@@ -1,4 +1,4 @@
-﻿namespace TwitchLib.Client.Models.Client
+﻿namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing cheer badge.</summary>
     public class CheerBadge

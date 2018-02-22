@@ -6,11 +6,11 @@ using System.Reflection;
 using TwitchLib.Client.Events.Client;
 using TwitchLib.Client.Exceptions.Client;
 using TwitchLib.Client.Internal;
-using TwitchLib.Client.Models.Client;
 using Microsoft.Extensions.Logging;
 using WebSocket4Net;
 using SuperSocket.ClientEngine;
 using SuperSocket.ClientEngine.Proxy;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Services;
 #endregion

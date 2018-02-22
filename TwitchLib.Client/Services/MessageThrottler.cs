@@ -7,7 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events.Services.MessageThrottler;
-using TwitchLib.Client.Models.Client;
+using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
+
 #endregion
 
 namespace TwitchLib.Client.Services

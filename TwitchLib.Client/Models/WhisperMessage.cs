@@ -1,13 +1,14 @@
-using System.Collections.Generic;
-using System.Linq;
 #if NETSTANDARD
     using TwitchLib.Client.Extensions.NetCore;
 #endif
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 #if NET452
-    using System.Drawing;
+
 #endif
 
-namespace TwitchLib.Client.Models.Client
+namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing a received whisper from TwitchWhisperClient</summary>
     public class WhisperMessage

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TwitchLib.Client.Models.Client
+namespace TwitchLib.Client.Models
 {
     /// <summary>Model representing a sent message.</summary>
     public class SentMessage

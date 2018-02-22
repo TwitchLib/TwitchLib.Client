@@ -1,4 +1,4 @@
-﻿namespace TwitchLib.Client.Models.Client
+﻿namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing a detection return object.</summary>
     public class DetectionReturn

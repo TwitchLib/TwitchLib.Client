@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-#if NETSTANDARD
+﻿#if NETSTANDARD
     using TwitchLib.Client.Extensions.NetCore;
 #endif
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 #if NET452
-    using System.Drawing;
+
 #endif
 
-namespace TwitchLib.Client.Models.Client
+namespace TwitchLib.Client.Models
 {
     /// <summary>Class represents ChatMessage in a Twitch channel.</summary>
     public class ChatMessage

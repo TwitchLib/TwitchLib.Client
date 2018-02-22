@@ -1,5 +1,5 @@
 ﻿using System;
-using TwitchLib.Client.Models.Client;
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events.Client
 {

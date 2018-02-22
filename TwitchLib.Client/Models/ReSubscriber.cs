@@ -1,4 +1,4 @@
-﻿namespace TwitchLib.Client.Models.Client
+﻿namespace TwitchLib.Client.Models
 {
     public class ReSubscriber : SubscriberBase
     {

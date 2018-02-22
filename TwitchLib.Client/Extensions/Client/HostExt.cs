@@ -1,4 +1,4 @@
-﻿using TwitchLib.Client.Models.Client;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions.Client
 {

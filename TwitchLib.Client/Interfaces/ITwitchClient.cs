@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using TwitchLib.Client.Events.Client;
-using TwitchLib.Client.Models.Client;
+using TwitchLib.Client.Models;
 using TwitchLib.Client.Services;
 
-namespace TwitchLib.Client
+namespace TwitchLib.Client.Interfaces
 {
     public interface ITwitchClient
     {
