@@ -3,14 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TwitchLib.Client.Events.Client;
-using TwitchLib.Client.Exceptions.Client;
 using TwitchLib.Client.Internal;
-using TwitchLib.Client.Models.Client;
 using Microsoft.Extensions.Logging;
 using WebSocket4Net;
 using SuperSocket.ClientEngine;
 using SuperSocket.ClientEngine.Proxy;
+using TwitchLib.Client.Events;
+using TwitchLib.Client.Exceptions;
+using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 using TwitchLib.Client.Services;
 #endregion
 
@@ -27,7 +28,7 @@ namespace TwitchLib.Client
         private readonly ICollection<char> _whisperCommandIdentifiers = new HashSet<char>();
         private readonly Queue<JoinedChannel> _joinChannelQueue = new Queue<JoinedChannel>();
         private readonly ILogger<TwitchClient> _logger;
-        private bool _initialized = false;
+        private bool _initialized;
         private string _autoJoinChannel;
         private bool _currentlyJoiningChannels;
         private System.Timers.Timer _joinTimer;
@@ -281,18 +282,20 @@ namespace TwitchLib.Client
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
-        /// <param name="channel">The channel to connect to.</param>
-        /// <param name="credentials">The credentials to use to log in.</param>
-        /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
-        /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        /// <param name="logging">Whether or not loging to console should be enabled.</param>
-        /// <param name="logger">Logger Type.</param>
-        /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
-        public TwitchClient(ILogger<TwitchClient> logger = null)
+        /// <param name="logger">Optional ILogger instance to enable logging</param>
+       public TwitchClient(ILogger<TwitchClient> logger = null)
         {
             _logger = logger;
         }
 
+        /// <summary>
+        /// Initializes the TwitchChatClient class.
+        /// </summary>
+        /// <param name="channel">The channel to connect to.</param>
+        /// <param name="credentials">The credentials to use to log in.</param>
+        /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
+        /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
+        /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
         public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
         {
             Log($"TwitchLib-TwitchClient initialized, assembly version: {Assembly.GetExecutingAssembly().GetName().Version}");
