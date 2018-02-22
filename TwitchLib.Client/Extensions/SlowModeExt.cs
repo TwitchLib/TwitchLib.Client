@@ -1,7 +1,7 @@
 ﻿using System;
 using TwitchLib.Client.Models;
 
-namespace TwitchLib.Client.Extensions.Client
+namespace TwitchLib.Client.Extensions
 {
     /// <summary>Extension to implement slowmode functionality in TwitchClient</summary>
     public static class SlowModeExt

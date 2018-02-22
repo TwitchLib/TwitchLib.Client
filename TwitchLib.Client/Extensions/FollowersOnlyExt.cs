@@ -1,7 +1,7 @@
 ﻿using System;
 using TwitchLib.Client.Models;
 
-namespace TwitchLib.Client.Extensions.Client
+namespace TwitchLib.Client.Extensions
 {
     /// <summary>Extension for implementing followers online mode functionality in TwitchClient</summary>
     public static class FollowersOnlyExt

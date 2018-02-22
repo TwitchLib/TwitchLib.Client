@@ -1,6 +1,6 @@
 ﻿using TwitchLib.Client.Models;
 
-namespace TwitchLib.Client.Extensions.Client
+namespace TwitchLib.Client.Extensions
 {
     /// <summary>Extension for implementing clear chat functionality in TwitchClient.</summary>
     public static class ClearChatExt

@@ -1,6 +1,6 @@
 ﻿using TwitchLib.Client.Models;
 
-namespace TwitchLib.Client.Extensions.Client
+namespace TwitchLib.Client.Extensions
 {
     /// <summary>Extension implementing the change chat color functionality in TwitchClient</summary>
     public static class ChangeChatColorExt

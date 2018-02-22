@@ -1,6 +1,6 @@
 ﻿using TwitchLib.Client.Models;
 
-namespace TwitchLib.Client.Extensions.Client
+namespace TwitchLib.Client.Extensions
 {
     /// <summary>Extension implementing the ability to start raids via TwitchClient.</summary>
     public static class RaidExt

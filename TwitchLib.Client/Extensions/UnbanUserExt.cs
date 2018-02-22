@@ -1,6 +1,6 @@
 ﻿using TwitchLib.Client.Models;
 
-namespace TwitchLib.Client.Extensions.Client
+namespace TwitchLib.Client.Extensions
 {
     /// <summary>Extension to implement unban functionality.</summary>
     public static class UnbanUserExt
