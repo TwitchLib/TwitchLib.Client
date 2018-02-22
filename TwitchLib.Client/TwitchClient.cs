@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using WebSocket4Net;
 using SuperSocket.ClientEngine;
 using SuperSocket.ClientEngine.Proxy;
+using TwitchLib.Client.Models;
 using TwitchLib.Client.Services;
 #endregion
 

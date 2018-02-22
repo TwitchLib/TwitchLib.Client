@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using TwitchLib.Client.Enums;
+﻿using System.Collections.Generic;
 
 namespace TwitchLib.Client.Common
 {
