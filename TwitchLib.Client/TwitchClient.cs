@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TwitchLib.Client.Events.Client;
-using TwitchLib.Client.Exceptions.Client;
 using TwitchLib.Client.Internal;
 using Microsoft.Extensions.Logging;
 using WebSocket4Net;

@@ -1,5 +1,4 @@
 ﻿using System;
-using TwitchLib.Client.Exceptions.Client;
 
 namespace TwitchLib.Client.Events.Client
 {

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.RegularExpressions;
+using TwitchLib.Client.Exceptions;
 
 namespace TwitchLib.Client.Models
 {
@@ -21,7 +22,7 @@ namespace TwitchLib.Client.Models
         public ConnectionCredentials(string twitchUsername, string twitchOAuth, string twitchHost = "irc-ws.chat.twitch.tv", int twitchPort = 80, bool disableUsernameCheck = false, string proxyIP = null, int? proxyPort = null)
         {
             if (!disableUsernameCheck && !(new Regex("^([a-zA-Z0-9][a-zA-Z0-9_]{3,25})$").Match(twitchUsername).Success))
-                throw new Exceptions.Client.ErrorLoggingInException("Twitch username does not appear to be valid.", twitchUsername);
+                throw new ErrorLoggingInException("Twitch username does not appear to be valid.", twitchUsername);
             TwitchUsername = twitchUsername.ToLower();
             TwitchOAuth = twitchOAuth;
             TwitchHost = twitchHost;

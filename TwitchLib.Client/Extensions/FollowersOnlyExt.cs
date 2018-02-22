@@ -1,4 +1,5 @@
 ﻿using System;
+using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -18,7 +19,7 @@ namespace TwitchLib.Client.Extensions
         public static void FollowersOnlyOn(this TwitchClient client, JoinedChannel channel, TimeSpan requiredFollowTime)
         {
             if (requiredFollowTime > TimeSpan.FromDays(MaximumDurationAllowedDays))
-                throw new Exceptions.Client.InvalidParameterException("The amount of time required to chat exceeded the maximum allowed by Twitch, which is 3 months.", client.TwitchUsername);
+                throw new InvalidParameterException("The amount of time required to chat exceeded the maximum allowed by Twitch, which is 3 months.", client.TwitchUsername);
 
             var duration = $"{requiredFollowTime.Days}d {requiredFollowTime.Hours}h {requiredFollowTime.Minutes}m";
 
@@ -34,7 +35,7 @@ namespace TwitchLib.Client.Extensions
         public static void FollowersOnlyOn(this TwitchClient client, string channel, TimeSpan requiredFollowTime)
         {
             if (requiredFollowTime > TimeSpan.FromDays(MaximumDurationAllowedDays))
-                throw new Exceptions.Client.InvalidParameterException("The amount of time required to chat exceeded the maximum allowed by Twitch, which is 3 months.", client.TwitchUsername);
+                throw new InvalidParameterException("The amount of time required to chat exceeded the maximum allowed by Twitch, which is 3 months.", client.TwitchUsername);
 
             var duration = $"{requiredFollowTime.Days}d {requiredFollowTime.Hours}h {requiredFollowTime.Minutes}m";
 
@@ -49,7 +50,7 @@ namespace TwitchLib.Client.Extensions
         public static void FollowersOnlyOn(this TwitchClient client, TimeSpan requiredFollowTime)
         {
             if (requiredFollowTime > TimeSpan.FromDays(MaximumDurationAllowedDays))
-                throw new Exceptions.Client.InvalidParameterException("The amount of time required to chat exceeded the maximum allowed by Twitch, which is 3 months.", client.TwitchUsername);
+                throw new InvalidParameterException("The amount of time required to chat exceeded the maximum allowed by Twitch, which is 3 months.", client.TwitchUsername);
 
             var duration = $"{requiredFollowTime.Days}d {requiredFollowTime.Hours}h {requiredFollowTime.Minutes}m";
 

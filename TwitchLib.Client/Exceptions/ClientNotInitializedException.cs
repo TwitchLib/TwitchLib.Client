@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace TwitchLib.Client.Exceptions.Client
+namespace TwitchLib.Client.Exceptions
 {
     /// <inheritdoc />
     /// <summary>Exception thrown when attempting to assign a variable with a different value that is not allowed.</summary>
-    public class IllegalAssignmentException : Exception
+    public class ClientNotInitializedException : Exception
     {
         /// <inheritdoc />
         /// <summary>Exception constructor</summary>
-        public IllegalAssignmentException(string description)
+        public ClientNotInitializedException(string description)
             : base(description)
         {
         }

@@ -1,4 +1,4 @@
-﻿namespace TwitchLib.Client.Exceptions.Client
+﻿namespace TwitchLib.Client.Exceptions
 {
     public class FailureToReceiveJoinConfirmationException
     {

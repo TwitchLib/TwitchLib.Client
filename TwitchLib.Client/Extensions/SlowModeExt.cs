@@ -1,4 +1,5 @@
 ﻿using System;
+using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -15,7 +16,7 @@ namespace TwitchLib.Client.Extensions
         public static void SlowModeOn(this TwitchClient client, JoinedChannel channel, TimeSpan messageCooldown)
         {
             if (messageCooldown > TimeSpan.FromDays(1))
-                throw new Exceptions.Client.InvalidParameterException("The message cooldown time supplied exceeded the maximum allowed by Twitch, which is 1 day.", client.TwitchUsername);
+                throw new InvalidParameterException("The message cooldown time supplied exceeded the maximum allowed by Twitch, which is 1 day.", client.TwitchUsername);
 
             client.SendMessage(channel, $".slow {messageCooldown.TotalSeconds}");
         }
@@ -29,7 +30,7 @@ namespace TwitchLib.Client.Extensions
         public static void SlowModeOn(this TwitchClient client, string channel, TimeSpan messageCooldown)
         {
             if (messageCooldown > TimeSpan.FromDays(1))
-                throw new Exceptions.Client.InvalidParameterException("The message cooldown time supplied exceeded the maximum allowed by Twitch, which is 1 day.", client.TwitchUsername);
+                throw new InvalidParameterException("The message cooldown time supplied exceeded the maximum allowed by Twitch, which is 1 day.", client.TwitchUsername);
 
             client.SendMessage(channel, $".slow {messageCooldown.TotalSeconds}");
         }
@@ -42,7 +43,7 @@ namespace TwitchLib.Client.Extensions
         public static void SlowModeOn(this TwitchClient client, TimeSpan messageCooldown)
         {
             if (messageCooldown > TimeSpan.FromDays(1))
-                throw new Exceptions.Client.InvalidParameterException("The message cooldown time supplied exceeded the maximum allowed by Twitch, which is 1 day.", client.TwitchUsername);
+                throw new InvalidParameterException("The message cooldown time supplied exceeded the maximum allowed by Twitch, which is 1 day.", client.TwitchUsername);
 
             client.SendMessage($".slow {messageCooldown.TotalSeconds}");
         }

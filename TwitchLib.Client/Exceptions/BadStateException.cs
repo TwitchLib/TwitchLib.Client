@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TwitchLib.Client.Exceptions.Client
+namespace TwitchLib.Client.Exceptions
 {
     /// <inheritdoc />
     /// <summary>Exception thrown when the state of the client cannot allow an operation to be run.</summary>
