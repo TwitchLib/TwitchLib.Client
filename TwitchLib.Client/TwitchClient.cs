@@ -1138,8 +1138,6 @@ namespace TwitchLib.Client
 
         private void Log(string message, bool includeDate = false, bool includeTime = false)
         {
-            if (_logger ==null) return;
-
             string dateTimeStr;
             if (includeDate && includeTime)
                 dateTimeStr = $"{DateTime.UtcNow}";
@@ -1153,7 +1151,7 @@ namespace TwitchLib.Client
             else
                 _logger?.LogInformation($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
 
-            OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
+            OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }
 
         public void SendQueuedItem(string message)
