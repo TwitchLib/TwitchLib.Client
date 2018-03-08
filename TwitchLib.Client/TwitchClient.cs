@@ -71,7 +71,8 @@ namespace TwitchLib.Client
             get => _credentials;
             set
             {
-                if (IsConnected)
+				if (!_initialized) HandleNotInitialized();
+				if (IsConnected)
                     throw new IllegalAssignmentException("While the client is connected, you are unable to change the connection credentials. Please disconnect first and then change them.");
                 _credentials = value;
                 TwitchUsername = value.TwitchUsername;
