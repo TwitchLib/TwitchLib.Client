@@ -69,9 +69,8 @@ namespace TwitchLib.Client
         public ConnectionCredentials ConnectionCredentials
         {
             get => _credentials;
-            set
+            private set
             {
-                if (!_initialized) HandleNotInitialized();
                 if (IsConnected)
                     throw new IllegalAssignmentException("While the client is connected, you are unable to change the connection credentials. Please disconnect first and then change them.");
                 _credentials = value;
@@ -309,15 +308,7 @@ namespace TwitchLib.Client
                 _whisperCommandIdentifiers.Add(whisperCommandIdentifier);
 
             AutoReListenOnException = autoReListenOnExceptions;
-
-            _client = new WebSocket($"ws://{_credentials.TwitchHost}:{_credentials.TwitchPort}");
-            _client.Opened += _client_OnConnected;
-            _client.MessageReceived += _client_OnMessage;
-            _client.Closed += _client_OnDisconnected;
-            _client.Error += _client_OnError;
-
-            if (credentials.Proxy != null)
-                _client.Proxy = new HttpConnectProxy(credentials.Proxy);
+            InitializeWebSocketClient();
 
             _initialized = true;
         }
@@ -411,9 +402,20 @@ namespace TwitchLib.Client
         /// </summary>
         public void Connect()
         {
-            if (!_initialized) HandleNotInitialized();
-            Log("Connecting to: " + _credentials.TwitchHost + ":" + _credentials.TwitchPort);
+            Connect(null);
+        }
 
+        public void Connect(ConnectionCredentials credentials = null)
+        {
+            if (!_initialized) HandleNotInitialized();
+            if (IsConnected) Disconnect();
+            if (credentials != null)
+            {
+                ConnectionCredentials = credentials;
+                InitializeWebSocketClient();
+            }
+
+            Log("Connecting to: " + _credentials.TwitchHost + ":" + _credentials.TwitchPort);
             _client.Open();
 
             Log("Should be connected!");
@@ -631,17 +633,11 @@ namespace TwitchLib.Client
         public void Reconnect()
         {
             if (!_initialized) HandleNotInitialized();
+            Disconnect();
+
             Log("Reconnecting to: " + _credentials.TwitchHost + ":" + _credentials.TwitchPort);
 
-            _client.Dispose();
-
-            JoinedChannels.Clear();
-
-            _client = new WebSocket($"ws://{_credentials.TwitchHost}:{_credentials.TwitchPort}");
-            _client.Opened += _client_OnConnected;
-            _client.MessageReceived += _client_OnMessage;
-            _client.Closed += _client_OnDisconnected;
-            _client.Error += _client_OnError;
+            InitializeWebSocketClient();
             _client.Open();
         }
 
@@ -1164,6 +1160,18 @@ namespace TwitchLib.Client
         public void HandleNotInitialized()
         {
             throw new ClientNotInitializedException("The twitch client has not been initialized and cannot be used. Please call Initialize();");
+        }
+
+        private void InitializeWebSocketClient()
+        {
+            _client = new WebSocket($"ws://{_credentials.TwitchHost}:{_credentials.TwitchPort}");
+            _client.Opened += _client_OnConnected;
+            _client.MessageReceived += _client_OnMessage;
+            _client.Closed += _client_OnDisconnected;
+            _client.Error += _client_OnError;
+
+            if (_credentials.Proxy != null)
+                _client.Proxy = new HttpConnectProxy(_credentials.Proxy);
         }
     }
 }
