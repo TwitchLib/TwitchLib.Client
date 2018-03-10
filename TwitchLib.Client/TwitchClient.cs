@@ -996,7 +996,7 @@ namespace TwitchLib.Client
             }
 
             // On ritual new chatter is detected in chat
-            response = Internal.Parsing.Chat.DetectedRitualNewChatter(ircMessage);
+            response = Internal.Parsing.Chat.DetectedRitualNewChatter(ircMessage, JoinedChannels);
             if (response.Successful)
             {
                 OnRitualNewChatter?.Invoke(this, new OnRitualNewChatterArgs { RitualNewChatter = new RitualNewChatter(ircMessage) });
