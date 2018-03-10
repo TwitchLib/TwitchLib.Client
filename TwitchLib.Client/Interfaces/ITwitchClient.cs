@@ -10,7 +10,7 @@ namespace TwitchLib.Client.Interfaces
     {
         bool AutoReListenOnException { get; set; }
         MessageEmoteCollection ChannelEmotes { get; }
-        ConnectionCredentials ConnectionCredentials { get; }
+        ConnectionCredentials ConnectionCredentials { get; set; }
         bool DisableAutoPong { get; set; }
         bool IsConnected { get; }
         List<JoinedChannel> JoinedChannels { get; }
@@ -61,8 +61,7 @@ namespace TwitchLib.Client.Interfaces
         void AddChatCommandIdentifier(char identifier);
         void AddWhisperCommandIdentifier(char identifier);
         void Connect();
-		void Connect(ConnectionCredentials credentials);
-		void Disconnect();
+        void Disconnect();
         void GetChannelModerators();
         void GetChannelModerators(JoinedChannel channel);
         void GetChannelModerators(string channel);
