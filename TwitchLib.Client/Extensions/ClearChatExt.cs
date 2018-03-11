@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
 {
@@ -10,7 +11,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">JoinedChannel representation of which channel to send clear chat command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void ClearChat(this TwitchClient client, JoinedChannel channel)
+        public static void ClearChat(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".clear");
         }
@@ -20,7 +21,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">String representation of which channel to send clear chat command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void ClearChat(this TwitchClient client, string channel)
+        public static void ClearChat(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".clear");
         }
@@ -29,7 +30,7 @@ namespace TwitchLib.Client.Extensions
         /// Sends request to clear chat (may be ignored by plugins like BTTV)
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void ClearChat(this TwitchClient client)
+        public static void ClearChat(this ITwitchClient client)
         {
             client.SendMessage(".clear");
         }

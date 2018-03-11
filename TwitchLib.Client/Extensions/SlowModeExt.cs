@@ -1,5 +1,6 @@
 ﻿using System;
 using TwitchLib.Client.Exceptions;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -13,7 +14,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="messageCooldown">TimeSpan object representing how long message cooldowns should be. May not exceed 1 day total.</param>
         /// <param name="channel">JoinedChannel representation of which channel to send the slow command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SlowModeOn(this TwitchClient client, JoinedChannel channel, TimeSpan messageCooldown)
+        public static void SlowModeOn(this ITwitchClient client, JoinedChannel channel, TimeSpan messageCooldown)
         {
             if (messageCooldown > TimeSpan.FromDays(1))
                 throw new InvalidParameterException("The message cooldown time supplied exceeded the maximum allowed by Twitch, which is 1 day.", client.TwitchUsername);
@@ -27,7 +28,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="messageCooldown">TimeSpan object representing how long message cooldowns should be. May not exceed 1 day total.</param>
         /// <param name="channel">String representation of which channel to send the slow command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SlowModeOn(this TwitchClient client, string channel, TimeSpan messageCooldown)
+        public static void SlowModeOn(this ITwitchClient client, string channel, TimeSpan messageCooldown)
         {
             if (messageCooldown > TimeSpan.FromDays(1))
                 throw new InvalidParameterException("The message cooldown time supplied exceeded the maximum allowed by Twitch, which is 1 day.", client.TwitchUsername);
@@ -40,7 +41,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="messageCooldown">TimeSpan object representing how long message cooldowns should be. May not exceed 1 day total.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SlowModeOn(this TwitchClient client, TimeSpan messageCooldown)
+        public static void SlowModeOn(this ITwitchClient client, TimeSpan messageCooldown)
         {
             if (messageCooldown > TimeSpan.FromDays(1))
                 throw new InvalidParameterException("The message cooldown time supplied exceeded the maximum allowed by Twitch, which is 1 day.", client.TwitchUsername);
@@ -53,7 +54,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">JoinedChannel representation of which channel to send slowoff command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SlowModeOff(this TwitchClient client, JoinedChannel channel)
+        public static void SlowModeOff(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".slowoff");
         }
@@ -63,7 +64,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">String representation of which channel to send slowoff command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SlowModeOff(this TwitchClient client, string channel)
+        public static void SlowModeOff(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".slowoff");
         }
@@ -72,7 +73,7 @@ namespace TwitchLib.Client.Extensions
         /// Disables slow mode.
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SlowModeOff(this TwitchClient client)
+        public static void SlowModeOff(this ITwitchClient client)
         {
             client.SendMessage(".slowoff");
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TwitchLib.Client.Common;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Internal.Parsing
@@ -30,7 +31,7 @@ namespace TwitchLib.Client.Internal.Parsing
         /// <returns>Message id (ie host_on)</returns>
         private static string GetMsgId(string message)
         {
-            return (from part in message.Split(' ') where part.Contains("@msg-id") select part.Split('=')[1]).FirstOrDefault();
+            return Helpers.ParseToken("msg-id", message);
         }
 
         /// <summary>[Works] Parse function to detect connected successfully</summary>
@@ -62,7 +63,10 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "USERNOTICE")
-                return new DetectionReturn(message.Split(';')[7].Split('=')[1] == "sub", channelRet);
+            {
+                var msgId = GetMsgId(message);
+                return new DetectionReturn(!string.IsNullOrWhiteSpace(msgId) && msgId.Equals(MsgIds.Subscription), channelRet);
+            }
             return new DetectionReturn(false);
         }
 
@@ -261,7 +265,10 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "NOTICE")
-                return new DetectionReturn(message.Contains("has gone offline"), channelRet);
+            {
+                var msgId = GetMsgId(message);
+                return new DetectionReturn(!string.IsNullOrWhiteSpace(msgId) && msgId.Equals(MsgIds.HostOff), channelRet);
+            }
             return new DetectionReturn(false);
         }
 
@@ -326,7 +333,10 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "USERNOTICE")
-                return new DetectionReturn(message.Split(';')[7].Split('=')[1] == "resub", channelRet);
+            {
+                var msgId = GetMsgId(message);
+                return new DetectionReturn(!string.IsNullOrWhiteSpace(msgId) && msgId.Equals(MsgIds.ReSubscription), channelRet);
+            }
             return new DetectionReturn(false);
         }
 
@@ -454,8 +464,11 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "NOTICE")
-                if (message.Contains("The moderators of this channel are:") || message.Contains("There are no moderators of this channel."))
+            {
+                var msgId = GetMsgId(message);
+                if (!string.IsNullOrWhiteSpace(msgId) && msgId.Equals(MsgIds.ModeratorsReceived))
                     return new DetectionReturn(true, channelRet);
+            }
             return new DetectionReturn(false);
         }
 
@@ -493,14 +506,15 @@ namespace TwitchLib.Client.Internal.Parsing
         public static DetectionReturn DetectedNowHosting(string message, IEnumerable<JoinedChannel> channels)
         {
             //@msg-id=host_on :tmi.twitch.tv NOTICE #burkeblack :Now hosting DjTechlive.
-            var id = GetMsgId(message);
-            if (string.IsNullOrEmpty(id) || id != "host_on")
+            var msgIid = GetMsgId(message);
+            if (string.IsNullOrEmpty(msgIid) || !msgIid.Equals(MsgIds.HostOn))
                 return new DetectionReturn(false);
             var channel = "";
             foreach (var channelObj in channels)
                 if (channelObj.Channel.ToLower() == message.Split(' ')[3].ToLower().Replace("#", ""))
                     channel = channelObj.Channel;
-            return new DetectionReturn(message.Contains(":Now hosting "), channel);
+
+            return new DetectionReturn(true, channel);
         }
 
         /// <summary>
@@ -543,7 +557,10 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "USERNOTICE")
-                return new DetectionReturn(message.Split(';')[7].Contains("=") && message.Split(';')[7].Split('=')[1] == "raid", channelRet);
+            {
+                var msgId = GetMsgId(message);
+                return new DetectionReturn(!string.IsNullOrWhiteSpace(msgId) && msgId.Equals(MsgIds.Raid), channelRet);
+            }
             return new DetectionReturn(false);
         }
 
@@ -563,7 +580,10 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "USERNOTICE")
-                return new DetectionReturn(message.Split(';')[7].Contains("=") && message.Split(';')[7].Split('=')[1] == "subgift", channelRet);
+            {
+                var msgId = GetMsgId(message);
+                return new DetectionReturn(!string.IsNullOrWhiteSpace(msgId) && msgId.Equals(MsgIds.SubGift), channelRet);
+            }
             return new DetectionReturn(false);
         }
 
@@ -583,7 +603,10 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "NOTICE")
-                return new DetectionReturn(message.Contains(" ") && message.Split(' ')[0].Contains("=") && message.Split(' ')[0].Split('=')[1] == "raid_error_self", channelRet);
+            {
+                var msgId = GetMsgId(message);
+                return new DetectionReturn(!string.IsNullOrWhiteSpace(msgId) && msgId.Equals(MsgIds.RaidErrorSelf), channelRet);
+            }
             return new DetectionReturn(false);
         }
 
@@ -603,7 +626,10 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "NOTICE")
-                return new DetectionReturn(message.Contains(" ") && message.Split(' ')[0].Contains("=") && message.Split(' ')[0].Split('=')[1] == "no_permission", channelRet);
+            {
+                var msgId = GetMsgId(message);
+                return new DetectionReturn(!string.IsNullOrWhiteSpace(msgId) && msgId.Equals(MsgIds.NoPermission), channelRet);
+            }
             return new DetectionReturn(false);
         }
 
@@ -623,7 +649,10 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "NOTICE")
-                return new DetectionReturn(message.Contains(" ") && message.Split(' ')[0].Contains("=") && message.Split(' ')[0].Split('=')[1] == "raid_notice_mature", channelRet);
+            {
+                var msgId = GetMsgId(message);
+                return new DetectionReturn(!string.IsNullOrWhiteSpace(msgId) && msgId.Equals(MsgIds.RaidNoticeMature), channelRet);
+            }
             return new DetectionReturn(false);
         }
 
@@ -631,15 +660,29 @@ namespace TwitchLib.Client.Internal.Parsing
         // login=kittyjinxu;mod=0;msg-id=ritual;msg-param-ritual-name=new_chatter;room-id=35740817;subscriber=1;
         // system-msg=@KittyJinxu\sis\snew\shere.\sSay\shello!;tmi-sent-ts=1514387871555;turbo=0;user-id=187446639;
         // user-type= USERNOTICE #thorlar kittyjinxu > #thorlar: HeyGuys
-        public static DetectionReturn DetectedRitualNewChatter(string message)
+        public static DetectionReturn DetectedRitualNewChatter(string message, IEnumerable<JoinedChannel> channels)
         {
-            if (message.Split(';').Length > 11
-                && message.Split(';')[8].Split('=')[1] == "new_chatter"
-                && message.Split(' ').Length > 2
-                && message.Split(' ')[2] == "USERNOTICE")
-                return new DetectionReturn(true, message.Split(' ')[3].Substring(1));
+            string readType = null;
+            string channelRet = null;
 
-            return new DetectionReturn(false);
+            foreach (var channel in channels)
+            {
+                readType = GetReadType(message, channel.Channel);
+                if (readType == null)
+                    continue;
+
+                channelRet = channel.Channel;
+                break;
+            }
+
+            if (readType == null || readType != "USERNOTICE") return new DetectionReturn(false);
+
+            var msgId = GetMsgId(message);
+
+            if (string.IsNullOrWhiteSpace(msgId) || !msgId.Equals(MsgIds.Ritual)) return new DetectionReturn(false);
+
+            var ritualName = Helpers.ParseToken("msg-param-ritual-name", message);
+            return new DetectionReturn(ritualName.Equals("new_chatter"), channelRet);
         }
     }
 }

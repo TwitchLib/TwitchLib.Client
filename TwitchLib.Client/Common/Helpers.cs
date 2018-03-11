@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TwitchLib.Client.Common
 {
@@ -48,6 +50,24 @@ namespace TwitchLib.Client.Common
             }
             return args;
         }
-        
+
+        public static string ParseToken(string token, string message)
+        {
+            var tokenValue = string.Empty;
+
+            for (var i = message.IndexOf(token, StringComparison.InvariantCultureIgnoreCase);
+                i > -1;
+                i = message.IndexOf(token, i + token.Length, StringComparison.InvariantCultureIgnoreCase))
+            {
+                tokenValue = new string(message
+                    .Substring(i)
+                    .TakeWhile(x => x != ';' && x != ' ')
+                    .ToArray())
+                    .Split('=')
+                    .LastOrDefault();
+            }
+
+            return tokenValue;
+        }
     }
 }

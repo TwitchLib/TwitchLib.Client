@@ -277,13 +277,13 @@ namespace TwitchLib.Client
 
         /// <summary>Fires when data is received from Twitch that is not able to be parsed.</summary>
         public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
-        #endregion  
+        #endregion
 
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
-       public TwitchClient(ILogger<TwitchClient> logger = null)
+        public TwitchClient(ILogger<TwitchClient> logger = null)
         {
             _logger = logger;
         }
@@ -939,7 +939,7 @@ namespace TwitchLib.Client
                 var payload = ircMessage.Split(':')[2];
                 var hostedBy = payload.Split(' ')[0];
                 var isAuto = payload.Contains("auto hosting");
-                var viewers = -1;
+                var viewers = 0;
                 if (payload.Contains("up to"))
                     viewers = int.Parse(payload.Split(' ')[payload.Split(' ').Length - 2]);
                 OnBeingHosted?.Invoke(this, new OnBeingHostedArgs
@@ -958,7 +958,7 @@ namespace TwitchLib.Client
             if (response.Successful)
             {
                 var raidNotification = new RaidNotification(ircMessage);
-                OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { RaidNotificaiton = raidNotification });
+                OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { RaidNotificaiton = raidNotification, Channel = response.Channel });
                 return;
             }
 
@@ -996,7 +996,7 @@ namespace TwitchLib.Client
             }
 
             // On ritual new chatter is detected in chat
-            response = Internal.Parsing.Chat.DetectedRitualNewChatter(ircMessage);
+            response = Internal.Parsing.Chat.DetectedRitualNewChatter(ircMessage, JoinedChannels);
             if (response.Successful)
             {
                 OnRitualNewChatter?.Invoke(this, new OnRitualNewChatterArgs { RitualNewChatter = new RitualNewChatter(ircMessage) });
