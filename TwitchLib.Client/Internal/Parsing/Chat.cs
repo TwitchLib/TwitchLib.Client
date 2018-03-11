@@ -454,7 +454,7 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             if (readType != null && readType == "NOTICE")
-                if (message.Contains("The moderators of this room are:") || message.Contains("There are no moderators of this room."))
+                if (message.Contains("The moderators of this channel are:") || message.Contains("There are no moderators of this channel."))
                     return new DetectionReturn(true, channelRet);
             return new DetectionReturn(false);
         }
