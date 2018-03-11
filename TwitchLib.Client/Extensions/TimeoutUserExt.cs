@@ -1,4 +1,5 @@
 ﻿using System;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -16,7 +17,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="message">Message to accompany the timeout and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not sened if true)</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void TimeoutUser(this TwitchClient client, JoinedChannel channel, string viewer, TimeSpan duration, string message = "", bool dryRun = false)
+        public static void TimeoutUser(this ITwitchClient client, JoinedChannel channel, string viewer, TimeSpan duration, string message = "", bool dryRun = false)
         {
             client.SendMessage(channel, $".timeout {viewer} {duration.TotalSeconds} {message}", dryRun);
         }
@@ -30,7 +31,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="message">Message to accompany the timeout and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not sened if true)</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void TimeoutUser(this TwitchClient client, string channel, string viewer, TimeSpan duration, string message = "", bool dryRun = false)
+        public static void TimeoutUser(this ITwitchClient client, string channel, string viewer, TimeSpan duration, string message = "", bool dryRun = false)
         {
             var joinedChannel = client.GetJoinedChannel(channel);
             if (joinedChannel != null)
@@ -45,7 +46,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="message">Message to accompany the timeout and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not sened if true)</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void TimeoutUser(this TwitchClient client, string viewer, TimeSpan duration, string message = "", bool dryRun = false)
+        public static void TimeoutUser(this ITwitchClient client, string viewer, TimeSpan duration, string message = "", bool dryRun = false)
         {
             if (client.JoinedChannels.Count > 0)
                 TimeoutUser(client, client.JoinedChannels[0], viewer, duration, message, dryRun);

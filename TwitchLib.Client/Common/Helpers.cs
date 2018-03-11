@@ -60,9 +60,9 @@ namespace TwitchLib.Client.Common
                 i = message.IndexOf(token, i + token.Length, StringComparison.InvariantCultureIgnoreCase))
             {
                 tokenValue = new string(message
-                        .Substring(i)
-                        .TakeWhile(x => x != ';' && x != ' ')
-                        .ToArray())
+                    .Substring(i)
+                    .TakeWhile(x => x != ';' && x != ' ')
+                    .ToArray())
                     .Split('=')
                     .LastOrDefault();
             }

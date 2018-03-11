@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
 {
@@ -10,7 +11,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">JoinedChannel representation of which channel to send subscriber only command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SubscribersOnlyOn(this TwitchClient client, JoinedChannel channel)
+        public static void SubscribersOnlyOn(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".subscribers");
         }
@@ -20,7 +21,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">String representation of which channel to send subscriber only command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SubscribersOnlyOn(this TwitchClient client, string channel)
+        public static void SubscribersOnlyOn(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".subscribers");
         }
@@ -29,7 +30,7 @@ namespace TwitchLib.Client.Extensions
         /// Enables subscriber only mode in chat.
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SubscribersOnlyOn(this TwitchClient client)
+        public static void SubscribersOnlyOn(this ITwitchClient client)
         {
             client.SendMessage(".subscribers");
         }
@@ -39,7 +40,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">JoinedChannel representation of which channel to send subscriber only off command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SubscribersOnlyOff(this TwitchClient client, JoinedChannel channel)
+        public static void SubscribersOnlyOff(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".subscribersoff");
         }
@@ -49,7 +50,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">String representation of which channel to send subscriber only off command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SubscribersOnlyOff(this TwitchClient client, string channel)
+        public static void SubscribersOnlyOff(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".subscribersoff");
         }
@@ -58,7 +59,7 @@ namespace TwitchLib.Client.Extensions
         /// Disables subscriber only mode in chat.
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void SubscribersOnlyOff(this TwitchClient client)
+        public static void SubscribersOnlyOff(this ITwitchClient client)
         {
             client.SendMessage(".subscribersoff");
         }

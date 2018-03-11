@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
 {
@@ -13,7 +14,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="message">Message to accompany the ban and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void BanUser(this TwitchClient client, JoinedChannel channel, string viewer, string message = "", bool dryRun = false)
+        public static void BanUser(this ITwitchClient client, JoinedChannel channel, string viewer, string message = "", bool dryRun = false)
         {
             client.SendMessage(channel, $".ban {viewer} {message}");
         }
@@ -26,7 +27,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="message">Message to accompany the ban and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void BanUser(this TwitchClient client, string channel, string viewer, string message = "", bool dryRun = false)
+        public static void BanUser(this ITwitchClient client, string channel, string viewer, string message = "", bool dryRun = false)
         {
             var joinedChannel = client.GetJoinedChannel(channel);
             if (joinedChannel != null)
@@ -40,7 +41,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="message">Message to accompany the ban and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void BanUser(this TwitchClient client, string viewer, string message = "", bool dryRun = false)
+        public static void BanUser(this ITwitchClient client, string viewer, string message = "", bool dryRun = false)
         {
             if (client.JoinedChannels.Count > 0)
                 BanUser(client, client.JoinedChannels[0], viewer, message, dryRun);

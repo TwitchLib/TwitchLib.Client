@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
 {
@@ -11,7 +12,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userToHost">The channel to be hosted.</param>
         /// <param name="channel">JoinedChannel representation of which channel to send the host command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void Host(this TwitchClient client, JoinedChannel channel, string userToHost)
+        public static void Host(this ITwitchClient client, JoinedChannel channel, string userToHost)
         {
             client.SendMessage(channel, $".host {userToHost}");
         }
@@ -22,7 +23,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userToHost">The channel to be hosted.</param>
         /// <param name="channel">String representation of which channel to send the host command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void Host(this TwitchClient client, string channel, string userToHost)
+        public static void Host(this ITwitchClient client, string channel, string userToHost)
         {
             client.SendMessage(channel, $".host {userToHost}");
         }
@@ -32,7 +33,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="userToHost">The channel to be hosted.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void Host(this TwitchClient client, string userToHost)
+        public static void Host(this ITwitchClient client, string userToHost)
         {
             client.SendMessage($".host {userToHost}");
         }
@@ -42,7 +43,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">JoinedChannel representation of the channel to send the unhost command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void Unhost(this TwitchClient client, JoinedChannel channel)
+        public static void Unhost(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".unhost");
         }
@@ -52,7 +53,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">String representation of the channel to send the unhost command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void Unhost(this TwitchClient client, string channel)
+        public static void Unhost(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".unhost");
         }
@@ -61,7 +62,7 @@ namespace TwitchLib.Client.Extensions
         /// Sends command to unhost if a stream is being hosted.
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void Unhost(this TwitchClient client)
+        public static void Unhost(this ITwitchClient client)
         {
             client.SendMessage(".unhost");
         }
