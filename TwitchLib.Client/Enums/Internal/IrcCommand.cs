@@ -29,6 +29,7 @@
         RoomState,
         Reconnect,
         ServerChange,
-        UserNotice
+        UserNotice,
+        Mode
     }
 }

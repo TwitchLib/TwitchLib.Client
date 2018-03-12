@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using TwitchLib.Client.Enums.Internal;
-using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Services
@@ -168,6 +167,9 @@ namespace TwitchLib.Client.Services
                     break;
                 case "USERNOTICE":
                     command = IrcCommand.UserNotice;
+                    break;
+                case "MODE":
+                    command = IrcCommand.Mode;
                     break;
             }
 
