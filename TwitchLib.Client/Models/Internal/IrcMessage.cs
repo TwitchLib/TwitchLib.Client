@@ -2,7 +2,7 @@
 using System.Text;
 using TwitchLib.Client.Enums.Internal;
 
-namespace TwitchLib.Client.Models
+namespace TwitchLib.Client.Models.Internal
 {
     public class IrcMessage
     {
@@ -11,19 +11,19 @@ namespace TwitchLib.Client.Models
         /// </summary>
         public string Channel => Params;
 
-        public string Params => Parameters != null && Parameters.Length > 0 ? Parameters[0] : "";
+        public string Params => _parameters != null && _parameters.Length > 0 ? _parameters[0] : "";
 
         /// <summary>
         /// Message itself
         /// </summary>r
         public string Message => Trailing;
 
-        public string Trailing => Parameters != null && Parameters.Length > 1 ? Parameters[Parameters.Length - 1] : "";
+        public string Trailing => _parameters != null && _parameters.Length > 1 ? _parameters[_parameters.Length - 1] : "";
 
         /// <summary>
         /// Command parameters
         /// </summary>
-        private readonly string[] Parameters;
+        private readonly string[] _parameters;
 
         /// <summary>
         /// The user whose message it is
@@ -51,7 +51,7 @@ namespace TwitchLib.Client.Models
         /// <param name="user"></param>
         public IrcMessage(string user)
         {
-            Parameters = null;
+            _parameters = null;
             User = user;
             Hostmask = null;
             Command = IrcCommand.Unknown;
@@ -70,7 +70,7 @@ namespace TwitchLib.Client.Models
             var idx = hostmask.IndexOf('!');
             User = idx != -1 ? hostmask.Substring(0, idx) : hostmask;
             Hostmask = hostmask;
-            Parameters = parameters;
+            _parameters = parameters;
             Command = command;
             Tags = tags;
         }
@@ -97,15 +97,15 @@ namespace TwitchLib.Client.Models
                 raw.Append(":").Append(Hostmask).Append(" ");
             }
             raw.Append(Command.ToString().ToUpper().Replace("RPL_", ""));
-            if (Parameters.Length <= 0) return raw.ToString();
+            if (_parameters.Length <= 0) return raw.ToString();
 
-            if (Parameters[0] != null && Parameters[0].Length > 0)
+            if (_parameters[0] != null && _parameters[0].Length > 0)
             {
-                raw.Append(" ").Append(Parameters[0]);
+                raw.Append(" ").Append(_parameters[0]);
             }
-            if (Parameters.Length > 1 && Parameters[1] != null && Parameters[1].Length > 0)
+            if (_parameters.Length > 1 && _parameters[1] != null && _parameters[1].Length > 0)
             {
-                raw.Append(" :").Append(Parameters[1]);
+                raw.Append(" :").Append(_parameters[1]);
             }
             return raw.ToString();
         }

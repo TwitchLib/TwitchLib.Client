@@ -14,6 +14,7 @@ using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Manager;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Models.Internal;
 using TwitchLib.Client.Services;
 #endregion
 
@@ -739,29 +740,26 @@ namespace TwitchLib.Client
 
         #endregion
 
+        #region IrcMessage Handling
+
         private void HandleIrcMessage(IrcMessage ircMessage)
         {
+            if (ircMessage.Message.Equals("You are in a maze of twisty passages, all alike."))
+                OnConnected?.Invoke(this, new OnConnectedArgs { AutoJoinChannel = _autoJoinChannel, BotUsername = TwitchUsername });
+
             switch (ircMessage.Command)
             {
                 case IrcCommand.PrivMsg:
-                    var chatMessage = new ChatMessage(TwitchUsername, ircMessage, ref _channelEmotes, WillReplaceEmotes);
-                    foreach (var joinedChannel in JoinedChannels.Where(x => string.Equals(x.Channel, ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
-                        joinedChannel.HandleMessage(chatMessage);
-                    OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage });
-
-                    if (_chatCommandIdentifiers != null && _chatCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(chatMessage.Message))
-                        if (_chatCommandIdentifiers.Contains(chatMessage.Message[0]))
-                        {
-                            var chatCommand = new ChatCommand(chatMessage);
-                            OnChatCommandReceived?.Invoke(this, new OnChatCommandReceivedArgs { Command = chatCommand });
-                        }
-                    break;
+                    HandlePrivMsg(ircMessage);
+                    return;
                 case IrcCommand.Notice:
                     break;
                 case IrcCommand.Ping:
-                    break;
+                    if (!DisableAutoPong)
+                        SendRaw("PONG");
+                    return;
                 case IrcCommand.Pong:
-                    break;
+                    return;
                 case IrcCommand.Join:
                     break;
                 case IrcCommand.Part:
@@ -810,6 +808,68 @@ namespace TwitchLib.Client
                     break;
             }
         }
+
+        #region IrcCommand Handling
+
+        private void HandlePrivMsg(IrcMessage ircMessage)
+        {
+            if (ircMessage.Hostmask.Equals(":jtv!jtv@jtv.tmi.twitch.tv"))
+            {
+                var hostNotification = new OnBeingHostedNotification(TwitchUsername, ircMessage);
+                OnBeingHosted?.Invoke(this, new OnBeingHostedArgs { OnBeingHostedNotification = hostNotification });
+                return;
+            }
+
+            var chatMessage = new ChatMessage(TwitchUsername, ircMessage, ref _channelEmotes, WillReplaceEmotes);
+            foreach (var joinedChannel in JoinedChannels.Where(x => string.Equals(x.Channel, ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
+                joinedChannel.HandleMessage(chatMessage);
+            OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage });
+
+            if (_chatCommandIdentifiers != null && _chatCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(chatMessage.Message))
+                if (_chatCommandIdentifiers.Contains(chatMessage.Message[0]))
+                {
+                    var chatCommand = new ChatCommand(chatMessage);
+                    OnChatCommandReceived?.Invoke(this, new OnChatCommandReceivedArgs { Command = chatCommand });
+                    return;
+                }
+
+            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "PrivMsgHandling", RawIRC = ircMessage.ToString() });
+        }
+
+        private void HandleNotice(IrcMessage ircMessage)
+        {
+            var success = ircMessage.Tags.TryGetValue("msg-id", out var msgId);
+            if (!success)
+                OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
+
+            switch (msgId)
+            {
+                case MsgIds.Subscription:
+                    var subscriber = new Subscriber(ircMessage);
+                    OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs { Subscriber = subscriber });
+                    break;
+                case MsgIds.ReSubscription:
+                    var resubscriber = new ReSubscriber(ircMessage);
+                    OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber });
+                    break;
+                case MsgIds.SubGift:
+                    var giftedSubscription = new GiftedSubscription(ircMessage);
+                    OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription });
+                    break;
+                default:
+                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
+                    break;
+            }
+        }
+
+        private void HandleJoin(IrcMessage ircMessage)
+        {
+
+        }
+
+        #endregion
+
+        #endregion
 
         private void Log(string message, bool includeDate = false, bool includeTime = false)
         {

@@ -1,4 +1,4 @@
-﻿namespace TwitchLib.Client.Models
+﻿namespace TwitchLib.Client.Models.Internal
 {
     public static class MsgIds
     {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Services
 {
@@ -17,8 +18,8 @@ namespace TwitchLib.Client.Services
             var tagDict = new Dictionary<string, string>();
 
             var state = ParserState.STATE_NONE;
-            var starts = new int[] { 0, 0, 0, 0, 0, 0 };
-            var lens = new int[] { 0, 0, 0, 0, 0, 0 };
+            var starts = new [] { 0, 0, 0, 0, 0, 0 };
+            var lens = new [] { 0, 0, 0, 0, 0, 0 };
             for (var i = 0; i < raw.Length; ++i)
             {
                 lens[(int)state] = i - starts[(int)state] - 1;
