@@ -1002,7 +1002,6 @@ namespace TwitchLib.Client
                 OnRitualNewChatter?.Invoke(this, new OnRitualNewChatterArgs { RitualNewChatter = new RitualNewChatter(ircMessage) });
                 return;
             }
-            Log(response.OptionalData ?? "none");
             #endregion
 
             #region Clear Chat, Timeouts, and Bans
