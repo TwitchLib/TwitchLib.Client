@@ -6,9 +6,9 @@ namespace TwitchLib.Client.Models
     public class EmoteSet
     {
         /// <summary>List containing all emotes in the message.</summary>
-        public List<Emote> Emotes { get; protected set; }
+        public List<Emote> Emotes { get; }
         /// <summary>The raw emote set string obtained from Twitch, for legacy purposes.</summary>
-        public string RawEmoteSetString { get; protected set; }
+        public string RawEmoteSetString { get; }
 
         /// <summary>Constructor for ChatEmoteSet object.</summary>
         /// <param name="emoteSetData"></param>

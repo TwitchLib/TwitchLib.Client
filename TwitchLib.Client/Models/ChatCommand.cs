@@ -15,7 +15,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing all arguments received in a string form.</summary>
         public string ArgumentsAsString { get; }
         /// <summary>Property representing the command identifier (ie command prefix).</summary>
-        public char CommandIdentifier { get; protected set; }
+        public char CommandIdentifier { get; }
 
         /// <summary>ChatCommand constructor.</summary>
         /// <param name="chatMessage"></param>

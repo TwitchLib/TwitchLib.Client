@@ -12,6 +12,7 @@ using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Internal.Parsing;
 using TwitchLib.Client.Manager;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
@@ -744,6 +745,11 @@ namespace TwitchLib.Client
 
         private void HandleIrcMessage(IrcMessage ircMessage)
         {
+            if (ircMessage.Message.Contains("Login authentication failed"))
+            {
+                OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
+            }
+
             switch (ircMessage.Command)
             {
                 case IrcCommand.PrivMsg:
@@ -765,8 +771,10 @@ namespace TwitchLib.Client
                     HandlePart(ircMessage);
                     break;
                 case IrcCommand.HostTarget:
+                    HandleHostTarget(ircMessage);
                     break;
                 case IrcCommand.ClearChat:
+                    HandleClearChat(ircMessage);
                     break;
                 case IrcCommand.UserState:
                     HandleUserState(ircMessage);
@@ -783,8 +791,10 @@ namespace TwitchLib.Client
                 case IrcCommand.RPL_004:
                     break;
                 case IrcCommand.RPL_353:
+                    Handle353(ircMessage);
                     break;
                 case IrcCommand.RPL_366:
+                    Handle366();
                     break;
                 case IrcCommand.RPL_372:
                     break;
@@ -796,11 +806,13 @@ namespace TwitchLib.Client
                     HandleWhisper(ircMessage);
                     break;
                 case IrcCommand.RoomState:
+                    HandleRoomState(ircMessage);
                     break;
                 case IrcCommand.Reconnect:
                     Reconnect();
                     break;
                 case IrcCommand.UserNotice:
+                    HandleUserNotice(ircMessage);
                     break;
                 case IrcCommand.Mode:
                     HandleMode(ircMessage);
@@ -817,11 +829,6 @@ namespace TwitchLib.Client
         }
 
         #region IrcCommand Handling
-
-        private void Handle001()
-        {
-            OnConnected?.Invoke(this, new OnConnectedArgs { AutoJoinChannel = _autoJoinChannel, BotUsername = TwitchUsername });
-        }
 
         private void HandlePrivMsg(IrcMessage ircMessage)
         {
@@ -846,40 +853,34 @@ namespace TwitchLib.Client
                 }
 
             OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "PrivMsgHandling", RawIRC = ircMessage.ToString() });
-        }
-
-        private void HandleWhisper(IrcMessage ircMessage)
-        {
-            var whisperMessage = new WhisperMessage(ircMessage, TwitchUsername);
-            PreviousWhisper = whisperMessage;
-            OnWhisperReceived?.Invoke(this, new OnWhisperReceivedArgs { WhisperMessage = whisperMessage });
-
-            if (_whisperCommandIdentifiers != null && _whisperCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(whisperMessage.Message))
-                if (_whisperCommandIdentifiers.Contains(whisperMessage.Message[0]))
-                {
-                    var whisperCommand = new WhisperCommand(whisperMessage);
-                    OnWhisperCommandReceived?.Invoke(this, new OnWhisperCommandReceivedArgs { Command = whisperCommand });
-                    return;
-                }
-
-            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "WhispergHandling", RawIRC = ircMessage.ToString() });
+            Log($"Unaccounted for: {ircMessage.ToString()}");
         }
 
         private void HandleNotice(IrcMessage ircMessage)
         {
+            if (ircMessage.Message.Contains("Improperly formatted auth"))
+            {
+                OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
+                return;
+            }
+
             var success = ircMessage.Tags.TryGetValue("msg-id", out var msgId);
             if (!success)
+            {
                 OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
+                Log($"Unaccounted for: {ircMessage.ToString()}");
+            }
 
             switch (msgId)
             {
+                case Tags.ColorChanged:
+                    OnChatColorChanged?.Invoke(this, new OnChatColorChangedArgs { Channel = ircMessage.Channel });
+                    break;
                 case MsgIds.HostOn:
-                    var hostingStarted = new HostingStarted(ircMessage);
-                    OnHostingStarted?.Invoke(this, new OnHostingStartedArgs { HostingStarted = hostingStarted });
+                    OnNowHosting?.Invoke(this, new OnNowHostingArgs { Channel = ircMessage.Channel, HostedChannel = ircMessage.Message.Split(' ')[2].Replace(".", "") });
                     break;
                 case MsgIds.HostOff:
-                    var hostingStopped = new HostingStopped(ircMessage);
-                    OnHostingStopped?.Invoke(this, new OnHostingStoppedArgs { HostingStopped = hostingStopped });
+                    OnHostLeft?.Invoke(this, null);
                     break;
                 case MsgIds.ModeratorsReceived:
                     OnModeratorsReceived?.Invoke(this, ircMessage.Message.Contains("There are no moderators of this room.")
@@ -893,6 +894,9 @@ namespace TwitchLib.Client
                                 Channel = ircMessage.Channel,
                                 Moderators = ircMessage.Message.Replace(" ", "").Split(':')[3].Split(',').ToList()
                             });
+                    break;
+                case MsgIds.NoPermission:
+                    OnNoPermissionError?.Invoke(this, null);
                     break;
                 case MsgIds.Raid:
                     var raidNotification = new RaidNotification(ircMessage);
@@ -908,8 +912,6 @@ namespace TwitchLib.Client
                     var resubscriber = new ReSubscriber(ircMessage);
                     OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber });
                     break;
-                case MsgIds.Ritual:
-                    break;
                 case MsgIds.SubGift:
                     var giftedSubscription = new GiftedSubscription(ircMessage);
                     OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription });
@@ -920,6 +922,7 @@ namespace TwitchLib.Client
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
+                    Log($"Unaccounted for: {ircMessage.ToString()}");
                     break;
             }
         }
@@ -956,6 +959,40 @@ namespace TwitchLib.Client
             }
         }
 
+        private void HandleHostTarget(IrcMessage ircMessage)
+        {
+            if (ircMessage.Message.StartsWith("-"))
+            {
+                var hostingStopped = new HostingStopped(ircMessage);
+                OnHostingStopped?.Invoke(this, new OnHostingStoppedArgs { HostingStopped = hostingStopped });
+            }
+            else
+            {
+                var hostingStarted = new HostingStarted(ircMessage);
+                OnHostingStarted?.Invoke(this, new OnHostingStartedArgs { HostingStarted = hostingStarted });
+            }
+        }
+
+        private void HandleClearChat(IrcMessage ircMessage)
+        {
+            if (string.IsNullOrWhiteSpace(ircMessage.Message))
+            {
+                OnChatCleared?.Invoke(this, new OnChatClearedArgs { Channel = ircMessage.Channel });
+                return;
+            }
+
+            var successBanDuration = ircMessage.Tags.TryGetValue(Tags.BanDuration, out _);
+            if (successBanDuration)
+            {
+                var userTimeout = new UserTimeout(ircMessage);
+                OnUserTimedout?.Invoke(this, new OnUserTimedoutArgs { UserTimeout = userTimeout });
+                return;
+            }
+
+            var userBan = new UserBan(ircMessage);
+            OnUserBanned?.Invoke(this, new OnUserBannedArgs { UserBan = userBan });
+        }
+
         private void HandleUserState(IrcMessage ircMessage)
         {
             var userState = new UserState(ircMessage);
@@ -966,6 +1003,86 @@ namespace TwitchLib.Client
             }
             else
                 OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, ircMessage.Message) });
+        }
+
+        private void Handle001()
+        {
+            OnConnected?.Invoke(this, new OnConnectedArgs { AutoJoinChannel = _autoJoinChannel, BotUsername = TwitchUsername });
+        }
+
+        private void Handle353(IrcMessage ircMessage)
+        {
+            if (string.Equals(ircMessage.Channel, TwitchUsername, StringComparison.InvariantCultureIgnoreCase))
+            {
+                OnExistingUsersDetected?.Invoke(this, new OnExistingUsersDetectedArgs { Channel = ircMessage.Channel, Users = ircMessage.Message.Split(' ').ToList() });
+            }
+        }
+
+        private void Handle366()
+        {
+            _currentlyJoiningChannels = false;
+            QueueingJoinCheck();
+        }
+
+        private void HandleWhisper(IrcMessage ircMessage)
+        {
+            var whisperMessage = new WhisperMessage(ircMessage, TwitchUsername);
+            PreviousWhisper = whisperMessage;
+            OnWhisperReceived?.Invoke(this, new OnWhisperReceivedArgs { WhisperMessage = whisperMessage });
+
+            if (_whisperCommandIdentifiers != null && _whisperCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(whisperMessage.Message))
+                if (_whisperCommandIdentifiers.Contains(whisperMessage.Message[0]))
+                {
+                    var whisperCommand = new WhisperCommand(whisperMessage);
+                    OnWhisperCommandReceived?.Invoke(this, new OnWhisperCommandReceivedArgs { Command = whisperCommand });
+                    return;
+                }
+
+            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "WhispergHandling", RawIRC = ircMessage.ToString() });
+            Log($"Unaccounted for: {ircMessage.ToString()}");
+        }
+
+        private void HandleRoomState(IrcMessage ircMessage)
+        {
+            OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage), Channel = ircMessage.Channel });
+        }
+
+        private void HandleUserNotice(IrcMessage ircMessage)
+        {
+            var successMsgId = ircMessage.Tags.TryGetValue(Tags.MsgId, out var msgId);
+            if (!successMsgId)
+            {
+                OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
+                Log($"Unaccounted for: {ircMessage.ToString()}");
+                return;
+            }
+
+            switch (msgId)
+            {
+                case MsgIds.Ritual:
+                    var successRitualName = ircMessage.Tags.TryGetValue(Tags.MsgParamRitualName, out var ritualName);
+                    if (!successRitualName)
+                    {
+                        OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeRitualHandling", RawIRC = ircMessage.ToString() });
+                        Log($"Unaccounted for: {ircMessage.ToString()}");
+                        return;
+                    }
+                    switch (ritualName)
+                    {
+                        case "new_chatter":
+                            OnRitualNewChatter?.Invoke(this, new OnRitualNewChatterArgs { RitualNewChatter = new RitualNewChatter(ircMessage) });
+                            break;
+                        default:
+                            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
+                            Log($"Unaccounted for: {ircMessage.ToString()}");
+                            break;
+                    }
+                    break;
+                default:
+                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
+                    Log($"Unaccounted for: {ircMessage.ToString()}");
+                    break;
+            }
         }
 
         private void HandleMode(IrcMessage ircMessage)
@@ -981,6 +1098,7 @@ namespace TwitchLib.Client
                 OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
             }
         }
+
         #endregion
 
         #endregion

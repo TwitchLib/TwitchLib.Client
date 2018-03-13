@@ -11,7 +11,8 @@ namespace TwitchLib.Client.Models
 
         public HostingStopped(IrcMessage ircMessage)
         {
-
+            HostingChannel = ircMessage.Channel;
+            Viewers = int.Parse(ircMessage.Message.Split(' ')[1]);
         }
     }
 }

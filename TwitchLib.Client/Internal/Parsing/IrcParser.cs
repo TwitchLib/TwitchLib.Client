@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Models.Internal;
 
-namespace TwitchLib.Client.Services
+namespace TwitchLib.Client.Internal.Parsing
 {
     internal class IrcParser
     {

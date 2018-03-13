@@ -13,7 +13,10 @@ namespace TwitchLib.Client.Models
 
         public HostingStarted(IrcMessage ircMessage)
         {
-
+            var splitted = ircMessage.Message.Split(' ');
+            HostingChannel = ircMessage.Channel;
+            TargetChannel = splitted[0];
+            Viewers = int.Parse(splitted[1]);
         }
     }
 }
