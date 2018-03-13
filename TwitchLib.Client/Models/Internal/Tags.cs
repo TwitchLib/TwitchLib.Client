@@ -7,6 +7,7 @@
         public const string Color = "color";
         public const string DisplayName = "display-name";
         public const string Emotes = "emotes";
+        public const string EmotesSets = "emote-sets";
         public const string Id = "id";
         public const string Login = "login";
         public const string MessageId = "message-id";

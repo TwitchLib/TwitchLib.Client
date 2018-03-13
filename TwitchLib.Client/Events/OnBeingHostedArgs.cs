@@ -8,6 +8,6 @@ namespace TwitchLib.Client.Events
     public class OnBeingHostedArgs : EventArgs
     {
         /// <summary>Property representing the Host notification</summary>
-        public OnBeingHostedNotification OnBeingHostedNotification;
+        public BeingHostedNotification OnBeingHostedNotification;
     }
 }

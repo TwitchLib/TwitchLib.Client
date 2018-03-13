@@ -32,11 +32,11 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing identifier of the message thread.</summary>
         public string ThreadId { get; }
         /// <summary>Property representing message identifier.</summary>
-        public long MessageId { get; }
+        public string MessageId { get; }
         /// <summary>Property representing sender identifier.</summary>
         public string UserId { get; }
         /// <summary>Property representing whether or not sender has Turbo.</summary>
-        public bool Turbo { get; }
+        public bool IsTurbo { get; }
         /// <summary>Property representing bot's username.</summary>
         public string BotUsername { get; }
         /// <summary>Property representing message contents.</summary>
@@ -47,7 +47,7 @@ namespace TwitchLib.Client.Models
         /// <summary>
         /// WhisperMessage constructor.
         /// </summary>
-        /// <param name="ircString">Received IRC string from Twitch server.</param>
+        /// <param name="ircMessage">Received IRC string from Twitch server.</param>
         /// <param name="botUsername">Active bot username receiving message.</param>
         public WhisperMessage(IrcMessage ircMessage, string botUsername)
         {
@@ -83,13 +83,13 @@ namespace TwitchLib.Client.Models
                         EmoteSet = new EmoteSet(tagValue, Message);
                         break;
                     case Tags.MessageId:
-                        MessageId = long.Parse(tagValue);
+                        MessageId = tagValue;
                         break;
                     case Tags.ThreadId:
                         ThreadId = tagValue;
                         break;
                     case Tags.Turbo:
-                        Turbo = Helpers.ConvertToBool(tagValue);
+                        IsTurbo = Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;

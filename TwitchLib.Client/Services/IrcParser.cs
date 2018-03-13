@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Models.Internal;
 
@@ -68,6 +69,12 @@ namespace TwitchLib.Client.Services
                 {
                     state = ParserState.STATE_TRAILING;
                     starts[(int)state] = ++i;
+                    break;
+                }
+                else if (state < ParserState.STATE_TRAILING && raw[i] == '+' || state < ParserState.STATE_TRAILING && raw[i] == '-')
+                {
+                    state = ParserState.STATE_TRAILING;
+                    starts[(int)state] = i;
                     break;
                 }
                 else if (state == ParserState.STATE_COMMAND)

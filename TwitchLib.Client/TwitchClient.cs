@@ -744,9 +744,6 @@ namespace TwitchLib.Client
 
         private void HandleIrcMessage(IrcMessage ircMessage)
         {
-            if (ircMessage.Message.Equals("You are in a maze of twisty passages, all alike."))
-                OnConnected?.Invoke(this, new OnConnectedArgs { AutoJoinChannel = _autoJoinChannel, BotUsername = TwitchUsername });
-
             switch (ircMessage.Command)
             {
                 case IrcCommand.PrivMsg:
@@ -772,10 +769,12 @@ namespace TwitchLib.Client
                 case IrcCommand.ClearChat:
                     break;
                 case IrcCommand.UserState:
+                    HandleUserState(ircMessage);
                     break;
                 case IrcCommand.GlobalUserState:
                     break;
                 case IrcCommand.RPL_001:
+                    Handle001();
                     break;
                 case IrcCommand.RPL_002:
                     break;
@@ -804,6 +803,7 @@ namespace TwitchLib.Client
                 case IrcCommand.UserNotice:
                     break;
                 case IrcCommand.Mode:
+                    HandleMode(ircMessage);
                     break;
                 case IrcCommand.Unknown:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = null, Location = "HandleIrcMessage", RawIRC = ircMessage.ToString() });
@@ -818,11 +818,16 @@ namespace TwitchLib.Client
 
         #region IrcCommand Handling
 
+        private void Handle001()
+        {
+            OnConnected?.Invoke(this, new OnConnectedArgs { AutoJoinChannel = _autoJoinChannel, BotUsername = TwitchUsername });
+        }
+
         private void HandlePrivMsg(IrcMessage ircMessage)
         {
             if (ircMessage.Hostmask.Equals(":jtv!jtv@jtv.tmi.twitch.tv"))
             {
-                var hostNotification = new OnBeingHostedNotification(TwitchUsername, ircMessage);
+                var hostNotification = new BeingHostedNotification(TwitchUsername, ircMessage);
                 OnBeingHosted?.Invoke(this, new OnBeingHostedArgs { OnBeingHostedNotification = hostNotification });
                 return;
             }
@@ -869,8 +874,12 @@ namespace TwitchLib.Client
             switch (msgId)
             {
                 case MsgIds.HostOn:
+                    var hostingStarted = new HostingStarted(ircMessage);
+                    OnHostingStarted?.Invoke(this, new OnHostingStartedArgs { HostingStarted = hostingStarted });
                     break;
                 case MsgIds.HostOff:
+                    var hostingStopped = new HostingStopped(ircMessage);
+                    OnHostingStopped?.Invoke(this, new OnHostingStoppedArgs { HostingStopped = hostingStopped });
                     break;
                 case MsgIds.ModeratorsReceived:
                     OnModeratorsReceived?.Invoke(this, ircMessage.Message.Contains("There are no moderators of this room.")
@@ -899,6 +908,8 @@ namespace TwitchLib.Client
                     var resubscriber = new ReSubscriber(ircMessage);
                     OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber });
                     break;
+                case MsgIds.Ritual:
+                    break;
                 case MsgIds.SubGift:
                     var giftedSubscription = new GiftedSubscription(ircMessage);
                     OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription });
@@ -915,14 +926,61 @@ namespace TwitchLib.Client
 
         private void HandleJoin(IrcMessage ircMessage)
         {
+            if (string.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
+                _awaitingJoins.Remove(channel);
 
+                OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
+                if (OnBeingHosted == null) return;
+                if (ircMessage.Channel.ToLowerInvariant() != TwitchUsername && !OverrideBeingHostedCheck)
+                    throw new BadListenException("BeingHosted", "You cannot listen to OnBeingHosted unless you are connected to the broadcaster's channel as the broadcaster. You may override this by setting the TwitchClient property OverrideBeingHostedCheck to true.");
+            }
+            else
+            {
+                OnUserJoined?.Invoke(this, new OnUserJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
+            }
         }
 
         private void HandlePart(IrcMessage ircMessage)
         {
-
+            if (string.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
+            {
+                _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
+                _hasSeenJoinedChannels.Remove(ircMessage.Channel);
+                OnLeftChannel?.Invoke(this, new OnLeftChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
+            }
+            else
+            {
+                OnUserLeft?.Invoke(this, new OnUserLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
+            }
         }
 
+        private void HandleUserState(IrcMessage ircMessage)
+        {
+            var userState = new UserState(ircMessage);
+            if (!_hasSeenJoinedChannels.Contains(userState.Channel.ToLowerInvariant()))
+            {
+                _hasSeenJoinedChannels.Add(userState.Channel.ToLowerInvariant());
+                OnUserStateChanged?.Invoke(this, new OnUserStateChangedArgs { UserState = userState });
+            }
+            else
+                OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, ircMessage.Message) });
+        }
+
+        private void HandleMode(IrcMessage ircMessage)
+        {
+            if (ircMessage.Message.StartsWith("+o"))
+            {
+                OnModeratorJoined?.Invoke(this, new OnModeratorJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
+                return;
+            }
+
+            if (ircMessage.Message.StartsWith("-o"))
+            {
+                OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
+            }
+        }
         #endregion
 
         #endregion

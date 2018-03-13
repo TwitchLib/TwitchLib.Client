@@ -9,7 +9,7 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// The channel the message was sent in
         /// </summary>
-        public string Channel => Params;
+        public string Channel => Params.Remove(0, 1);
 
         public string Params => _parameters != null && _parameters.Length > 0 ? _parameters[0] : "";
 

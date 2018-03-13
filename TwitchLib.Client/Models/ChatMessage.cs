@@ -34,7 +34,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Emote Ids that exist in message.</summary>
         public EmoteSet EmoteSet { get; }
         /// <summary>Twitch chat message contents.</summary>
-        public string Message { get; private set; }
+        public string Message { get; }
         /// <summary>User type can be viewer, moderator, global mod, admin, or staff</summary>
         public UserType UserType { get; }
         /// <summary>Twitch channel message was sent from (useful for multi-channel bots).</summary>
@@ -85,7 +85,7 @@ namespace TwitchLib.Client.Models
             EmoteSet = new EmoteSet(_emoteSetStorage, Message);
 
             Username = ircMessage.User;
-            Channel = ircMessage.Channel.Remove(0, 1);
+            Channel = ircMessage.Channel;
 
             foreach (var tag in ircMessage.Tags.Keys)
             {

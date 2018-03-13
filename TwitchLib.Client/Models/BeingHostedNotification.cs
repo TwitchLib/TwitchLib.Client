@@ -3,7 +3,7 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class OnBeingHostedNotification
+    public class BeingHostedNotification
     {
         public string Channel { get; }
         public string BotUsername { get; }
@@ -11,7 +11,7 @@ namespace TwitchLib.Client.Models
         public int Viewers { get; }
         public bool IsAutoHosted { get; }
 
-        public OnBeingHostedNotification(string botUsername, IrcMessage ircMessage)
+        public BeingHostedNotification(string botUsername, IrcMessage ircMessage)
         {
             Channel = ircMessage.Channel;
             BotUsername = botUsername;
