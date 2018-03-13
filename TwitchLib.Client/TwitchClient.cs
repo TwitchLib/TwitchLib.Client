@@ -1089,13 +1089,13 @@ namespace TwitchLib.Client
         {
             if (ircMessage.Message.StartsWith("+o"))
             {
-                OnModeratorJoined?.Invoke(this, new OnModeratorJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
+                OnModeratorJoined?.Invoke(this, new OnModeratorJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.Message.Split(' ')[1] });
                 return;
             }
 
             if (ircMessage.Message.StartsWith("-o"))
             {
-                OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
+                OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.Message.Split(' ')[1] });
             }
         }
 
