@@ -1,4 +1,6 @@
 ﻿using System;
+using TwitchLib.Client.Common;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
@@ -6,76 +8,70 @@ namespace TwitchLib.Client.Models
     public class ChannelState
     {
         /// <summary>Property representing whether R9K is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
-        public bool? R9K { get; protected set; }
+        public bool? R9K { get; }
         /// <summary>Property representing whether Rituals is enabled or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
-        public bool? Rituals { get; protected set; }
+        public bool? Rituals { get; }
         /// <summary>Property representing whether Sub Mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
-        public bool? SubOnly { get; protected set; }
+        public bool? SubOnly { get; }
         /// <summary>Property representing whether Slow mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
-        public bool? SlowMode { get; protected set; }
+        public bool? SlowMode { get; }
         /// <summary>Property representing whether EmoteOnly mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
-        public bool? EmoteOnly { get; protected set; }
+        public bool? EmoteOnly { get; }
         /// <summary>Property representing the current broadcaster language.</summary>
-        public string BroadcasterLanguage { get; protected set; }
+        public string BroadcasterLanguage { get; }
         /// <summary>Property representing the current channel.</summary>
-        public string Channel { get; protected set; }
+        public string Channel { get; }
         /// <summary>Property representing how long needed to be following to talk </summary>
-        public TimeSpan FollowersOnly { get; protected set; }
+        public TimeSpan FollowersOnly { get; }
         /// <summary>Property representing mercury value. Not sure what it's for.</summary>
-        public bool Mercury { get; protected set; }
+        public bool Mercury { get; }
         /// <summary>Twitch assignedc room id</summary>
-        public string RoomId { get; protected set; }
+        public string RoomId { get; }
 
         /// <summary>ChannelState object constructor.</summary>
-        public ChannelState(string ircString)
+        public ChannelState(IrcMessage ircMessage)
         {
             //@broadcaster-lang=;emote-only=0;r9k=0;slow=0;subs-only=1 :tmi.twitch.tv ROOMSTATE #burkeblack
-            var propertyStrig = ircString.Split(' ')[0];
-            foreach(var part in propertyStrig.Split(';'))
+            foreach(var tag in ircMessage.Tags.Keys)
             {
-                switch(part.Split('=')[0].Replace("@", ""))
+                var tagValue = ircMessage.Tags[tag];
+
+                switch(tag)
                 {
-                    case "broadcaster-lang":
-                        BroadcasterLanguage = part.Split('=')[1];
+                    case Tags.BroadcasterLang:
+                        BroadcasterLanguage = tagValue;
                         break;
-                    case "emote-only":
-                        EmoteOnly = ConvertToBool(part.Split('=')[1]);
+                    case Tags.EmoteOnly:
+                        EmoteOnly = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "r9k":
-                        R9K = ConvertToBool(part.Split('=')[1]);
+                    case Tags.R9K:
+                        R9K = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "rituals":
-                        Rituals = ConvertToBool(part.Split('=')[1]);
+                    case Tags.Rituals:
+                        Rituals = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "slow":
-                        SlowMode = ConvertToBool(part.Split('=')[1]);
+                    case Tags.Slow:
+                        SlowMode = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "subs-only":
-                        SubOnly = ConvertToBool(part.Split('=')[1]);
+                    case Tags.SubsOnly:
+                        SubOnly = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "followers-only":
-                        var minutes = int.Parse(part.Split('=')[1]);
+                    case Tags.FollowersOnly:
+                        var minutes = int.Parse(tagValue);
                         FollowersOnly = TimeSpan.FromMinutes(minutes == -1 ? 0 : minutes);
                         break;
-                    case "room-id":
-                        RoomId = part.Split('=')[1];
+                    case Tags.RoomId:
+                        RoomId = tagValue;
                         break;
-                    case "mercury":
-                        Mercury = (part.Split('=')[1] == "1");
+                    case Tags.Mercury:
+                        Mercury = Helpers.ConvertToBool(tagValue);
                         break;
                     default:
-                        Console.WriteLine("[TwitchLib][ChannelState] Unaccounted for: " + part);
+                        Console.WriteLine("[TwitchLib][ChannelState] Unaccounted for: " + tag);
                         break;
                 }
             }
-            Channel = ircString.Split('#')[1];
-        }
-
-        private static bool? ConvertToBool(string data)
-        {
-            if (string.IsNullOrEmpty(data))
-                return null;
-            return data == "1";
+            Channel = ircMessage.Channel;
         }
     }
 }

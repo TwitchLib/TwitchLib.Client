@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Internal.Parsing
 {
@@ -17,9 +18,9 @@ namespace TwitchLib.Client.Internal.Parsing
         }
 
         /// <summary>Function used to detect if a whisper command was received or not.</summary>
-        public static bool DetectedWhisperCommandReceived(string message, string username, ICollection<char> commandIdentifiers)
+        public static bool DetectedWhisperCommandReceived(IrcMessage message, string username, ICollection<char> commandIdentifiers)
         {
-            if (!DetectedWhisperReceived(message, username)) return false;
+            if (!DetectedWhisperReceived(message.ToString(), username)) return false;
 
             var whisperMessage = new WhisperMessage(message, username);
             return commandIdentifiers.Count > 0 && commandIdentifiers.Contains(whisperMessage.Message[0]);

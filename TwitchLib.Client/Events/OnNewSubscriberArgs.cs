@@ -9,7 +9,5 @@ namespace TwitchLib.Client.Events
     {
         /// <summary>Property representing subscriber object.</summary>
         public Subscriber Subscriber;
-        /// <summary>Property representing channel bot is connected to.</summary>
-        public string Channel;
     }
 }

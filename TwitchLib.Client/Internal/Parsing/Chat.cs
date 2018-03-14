@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TwitchLib.Client.Common;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Internal.Parsing
 {
@@ -101,13 +102,13 @@ namespace TwitchLib.Client.Internal.Parsing
         /// <param name="willReplaceEmotes"></param>
         /// <param name="commandIdentifiers"></param>
         /// <returns></returns>
-        public static DetectionReturn DetectCommandReceived(string botUsername, string message, IEnumerable<JoinedChannel> channels, MessageEmoteCollection channelEmotes, bool willReplaceEmotes, ICollection<char> commandIdentifiers)
+        public static DetectionReturn DetectCommandReceived(string botUsername, IrcMessage message, IEnumerable<JoinedChannel> channels, MessageEmoteCollection channelEmotes, bool willReplaceEmotes, ICollection<char> commandIdentifiers)
         {
             string readType = null;
             string channelRet = null;
             foreach (var channel in channels)
             {
-                readType = GetReadType(message, channel.Channel);
+                readType = GetReadType("", channel.Channel);
                 if (readType == null)
                     continue;
 
@@ -381,7 +382,7 @@ namespace TwitchLib.Client.Internal.Parsing
         /// <param name="username"></param>
         /// <param name="channels"></param>
         /// <returns></returns>
-        public static DetectionReturn DetectedExistingUsers(string message, string username, List<JoinedChannel> channels)
+        public static DetectionReturn DetectedExistingUsers(string message, string username, IReadOnlyList<JoinedChannel> channels)
         {
             if (channels.Count == 0)
                 return new DetectionReturn(false);

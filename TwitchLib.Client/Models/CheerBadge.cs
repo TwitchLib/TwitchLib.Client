@@ -4,9 +4,9 @@
     public class CheerBadge
     {
         /// <summary>Property representing raw cheer amount represented by badge.</summary>
-        public int CheerAmount { get; protected set; }
+        public int CheerAmount { get; }
         /// <summary>Property representing the color of badge via an enum.</summary>
-        public Enums.BadgeColor Color { get; protected set; }
+        public Enums.BadgeColor Color { get; }
 
         /// <summary>Constructor for CheerBadge</summary>
         public CheerBadge(int cheerAmount)
