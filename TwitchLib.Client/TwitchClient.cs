@@ -1037,7 +1037,6 @@ namespace TwitchLib.Client
                     OnWhisperCommandReceived?.Invoke(this, new OnWhisperCommandReceivedArgs { Command = whisperCommand });
                     return;
                 }
-
             OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "WhispergHandling", RawIRC = ircMessage.ToString() });
             Log($"Unaccounted for: {ircMessage.ToString()}");
         }
