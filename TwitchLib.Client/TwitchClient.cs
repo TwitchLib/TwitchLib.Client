@@ -898,27 +898,11 @@ namespace TwitchLib.Client
                 case MsgIds.NoPermission:
                     OnNoPermissionError?.Invoke(this, null);
                     break;
-                case MsgIds.Raid:
-                    var raidNotification = new RaidNotification(ircMessage);
-                    OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotificaiton = raidNotification });
-                    break;
                 case MsgIds.RaidErrorSelf:
                     OnSelfRaidError?.Invoke(this, null);
                     break;
                 case MsgIds.RaidNoticeMature:
                     OnRaidedChannelIsMatureAudience?.Invoke(this, null);
-                    break;
-                case MsgIds.ReSubscription:
-                    var resubscriber = new ReSubscriber(ircMessage);
-                    OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber });
-                    break;
-                case MsgIds.SubGift:
-                    var giftedSubscription = new GiftedSubscription(ircMessage);
-                    OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription });
-                    break;
-                case MsgIds.Subscription:
-                    var subscriber = new Subscriber(ircMessage);
-                    OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs { Subscriber = subscriber });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
@@ -1059,6 +1043,14 @@ namespace TwitchLib.Client
 
             switch (msgId)
             {
+                case MsgIds.Raid:
+                    var raidNotification = new RaidNotification(ircMessage);
+                    OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotificaiton = raidNotification });
+                    break;
+                case MsgIds.ReSubscription:
+                    var resubscriber = new ReSubscriber(ircMessage);
+                    OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber });
+                    break;
                 case MsgIds.Ritual:
                     var successRitualName = ircMessage.Tags.TryGetValue(Tags.MsgParamRitualName, out var ritualName);
                     if (!successRitualName)
@@ -1077,6 +1069,14 @@ namespace TwitchLib.Client
                             Log($"Unaccounted for: {ircMessage.ToString()}");
                             break;
                     }
+                    break;
+                case MsgIds.SubGift:
+                    var giftedSubscription = new GiftedSubscription(ircMessage);
+                    OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription });
+                    break;
+                case MsgIds.Subscription:
+                    var subscriber = new Subscriber(ircMessage);
+                    OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs { Subscriber = subscriber });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
