@@ -8,7 +8,6 @@
         public const string BroadcasterLang = "broadcaster-lang";
         public const string Bits = "bits";
         public const string Color = "color";
-        public const string ColorChanged = "color_changed";
         public const string DisplayName = "display-name";
         public const string Emotes = "emotes";
         public const string EmoteOnly = "emote-only";

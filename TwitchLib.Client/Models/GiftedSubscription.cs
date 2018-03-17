@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Common;
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -54,7 +55,7 @@ namespace TwitchLib.Client.Models
                         Login = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = ConvertToBool(tagValue);
+                        IsModerator = Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.MsgId:
                         MsgId = tagValue;
@@ -81,7 +82,7 @@ namespace TwitchLib.Client.Models
                         RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = ConvertToBool(tagValue);
+                        IsSubscriber = Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.SystemMsg:
                         SystemMsg = tagValue;
@@ -91,7 +92,7 @@ namespace TwitchLib.Client.Models
                         TmiSentTs = tagValue;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = ConvertToBool(tagValue);
+                        IsTurbo = Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.UserType:
                         switch (tagValue)
@@ -115,11 +116,6 @@ namespace TwitchLib.Client.Models
                         break;
                 }
             }
-        }
-
-        private static bool ConvertToBool(string data)
-        {
-            return data == "1";
         }
     }
 }

@@ -77,15 +77,15 @@ namespace TwitchLib.Client.Models
         public class Emote
         {
             /// <summary>Twitch-assigned emote Id.</summary>
-            public int Id { get; protected set; }
+            public int Id { get; }
             /// <summary>The name of the emote. For example, if the message was "This is Kappa test.", the name would be 'Kappa'.</summary>
-            public string Name { get; protected set; }
+            public string Name { get; }
             /// <summary>Character starting index. For example, if the message was "This is Kappa test.", the start index would be 8 for 'Kappa'.</summary>
-            public int StartIndex { get; protected set; }
+            public int StartIndex { get; }
             /// <summary>Character ending index. For example, if the message was "This is Kappa test.", the start index would be 12 for 'Kappa'.</summary>
-            public int EndIndex { get; protected set; }
+            public int EndIndex { get; }
             /// <summary>URL to Twitch hosted emote image.</summary>
-            public string ImageUrl { get; protected set; }
+            public string ImageUrl { get; }
 
             /// <summary>
             /// Emote constructor.

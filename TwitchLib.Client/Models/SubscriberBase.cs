@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+    using TwitchLib.Client.Enums;
     using TwitchLib.Client.Models.Internal;
 
 #if NET452
@@ -21,7 +22,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing the colorhex of the resubscriber.</summary>
         public string ColorHex { get; }
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public System.Drawing.Color Color { get; }
+        public Color Color { get; }
         /// <summary>Property representing resubscriber's customized display name.</summary>
         public string DisplayName { get; }
         /// <summary>Property representing emote set of resubscriber.</summary>
@@ -37,7 +38,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing system message.</summary>
         public string ResubMessage { get; }
         /// <summary>Property representing the plan a user is on.</summary>
-        public Enums.SubscriptionPlan SubscriptionPlan { get; } = Enums.SubscriptionPlan.NotSet;
+        public SubscriptionPlan SubscriptionPlan { get; } = SubscriptionPlan.NotSet;
         /// <summary>Property representing the subscription plan name.</summary>
         public string SubscriptionPlanName { get; }
         /// <summary>Property representing the room id.</summary>
@@ -55,7 +56,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing the tmi-sent-ts value.</summary>
         public string TmiSentTs { get; }
         /// <summary>Property representing the user type of the resubscriber.</summary>
-        public Enums.UserType UserType { get; }
+        public UserType UserType { get; }
         /// <summary>Property representing the raw IRC message (for debugging/customized parsing)</summary>
         public string RawIrc { get; }
         /// <summary>Property representing the channel the resubscription happened in.</summary>
@@ -115,16 +116,16 @@ namespace TwitchLib.Client.Models
                         switch (tagValue.ToLower())
                         {
                             case "prime":
-                                SubscriptionPlan = Enums.SubscriptionPlan.Prime;
+                                SubscriptionPlan = SubscriptionPlan.Prime;
                                 break;
                             case "1000":
-                                SubscriptionPlan = Enums.SubscriptionPlan.Tier1;
+                                SubscriptionPlan = SubscriptionPlan.Tier1;
                                 break;
                             case "2000":
-                                SubscriptionPlan = Enums.SubscriptionPlan.Tier2;
+                                SubscriptionPlan = SubscriptionPlan.Tier2;
                                 break;
                             case "3000":
-                                SubscriptionPlan = Enums.SubscriptionPlan.Tier3;
+                                SubscriptionPlan = SubscriptionPlan.Tier3;
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
@@ -156,19 +157,19 @@ namespace TwitchLib.Client.Models
                         switch (tagValue)
                         {
                             case "mod":
-                                UserType = Enums.UserType.Moderator;
+                                UserType = UserType.Moderator;
                                 break;
                             case "global_mod":
-                                UserType = Enums.UserType.GlobalModerator;
+                                UserType = UserType.GlobalModerator;
                                 break;
                             case "admin":
-                                UserType = Enums.UserType.Admin;
+                                UserType = UserType.Admin;
                                 break;
                             case "staff":
-                                UserType = Enums.UserType.Staff;
+                                UserType = UserType.Staff;
                                 break;
                             default:
-                                UserType = Enums.UserType.Viewer;
+                                UserType = UserType.Viewer;
                                 break;
                         }
                         break;

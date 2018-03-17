@@ -22,10 +22,10 @@ namespace TwitchLib.Client.Models
         public ChatCommand(ChatMessage chatMessage)
         {
             ChatMessage = chatMessage;
-            CommandText = chatMessage.Message.Split(' ')[0].Substring(1, chatMessage.Message.Split(' ')[0].Length - 1);
+            CommandText = chatMessage.Message.Split(' ')?[0].Substring(1, chatMessage.Message.Split(' ')[0].Length - 1) ?? chatMessage.Message.Substring(1, chatMessage.Message.Length - 1); ;
             ArgumentsAsString = chatMessage.Message.Contains(" ") ? chatMessage.Message.Replace(chatMessage.Message.Split(' ')?[0] + " ", "") : "";
             if (!chatMessage.Message.Contains("\"") || chatMessage.Message.Count(x => x == '"') % 2 == 1)
-                ArgumentsAsList = chatMessage.Message.Split(' ')?.Where(arg => arg != chatMessage.Message[0] + CommandText).ToList();
+                ArgumentsAsList = chatMessage.Message.Split(' ')?.Where(arg => arg != chatMessage.Message[0] + CommandText).ToList() ?? new List<string>();
             else
                 ArgumentsAsList = Common.Helpers.ParseQuotesAndNonQuotes(ArgumentsAsString);
             CommandIdentifier = chatMessage.Message[0];

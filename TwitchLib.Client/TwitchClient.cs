@@ -866,7 +866,7 @@ namespace TwitchLib.Client
                 return;
             }
 
-            var success = ircMessage.Tags.TryGetValue("msg-id", out var msgId);
+            var success = ircMessage.Tags.TryGetValue(Tags.MsgId, out var msgId);
             if (!success)
             {
                 OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
@@ -875,7 +875,7 @@ namespace TwitchLib.Client
 
             switch (msgId)
             {
-                case Tags.ColorChanged:
+                case MsgIds.ColorChanged:
                     OnChatColorChanged?.Invoke(this, new OnChatColorChangedArgs { Channel = ircMessage.Channel });
                     break;
                 case MsgIds.HostOn:
