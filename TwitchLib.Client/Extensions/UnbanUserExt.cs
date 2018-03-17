@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
 {
@@ -12,7 +13,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="viewer">Viewer name to unban</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void UnbanUser(this TwitchClient client, JoinedChannel channel, string viewer, bool dryRun = false)
+        public static void UnbanUser(this ITwitchClient client, JoinedChannel channel, string viewer, bool dryRun = false)
         {
             client.SendMessage(channel, $".unban {viewer}", dryRun);
         }
@@ -24,7 +25,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="viewer">Viewer name to unban</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
         /// /// <param name="client">Client reference used to identify extension.</param>
-        public static void UnbanUser(this TwitchClient client, string channel, string viewer, bool dryRun = false)
+        public static void UnbanUser(this ITwitchClient client, string channel, string viewer, bool dryRun = false)
         {
             var joinedChannel = client.GetJoinedChannel(channel);
             if (joinedChannel != null)
@@ -37,7 +38,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="viewer">Viewer name to unban</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void UnbanUser(this TwitchClient client, string viewer, bool dryRun = false)
+        public static void UnbanUser(this ITwitchClient client, string viewer, bool dryRun = false)
         {
             if (client.JoinedChannels.Count > 0)
                 UnbanUser(client, client.JoinedChannels[0], viewer, dryRun);

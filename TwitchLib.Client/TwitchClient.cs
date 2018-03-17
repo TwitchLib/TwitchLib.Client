@@ -28,7 +28,6 @@ namespace TwitchLib.Client
         private readonly ICollection<char> _whisperCommandIdentifiers = new HashSet<char>();
         private readonly Queue<JoinedChannel> _joinChannelQueue = new Queue<JoinedChannel>();
         private readonly ILogger<TwitchClient> _logger;
-        private bool _initialized;
         private string _autoJoinChannel;
         private bool _currentlyJoiningChannels;
         private System.Timers.Timer _joinTimer;
@@ -40,6 +39,7 @@ namespace TwitchLib.Client
         #endregion
 
         #region Public Variables
+        public bool IsInitialized { get { return _client != null; } }
         /// <summary>A list of all channels the client is currently in.</summary>
         public List<JoinedChannel> JoinedChannels { get; protected set; } = new List<JoinedChannel>();
         /// <summary>Username of the user connected via this library.</summary>
@@ -277,13 +277,13 @@ namespace TwitchLib.Client
 
         /// <summary>Fires when data is received from Twitch that is not able to be parsed.</summary>
         public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
-        #endregion  
+        #endregion
 
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
-       public TwitchClient(ILogger<TwitchClient> logger = null)
+        public TwitchClient(ILogger<TwitchClient> logger = null)
         {
             _logger = logger;
         }
@@ -317,8 +317,6 @@ namespace TwitchLib.Client
 
             if (credentials.Proxy != null)
                 _client.Proxy = new HttpConnectProxy(credentials.Proxy);
-
-            _initialized = true;
         }
 
         /// <summary>
@@ -327,7 +325,7 @@ namespace TwitchLib.Client
         /// <param name="message">The RAW message to be sent.</param>
         public void SendRaw(string message)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
 
             var prevColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -347,7 +345,7 @@ namespace TwitchLib.Client
         /// <param name="channel">Channel to send message to.</param>
         public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
             var twitchMessage = $":{_credentials.TwitchUsername}!{_credentials.TwitchUsername}@{_credentials.TwitchUsername}" +
                 $".tmi.twitch.tv PRIVMSG #{channel.Channel} :{message}";
@@ -364,7 +362,7 @@ namespace TwitchLib.Client
         /// </summary>
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             SendMessage(GetJoinedChannel(channel), message, dryRun);
         }
 
@@ -373,7 +371,7 @@ namespace TwitchLib.Client
         /// </summary>
         public void SendMessage(string message, bool dryRun = false)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             if (JoinedChannels.Count > 0)
                 SendMessage(JoinedChannels[0], message, dryRun);
             else
@@ -390,7 +388,7 @@ namespace TwitchLib.Client
         /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
         public void SendWhisper(string receiver, string message, bool dryRun = false)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             if (dryRun) return;
 
             var twitchMessage = $":{_credentials.TwitchUsername}~{_credentials.TwitchUsername}@{_credentials.TwitchUsername}" +
@@ -410,7 +408,7 @@ namespace TwitchLib.Client
         /// </summary>
         public void Connect()
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             Log("Connecting to: " + _credentials.TwitchHost + ":" + _credentials.TwitchPort);
 
             _client.Open();
@@ -425,7 +423,7 @@ namespace TwitchLib.Client
         {
             Log("Disconnect Twitch Chat Client...");
 
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             _client.Close();
 
             // Clear instance data
@@ -441,7 +439,7 @@ namespace TwitchLib.Client
         /// <param name="identifier">Character, that if found at start of message, fires command received event.</param>
         public void AddChatCommandIdentifier(char identifier)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             _chatCommandIdentifiers.Add(identifier);
         }
 
@@ -451,7 +449,7 @@ namespace TwitchLib.Client
         /// <param name="identifier">Command identifier to removed from identifier list.</param>
         public void RemoveChatCommandIdentifier(char identifier)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             _chatCommandIdentifiers.Remove(identifier);
         }
 
@@ -461,7 +459,7 @@ namespace TwitchLib.Client
         /// <param name="identifier">Character, that if found at start of message, fires command received event.</param>
         public void AddWhisperCommandIdentifier(char identifier)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             _whisperCommandIdentifiers.Add(identifier);
         }
 
@@ -471,7 +469,7 @@ namespace TwitchLib.Client
         /// <param name="identifier">Command identifier to removed from identifier list.</param>
         public void RemoveWhisperCommandIdentifier(char identifier)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             _whisperCommandIdentifiers.Remove(identifier);
         }
         #endregion
@@ -484,7 +482,7 @@ namespace TwitchLib.Client
         /// <param name="overrideCheck">Override a join check.</param>
         public void JoinChannel(string channel, bool overrideCheck = false)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             // Channel MUST be lower case
             channel = channel.ToLower();
             // Check to see if client is already in channel
@@ -497,7 +495,7 @@ namespace TwitchLib.Client
 
         public void JoinRoom(string channelId, string roomId, bool overrideCheck = false)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             // Check to see if client is already in channel
             if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == $"chatrooms:{channelId}:{roomId}" && !overrideCheck) != null)
                 return;
@@ -511,7 +509,7 @@ namespace TwitchLib.Client
         /// <param name="channel">String channel to search for.</param>
         public JoinedChannel GetJoinedChannel(string channel)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             if (JoinedChannels.Count == 0)
                 throw new BadStateException("Must be connected to at least one channel.");
             return JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channel.ToLower());
@@ -524,7 +522,7 @@ namespace TwitchLib.Client
         /// <returns>True is returned if the passed channel was found, false if channel not found.</returns>
         public void LeaveChannel(string channel)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             // Channel MUST be lower case
             channel = channel.ToLower();
             Log($"Leaving channel: {channel}");
@@ -535,7 +533,7 @@ namespace TwitchLib.Client
 
         public void LeaveRoom(string channelId, string roomId)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             Log($"Leaving channel: chatrooms:{channelId}:{roomId}");
             var joinedChannel = JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == $"chatrooms:{channelId}:{roomId}");
             if (joinedChannel != null)
@@ -549,7 +547,7 @@ namespace TwitchLib.Client
         /// <returns>True is returned if the passed channel was found, false if channel not found.</returns>
         public void LeaveChannel(JoinedChannel channel)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             LeaveChannel(channel.Channel);
         }
 
@@ -559,7 +557,7 @@ namespace TwitchLib.Client
         /// <param name="channel">JoinedChannel object to designate which channel to send request to.</param>
         public void GetChannelModerators(JoinedChannel channel)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             if (OnModeratorsReceived == null)
                 throw new EventNotHandled("OnModeratorsReceived");
             SendMessage(channel, "/mods");
@@ -571,7 +569,7 @@ namespace TwitchLib.Client
         /// <param name="channel">String representing channel to designate which channel to send request to.</param>
         public void GetChannelModerators(string channel)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             var joinedChannel = GetJoinedChannel(channel);
             if (joinedChannel != null)
                 GetChannelModerators(joinedChannel);
@@ -582,7 +580,7 @@ namespace TwitchLib.Client
         /// </summary>
         public void GetChannelModerators()
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             if (JoinedChannels.Count > 0)
                 GetChannelModerators(JoinedChannels[0]);
         }
@@ -594,7 +592,7 @@ namespace TwitchLib.Client
         /// <param name="rawIrc">This should be a raw IRC message resembling one received from Twitch IRC.</param>
         public void OnReadLineTest(string rawIrc)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             ParseIrcMessage(rawIrc);
         }
 
@@ -629,7 +627,7 @@ namespace TwitchLib.Client
 
         public void Reconnect()
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             Log("Reconnecting to: " + _credentials.TwitchHost + ":" + _credentials.TwitchPort);
 
             _client.Dispose();
@@ -941,7 +939,7 @@ namespace TwitchLib.Client
                 var payload = ircMessage.Split(':')[2];
                 var hostedBy = payload.Split(' ')[0];
                 var isAuto = payload.Contains("auto hosting");
-                var viewers = -1;
+                var viewers = 0;
                 if (payload.Contains("up to"))
                     viewers = int.Parse(payload.Split(' ')[payload.Split(' ').Length - 2]);
                 OnBeingHosted?.Invoke(this, new OnBeingHostedArgs
@@ -960,7 +958,7 @@ namespace TwitchLib.Client
             if (response.Successful)
             {
                 var raidNotification = new RaidNotification(ircMessage);
-                OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { RaidNotificaiton = raidNotification });
+                OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { RaidNotificaiton = raidNotification, Channel = response.Channel });
                 return;
             }
 
@@ -998,13 +996,12 @@ namespace TwitchLib.Client
             }
 
             // On ritual new chatter is detected in chat
-            response = Internal.Parsing.Chat.DetectedRitualNewChatter(ircMessage);
+            response = Internal.Parsing.Chat.DetectedRitualNewChatter(ircMessage, JoinedChannels);
             if (response.Successful)
             {
                 OnRitualNewChatter?.Invoke(this, new OnRitualNewChatterArgs { RitualNewChatter = new RitualNewChatter(ircMessage) });
                 return;
             }
-            Log(response.OptionalData ?? "none");
             #endregion
 
             #region Clear Chat, Timeouts, and Bans
@@ -1156,7 +1153,7 @@ namespace TwitchLib.Client
 
         public void SendQueuedItem(string message)
         {
-            if (!_initialized) HandleNotInitialized();
+            if (!IsInitialized) HandleNotInitialized();
             _client.Send(message);
         }
 

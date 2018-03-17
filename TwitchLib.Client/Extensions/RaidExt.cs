@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
 {
@@ -11,7 +12,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">JoinedChannel representation of which channel to send the command to.</param>
         /// <param name="channelToRaid">Channel to begin raid on.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void Raid(this TwitchClient client, JoinedChannel channel, string channelToRaid)
+        public static void Raid(this ITwitchClient client, JoinedChannel channel, string channelToRaid)
         {
             client.SendMessage(channel, $".raid {channelToRaid}");
         }
