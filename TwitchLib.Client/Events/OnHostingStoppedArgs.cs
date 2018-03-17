@@ -1,4 +1,5 @@
 ﻿using System;
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -7,8 +8,6 @@ namespace TwitchLib.Client.Events
     public class OnHostingStoppedArgs : EventArgs
     {
         /// <summary>Property representing hosting channel.</summary>
-        public string HostingChannel;
-        /// <summary>Property representing number of viewers that were in hosting channel.</summary>
-        public int Viewers;
+        public HostingStopped HostingStopped;
     }
 }

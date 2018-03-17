@@ -1,9 +1,13 @@
 #if NETSTANDARD
-    using TwitchLib.Client.Extensions.NetCore;
+using TwitchLib.Client.Extensions.NetCore;
 #endif
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TwitchLib.Client.Common;
+using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Internal;
+
 #if NET452
 
 #endif
@@ -14,118 +18,101 @@ namespace TwitchLib.Client.Models
     public class WhisperMessage
     {
         /// <summary>Property representing dynamic badges assigned to message.</summary>
-        public List<KeyValuePair<string, string>> Badges { get; protected set; }
+        public List<KeyValuePair<string, string>> Badges { get; }
         /// <summary>Property representing HEX representation of color of username.</summary>
-        public string ColorHex { get; protected set; }
+        public string ColorHex { get; }
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public System.Drawing.Color Color { get; protected set; }
+        public Color Color { get; }
         /// <summary>Property representing sender Username.</summary>
-        public string Username { get; protected set; }
+        public string Username { get; }
         /// <summary>Property representing sender DisplayName (can be null/blank).</summary>
-        public string DisplayName { get; protected set; }
+        public string DisplayName { get; }
         /// <summary>Property representing list of string emotes in message.</summary>
-        public EmoteSet EmoteSet { get; protected set; }
+        public EmoteSet EmoteSet { get; }
         /// <summary>Property representing identifier of the message thread.</summary>
-        public string ThreadId { get; protected set; }
+        public string ThreadId { get; }
         /// <summary>Property representing message identifier.</summary>
-        public long MessageId { get; protected set; }
+        public string MessageId { get; }
         /// <summary>Property representing sender identifier.</summary>
-        public string UserId { get; protected set; }
+        public string UserId { get; }
         /// <summary>Property representing whether or not sender has Turbo.</summary>
-        public bool Turbo { get; protected set; }
+        public bool IsTurbo { get; }
         /// <summary>Property representing bot's username.</summary>
-        public string BotUsername { get; protected set; }
+        public string BotUsername { get; }
         /// <summary>Property representing message contents.</summary>
-        public string Message { get; protected set; }
+        public string Message { get; }
         /// <summary>Property representing user type of sender.</summary>
-        public Enums.UserType UserType { get; protected set; }
+        public UserType UserType { get; }
 
         /// <summary>
         /// WhisperMessage constructor.
         /// </summary>
-        /// <param name="ircString">Received IRC string from Twitch server.</param>
+        /// <param name="ircMessage">Received IRC string from Twitch server.</param>
         /// <param name="botUsername">Active bot username receiving message.</param>
-        public WhisperMessage(string ircString, string botUsername)
+        public WhisperMessage(IrcMessage ircMessage, string botUsername)
         {
-            Username = ircString.Split('!')[1].Split('@')[0];
+            Username = ircMessage.User;
             BotUsername = botUsername;
-            Message = ircString.Replace($"{ircString.Split('!')[0]}!{Username}@{Username}.tmi.twitch.tv WHISPER {botUsername.ToLower()} :", "");
 
-            var props = ircString.Replace(Message, "");
-            foreach (var part in props.Split(';'))
+            Message = ircMessage.Message;
+            foreach (var tag in ircMessage.Tags.Keys)
             {
-                var key = part.Split('=')[0];
-                var value = part.Split('=')[1];
-                switch (key)
+                var tagValue = ircMessage.Tags[tag];
+                switch (tag)
                 {
-
-                    case "@badges":
+                    case Tags.Badges:
                         Badges = new List<KeyValuePair<string, string>>();
-                        if (value.Contains('/'))
+                        if (tagValue.Contains('/'))
                         {
-                            if (!value.Contains(","))
-                                Badges.Add(new KeyValuePair<string, string>(value.Split('/')[0], value.Split('/')[1]));
+                            if (!tagValue.Contains(","))
+                                Badges.Add(new KeyValuePair<string, string>(tagValue.Split('/')[0], tagValue.Split('/')[1]));
                             else
-                                foreach (var badge in value.Split(','))
+                                foreach (var badge in tagValue.Split(','))
                                     Badges.Add(new KeyValuePair<string, string>(badge.Split('/')[0], badge.Split('/')[1]));
                         }
                         break;
-
-                    case "color":
-                        ColorHex = value;
+                    case Tags.Color:
+                        ColorHex = tagValue;
                         if (!string.IsNullOrEmpty(ColorHex))
                             Color = ColorTranslator.FromHtml(ColorHex);
                         break;
-
-                    case "display-name":
-                        DisplayName = value;
+                    case Tags.DisplayName:
+                        DisplayName = tagValue;
                         break;
-
-                    case "emotes":
-                        EmoteSet = new EmoteSet(value, Message);
+                    case Tags.Emotes:
+                        EmoteSet = new EmoteSet(tagValue, Message);
                         break;
-
-                    case "message-id":
-                        MessageId = long.Parse(value);
+                    case Tags.MessageId:
+                        MessageId = tagValue;
                         break;
-
-                    case "thread-id":
-                        ThreadId = value;
+                    case Tags.ThreadId:
+                        ThreadId = tagValue;
                         break;
-
-                    case "turbo":
-                        if (value == "1")
-                            Turbo = true;
+                    case Tags.Turbo:
+                        IsTurbo = Helpers.ConvertToBool(tagValue);
                         break;
-
-                    case "user-id":
-                        UserId = value;
+                    case Tags.UserId:
+                        UserId = tagValue;
                         break;
-
-                    case "user-type":
-                        switch (part.Split('=')[1].Split(' ')[0])
+                    case Tags.UserType:
+                        switch (tagValue)
                         {
                             case "global_mod":
-                                UserType = Enums.UserType.GlobalModerator;
+                                UserType = UserType.GlobalModerator;
                                 break;
                             case "admin":
-                                UserType = Enums.UserType.Admin;
+                                UserType = UserType.Admin;
                                 break;
                             case "staff":
-                                UserType = Enums.UserType.Staff;
+                                UserType = UserType.Staff;
                                 break;
                             default:
-                                UserType = Enums.UserType.Viewer;
+                                UserType = UserType.Viewer;
                                 break;
                         }
                         break;
                 }
             }
-        }
-
-        private bool ConvertToBool(string data)
-        {
-            return data == "1";
         }
     }
 }

@@ -4,10 +4,10 @@ using System.Linq;
 namespace TwitchLib.Client.Models
 {
     /// <summary>Object representing a command received via Twitch chat.</summary>
-    public class ChatCommand
+    public class WhisperCommand
     {
         /// <summary>Property representing the chat message that the command came in.</summary>
-        public ChatMessage ChatMessage { get; }
+        public WhisperMessage WhisperMessage { get; }
         /// <summary>Property representing the actual command (without the command prefix).</summary>
         public string CommandText { get; }
         /// <summary>Property representing all arguments received in a List form.</summary>
@@ -18,17 +18,14 @@ namespace TwitchLib.Client.Models
         public char CommandIdentifier { get; }
 
         /// <summary>ChatCommand constructor.</summary>
-        /// <param name="chatMessage"></param>
-        public ChatCommand(ChatMessage chatMessage)
+        /// <param name="whisperMessage"></param>
+        public WhisperCommand(WhisperMessage whisperMessage)
         {
-            ChatMessage = chatMessage;
-            CommandText = chatMessage.Message.Split(' ')[0].Substring(1, chatMessage.Message.Split(' ')[0].Length - 1);
-            ArgumentsAsString = chatMessage.Message.Contains(" ") ? chatMessage.Message.Replace(chatMessage.Message.Split(' ')?[0] + " ", "") : "";
-            if (!chatMessage.Message.Contains("\"") || chatMessage.Message.Count(x => x == '"') % 2 == 1)
-                ArgumentsAsList = chatMessage.Message.Split(' ')?.Where(arg => arg != chatMessage.Message[0] + CommandText).ToList();
-            else
-                ArgumentsAsList = Common.Helpers.ParseQuotesAndNonQuotes(ArgumentsAsString);
-            CommandIdentifier = chatMessage.Message[0];
+            WhisperMessage = whisperMessage;
+            CommandText = whisperMessage.Message.Split(' ')?[0].Substring(1, whisperMessage.Message.Split(' ')[0].Length - 1) ?? whisperMessage.Message.Substring(1, whisperMessage.Message.Length - 1);
+            ArgumentsAsString = whisperMessage.Message.Replace(whisperMessage.Message.Split(' ')?[0] + " ", "");
+            ArgumentsAsList = whisperMessage.Message.Split(' ')?.Where(arg => arg != whisperMessage.Message[0] + CommandText).ToList() ?? new List<string>();
+            CommandIdentifier = whisperMessage.Message[0];
         }
     }
 }

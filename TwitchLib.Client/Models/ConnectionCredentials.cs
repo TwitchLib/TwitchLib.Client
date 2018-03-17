@@ -8,20 +8,20 @@ namespace TwitchLib.Client.Models
     public class ConnectionCredentials
     {
         /// <summary>Property representing bot's username.</summary>
-        public string TwitchUsername { get; set; }
+        public string TwitchUsername { get; }
         /// <summary>Property representing bot's oauth.</summary>
-        public string TwitchOAuth { get; set; }
+        public string TwitchOAuth { get; internal set; }
         /// <summary>Property representing Twitch's host address</summary>
-        public string TwitchHost { get; set; }
+        public string TwitchHost { get; }
         /// <summary>Property representing Twitch's host port</summary>
-        public int TwitchPort { get; set; }
+        public int TwitchPort { get; }
         /// <summary>Property IP/port of a proxy.</summary>
-        public IPEndPoint Proxy { get; set; }
+        public IPEndPoint Proxy { get; }
 
         /// <summary>Constructor for ConnectionCredentials object.</summary>
         public ConnectionCredentials(string twitchUsername, string twitchOAuth, string twitchHost = "irc-ws.chat.twitch.tv", int twitchPort = 80, bool disableUsernameCheck = false, string proxyIP = null, int? proxyPort = null)
         {
-            if (!disableUsernameCheck && !(new Regex("^([a-zA-Z0-9][a-zA-Z0-9_]{3,25})$").Match(twitchUsername).Success))
+            if (!disableUsernameCheck && !new Regex("^([a-zA-Z0-9][a-zA-Z0-9_]{3,25})$").Match(twitchUsername).Success)
                 throw new ErrorLoggingInException("Twitch username does not appear to be valid.", twitchUsername);
             TwitchUsername = twitchUsername.ToLower();
             TwitchOAuth = twitchOAuth;

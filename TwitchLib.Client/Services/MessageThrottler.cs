@@ -79,7 +79,7 @@ namespace TwitchLib.Client.Services
 
         public void StopQueue()
         {
-            CancellationTokenSource.Cancel();
+            CancellationTokenSource?.Cancel();
             Clear();
         }
 
@@ -112,7 +112,7 @@ namespace TwitchLib.Client.Services
 
         public void Clear()
         {
-            while (_pendingSends.TryDequeue(out var msg))
+            while (_pendingSends.TryDequeue(out _))
             { }
 
             _pendingSendsByNonce.Clear();
