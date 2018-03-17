@@ -602,7 +602,7 @@ namespace TwitchLib.Client
         #region Client Events
         private void _client_OnError(object sender, ErrorEventArgs e)
         {
-            OnConnectionError?.Invoke(_client, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Exception = e.Exception, Message = e.Exception.Message } });
+            OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Exception = e.Exception, Message = e.Exception.Message } });
             Reconnect();
         }
 
