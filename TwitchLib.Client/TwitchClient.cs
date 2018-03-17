@@ -39,6 +39,9 @@ namespace TwitchLib.Client
         #endregion
 
         #region Public Variables
+        /// <summary>User customizable field used for environments with many TwitchLib.Client instances.</summary>
+        public object Context { get; set; }
+        /// <summary>Boolean representing whether or not client has been initialized</summary>
         public bool IsInitialized { get { return _client != null; } }
         /// <summary>A list of all channels the client is currently in.</summary>
         public List<JoinedChannel> JoinedChannels { get; protected set; } = new List<JoinedChannel>();
