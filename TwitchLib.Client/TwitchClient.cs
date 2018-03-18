@@ -372,17 +372,6 @@ namespace TwitchLib.Client
             SendMessage(GetJoinedChannel(channel), message, dryRun);
         }
 
-        /// <summary>
-        /// SendMessage wrapper that sends message to first joined channel.
-        /// </summary>
-        public void SendMessage(string message, bool dryRun = false)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            if (JoinedChannels.Count > 0)
-                SendMessage(JoinedChannels[0], message, dryRun);
-            else
-                throw new BadStateException("Must be connected to at least one channel to use SendMessage.");
-        }
         #endregion
 
         #region Whispers

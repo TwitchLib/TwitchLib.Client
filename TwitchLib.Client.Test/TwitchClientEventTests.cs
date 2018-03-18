@@ -79,8 +79,7 @@ namespace TwitchLib.Client.Test
             Assert.IsTrue(onConnectedFired);
 
         }
-
-
+        
         [TestMethod]
         public void ClientCanJoinChannels()
         {
