@@ -452,7 +452,7 @@ namespace TwitchLib.Client
             _joinedChannelManager.Clear();
 
             InitializeWebsocketClient();
-            
+
             _client.Open();
         }
         #endregion
@@ -915,20 +915,7 @@ namespace TwitchLib.Client
 
         private void HandleJoin(IrcMessage ircMessage)
         {
-            if (string.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
-            {
-                var channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
-                _awaitingJoins.Remove(channel);
-
-                OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
-                if (OnBeingHosted == null) return;
-                if (ircMessage.Channel.ToLowerInvariant() != TwitchUsername && !OverrideBeingHostedCheck)
-                    throw new BadListenException("BeingHosted", "You cannot listen to OnBeingHosted unless you are connected to the broadcaster's channel as the broadcaster. You may override this by setting the TwitchClient property OverrideBeingHostedCheck to true.");
-            }
-            else
-            {
-                OnUserJoined?.Invoke(this, new OnUserJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
-            }
+            OnUserJoined?.Invoke(this, new OnUserJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
         }
 
         private void HandlePart(IrcMessage ircMessage)
@@ -1029,6 +1016,18 @@ namespace TwitchLib.Client
 
         private void HandleRoomState(IrcMessage ircMessage)
         {
+            if (ircMessage.Tags.ContainsKey(Tags.SubsOnly) && ircMessage.Tags.ContainsKey(Tags.Slow))
+            {
+                    var channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
+                    _awaitingJoins.Remove(channel);
+
+                    OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
+                    if (OnBeingHosted == null) return;
+                    if (ircMessage.Channel.ToLowerInvariant() != TwitchUsername && !OverrideBeingHostedCheck)
+                        throw new BadListenException("BeingHosted", "You cannot listen to OnBeingHosted unless you are connected to the broadcaster's channel as the broadcaster. You may override this by setting the TwitchClient property OverrideBeingHostedCheck to true.");
+
+            }
+
             OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage), Channel = ircMessage.Channel });
         }
 
