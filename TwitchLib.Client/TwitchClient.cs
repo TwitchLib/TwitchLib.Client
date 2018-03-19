@@ -397,12 +397,17 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             if (dryRun) return;
 
-            var twitchMessage = $":{_credentials.TwitchUsername}~{_credentials.TwitchUsername}@{_credentials.TwitchUsername}" +
-                    $".tmi.twitch.tv PRIVMSG #jtv :/w {receiver} {message}";
+            var twitchMessage = new OutboundWhisperMessage
+            {
+                Username = _credentials.TwitchUsername,
+                Receiver = receiver,
+                Message = message
+            };
+                
             if (WhisperThrottler != null)
-                WhisperThrottler.QueueSend(twitchMessage);
+                WhisperThrottler.QueueSend(twitchMessage.ToString());
             else
-                _client.Send(twitchMessage);
+                _client.Send(twitchMessage.ToString());
 
             OnWhisperSent?.Invoke(this, new OnWhisperSentArgs { Receiver = receiver, Message = message });
         }
