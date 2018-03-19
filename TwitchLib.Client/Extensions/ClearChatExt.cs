@@ -25,14 +25,5 @@ namespace TwitchLib.Client.Extensions
         {
             client.SendMessage(channel, ".clear");
         }
-
-        /// <summary>
-        /// Sends request to clear chat (may be ignored by plugins like BTTV)
-        /// </summary>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void ClearChat(this ITwitchClient client)
-        {
-            client.SendMessage(".clear");
-        }
     }
 }

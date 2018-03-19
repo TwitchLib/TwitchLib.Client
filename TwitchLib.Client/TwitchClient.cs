@@ -18,10 +18,10 @@ using TwitchLib.Client.Services;
 namespace TwitchLib.Client
 {
     /// <summary>Represents a client connected to a Twitch channel.</summary>
-    public class TwitchClient : ITwitchClient
+    public class TwitchClient : ITwitchClient 
     {
         #region Private Variables
-        private WebSocket _client;
+        private ITwitchWebSocket _client;
         private ConnectionCredentials _credentials;
         private MessageEmoteCollection _channelEmotes = new MessageEmoteCollection();
         private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
@@ -283,11 +283,15 @@ namespace TwitchLib.Client
         /// Initializes the TwitchChatClient class.
         /// </summary>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
+        public TwitchClient(ITwitchWebSocket webSocketClient, ILogger<TwitchClient> logger = null)
+        {
+            _logger = logger;
+            _client = webSocketClient;
+        }
         public TwitchClient(ILogger<TwitchClient> logger = null)
         {
             _logger = logger;
         }
-
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
@@ -309,7 +313,9 @@ namespace TwitchLib.Client
 
             AutoReListenOnException = autoReListenOnExceptions;
 
-            _client = new WebSocket($"ws://{_credentials.TwitchHost}:{_credentials.TwitchPort}");
+            _client = _client ?? new TwitchWebSocket($"ws://{_credentials.TwitchHost}:{_credentials.TwitchPort}");
+
+            _client.Opened -= _client_OnConnected;
             _client.Opened += _client_OnConnected;
             _client.MessageReceived += _client_OnMessage;
             _client.Closed += _client_OnDisconnected;
@@ -363,17 +369,6 @@ namespace TwitchLib.Client
             SendMessage(GetJoinedChannel(channel), message, dryRun);
         }
 
-        /// <summary>
-        /// SendMessage wrapper that sends message to first joined channel.
-        /// </summary>
-        public void SendMessage(string message, bool dryRun = false)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            if (JoinedChannels.Count > 0)
-                SendMessage(JoinedChannels[0], message, dryRun);
-            else
-                throw new BadStateException("Must be connected to at least one channel to use SendMessage.");
-        }
         #endregion
 
         #region Whispers
@@ -631,7 +626,7 @@ namespace TwitchLib.Client
 
             JoinedChannels.Clear();
 
-            _client = new WebSocket($"ws://{_credentials.TwitchHost}:{_credentials.TwitchPort}");
+            _client = _client ?? new TwitchWebSocket($"ws://{_credentials.TwitchHost}:{_credentials.TwitchPort}");
             _client.Opened += _client_OnConnected;
             _client.MessageReceived += _client_OnMessage;
             _client.Closed += _client_OnDisconnected;
