@@ -362,7 +362,7 @@ namespace TwitchLib.Client
         /// </summary>
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
-            if (!IsInitialized) HandleNotInitialized();
+
             SendMessage(GetJoinedChannel(channel), message, dryRun);
         }
 
@@ -371,7 +371,7 @@ namespace TwitchLib.Client
         /// </summary>
         public void SendMessage(string message, bool dryRun = false)
         {
-            if (!IsInitialized) HandleNotInitialized();
+
             if (JoinedChannels.Count > 0)
                 SendMessage(JoinedChannels[0], message, dryRun);
             else
