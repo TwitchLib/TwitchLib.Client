@@ -326,14 +326,11 @@ namespace TwitchLib.Client
         public void SendRaw(string message)
         {
             if (!IsInitialized) HandleNotInitialized();
-
-            var prevColor = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            
             Log($"Writing: {message}");
             if (ChatThrottler == null || !ChatThrottler.ApplyThrottlingToRawMessages)
                 _client.Send(message);
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
-            Console.ForegroundColor = prevColor;
         }
 
         #region SendMessage
