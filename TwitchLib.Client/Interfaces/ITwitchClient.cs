@@ -77,7 +77,6 @@ namespace TwitchLib.Client.Interfaces
         void RemoveChatCommandIdentifier(char identifier);
         void RemoveWhisperCommandIdentifier(char identifier);
         void SendMessage(JoinedChannel channel, string message, bool dryRun = false);
-        void SendMessage(string message, bool dryRun = false);
         void SendMessage(string channel, string message, bool dryRun = false);
         void SendQueuedItem(string message);
         void SendRaw(string message);
