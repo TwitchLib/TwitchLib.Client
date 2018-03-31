@@ -39,6 +39,9 @@ namespace TwitchLib.Client
         #endregion
 
         #region Public Variables
+        /// <summary>Assembly version of TwitchLib.Client.</summary>
+        public Version Version { get { return Assembly.GetEntryAssembly().GetName().Version; } }
+        /// <summary>Checks if underlying client has been initialized.</summary>
         public bool IsInitialized { get { return _client != null; } }
         /// <summary>A list of all channels the client is currently in.</summary>
         public List<JoinedChannel> JoinedChannels { get; protected set; } = new List<JoinedChannel>();
