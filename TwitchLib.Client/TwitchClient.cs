@@ -350,14 +350,19 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
-            var twitchMessage = $":{_credentials.TwitchUsername}!{_credentials.TwitchUsername}@{_credentials.TwitchUsername}" +
-                $".tmi.twitch.tv PRIVMSG #{channel.Channel} :{message}";
+            var twitchMessage = new OutboundChatMessage
+            {
+                Channel = channel.Channel,
+                Username = _credentials.TwitchUsername,
+                Message = message
+            };
+                
             _lastMessageSent = message;
 
             if (ChatThrottler != null)
-                ChatThrottler.QueueSend(twitchMessage);
+                ChatThrottler.QueueSend(twitchMessage.ToString());
             else
-                _client.Send(twitchMessage);
+                _client.Send(twitchMessage.ToString());
         }
 
         /// <summary>
@@ -365,8 +370,9 @@ namespace TwitchLib.Client
         /// </summary>
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
-            if (!IsInitialized) HandleNotInitialized();
+
             SendMessage(GetJoinedChannel(channel), message, dryRun);
+
         }
 
         #endregion
@@ -383,12 +389,17 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             if (dryRun) return;
 
-            var twitchMessage = $":{_credentials.TwitchUsername}~{_credentials.TwitchUsername}@{_credentials.TwitchUsername}" +
-                    $".tmi.twitch.tv PRIVMSG #jtv :/w {receiver} {message}";
+            var twitchMessage = new OutboundWhisperMessage
+            {
+                Username = _credentials.TwitchUsername,
+                Receiver = receiver,
+                Message = message
+            };
+                
             if (WhisperThrottler != null)
-                WhisperThrottler.QueueSend(twitchMessage);
+                WhisperThrottler.QueueSend(twitchMessage.ToString());
             else
-                _client.Send(twitchMessage);
+                _client.Send(twitchMessage.ToString());
 
             OnWhisperSent?.Invoke(this, new OnWhisperSentArgs { Receiver = receiver, Message = message });
         }
