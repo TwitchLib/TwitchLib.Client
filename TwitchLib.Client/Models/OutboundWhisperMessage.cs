@@ -1,4 +1,4 @@
-﻿namespace TwitchLib.Client.Models.Internal
+﻿namespace TwitchLib.Client.Models
 {
     public class OutboundWhisperMessage
     {
