@@ -27,7 +27,7 @@ namespace TwitchLib.Client.Extensions
         {
             client.SendMessage(channel, $".host {userToHost}");
         }
-        
+
         /// <summary>
         /// Sends command to unhost if a stream is being hosted.
         /// </summary>

@@ -12,7 +12,6 @@ namespace TwitchLib.Client.Test
         [TestMethod]
         public void ClientCanReceiveData()
         {
-
             var finish = DateTime.Now.AddSeconds(10);
             var websocket = new MockTwitchWebSocket();
             var client = new TwitchClient(websocket);
@@ -22,6 +21,7 @@ namespace TwitchLib.Client.Test
             client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
 
             client.OnSendReceiveData += (sender, e) =>
+
             {
                 onSendReceiveDataFired = true;
             };
@@ -36,7 +36,6 @@ namespace TwitchLib.Client.Test
             }
 
             Assert.IsTrue(onSendReceiveDataFired);
-
         }
 
         [TestMethod]
@@ -71,11 +70,10 @@ namespace TwitchLib.Client.Test
             {
 
             }
-
           
             Assert.IsTrue(onConnectedFired);
-
         }
+
 
         [TestMethod]
         public void ClientCanJoinChannels()
