@@ -14,7 +14,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing whether Sub Mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public bool? SubOnly { get; }
         /// <summary>Property representing whether Slow mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
-        public bool? SlowMode { get; }
+        public int? SlowMode { get; }
         /// <summary>Property representing whether EmoteOnly mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public bool? EmoteOnly { get; }
         /// <summary>Property representing the current broadcaster language.</summary>
@@ -51,7 +51,8 @@ namespace TwitchLib.Client.Models
                         Rituals = Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.Slow:
-                        SlowMode = Helpers.ConvertToBool(tagValue);
+                        var success = int.TryParse(tagValue, out var slowDuration);
+                        SlowMode = success ? slowDuration : (int?) null;
                         break;
                     case Tags.SubsOnly:
                         SubOnly = Helpers.ConvertToBool(tagValue);
