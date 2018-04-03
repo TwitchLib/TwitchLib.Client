@@ -25,7 +25,7 @@ namespace TwitchLib.Client
     public class TwitchClient : ITwitchClient
     {
         #region Private Variables
-        private WebSocket _client;
+        private ITwitchWebSocket _client;
         private MessageEmoteCollection _channelEmotes = new MessageEmoteCollection();
         private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
         private readonly ICollection<char> _whisperCommandIdentifiers = new HashSet<char>();
@@ -45,6 +45,9 @@ namespace TwitchLib.Client
         #endregion
 
         #region Public Variables
+        /// <summary>Assembly version of TwitchLib.Client.</summary>
+        public Version Version => Assembly.GetEntryAssembly().GetName().Version;
+        /// <summary>Checks if underlying client has been initialized.</summary>
         public bool IsInitialized => _client != null;
         /// <summary>A list of all channels the client is currently in.</summary>
         public IReadOnlyList<JoinedChannel> JoinedChannels => _joinedChannelManager.GetJoinedChannels();
@@ -280,10 +283,12 @@ namespace TwitchLib.Client
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
+        /// <param name="webSocket">Optional mock websocket for use with the testing framework. (Dont set this!)</param>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
-        public TwitchClient(ILogger<TwitchClient> logger = null)
+        public TwitchClient(ITwitchWebSocket webSocket = null, ILogger<TwitchClient> logger = null)
         {
             _logger = logger;
+            _client = webSocket;
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
         }
@@ -309,12 +314,28 @@ namespace TwitchLib.Client
 
             AutoReListenOnException = autoReListenOnExceptions;
 
-            InitializeWebsocketClient();
+            if (_client == null)
+                InitializeWebsocketClient();
+            else
+            {
+                InitializeMockWebsocketClient();
+            }
         }
 
         private void InitializeWebsocketClient()
         {
-            _client = new WebSocket($"ws://{ConnectionCredentials.TwitchHost}:{ConnectionCredentials.TwitchPort}");
+            _client = new TwitchWebSocket($"ws://{ConnectionCredentials.TwitchHost}:{ConnectionCredentials.TwitchPort}");
+            _client.Opened += _client_OnConnected;
+            _client.MessageReceived += _client_OnMessage;
+            _client.Closed += _client_OnDisconnected;
+            _client.Error += _client_OnError;
+
+            if (ConnectionCredentials.Proxy != null)
+                _client.Proxy = new HttpConnectProxy(ConnectionCredentials.Proxy);
+        }
+
+        private void InitializeMockWebsocketClient()
+        {
             _client.Opened += _client_OnConnected;
             _client.MessageReceived += _client_OnMessage;
             _client.Closed += _client_OnDisconnected;
@@ -334,16 +355,14 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
 
-            var prevColor = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Log($"Writing: {message}");
             if (ChatThrottler == null || !ChatThrottler.ApplyThrottlingToRawMessages)
                 _client.Send(message);
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
-            Console.ForegroundColor = prevColor;
         }
 
         #region SendMessage
+
         /// <summary>
         /// Sends a formatted Twitch channel chat message.
         /// </summary>
@@ -354,14 +373,18 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
-            var twitchMessage = $":{ConnectionCredentials.TwitchUsername}!{ConnectionCredentials.TwitchUsername}@{ConnectionCredentials.TwitchUsername}" +
-                $".tmi.twitch.tv PRIVMSG #{channel.Channel} :{message}";
+            var twitchMessage = new OutboundChatMessage()
+            {
+                Channel = channel.Channel,
+                Username = ConnectionCredentials.TwitchUsername,
+                Message = message
+            };
             _lastMessageSent = message;
 
             if (ChatThrottler != null)
-                ChatThrottler.QueueSend(twitchMessage);
+                ChatThrottler.QueueSend(twitchMessage.ToString());
             else
-                _client.Send(twitchMessage);
+                _client.Send(twitchMessage.ToString());
         }
 
         /// <summary>
@@ -369,21 +392,9 @@ namespace TwitchLib.Client
         /// </summary>
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
-            if (!IsInitialized) HandleNotInitialized();
             SendMessage(GetJoinedChannel(channel), message, dryRun);
         }
 
-        /// <summary>
-        /// SendMessage wrapper that sends message to first joined channel.
-        /// </summary>
-        public void SendMessage(string message, bool dryRun = false)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            if (JoinedChannels.Count > 0)
-                SendMessage(JoinedChannels[0], message, dryRun);
-            else
-                throw new BadStateException("Must be connected to at least one channel to use SendMessage.");
-        }
         #endregion
 
         #region Whispers
@@ -398,12 +409,17 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             if (dryRun) return;
 
-            var twitchMessage = $":{ConnectionCredentials.TwitchUsername}~{ConnectionCredentials.TwitchUsername}@{ConnectionCredentials.TwitchUsername}" +
-                    $".tmi.twitch.tv PRIVMSG #jtv :/w {receiver} {message}";
+            var twitchMessage = new OutboundWhisperMessage
+            {
+                Receiver = receiver,
+                Username = ConnectionCredentials.TwitchUsername,
+                Message = message
+            };
+
             if (WhisperThrottler != null)
-                WhisperThrottler.QueueSend(twitchMessage);
+                WhisperThrottler.QueueSend(twitchMessage.ToString());
             else
-                _client.Send(twitchMessage);
+                _client.Send(twitchMessage.ToString());
 
             OnWhisperSent?.Invoke(this, new OnWhisperSentArgs { Receiver = receiver, Message = message });
         }
@@ -565,7 +581,7 @@ namespace TwitchLib.Client
             // Channel MUST be lower case
             channel = channel.ToLower();
             Log($"Leaving channel: {channel}");
-            var joinedChannel = JoinedChannels.FirstOrDefault(x => string.Equals(x.Channel, channel, StringComparison.InvariantCultureIgnoreCase));
+            var joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
             if (joinedChannel != null)
                 _client.Send(Rfc2812.Part($"#{channel}"));
         }
@@ -573,10 +589,11 @@ namespace TwitchLib.Client
         public void LeaveRoom(string channelId, string roomId)
         {
             if (!IsInitialized) HandleNotInitialized();
-            Log($"Leaving channel: chatrooms:{channelId}:{roomId}");
-            var joinedChannel = JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == $"chatrooms:{channelId}:{roomId}");
+            var room = $"chatrooms:{channelId}:{roomId}";
+            Log($"Leaving channel: {room}");
+            var joinedChannel = _joinedChannelManager.GetJoinedChannel(room);
             if (joinedChannel != null)
-                _client.Send(Rfc2812.Part($"#chatrooms:{channelId}:{roomId}"));
+                _client.Send(Rfc2812.Part($"#{room}"));
         }
 
         /// <summary>
@@ -614,15 +631,6 @@ namespace TwitchLib.Client
                 GetChannelModerators(joinedChannel);
         }
 
-        /// <summary>
-        /// Sends a request to get channel moderators. Request sent to first joined channel. You MUST listen to OnModeratorsReceived event./>.
-        /// </summary>
-        public void GetChannelModerators()
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            if (JoinedChannels.Count > 0)
-                GetChannelModerators(JoinedChannels[0]);
-        }
         #endregion
 
         /// <summary>
@@ -632,8 +640,7 @@ namespace TwitchLib.Client
         public void OnReadLineTest(string rawIrc)
         {
             if (!IsInitialized) HandleNotInitialized();
-            var ircMessage = _ircParser.ParseIrcMessage(rawIrc);
-            HandleIrcMessage(ircMessage);
+            HandleIrcMessage(_ircParser.ParseIrcMessage(rawIrc));
         }
 
         #region Client Events
@@ -660,9 +667,7 @@ namespace TwitchLib.Client
 
                 Log($"Received: {line}");
                 OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Received, Data = line });
-                var ircMessage = _ircParser.ParseIrcMessage(line);
-
-                HandleIrcMessage(ircMessage);
+                HandleIrcMessage(_ircParser.ParseIrcMessage(line));
             }
 
         }
@@ -1018,13 +1023,13 @@ namespace TwitchLib.Client
         {
             if (ircMessage.Tags.ContainsKey(Tags.SubsOnly) && ircMessage.Tags.ContainsKey(Tags.Slow))
             {
-                    var channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
-                    _awaitingJoins.Remove(channel);
+                var channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
+                _awaitingJoins.Remove(channel);
 
-                    OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
-                    if (OnBeingHosted == null) return;
-                    if (ircMessage.Channel.ToLowerInvariant() != TwitchUsername && !OverrideBeingHostedCheck)
-                        throw new BadListenException("BeingHosted", "You cannot listen to OnBeingHosted unless you are connected to the broadcaster's channel as the broadcaster. You may override this by setting the TwitchClient property OverrideBeingHostedCheck to true.");
+                OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
+                if (OnBeingHosted == null) return;
+                if (ircMessage.Channel.ToLowerInvariant() != TwitchUsername && !OverrideBeingHostedCheck)
+                    throw new BadListenException("BeingHosted", "You cannot listen to OnBeingHosted unless you are connected to the broadcaster's channel as the broadcaster. You may override this by setting the TwitchClient property OverrideBeingHostedCheck to true.");
 
             }
 

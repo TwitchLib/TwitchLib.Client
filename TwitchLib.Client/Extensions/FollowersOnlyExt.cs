@@ -44,21 +44,6 @@ namespace TwitchLib.Client.Extensions
         }
 
         /// <summary>
-        /// Enables follower only chat, requires a TimeSpan object to indicate how long a viewer must have been following to chat. Maximum time is 90 days (3 months).
-        /// </summary>
-        /// <param name="requiredFollowTime">Amount of time required to pass before a viewer can chat. Maximum is 3 months (90 days).</param>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void FollowersOnlyOn(this ITwitchClient client, TimeSpan requiredFollowTime)
-        {
-            if (requiredFollowTime > TimeSpan.FromDays(MaximumDurationAllowedDays))
-                throw new InvalidParameterException("The amount of time required to chat exceeded the maximum allowed by Twitch, which is 3 months.", client.TwitchUsername);
-
-            var duration = $"{requiredFollowTime.Days}d {requiredFollowTime.Hours}h {requiredFollowTime.Minutes}m";
-
-            client.SendMessage($".followers {duration}");
-        }
-
-        /// <summary>
         /// Disables follower only chat.
         /// </summary>
         /// <param name="channel">JoinedChannel representation of channel to send command to</param>
@@ -75,16 +60,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         public static void FollowersOnlyOff(this TwitchClient client, string channel)
         {
-            client.SendMessage(".followersoff");
-        }
-
-        /// <summary>
-        /// Disables follower only chat.
-        /// </summary>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void FollowersOnlyOff(this TwitchClient client)
-        {
-            client.SendMessage(".followersoff");
+            client.SendMessage(channel, ".followersoff");
         }
     }
 }

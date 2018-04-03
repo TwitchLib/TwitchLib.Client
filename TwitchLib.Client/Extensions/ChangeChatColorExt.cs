@@ -27,15 +27,5 @@ namespace TwitchLib.Client.Extensions
         {
             client.SendMessage(channel, $".color {color}");
         }
-
-        /// <summary>
-        /// Sends request to change color of chat name in Twitch chat.
-        /// </summary>
-        /// <param name="color">Enum representing available chat preset colors.</param>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void ChangeChatColor(this ITwitchClient client, Enums.ChatColorPresets color)
-        {
-            client.SendMessage($".color {color}");
-        }
     }
 }

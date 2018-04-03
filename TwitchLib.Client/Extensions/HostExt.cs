@@ -27,17 +27,7 @@ namespace TwitchLib.Client.Extensions
         {
             client.SendMessage(channel, $".host {userToHost}");
         }
-
-        /// <summary>
-        /// Sends command to host a given channel.
-        /// </summary>
-        /// <param name="userToHost">The channel to be hosted.</param>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void Host(this ITwitchClient client, string userToHost)
-        {
-            client.SendMessage($".host {userToHost}");
-        }
-
+        
         /// <summary>
         /// Sends command to unhost if a stream is being hosted.
         /// </summary>
@@ -56,15 +46,6 @@ namespace TwitchLib.Client.Extensions
         public static void Unhost(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".unhost");
-        }
-
-        /// <summary>
-        /// Sends command to unhost if a stream is being hosted.
-        /// </summary>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void Unhost(this ITwitchClient client)
-        {
-            client.SendMessage(".unhost");
         }
     }
 }

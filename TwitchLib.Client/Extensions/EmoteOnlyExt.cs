@@ -27,15 +27,6 @@ namespace TwitchLib.Client.Extensions
         }
 
         /// <summary>
-        /// Enables emote only chat requirement.
-        /// </summary>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void EmoteOnlyOn(this ITwitchClient client)
-        {
-            client.SendMessage(".emoteonly");
-        }
-
-        /// <summary>
         /// Disables emote only chat requirement.
         /// </summary>
         /// <param name="channel">JoinedChannel representation of the channel to send the disable emote only command to.</param>
@@ -53,15 +44,6 @@ namespace TwitchLib.Client.Extensions
         public static void EmoteOnlyOff(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".emoteonlyoff");
-        }
-
-        /// <summary>
-        /// Disables emote only chat requirement.
-        /// </summary>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void EmoteOnlyOff(this ITwitchClient client)
-        {
-            client.SendMessage(".emoteonlyoff");
         }
     }
 }
