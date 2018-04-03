@@ -22,7 +22,7 @@ using TwitchLib.Client.Services;
 namespace TwitchLib.Client
 {
     /// <summary>Represents a client connected to a Twitch channel.</summary>
-    public class TwitchClient : ITwitchClient
+    public class TwitchClient : ITwitchClient 
     {
         #region Private Variables
         private ITwitchWebSocket _client;
@@ -292,7 +292,6 @@ namespace TwitchLib.Client
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
         }
-
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
@@ -373,12 +372,14 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
-            var twitchMessage = new OutboundChatMessage()
+
+            var twitchMessage = new OutboundChatMessage
             {
                 Channel = channel.Channel,
-                Username = ConnectionCredentials.TwitchUsername,
+                Username = _credentials.TwitchUsername,
                 Message = message
             };
+
             _lastMessageSent = message;
 
             if (ChatThrottler != null)
@@ -415,7 +416,7 @@ namespace TwitchLib.Client
                 Username = ConnectionCredentials.TwitchUsername,
                 Message = message
             };
-
+            
             if (WhisperThrottler != null)
                 WhisperThrottler.QueueSend(twitchMessage.ToString());
             else
@@ -646,7 +647,7 @@ namespace TwitchLib.Client
         #region Client Events
         private void _client_OnError(object sender, ErrorEventArgs e)
         {
-            OnConnectionError?.Invoke(_client, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Exception = e.Exception, Message = e.Exception.Message } });
+            OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Exception = e.Exception, Message = e.Exception.Message } });
             Reconnect();
         }
 
