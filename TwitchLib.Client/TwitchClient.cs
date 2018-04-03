@@ -376,7 +376,7 @@ namespace TwitchLib.Client
             var twitchMessage = new OutboundChatMessage
             {
                 Channel = channel.Channel,
-                Username = _credentials.TwitchUsername,
+                Username = ConnectionCredentials.TwitchUsername,
                 Message = message
             };
 
