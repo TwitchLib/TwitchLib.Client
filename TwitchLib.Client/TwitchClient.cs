@@ -616,7 +616,7 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (OnModeratorsReceived == null)
-                throw new EventNotHandled("OnModeratorsReceived");
+                Log("[GetChannelModerators] You are not listening to OnModeratorsReceived. The response to this message will not be handled.");
             SendMessage(channel, "/mods");
         }
 
@@ -1028,10 +1028,9 @@ namespace TwitchLib.Client
                 _awaitingJoins.Remove(channel);
 
                 OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
-                if (OnBeingHosted == null) return;
+                if (OnBeingHosted != null)
                 if (ircMessage.Channel.ToLowerInvariant() != TwitchUsername && !OverrideBeingHostedCheck)
-                    throw new BadListenException("BeingHosted", "You cannot listen to OnBeingHosted unless you are connected to the broadcaster's channel as the broadcaster. You may override this by setting the TwitchClient property OverrideBeingHostedCheck to true.");
-
+                    Log("[OnBeingHosted] OnBeingHosted will only be fired while listening to this event as the broadcaster's channel. You do not appear to be connected as the broadcaster. To hide this warning, set TwitchClient property OverrideBeingHostedCheck to true.");
             }
 
             OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage), Channel = ircMessage.Channel });

@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Common;
+﻿using System;
+using TwitchLib.Client.Common;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -19,7 +20,7 @@ namespace TwitchLib.Client.Models
         public string MsgParamRecipientId { get; }
         public string MsgParamRecipientUserName { get; }
         public string MsgParamSubPlanName { get; }
-        public string MsgParamSubPlan { get; }
+        public SubscriptionPlan MsgParamSubPlan { get; }
         public string RoomId { get; }
         public bool IsSubscriber { get; }
         public string SystemMsg { get; }
@@ -76,7 +77,23 @@ namespace TwitchLib.Client.Models
                         MsgParamSubPlanName = tagValue;
                         break;
                     case Tags.MsgParamSubPlan:
-                        MsgParamSubPlan = tagValue;
+                        switch (tagValue)
+                        {
+                            case "prime":
+                                MsgParamSubPlan = SubscriptionPlan.Prime;
+                                break;
+                            case "1000":
+                                MsgParamSubPlan = SubscriptionPlan.Tier1;
+                                break;
+                            case "2000":
+                                MsgParamSubPlan = SubscriptionPlan.Tier2;
+                                break;
+                            case "3000":
+                                MsgParamSubPlan = SubscriptionPlan.Tier3;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
+                        }
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
