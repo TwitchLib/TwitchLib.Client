@@ -1031,6 +1031,10 @@ namespace TwitchLib.Client
                 if (OnBeingHosted != null)
                 if (ircMessage.Channel.ToLowerInvariant() != TwitchUsername && !OverrideBeingHostedCheck)
                     Log("[OnBeingHosted] OnBeingHosted will only be fired while listening to this event as the broadcaster's channel. You do not appear to be connected as the broadcaster. To hide this warning, set TwitchClient property OverrideBeingHostedCheck to true.");
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/master
             }
 
             OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage), Channel = ircMessage.Channel });
