@@ -1,10 +1,12 @@
-﻿namespace TwitchLib.Client.Models
+﻿using TwitchLib.Client.Models.Internal;
+
+namespace TwitchLib.Client.Models
 {
     public class ReSubscriber : SubscriberBase
     {
-        public int Months { get; protected set; }
+        public int Months { get; }
 
-        public ReSubscriber(string ircString) : base(ircString) {
+        public ReSubscriber(IrcMessage ircMessage) : base(ircMessage) {
             Months = months;
         }
     }

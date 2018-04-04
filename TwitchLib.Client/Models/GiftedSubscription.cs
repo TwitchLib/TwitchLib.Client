@@ -1,104 +1,118 @@
-﻿using System;
+﻿using TwitchLib.Client.Common;
+using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     public class GiftedSubscription
     {
-        public string Badges { get; protected set; }
-        public string Color { get; protected set; }
-        public string DisplayName { get; protected set; }
-        public string Emotes { get; protected set; }
-        public string Id { get; protected set; }
-        public string Login { get; protected set; }
-        public bool Moderator { get; protected set; }
-        public string MsgId { get; protected set; }
-        public string MsgParamMonths { get; protected set; }
-        public string MsgParamRecipientDisplayName { get; protected set; }
-        public string MsgParamRecipientId { get; protected set; }
-        public string MsgParamRecipientUserName { get; protected set; }
-        public string MsgParamSubPlanName { get; protected set; }
-        public string MsgParamSubPlan { get; protected set; }
-        public string RoomId { get; protected set; }
-        public bool Subscriber { get; protected set; }
-        public string SystemMsg { get; protected set; }
-        public string SystemMsgParsed { get; protected set; }
-        public string TmiSentTs { get; protected set; }
-        public bool Turbo { get; protected set; }
-        public string UserType { get; protected set; }
+        public string Badges { get; }
+        public string Color { get; }
+        public string DisplayName { get; }
+        public string Emotes { get; }
+        public string Id { get; }
+        public string Login { get; }
+        public bool IsModerator { get; }
+        public string MsgId { get; }
+        public string MsgParamMonths { get; }
+        public string MsgParamRecipientDisplayName { get; }
+        public string MsgParamRecipientId { get; }
+        public string MsgParamRecipientUserName { get; }
+        public string MsgParamSubPlanName { get; }
+        public string MsgParamSubPlan { get; }
+        public string RoomId { get; }
+        public bool IsSubscriber { get; }
+        public string SystemMsg { get; }
+        public string SystemMsgParsed { get; }
+        public string TmiSentTs { get; }
+        public bool IsTurbo { get; }
+        public UserType UserType { get; }
 
-        public GiftedSubscription(string ircMessage)
+        public GiftedSubscription(IrcMessage ircMessage)
         {
-            if (ircMessage[0] == '@')
-                ircMessage = ircMessage.Substring(0, ircMessage.Length - 1);
-            var parts = ircMessage.Split(new [] { ":tmi.twitch.tv" }, StringSplitOptions.None)[0].Split(';');
-            foreach (var part in parts)
+            foreach (var tag in ircMessage.Tags.Keys)
             {
-                if (!part.Contains("=")) continue;
+                var tagValue = ircMessage.Tags[tag];
 
-                var key = part.Split('=')[0];
-                var val = part.Split('=')[1];
-                switch (key)
+                switch (tag)
                 {
-                    case "badges":
-                        Badges = val;
+                    case Tags.Badges:
+                        Badges = tagValue;
                         break;
-                    case "color":
-                        Color = val;
+                    case Tags.Color:
+                        Color = tagValue;
                         break;
-                    case "display-name":
-                        DisplayName = val;
+                    case Tags.DisplayName:
+                        DisplayName = tagValue;
                         break;
-                    case "emotes":
-                        Emotes = val;
+                    case Tags.Emotes:
+                        Emotes = tagValue;
                         break;
-                    case "id":
-                        Id = val;
+                    case Tags.Id:
+                        Id = tagValue;
                         break;
-                    case "login":
-                        Login = val;
+                    case Tags.Login:
+                        Login = tagValue;
                         break;
-                    case "mod":
-                        Moderator = (val == "1");
+                    case Tags.Mod:
+                        IsModerator = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "msg-id":
-                        MsgId = val;
+                    case Tags.MsgId:
+                        MsgId = tagValue;
                         break;
-                    case "msg-param-months":
-                        MsgParamMonths = val;
+                    case Tags.MsgParamMonths:
+                        MsgParamMonths = tagValue;
                         break;
-                    case "msg-param-recipient-display-name":
-                        MsgParamRecipientDisplayName = val;
+                    case Tags.MsgParamRecipientDisplayname:
+                        MsgParamRecipientDisplayName = tagValue;
                         break;
-                    case "msg-param-recipient-id":
-                        MsgParamRecipientId = val;
+                    case Tags.MsgParamRecipientId:
+                        MsgParamRecipientId = tagValue;
                         break;
-                    case "msg-param-recipient-user-name":
-                        MsgParamRecipientUserName = val;
+                    case Tags.MsgParamRecipientUsername:
+                        MsgParamRecipientUserName = tagValue;
                         break;
-                    case "msg-param-sub-plan-name":
-                        MsgParamSubPlanName = val;
+                    case Tags.MsgParamSubPlanName:
+                        MsgParamSubPlanName = tagValue;
                         break;
-                    case "msg-param-sub-plan":
-                        MsgParamSubPlan = val;
+                    case Tags.MsgParamSubPlan:
+                        MsgParamSubPlan = tagValue;
                         break;
-                    case "room-id":
-                        RoomId = val;
+                    case Tags.RoomId:
+                        RoomId = tagValue;
                         break;
-                    case "subscriber":
-                        Subscriber = (val == "1");
+                    case Tags.Subscriber:
+                        IsSubscriber = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "system-msg":
-                        SystemMsg = val;
-                        SystemMsgParsed = val.Replace("\\s", " ").Replace("\\n", "");
+                    case Tags.SystemMsg:
+                        SystemMsg = tagValue;
+                        SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
                         break;
-                    case "tmi-sent-ts":
-                        TmiSentTs = val;
+                    case Tags.TmiSentTs:
+                        TmiSentTs = tagValue;
                         break;
-                    case "turbo":
-                        Turbo = (val == "1");
+                    case Tags.Turbo:
+                        IsTurbo = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "user-type":
-                        UserType = val;
+                    case Tags.UserType:
+                        switch (tagValue)
+                        {
+                            case "mod":
+                                UserType = UserType.Moderator;
+                                break;
+                            case "global_mod":
+                                UserType = UserType.GlobalModerator;
+                                break;
+                            case "admin":
+                                UserType = UserType.Admin;
+                                break;
+                            case "staff":
+                                UserType = UserType.Staff;
+                                break;
+                            default:
+                                UserType = UserType.Viewer;
+                                break;
+                        }
                         break;
                 }
             }

@@ -69,5 +69,10 @@ namespace TwitchLib.Client.Common
 
             return tokenValue;
         }
+
+        public static bool ConvertToBool(string data)
+        {
+            return data == "1";
+        }
     }
 }

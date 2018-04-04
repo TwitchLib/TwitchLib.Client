@@ -6,23 +6,23 @@ namespace TwitchLib.Client.Models
     public class SentMessage
     {
         /// <summary>Badges the sender has</summary>
-        public List<KeyValuePair<string, string>> Badges { get; protected set; }
+        public List<KeyValuePair<string, string>> Badges { get; }
         /// <summary>Channel the sent message was sent from.</summary>
-        public string Channel { get; protected set; }
+        public string Channel { get; }
         /// <summary>Sender's name color.</summary>
-        public string ColorHex { get; protected set; }
+        public string ColorHex { get; }
         /// <summary>Display name of the sender.</summary>
-        public string DisplayName { get; protected set; }
+        public string DisplayName { get; }
         /// <summary>Emotes that appear in the sent message.</summary>
-        public string EmoteSet { get; protected set; }
+        public string EmoteSet { get; }
         /// <summary>Whether or not the sender is a moderator.</summary>
-        public bool IsModerator { get; protected set; }
+        public bool IsModerator { get; }
         /// <summary>Whether or not the sender is a subscriber.</summary>
-        public bool IsSubscriber { get; protected set; }
+        public bool IsSubscriber { get; }
         /// <summary>The type of user (admin, broadcaster, viewer, moderator)</summary>
-        public Enums.UserType UserType { get; protected set; }
+        public Enums.UserType UserType { get; }
         /// <summary>The message contents.</summary>
-        public string Message { get; protected set; }
+        public string Message { get; }
 
         /// <summary>Model constructor.</summary>
         public SentMessage(UserState state, string message)
@@ -32,8 +32,8 @@ namespace TwitchLib.Client.Models
             ColorHex = state.ColorHex;
             DisplayName = state.DisplayName;
             EmoteSet = state.EmoteSet;
-            IsModerator = state.Moderator;
-            IsSubscriber = state.Subscriber;
+            IsModerator = state.IsModerator;
+            IsSubscriber = state.IsSubscriber;
             UserType = state.UserType;
             Message = message;
         }

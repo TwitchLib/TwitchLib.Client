@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+    using TwitchLib.Client.Enums;
+    using TwitchLib.Client.Models.Internal;
+
 #if NET452
 
 #endif
@@ -15,70 +18,68 @@ namespace TwitchLib.Client.Models
     public class SubscriberBase
     {
         /// <summary>Property representing list of badges assigned.</summary>
-        public List<KeyValuePair<string, string>> Badges { get; protected set; }
+        public List<KeyValuePair<string, string>> Badges { get; }
         /// <summary>Property representing the colorhex of the resubscriber.</summary>
-        public string ColorHex { get; protected set; }
+        public string ColorHex { get; }
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public System.Drawing.Color Color { get; protected set; }
+        public Color Color { get; }
         /// <summary>Property representing resubscriber's customized display name.</summary>
-        public string DisplayName { get; protected set; }
+        public string DisplayName { get; }
         /// <summary>Property representing emote set of resubscriber.</summary>
-        public string EmoteSet { get; protected set; }
+        public string EmoteSet { get; }
         /// <summary>Property representing resub message id</summary>
-        public string Id { get; protected set; }
+        public string Id { get; }
         /// <summary>Property representing login of resubscription event.</summary>
-        public string Login { get; protected set; }
+        public string Login { get; }
         /// <summary>Property representing internval system message value.</summary>
-        public string SystemMessage { get; protected set; }
+        public string SystemMessage { get; }
         /// <summary>Property representing internal system message value, parsed.</summary>
-        public string SystemMessageParsed { get; protected set; }
+        public string SystemMessageParsed { get; }
         /// <summary>Property representing system message.</summary>
-        public string ResubMessage { get; protected set; }
+        public string ResubMessage { get; }
         /// <summary>Property representing the plan a user is on.</summary>
-        public Enums.SubscriptionPlan SubscriptionPlan { get; protected set; } = Enums.SubscriptionPlan.NotSet;
+        public SubscriptionPlan SubscriptionPlan { get; } = SubscriptionPlan.NotSet;
         /// <summary>Property representing the subscription plan name.</summary>
-        public string SubscriptionPlanName { get; protected set; }
+        public string SubscriptionPlanName { get; }
         /// <summary>Property representing the room id.</summary>
-        public string RoomId { get; protected set; }
+        public string RoomId { get; }
         /// <summary>Property representing the user's id.</summary>
-        public string UserId { get; protected set; }
+        public string UserId { get; }
         /// <summary>Property representing whether or not the resubscriber is a moderator.</summary>
-        public bool IsModerator { get; protected set; }
+        public bool IsModerator { get; }
         /// <summary>Property representing whether or not the resubscriber is a turbo member.</summary>
-        public bool IsTurbo { get; protected set; }
+        public bool IsTurbo { get; }
         /// <summary>Property representing whether or not the resubscriber is a subscriber (YES).</summary>
-        public bool IsSubscriber { get; protected set; }
+        public bool IsSubscriber { get; }
         /// <summary>Property representing whether or not person is a partner.</summary>
-        public bool IsPartner { get; protected set; }
+        public bool IsPartner { get; }
         /// <summary>Property representing the tmi-sent-ts value.</summary>
-        public string TmiSentTs { get; protected set; }
+        public string TmiSentTs { get; }
         /// <summary>Property representing the user type of the resubscriber.</summary>
-        public Enums.UserType UserType { get; protected set; }
+        public UserType UserType { get; }
         /// <summary>Property representing the raw IRC message (for debugging/customized parsing)</summary>
-        public string RawIrc { get; protected set; }
+        public string RawIrc { get; }
         /// <summary>Property representing the channel the resubscription happened in.</summary>
-        public string Channel { get; protected set; }
-        /// <summary>[DEPRECATED, USE SUBSCRIPTIONPLAN PROPERTY] Property representing if the resubscription came from Twitch Prime.</summary>
-        public bool IsTwitchPrime { get; protected set; }
+        public string Channel { get; }
         // @badges=subscriber/1,turbo/1;color=#2B119C;display-name=JustFunkIt;emotes=;id=9dasn-asdibas-asdba-as8as;login=justfunkit;mod=0;msg-id=resub;msg-param-months=2;room-id=44338537;subscriber=1;system-msg=JustFunkIt\ssubscribed\sfor\s2\smonths\sin\sa\srow!;turbo=1;user-id=26526370;user-type= :tmi.twitch.tv USERNOTICE #burkeblack :AVAST YEE SCURVY DOG
 
         protected readonly int months;
 
         /// <summary>Subscriber object constructor.</summary>
-        public SubscriberBase(string ircString)
+        protected SubscriberBase(IrcMessage ircMessage)
         {
-            RawIrc = ircString;
-            foreach (var section in ircString.Split(';'))
-            {
-                if (!section.Contains("=")) continue;
+            RawIrc = ircMessage.ToString();
+            Channel = ircMessage.Channel;
+            ResubMessage = ircMessage.Message;
 
-                var key = section.Split('=')[0];
-                var value = section.Split('=')[1];
-                switch (key)
+            foreach (var tag in ircMessage.Tags.Keys)
+            {
+                var tagValue = ircMessage.Tags[tag];
+                switch (tag)
                 {
-                    case "@badges":
+                    case Tags.Badges:
                         Badges = new List<KeyValuePair<string, string>>();
-                        foreach (var badgeValue in value.Split(','))
+                        foreach (var badgeValue in tagValue.Split(','))
                             if (badgeValue.Contains('/'))
                                 Badges.Add(new KeyValuePair<string, string>(badgeValue.Split('/')[0], badgeValue.Split('/')[1]));
                         // iterate through badges for special circumstances
@@ -88,123 +89,97 @@ namespace TwitchLib.Client.Models
                                 IsPartner = true;
                         }
                         break;
-                    case "color":
-                        ColorHex = value;
+                    case Tags.Color:
+                        ColorHex = tagValue;
                         if (!string.IsNullOrEmpty(ColorHex))
                             Color = ColorTranslator.FromHtml(ColorHex);
                         break;
-                    case "display-name":
-                        DisplayName = value.Replace(" ", "");
+                    case Tags.DisplayName:
+                        DisplayName = tagValue;
                         break;
-                    case "emotes":
-                        EmoteSet = value;
+                    case Tags.Emotes:
+                        EmoteSet = tagValue;
                         break;
-                    case "id":
-                        Id = value;
+                    case Tags.Id:
+                        Id = tagValue;
                         break;
-                    case "login":
-                        Login = value;
+                    case Tags.Login:
+                        Login = tagValue;
                         break;
-                    case "mod":
-                        IsModerator = value == "1";
+                    case Tags.Mod:
+                        IsModerator = ConvertToBool(tagValue);
                         break;
-                    case "msg-param-months":
-                        months = int.Parse(value);
+                    case Tags.MsgParamMonths:
+                        months = int.Parse(tagValue);
                         break;
-                    case "msg-param-sub-plan":
-                        switch (value.ToLower())
+                    case Tags.MsgParamSubPlan:
+                        switch (tagValue.ToLower())
                         {
                             case "prime":
-                                SubscriptionPlan = Enums.SubscriptionPlan.Prime;
+                                SubscriptionPlan = SubscriptionPlan.Prime;
                                 break;
                             case "1000":
-                                SubscriptionPlan = Enums.SubscriptionPlan.Tier1;
+                                SubscriptionPlan = SubscriptionPlan.Tier1;
                                 break;
                             case "2000":
-                                SubscriptionPlan = Enums.SubscriptionPlan.Tier2;
+                                SubscriptionPlan = SubscriptionPlan.Tier2;
                                 break;
                             case "3000":
-                                SubscriptionPlan = Enums.SubscriptionPlan.Tier3;
+                                SubscriptionPlan = SubscriptionPlan.Tier3;
                                 break;
                             default:
-                                throw new ArgumentOutOfRangeException(nameof(value.ToLower));
+                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
                         }
                         break;
-                    case "msg-param-sub-plan-name":
-                        SubscriptionPlanName = value.Replace("\\s", " ");
+                    case Tags.MsgParamSubPlanName:
+                        SubscriptionPlanName = tagValue.Replace("\\s", " ");
                         break;
-                    case "room-id":
-                        RoomId = value;
+                    case Tags.RoomId:
+                        RoomId = tagValue;
                         break;
-                    case "subscriber":
-                        IsSubscriber = value == "1";
+                    case Tags.Subscriber:
+                        IsSubscriber = ConvertToBool(tagValue);
                         break;
-                    case "system-msg":
-                        SystemMessage = value;
-                        SystemMessageParsed = value.Replace("\\s", " ");
+                    case Tags.SystemMsg:
+                        SystemMessage = tagValue;
+                        SystemMessageParsed = tagValue.Replace("\\s", " ");
                         break;
-                    case "tmi-sent-ts":
-                        TmiSentTs = value;
+                    case Tags.TmiSentTs:
+                        TmiSentTs = tagValue;
                         break;
-                    case "turbo":
-                        IsTurbo = value == "1";
+                    case Tags.Turbo:
+                        IsTurbo = ConvertToBool(tagValue);
                         break;
-                    case "user-id":
-                        UserId = value;
+                    case Tags.UserId:
+                        UserId = tagValue;
                         break;
-                }
-            }
-            // Parse user-type
-            if (ircString.Contains("=") && ircString.Contains(" "))
-            {
-                switch (ircString.Split(' ')[0].Split(';')[13].Split('=')[1])
-                {
-                    case "mod":
-                        UserType = Enums.UserType.Moderator;
-                        break;
-                    case "global_mod":
-                        UserType = Enums.UserType.GlobalModerator;
-                        break;
-                    case "admin":
-                        UserType = Enums.UserType.Admin;
-                        break;
-                    case "staff":
-                        UserType = Enums.UserType.Staff;
-                        break;
-                    default:
-                        UserType = Enums.UserType.Viewer;
+                    case Tags.UserType:
+                        switch (tagValue)
+                        {
+                            case "mod":
+                                UserType = UserType.Moderator;
+                                break;
+                            case "global_mod":
+                                UserType = UserType.GlobalModerator;
+                                break;
+                            case "admin":
+                                UserType = UserType.Admin;
+                                break;
+                            case "staff":
+                                UserType = UserType.Staff;
+                                break;
+                            default:
+                                UserType = UserType.Viewer;
+                                break;
+                        }
                         break;
                 }
             }
+        }
 
-
-            // Parse channel
-            if (ircString.Contains("#"))
-            {
-                if (ircString.Split('#').Length > 2)
-                {
-                    Channel = ircString.Split('#')[2].Contains(" ") ? ircString.Split('#')[2].Split(' ')[0].Replace(" ", "") : ircString.Split('#')[2].Replace(" ", "");
-                }
-                else
-                {
-                    Channel = ircString.Split('#')[1];
-                    if (Channel.Contains(" "))
-                        Channel = Channel.Split(' ')[0];
-                    if (Channel.Contains(":"))
-                        Channel = Channel.Split(':')[0];
-                }
-            }
-
-            // Parse sub message
-            ResubMessage = "";
-            if (ircString.Contains($"#{Channel} :"))
-            {
-                var rawParsedIrc = ircString.Split(new[] { $"#{Channel} :" }, StringSplitOptions.None)[0];
-                ResubMessage = ircString.Replace($"{rawParsedIrc}#{Channel} :", "");
-            }
-
-            // Check if Twitch Prime
-            IsTwitchPrime = SubscriptionPlan == Enums.SubscriptionPlan.Prime;
+        private static bool ConvertToBool(string data)
+        {
+            return data == "1";
         }
 
         /// <summary>Overriden ToString method, prints out all properties related to resub.</summary>

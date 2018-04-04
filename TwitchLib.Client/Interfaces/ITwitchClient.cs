@@ -10,10 +10,11 @@ namespace TwitchLib.Client.Interfaces
     {
         bool AutoReListenOnException { get; set; }
         MessageEmoteCollection ChannelEmotes { get; }
-        ConnectionCredentials ConnectionCredentials { get; set; }
+        ConnectionCredentials ConnectionCredentials { get; }
         bool DisableAutoPong { get; set; }
         bool IsConnected { get; }
-        List<JoinedChannel> JoinedChannels { get; }
+        bool IsInitialized { get; }
+        IReadOnlyList<JoinedChannel> JoinedChannels { get; }
         bool OverrideBeingHostedCheck { get; set; }
         WhisperMessage PreviousWhisper { get; }
         string TwitchUsername { get; }
@@ -58,24 +59,31 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnWhisperSentArgs> OnWhisperSent;
 
         void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
+
+        void SetConnectionCredentials(ConnectionCredentials credentials);
+
         void AddChatCommandIdentifier(char identifier);
         void AddWhisperCommandIdentifier(char identifier);
+        void RemoveChatCommandIdentifier(char identifier);
+        void RemoveWhisperCommandIdentifier(char identifier);
+
         void Connect();
         void Disconnect();
-        void GetChannelModerators();
-        void GetChannelModerators(JoinedChannel channel);
-        void GetChannelModerators(string channel);
+        void Reconnect();
+
         JoinedChannel GetJoinedChannel(string channel);
+
         void JoinChannel(string channel, bool overrideCheck = false);
         void JoinRoom(string channelId, string roomId, bool overrideCheck = false);
         void LeaveChannel(JoinedChannel channel);
         void LeaveChannel(string channel);
         void LeaveRoom(string channelId, string roomId);
-        //void Log(string message, bool includeDate = false, bool includeTime = false);
+
+        void GetChannelModerators(JoinedChannel channel);
+        void GetChannelModerators(string channel);
+
         void OnReadLineTest(string rawIrc);
-        void Reconnect();
-        void RemoveChatCommandIdentifier(char identifier);
-        void RemoveWhisperCommandIdentifier(char identifier);
+
         void SendMessage(JoinedChannel channel, string message, bool dryRun = false);
         void SendMessage(string channel, string message, bool dryRun = false);
         void SendQueuedItem(string message);

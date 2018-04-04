@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TwitchLib.Client.Common;
+using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
@@ -8,107 +11,89 @@ namespace TwitchLib.Client.Models
     public class UserState
     {
         /// <summary>Properrty representing the chat badges a specific user has.</summary>
-        public List<KeyValuePair<string, string>> Badges { get; protected set; } = new List<KeyValuePair<string, string>>();
+        public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
         /// <summary>Properrty representing HEX user's name.</summary>
-        public string ColorHex { get; protected set; }
+        public string ColorHex { get; }
         /// <summary>Property representing user's display name.</summary>
-        public string DisplayName { get; protected set; }
+        public string DisplayName { get; }
         /// <summary>Property representing emote sets available to user.</summary>
-        public string EmoteSet { get; protected set; }
+        public string EmoteSet { get; }
         /// <summary>Property representing channel.</summary>
-        public string Channel { get; protected set; }
+        public string Channel { get; }
         /// <summary>Property representing subscriber status.</summary>
-        public bool Subscriber { get; protected set; }
+        public bool IsSubscriber { get; }
         /// <summary>Property representing Turbo status.</summary>
-        public bool Moderator { get; protected set; }
+        public bool IsModerator { get; }
         /// <summary>Property representing returned user type of user.</summary>
-        public Enums.UserType UserType { get; protected set; }
+        public UserType UserType { get; }
 
         /// <summary>
         /// Constructor for UserState.
         /// </summary>
-        /// <param name="ircString"></param>
-        public UserState(string ircString)
+        /// <param name="ircMessage"></param>
+        public UserState(IrcMessage ircMessage)
         {
-            foreach (var part in ircString.Split(';'))
+            Channel = ircMessage.Channel;
+
+            foreach (var tag in ircMessage.Tags.Keys)
             {
-                // The 'user-type' section does not have a ; suffix, we will account for this outside of for loop, we should exit loop immediately
-                if (part.Contains(" :tmi.twitch.tv USERSTATE "))
+                var tagValue = ircMessage.Tags[tag];
+                switch (tag)
                 {
-                    // Lets deal with that user-type
-                    if (part.Split(' ')[0].Split('=')[0] == "user-type")
-                    {
-                        switch (part.Split(' ')[0].Split('=')[1])
+                    case Tags.Badges:
+                        if (tagValue.Contains('/'))
                         {
-                            case "mod":
-                                UserType = Enums.UserType.Moderator;
-                                break;
-
-                            case "global_mod":
-                                UserType = Enums.UserType.GlobalModerator;
-                                break;
-
-                            case "admin":
-                                UserType = Enums.UserType.Admin;
-                                break;
-
-                            case "staff":
-                                UserType = Enums.UserType.Staff;
-                                break;
-
-                            default:
-                                UserType = Enums.UserType.Viewer;
-                                break;
-                        }
-                    }
-                    break;
-                }
-                if (!part.Contains("="))
-                {
-                    // This should never happen, unless Twitch changes their shit.
-                    Console.WriteLine($"Unaccounted for [UserState]: {part}");
-                    continue;
-                }
-                switch (part.Split('=')[0])
-                {
-                    case "@badges":
-                        var badges = part.Split('=')[1];
-                        if (badges.Contains('/'))
-                        {
-                            if (!badges.Contains(","))
-                                Badges.Add(new KeyValuePair<string, string>(badges.Split('/')[0], badges.Split('/')[1]));
+                            if (!tagValue.Contains(","))
+                                Badges.Add(new KeyValuePair<string, string>(tagValue.Split('/')[0], tagValue.Split('/')[1]));
                             else
-                                foreach (var badge in badges.Split(','))
+                                foreach (var badge in tagValue.Split(','))
                                     Badges.Add(new KeyValuePair<string, string>(badge.Split('/')[0], badge.Split('/')[1]));
                         }
                         break;
-                    case "@color":
-                    case "color":
-                        ColorHex = part.Split('=')[1];
+                    case Tags.Color:
+                        ColorHex = tagValue;
                         break;
-                    case "display-name":
-                        DisplayName = part.Split('=')[1];
+                    case Tags.DisplayName:
+                        DisplayName = tagValue;
                         break;
-                    case "emote-sets":
-                        EmoteSet = part.Split('=')[1];
+                    case Tags.EmotesSets:
+                        EmoteSet = tagValue;
                         break;
-                    case "mod":
-                        Moderator = part.Split('=')[1] == "1";
+                    case Tags.Mod:
+                        IsModerator = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "subscriber":
-                        Subscriber = part.Split('=')[1] == "1";
+                    case Tags.Subscriber:
+                        IsSubscriber = Helpers.ConvertToBool(tagValue);
+                        break;
+                    case Tags.UserType:
+                        switch (tagValue)
+                        {
+                            case "mod":
+                                UserType = UserType.Moderator;
+                                break;
+                            case "global_mod":
+                                UserType = UserType.GlobalModerator;
+                                break;
+                            case "admin":
+                                UserType = UserType.Admin;
+                                break;
+                            case "staff":
+                                UserType = UserType.Staff;
+                                break;
+                            default:
+                                UserType = UserType.Viewer;
+                                break;
+                        }
                         break;
                     default:
                         // This should never happen, unless Twitch changes their shit
-                        Console.WriteLine($"Unaccounted for [UserState]: {part.Split('=')[0]}");
+                        Console.WriteLine($"Unaccounted for [UserState]: {tag}");
                         break;
                 }
             }
 
-            Channel = ircString.Split(' ')[3].Replace("#", "");
-            if (string.Equals(DisplayName, Channel, StringComparison.InvariantCultureIgnoreCase))
-                UserType = Enums.UserType.Broadcaster;
-
+            if (string.Equals(ircMessage.User, Channel, StringComparison.InvariantCultureIgnoreCase))
+                UserType = UserType.Broadcaster;
         }
     }
 }
