@@ -1132,7 +1132,7 @@ namespace TwitchLib.Client
             _client.Send(message);
         }
 
-        private static void HandleNotInitialized()
+        protected static void HandleNotInitialized()
         {
             throw new ClientNotInitializedException("The twitch client has not been initialized and cannot be used. Please call Initialize();");
         }
