@@ -1,94 +1,109 @@
 ﻿using System;
+using TwitchLib.Client.Common;
+using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     public class RitualNewChatter
     {
-        public string Badges { get; protected set; }
-        public string Color { get; protected set; }
-        public string DisplayName { get; protected set; }
-        public string Emotes { get; protected set; }
-        public string Id { get; protected set; }
-        public string Login { get; protected set; }
-        public bool Moderator { get; protected set; }
-        public string MsgId { get; protected set; }
-        public string MsgParamRitualName { get; protected set; }
-        public string RoomId { get; protected set; }
-        public bool Subscriber { get; protected set; }
-        public string SystemMsgParsed { get; protected set; }
-        public string SystemMsg { get; protected set; }
-        public string TmiSentTs { get; protected set; }
-        public bool Turbo { get; protected set; }
-        public string UserId { get; protected set; }
-        public string UserType { get; protected set; }
-        public string Message { get; protected set; }
+        public string Badges { get; }
+        public string Color { get; }
+        public string DisplayName { get; }
+        public string Emotes { get; }
+        public string Id { get; }
+        public string Login { get; }
+        public bool IsModerator { get; }
+        public string MsgId { get; }
+        public string MsgParamRitualName { get; }
+        public string RoomId { get; }
+        public bool IsSubscriber { get; }
+        public string SystemMsgParsed { get; }
+        public string SystemMsg { get; }
+        public string TmiSentTs { get; }
+        public bool IsTurbo { get; }
+        public string UserId { get; }
+        public UserType UserType { get; }
+        public string Message { get; }
 
         // badges=subscriber/0;color=#0000FF;display-name=KittyJinxu;emotes=30259:0-6;id=1154b7c0-8923-464e-a66b-3ef55b1d4e50;
         // login=kittyjinxu;mod=0;msg-id=ritual;msg-param-ritual-name=new_chatter;room-id=35740817;subscriber=1;
         // system-msg=@KittyJinxu\sis\snew\shere.\sSay\shello!;tmi-sent-ts=1514387871555;turbo=0;user-id=187446639;
         // user-type= USERNOTICE #thorlar kittyjinxu > #thorlar: HeyGuys
-        public RitualNewChatter(string ircMessage)
+        public RitualNewChatter(IrcMessage ircMessage)
         {
-            if (ircMessage[0] == '@')
-                ircMessage = ircMessage.Substring(0, ircMessage.Length - 1);
-            var main = ircMessage.Split(new [] { " USERNOTICE" }, StringSplitOptions.None);
-            Message = main[1].Split(new [] { ": " }, StringSplitOptions.None)[1];
-            foreach (var part in main[0].Split(';'))
+            Message = ircMessage.Message;
+            foreach (var tag in ircMessage.Tags.Keys)
             {
-                if (!part.Contains("=")) continue;
+                var tagValue = ircMessage.Tags[tag];
 
-                var key = part.Split('=')[0];
-                var val = part.Split('=')[1];
-                switch (key)
+                switch (tag)
                 {
-                    case "badges":
-                        Badges = val;
+                    case Tags.Badges:
+                        Badges = tagValue;
                         break;
-                    case "color":
-                        Color = val;
+                    case Tags.Color:
+                        Color = tagValue;
                         break;
-                    case "display-name":
-                        DisplayName = val;
+                    case Tags.DisplayName:
+                        DisplayName = tagValue;
                         break;
-                    case "emotes":
-                        Emotes = val;
+                    case Tags.Emotes:
+                        Emotes = tagValue;
                         break;
-                    case "id":
-                        Id = val;
+                    case Tags.Id:
+                        Id = tagValue;
                         break;
-                    case "login":
-                        Login = val;
+                    case Tags.Login:
+                        Login = tagValue;
                         break;
-                    case "mod":
-                        Moderator = (val == "1");
+                    case Tags.Mod:
+                        IsModerator = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "msg-id":
-                        MsgId = val;
+                    case Tags.MsgId:
+                        MsgId = tagValue;
                         break;
-                    case "msg-param-ritual-name":
-                        MsgParamRitualName = val;
+                    case Tags.MsgParamRitualName:
+                        MsgParamRitualName = tagValue;
                         break;
-                    case "room-id":
-                        RoomId = val;
+                    case Tags.RoomId:
+                        RoomId = tagValue;
                         break;
-                    case "subscriber":
-                        Subscriber = (val == "1");
+                    case Tags.Subscriber:
+                        IsSubscriber = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "system-msg":
-                        SystemMsg = val;
-                        SystemMsgParsed = val.Replace("\\s", " ").Replace("\\n", "");
+                    case Tags.SystemMsg:
+                        SystemMsg = tagValue;
+                        SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
                         break;
-                    case "tmi-sent-ts":
-                        TmiSentTs = val;
+                    case Tags.TmiSentTs:
+                        TmiSentTs = tagValue;
                         break;
-                    case "turbo":
-                        Turbo = (val == "1");
+                    case Tags.Turbo:
+                        IsTurbo = Helpers.ConvertToBool(tagValue);
                         break;
-                    case "user-id":
-                        UserId = val;
+                    case Tags.UserId:
+                        UserId = tagValue;
                         break;
-                    case "user-type":
-                        UserType = val;
+                    case Tags.UserType:
+                        switch (tagValue)
+                        {
+                            case "mod":
+                                UserType = UserType.Moderator;
+                                break;
+                            case "global_mod":
+                                UserType = UserType.GlobalModerator;
+                                break;
+                            case "admin":
+                                UserType = UserType.Admin;
+                                break;
+                            case "staff":
+                                UserType = UserType.Staff;
+                                break;
+                            default:
+                                UserType = UserType.Viewer;
+                                break;
+                        }
                         break;
                 }
             }

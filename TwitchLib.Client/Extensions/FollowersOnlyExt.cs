@@ -60,7 +60,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         public static void FollowersOnlyOff(this TwitchClient client, string channel)
         {
-            client.SendMessage(channel,".followersoff");
+            client.SendMessage(channel, ".followersoff");
         }
     }
 }

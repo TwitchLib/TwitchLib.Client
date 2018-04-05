@@ -1,4 +1,4 @@
-﻿namespace TwitchLib.Client.Models
+﻿namespace TwitchLib.Client.Models.Internal
 {
     public static class MsgIds
     {
@@ -12,6 +12,7 @@
         public const string BadHostHosting = "bad_host_hosting";
         public const string BadUnbanNoBan = "bad_unban_no_ban";
         public const string BanSuccess = "ban_success";
+        public const string ColorChanged = "color_changed";
         public const string EmoteOnlyOff = "emote_only_off";
         public const string EmoteOnlyOn = "emote_only_on";
         public const string HostOff = "host_off";
