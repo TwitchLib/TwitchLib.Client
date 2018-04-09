@@ -345,6 +345,14 @@ namespace TwitchLib.Client
         }
 
         #endregion
+        
+        internal void _raiseEvent(string eventName, object args)
+        {
+            FieldInfo fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
+            MulticastDelegate multi = fInfo.GetValue(this) as MulticastDelegate;
+            foreach (Delegate del in multi.GetInvocationList())
+                del.Method.Invoke(del.Target, new object[] { this, args });
+        }
 
         /// <summary>
         /// Sends a RAW IRC message.
