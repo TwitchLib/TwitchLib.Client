@@ -59,8 +59,6 @@ namespace TwitchLib.Client.Models
         public UserType UserType { get; }
         /// <summary>Property representing the raw IRC message (for debugging/customized parsing)</summary>
         public string RawIrc { get; }
-        /// <summary>Property representing the channel the resubscription happened in.</summary>
-        public string Channel { get; }
         // @badges=subscriber/1,turbo/1;color=#2B119C;display-name=JustFunkIt;emotes=;id=9dasn-asdibas-asdba-as8as;login=justfunkit;mod=0;msg-id=resub;msg-param-months=2;room-id=44338537;subscriber=1;system-msg=JustFunkIt\ssubscribed\sfor\s2\smonths\sin\sa\srow!;turbo=1;user-id=26526370;user-type= :tmi.twitch.tv USERNOTICE #burkeblack :AVAST YEE SCURVY DOG
 
         protected readonly int months;
@@ -69,7 +67,6 @@ namespace TwitchLib.Client.Models
         protected SubscriberBase(IrcMessage ircMessage)
         {
             RawIrc = ircMessage.ToString();
-            Channel = ircMessage.Channel;
             ResubMessage = ircMessage.Message;
 
             foreach (var tag in ircMessage.Tags.Keys)
@@ -186,8 +183,7 @@ namespace TwitchLib.Client.Models
         public override string ToString()
         {
             return $"Badges: {Badges.Count}, color hex: {ColorHex}, display name: {DisplayName}, emote set: {EmoteSet}, login: {Login}, system message: {SystemMessage}, " +
-                $"resub message: {ResubMessage}, months: {months}, room id: {RoomId}, user id: {UserId}, mod: {IsModerator}, turbo: {IsTurbo}, sub: {IsSubscriber}, user type: {UserType}, " +
-                   $"channel: {Channel}, raw irc: {RawIrc}";
+                $"resub message: {ResubMessage}, months: {months}, room id: {RoomId}, user id: {UserId}, mod: {IsModerator}, turbo: {IsTurbo}, sub: {IsSubscriber}, user type: {UserType}, raw irc: {RawIrc}";
         }
     }
 }
