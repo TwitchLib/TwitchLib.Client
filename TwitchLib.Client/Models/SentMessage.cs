@@ -37,5 +37,19 @@ namespace TwitchLib.Client.Models
             UserType = state.UserType;
             Message = message;
         }
+
+        internal SentMessage(List<KeyValuePair<string, string>> badges, string channel, string colorHex, string displayName, string emoteSet,
+            bool isModerator, bool isSubscriber, Enums.UserType userType, string message)
+        {
+            Badges = badges;
+            Channel = channel;
+            ColorHex = colorHex;
+            DisplayName = displayName;
+            EmoteSet = emoteSet;
+            IsModerator = isModerator;
+            IsSubscriber = isSubscriber;
+            UserType = userType;
+            Message = message;
+        }
     }
 }

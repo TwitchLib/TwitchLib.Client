@@ -22,5 +22,12 @@ namespace TwitchLib.Client.Models
                 BanReason = banReason;
             }
         }
+
+        internal UserBan(string channel, string username, string banReason)
+        {
+            Channel = channel;
+            Username = username;
+            BanReason = banReason;
+        }
     }
 }

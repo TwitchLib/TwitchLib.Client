@@ -26,7 +26,7 @@ namespace TwitchLib.Client.Models
         public bool IsModerator { get; }
         /// <summary>Property representing returned user type of user.</summary>
         public UserType UserType { get; }
-
+    
         /// <summary>
         /// Constructor for UserState.
         /// </summary>
@@ -94,6 +94,19 @@ namespace TwitchLib.Client.Models
 
             if (string.Equals(ircMessage.User, Channel, StringComparison.InvariantCultureIgnoreCase))
                 UserType = UserType.Broadcaster;
+        }
+
+        internal UserState(List<KeyValuePair<string, string>> badges, string colorHex, string displayName, string emoteSet, string channel,
+            bool isSubscriber, bool isModerator, UserType userType)
+        {
+            Badges = badges;
+            ColorHex = colorHex;
+            DisplayName = displayName;
+            EmoteSet = emoteSet;
+            Channel = channel;
+            IsSubscriber = isSubscriber;
+            IsModerator = isModerator;
+            UserType = UserType;
         }
     }
 }

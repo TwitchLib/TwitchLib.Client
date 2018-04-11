@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
@@ -39,6 +40,276 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel
             };
             client._raiseEvent("OnChatCleared", model);
+        }
+
+        public static void InvokeChatCommandsReceived(this TwitchClient client)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void InvokeConnected(this TwitchClient client, string autoJoinChannel, string botUsername)
+        {
+            var model = new OnConnectedArgs()
+            {
+                AutoJoinChannel = autoJoinChannel,
+                BotUsername = botUsername
+            };
+            client._raiseEvent("OnConnected", model);
+        }
+
+        public static void InvokeConnectionError(this TwitchClient client, string botUsername, ErrorEvent errorEvent)
+        {
+            var model = new OnConnectionErrorArgs()
+            {
+                BotUsername = botUsername,
+                Error = errorEvent
+            };
+            client._raiseEvent("OnConnectionError", model);
+        }
+
+        public static void InvokeDisconnected(this TwitchClient client, string botUsername)
+        {
+            var model = new OnDisconnectedArgs()
+            {
+                BotUsername = botUsername
+            };
+            client._raiseEvent("OnDisconnected", model);
+        }
+
+        public static void InvokeExistingUsersDetected(this TwitchClient client, string channel, List<string> users)
+        {
+            var model = new OnExistingUsersDetectedArgs()
+            {
+                Channel = channel,
+                Users = users
+            };
+            client._raiseEvent("OnExistingUsersDetected", model);
+        }
+
+        public static void InvokeOnGiftedSubscription(this TwitchClient client)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void InvokeOnHostingStarted(this TwitchClient client, string hostingChannel, string targetChannel, int viewers)
+        {
+            var model = new OnHostingStartedArgs()
+            {
+                HostingStarted = new HostingStarted(hostingChannel, targetChannel, viewers)
+            };
+            client._raiseEvent("OnHostingStarted", model);
+        }
+
+        public static void InvokeOnHostingStopped(this TwitchClient client, string hostingChannel, int viewers)
+        {
+            var model = new OnHostingStoppedArgs()
+            {
+                HostingStopped = new HostingStopped(hostingChannel, viewers)
+            };
+            client._raiseEvent("OnHostingStoped", model);
+        }
+
+        public static void InvokeHostLeft(this TwitchClient client)
+        {
+            client._raiseEvent("OnHostLeft");
+        }
+
+        public static void InvokeIncorrectLogin(this TwitchClient client, Exceptions.ErrorLoggingInException ex)
+        {
+            var model = new OnIncorrectLoginArgs()
+            {
+                Exception = ex
+            };
+            client._raiseEvent("OnIncorrectLogin", model);
+        }
+
+        public static void InvokeJoinedChannel(this TwitchClient client, string botUsername, string channel)
+        {
+            var model = new OnJoinedChannelArgs()
+            {
+                BotUsername = botUsername,
+                Channel = channel
+            };
+            client._raiseEvent("OnJoinedChannel", model);
+        }
+
+        public static void InvokeLeftChannel(this TwitchClient client, string botUsername, string channel)
+        {
+            var model = new OnLeftChannelArgs()
+            {
+                BotUsername = botUsername,
+                Channel = channel
+            };
+            client._raiseEvent("OnLeftChannel", model);
+        }
+
+        public static void InvokeLog(this TwitchClient client, string botUsername, string data, DateTime dateTime)
+        {
+            var model = new OnLogArgs()
+            {
+                BotUsername = botUsername,
+                Data = data,
+                DateTime = dateTime
+            };
+            client._raiseEvent("OnLog", model);
+        }
+
+        public static void InvokeMessageReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName, string colorHex,
+            Color color, EmoteSet emoteSet, string message, UserType userType, string channel, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo,
+            bool isModerator, bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
+            CheerBadge cheerBadge, int bits, double bitsInDollars)
+        {
+            var model = new OnMessageReceivedArgs()
+            {
+                ChatMessage = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, isSubscriber,
+                subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, noisy, rawIrcMessage, emoteReplacedMessage, badges, cheerBadge, bits,
+                bitsInDollars)
+            };
+            client._raiseEvent("OnMessageReceived", model);
+        }
+
+        public static void InvokeMessageSent(this TwitchClient client, List<KeyValuePair<string, string>> badges, string channel, string colorHex,
+            string displayName, string emoteSet, bool isModerator, bool isSubscriber, UserType userType, string message)
+        {
+            var model = new OnMessageSentArgs()
+            {
+                SentMessage = new SentMessage(badges, channel, colorHex, displayName, emoteSet, isModerator, isSubscriber, userType, message)
+            };
+            client._raiseEvent("OnMessageSent", model);
+        }
+
+        public static void InvokeModeratorJoined(this TwitchClient client, string channel, string username)
+        {
+            var model = new OnModeratorJoinedArgs()
+            {
+                Channel = channel,
+                Username = username
+            };
+            client._raiseEvent("OnModeratorJoined", model);
+        }
+
+        public static void InvokeModeratorLeft(this TwitchClient client, string channel, string username)
+        {
+            var model = new OnModeratorLeftArgs()
+            {
+                Channel = channel,
+                Username = username
+            };
+            client._raiseEvent("OnModeratorLeft", model);
+        }
+
+        public static void InvokeModeratorsReceived(this TwitchClient client, string channel, List<string> moderators)
+        {
+            var model = new OnModeratorsReceivedArgs()
+            {
+                Channel = channel,
+                Moderators = moderators
+            };
+            client._raiseEvent("OnModeratorsReceived", model);
+        }
+
+        public static void InvokeNewSubscriber()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void InvokeNowHosting(this TwitchClient client, string channel, string hostedChannel)
+        {
+            var model = new OnNowHostingArgs()
+            {
+                Channel = channel,
+                HostedChannel = hostedChannel
+            };
+            client._raiseEvent("OnNowHosting", model);
+        }
+
+        public static void InvokeRaidNotification()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void InvokeReSubscriber()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void InvokeSendReceiveData(this TwitchClient client, string data, SendReceiveDirection direction)
+        {
+            var model = new OnSendReceiveDataArgs()
+            {
+                Data = data,
+                Direction = direction
+            };
+            client._raiseEvent("OnSendReceiveData", model);
+        }
+
+        public static void InvokeUserBanned(this TwitchClient client, string channel, string username, string banReason)
+        {
+            var model = new OnUserBannedArgs()
+            {
+                UserBan = new UserBan(channel, username, banReason)
+            };
+            client._raiseEvent("OnUserBanned", model);
+        }
+
+        public static void InvokeUserJoined(this TwitchClient client, string channel, string username)
+        {
+            var model = new OnUserJoinedArgs()
+            {
+                Channel = channel,
+                Username = username
+            };
+            client._raiseEvent("OnUserJoined", model);
+        }
+
+        public static void InvokeUserLeft(this TwitchClient client, string channel, string username)
+        {
+            var model = new OnUserLeftArgs()
+            {
+                Channel = channel,
+                Username = username
+            };
+            client._raiseEvent("OnUserLeft", model);
+        }
+
+        public static void InvokeUserStateChanged(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, string displayName,
+            string emoteSet, string channel, bool isSubscriber, bool isModerator, UserType userType)
+        {
+            var model = new OnUserStateChangedArgs()
+            {
+                UserState = new UserState(badges, colorHex, displayName, emoteSet, channel, isSubscriber, isModerator, userType)
+            };
+            client._raiseEvent("OnUserStateChanged", model);
+        }
+
+        public static void InvokeUserTimedout(this TwitchClient client, string channel, string username, int timeoutDuration, string timeoutReason)
+        {
+            var model = new OnUserTimedoutArgs()
+            {
+                UserTimeout = new UserTimeout(channel, username, timeoutDuration, timeoutReason)
+            };
+            client._raiseEvent("OnUserTimedout", model);
+        }
+
+        public static void InvokeWhisperCommandReceived(this TwitchClient client)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void InvokeWhisperReceived(this TwitchClient client)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void InvokeWhisperSent(this TwitchClient client, string username, string receiver, string message)
+        {
+            var model = new OnWhisperSentArgs()
+            {
+                Message = message,
+                Receiver = receiver,
+                Username = username
+            };
+            client._raiseEvent("OnWhisperSent", model);
         }
 
         public static void InvokeNewSubscriber(this TwitchClient client, string channel, string colorHex, string displayName, string emotes, 

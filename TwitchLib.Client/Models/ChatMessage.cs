@@ -241,19 +241,34 @@ namespace TwitchLib.Client.Models
             }
         }
 
-        /// <summary>Chat Message constructor with passed in values.</summary>
-        public ChatMessage(List<KeyValuePair<string, string>> badges, string channel, string colorHex, string displayName,
-            EmoteSet emoteSet, bool moderator, bool subscriber, UserType userType, string message)
+        internal ChatMessage(string botUsername, string userId, string userName, string displayName, string colorHex, Color color, EmoteSet emoteSet,
+            string message, UserType userType, string channel, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo, bool isModerator,
+            bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
+            CheerBadge cheerBadge, int bits, double bitsInDollars)
         {
-            Badges = badges;
-            Channel = channel;
+            BotUsername = botUsername;
+            UserId = userId;
+            DisplayName = displayName;
             ColorHex = colorHex;
-            Username = DisplayName = displayName;
+            Color = color;
             EmoteSet = emoteSet;
-            IsModerator = moderator;
-            IsSubscriber = subscriber;
-            UserType = userType;
             Message = message;
+            UserType = userType;
+            Channel = channel;
+            IsSubscriber = isSubscriber;
+            SubscribedMonthCount = subscribedMonthCount;
+            RoomId = roomId;
+            IsTurbo = isTurbo;
+            IsModerator = isModerator;
+            IsMe = isMe;
+            IsBroadcaster = isBroadcaster;
+            Noisy = Noisy;
+            RawIrcMessage = rawIrcMessage;
+            EmoteReplacedMessage = emoteReplacedMessage;
+            Badges = badges;
+            CheerBadge = cheerBadge;
+            Bits = bits;
+            BitsInDollars = BitsInDollars;
         }
 
         private static double ConvertBitsToUsd(int bits)
