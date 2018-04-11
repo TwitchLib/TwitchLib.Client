@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Extensions
 {
@@ -37,6 +39,53 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel
             };
             client._raiseEvent("OnChatCleared", model);
+        }
+
+        public static void InvokeNewSubscriber(this TwitchClient client, string channel, string colorHex, string displayName, string emotes, 
+            string id, string login, bool mod, int msgParamMonths, string msgParamSubPlanName, string roomId, bool subscriber, string systemMsg,
+            string tmiSentTs, bool turbo, string userId, UserType userType)
+        {
+            string userTypeStr = "viewer";
+            switch(userType)
+            {
+                case UserType.Moderator:
+                    userTypeStr = "mod";
+                    break;
+                case UserType.GlobalModerator:
+                    userTypeStr = "global_mod";
+                    break;
+                case UserType.Admin:
+                    userTypeStr = "admin";
+                    break;
+                case UserType.Staff:
+                    userTypeStr = "staff";
+                    break;
+            }
+
+            var irc = new IrcMessage(Enums.Internal.IrcCommand.UserNotice, new string[] { channel }, "", new Dictionary<string, string>()
+            {
+                { Tags.Badges, "" },
+                { Tags.Color, colorHex },
+                { Tags.DisplayName, displayName },
+                { Tags.Emotes, emotes },
+                { Tags.Id, id },
+                { Tags.Login, login },
+                { Tags.Mod, mod ? "1" : "0" },
+                { Tags.MsgParamMonths, msgParamMonths.ToString() },
+                { Tags.MsgParamSubPlanName, msgParamSubPlanName },
+                { Tags.RoomId, roomId },
+                { Tags.Subscriber, subscriber ? "1" : "0" },
+                { Tags.SystemMsg, systemMsg },
+                { Tags.TmiSentTs, tmiSentTs },
+                { Tags.Turbo, turbo ? "1" : "0" },
+                { Tags.UserId, userId },
+                { Tags.UserType, userTypeStr }
+            });
+            var model = new OnNewSubscriberArgs()
+            {
+                Subscriber = new Subscriber(irc)
+            };
+            client._raiseEvent("OnNewSubscriber", model);
         }
     }
 }
