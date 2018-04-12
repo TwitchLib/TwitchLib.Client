@@ -334,14 +334,25 @@ namespace TwitchLib.Client.Extensions
             client._raiseEvent("OnUserTimedout", model);
         }
 
-        public static void InvokeWhisperCommandReceived(this TwitchClient client)
+        public static void InvokeWhisperCommandReceived(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
+            string userId, bool isTurbo, string botUsername, string message, UserType userType, string commandText, string argumentsAsString, List<string> argumentsAsList, char commandIdentifier)
         {
-            throw new NotImplementedException();
+            var whisperMsg = new WhisperMessage(badges, colorHex, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType);
+            var model = new OnWhisperCommandReceivedArgs()
+            {
+                Command = new WhisperCommand(whisperMsg, commandText, argumentsAsString, argumentsAsList, commandIdentifier)
+            };
+            client._raiseEvent("OnWhisperCommandReceived", model);
         }
 
-        public static void InvokeWhisperReceived(this TwitchClient client)
+        public static void InvokeWhisperReceived(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
+            string userId, bool isTurbo, string botUsername, string message, UserType userType)
         {
-            throw new NotImplementedException();
+            var model = new OnWhisperReceivedArgs()
+            {
+                WhisperMessage = new WhisperMessage(badges, colorHex, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType)
+            };
+            client._raiseEvent("OnWhisperReceived", model);
         }
 
         public static void InvokeWhisperSent(this TwitchClient client, string username, string receiver, string message)
