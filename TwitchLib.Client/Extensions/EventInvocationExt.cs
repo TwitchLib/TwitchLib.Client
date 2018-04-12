@@ -18,7 +18,7 @@ namespace TwitchLib.Client.Extensions
             {
                 BeingHostedNotification = new BeingHostedNotification(channel, botUsername, hostedByChannel, viewers, isAutoHosted)
             };
-            client._raiseEvent("OnBeingHosted", model);
+            client.RaiseEvent("OnBeingHosted", model);
         }
 
         public static void InvokeChannelStateChanged(this TwitchClient client, string channel, bool r9k, bool rituals, 
@@ -30,7 +30,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 ChannelState = state
             };
-            client._raiseEvent("OnChannelStateChanged", model);
+            client.RaiseEvent("OnChannelStateChanged", model);
         }
 
         public static void InvokeChatCleared(this TwitchClient client, string channel)
@@ -39,7 +39,7 @@ namespace TwitchLib.Client.Extensions
             {
                 Channel = channel
             };
-            client._raiseEvent("OnChatCleared", model);
+            client.RaiseEvent("OnChatCleared", model);
         }
 
         public static void InvokeChatCommandsReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName,
@@ -55,7 +55,7 @@ namespace TwitchLib.Client.Extensions
             {
                 Command = new ChatCommand(msg, commandText, argumentsAsString, argumentsAsList, commandIdentifier)
             };
-            client._raiseEvent("OnChatCommandsReceived", model);
+            client.RaiseEvent("OnChatCommandsReceived", model);
         }
 
         public static void InvokeConnected(this TwitchClient client, string autoJoinChannel, string botUsername)
@@ -65,7 +65,7 @@ namespace TwitchLib.Client.Extensions
                 AutoJoinChannel = autoJoinChannel,
                 BotUsername = botUsername
             };
-            client._raiseEvent("OnConnected", model);
+            client.RaiseEvent("OnConnected", model);
         }
 
         public static void InvokeConnectionError(this TwitchClient client, string botUsername, ErrorEvent errorEvent)
@@ -75,7 +75,7 @@ namespace TwitchLib.Client.Extensions
                 BotUsername = botUsername,
                 Error = errorEvent
             };
-            client._raiseEvent("OnConnectionError", model);
+            client.RaiseEvent("OnConnectionError", model);
         }
 
         public static void InvokeDisconnected(this TwitchClient client, string botUsername)
@@ -84,7 +84,7 @@ namespace TwitchLib.Client.Extensions
             {
                 BotUsername = botUsername
             };
-            client._raiseEvent("OnDisconnected", model);
+            client.RaiseEvent("OnDisconnected", model);
         }
 
         public static void InvokeExistingUsersDetected(this TwitchClient client, string channel, List<string> users)
@@ -94,7 +94,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Users = users
             };
-            client._raiseEvent("OnExistingUsersDetected", model);
+            client.RaiseEvent("OnExistingUsersDetected", model);
         }
 
         public static void InvokeGiftedSubscription(this TwitchClient client, string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
@@ -108,7 +108,7 @@ namespace TwitchLib.Client.Extensions
                 msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
                 userType)
             };
-            client._raiseEvent("OnNewSubscriber", model);
+            client.RaiseEvent("OnNewSubscriber", model);
         }
 
         public static void InvokeOnHostingStarted(this TwitchClient client, string hostingChannel, string targetChannel, int viewers)
@@ -117,7 +117,7 @@ namespace TwitchLib.Client.Extensions
             {
                 HostingStarted = new HostingStarted(hostingChannel, targetChannel, viewers)
             };
-            client._raiseEvent("OnHostingStarted", model);
+            client.RaiseEvent("OnHostingStarted", model);
         }
 
         public static void InvokeOnHostingStopped(this TwitchClient client, string hostingChannel, int viewers)
@@ -126,12 +126,12 @@ namespace TwitchLib.Client.Extensions
             {
                 HostingStopped = new HostingStopped(hostingChannel, viewers)
             };
-            client._raiseEvent("OnHostingStoped", model);
+            client.RaiseEvent("OnHostingStoped", model);
         }
 
         public static void InvokeHostLeft(this TwitchClient client)
         {
-            client._raiseEvent("OnHostLeft");
+            client.RaiseEvent("OnHostLeft");
         }
 
         public static void InvokeIncorrectLogin(this TwitchClient client, Exceptions.ErrorLoggingInException ex)
@@ -140,7 +140,7 @@ namespace TwitchLib.Client.Extensions
             {
                 Exception = ex
             };
-            client._raiseEvent("OnIncorrectLogin", model);
+            client.RaiseEvent("OnIncorrectLogin", model);
         }
 
         public static void InvokeJoinedChannel(this TwitchClient client, string botUsername, string channel)
@@ -150,7 +150,7 @@ namespace TwitchLib.Client.Extensions
                 BotUsername = botUsername,
                 Channel = channel
             };
-            client._raiseEvent("OnJoinedChannel", model);
+            client.RaiseEvent("OnJoinedChannel", model);
         }
 
         public static void InvokeLeftChannel(this TwitchClient client, string botUsername, string channel)
@@ -160,7 +160,7 @@ namespace TwitchLib.Client.Extensions
                 BotUsername = botUsername,
                 Channel = channel
             };
-            client._raiseEvent("OnLeftChannel", model);
+            client.RaiseEvent("OnLeftChannel", model);
         }
 
         public static void InvokeLog(this TwitchClient client, string botUsername, string data, DateTime dateTime)
@@ -171,7 +171,7 @@ namespace TwitchLib.Client.Extensions
                 Data = data,
                 DateTime = dateTime
             };
-            client._raiseEvent("OnLog", model);
+            client.RaiseEvent("OnLog", model);
         }
 
         public static void InvokeMessageReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName, string colorHex,
@@ -185,7 +185,7 @@ namespace TwitchLib.Client.Extensions
                 subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, noisy, rawIrcMessage, emoteReplacedMessage, badges, cheerBadge, bits,
                 bitsInDollars)
             };
-            client._raiseEvent("OnMessageReceived", model);
+            client.RaiseEvent("OnMessageReceived", model);
         }
 
         public static void InvokeMessageSent(this TwitchClient client, List<KeyValuePair<string, string>> badges, string channel, string colorHex,
@@ -195,7 +195,7 @@ namespace TwitchLib.Client.Extensions
             {
                 SentMessage = new SentMessage(badges, channel, colorHex, displayName, emoteSet, isModerator, isSubscriber, userType, message)
             };
-            client._raiseEvent("OnMessageSent", model);
+            client.RaiseEvent("OnMessageSent", model);
         }
 
         public static void InvokeModeratorJoined(this TwitchClient client, string channel, string username)
@@ -205,7 +205,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Username = username
             };
-            client._raiseEvent("OnModeratorJoined", model);
+            client.RaiseEvent("OnModeratorJoined", model);
         }
 
         public static void InvokeModeratorLeft(this TwitchClient client, string channel, string username)
@@ -215,7 +215,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Username = username
             };
-            client._raiseEvent("OnModeratorLeft", model);
+            client.RaiseEvent("OnModeratorLeft", model);
         }
 
         public static void InvokeModeratorsReceived(this TwitchClient client, string channel, List<string> moderators)
@@ -225,7 +225,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Moderators = moderators
             };
-            client._raiseEvent("OnModeratorsReceived", model);
+            client.RaiseEvent("OnModeratorsReceived", model);
         }
 
         public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName, 
@@ -238,7 +238,7 @@ namespace TwitchLib.Client.Extensions
                 Subscriber = new Subscriber(badges, colorHex, color, displayName, emoteSet, id, login, systemMessage, systemMessageParsed, resubMessage,
                 subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
             };
-            client._raiseEvent("OnNewSubscriber", model);
+            client.RaiseEvent("OnNewSubscriber", model);
         }
 
         public static void InvokeNowHosting(this TwitchClient client, string channel, string hostedChannel)
@@ -248,7 +248,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 HostedChannel = hostedChannel
             };
-            client._raiseEvent("OnNowHosting", model);
+            client.RaiseEvent("OnNowHosting", model);
         }
 
         public static void InvokeRaidNotification(this TwitchClient client, string channel, string badges, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
@@ -260,7 +260,7 @@ namespace TwitchLib.Client.Extensions
                 RaidNotificaiton = new RaidNotification(badges, color, displayName, emotes, id, login, moderator, msgId, msgParamDisplayName, msgParamLogin, msgParamViewerCount,
                 roomId, subscriber, systemMsg, systemMsgParsed, tmiSentTs, turbo, userType)
             };
-            client._raiseEvent("OnRaidNotification", model);
+            client.RaiseEvent("OnRaidNotification", model);
         }
 
         public static void InvokeReSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName,
@@ -273,7 +273,7 @@ namespace TwitchLib.Client.Extensions
                 ReSubscriber = new ReSubscriber(badges, colorHex, color, displayName, emoteSet, id, login, systemMessage, systemMessageParsed, resubMessage,
                 subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
             };
-            client._raiseEvent("OnNewSubscriber", model);
+            client.RaiseEvent("OnNewSubscriber", model);
         }
 
         public static void InvokeSendReceiveData(this TwitchClient client, string data, SendReceiveDirection direction)
@@ -283,7 +283,7 @@ namespace TwitchLib.Client.Extensions
                 Data = data,
                 Direction = direction
             };
-            client._raiseEvent("OnSendReceiveData", model);
+            client.RaiseEvent("OnSendReceiveData", model);
         }
 
         public static void InvokeUserBanned(this TwitchClient client, string channel, string username, string banReason)
@@ -292,7 +292,7 @@ namespace TwitchLib.Client.Extensions
             {
                 UserBan = new UserBan(channel, username, banReason)
             };
-            client._raiseEvent("OnUserBanned", model);
+            client.RaiseEvent("OnUserBanned", model);
         }
 
         public static void InvokeUserJoined(this TwitchClient client, string channel, string username)
@@ -302,7 +302,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Username = username
             };
-            client._raiseEvent("OnUserJoined", model);
+            client.RaiseEvent("OnUserJoined", model);
         }
 
         public static void InvokeUserLeft(this TwitchClient client, string channel, string username)
@@ -312,7 +312,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Username = username
             };
-            client._raiseEvent("OnUserLeft", model);
+            client.RaiseEvent("OnUserLeft", model);
         }
 
         public static void InvokeUserStateChanged(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, string displayName,
@@ -322,7 +322,7 @@ namespace TwitchLib.Client.Extensions
             {
                 UserState = new UserState(badges, colorHex, displayName, emoteSet, channel, isSubscriber, isModerator, userType)
             };
-            client._raiseEvent("OnUserStateChanged", model);
+            client.RaiseEvent("OnUserStateChanged", model);
         }
 
         public static void InvokeUserTimedout(this TwitchClient client, string channel, string username, int timeoutDuration, string timeoutReason)
@@ -331,7 +331,7 @@ namespace TwitchLib.Client.Extensions
             {
                 UserTimeout = new UserTimeout(channel, username, timeoutDuration, timeoutReason)
             };
-            client._raiseEvent("OnUserTimedout", model);
+            client.RaiseEvent("OnUserTimedout", model);
         }
 
         public static void InvokeWhisperCommandReceived(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
@@ -342,7 +342,7 @@ namespace TwitchLib.Client.Extensions
             {
                 Command = new WhisperCommand(whisperMsg, commandText, argumentsAsString, argumentsAsList, commandIdentifier)
             };
-            client._raiseEvent("OnWhisperCommandReceived", model);
+            client.RaiseEvent("OnWhisperCommandReceived", model);
         }
 
         public static void InvokeWhisperReceived(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
@@ -352,7 +352,7 @@ namespace TwitchLib.Client.Extensions
             {
                 WhisperMessage = new WhisperMessage(badges, colorHex, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType)
             };
-            client._raiseEvent("OnWhisperReceived", model);
+            client.RaiseEvent("OnWhisperReceived", model);
         }
 
         public static void InvokeWhisperSent(this TwitchClient client, string username, string receiver, string message)
@@ -363,7 +363,7 @@ namespace TwitchLib.Client.Extensions
                 Receiver = receiver,
                 Username = username
             };
-            client._raiseEvent("OnWhisperSent", model);
+            client.RaiseEvent("OnWhisperSent", model);
         }
     }
 }

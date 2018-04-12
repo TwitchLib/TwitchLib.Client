@@ -346,7 +346,7 @@ namespace TwitchLib.Client
 
         #endregion
         
-        internal void _raiseEvent(string eventName, object args = null)
+        internal void RaiseEvent(string eventName, object args = null)
         {
             FieldInfo fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
             MulticastDelegate multi = fInfo.GetValue(this) as MulticastDelegate;
