@@ -199,7 +199,6 @@ namespace TwitchLib.Client.Models
             TmiSentTs = tmiSentTs;
             UserType = userType;
             RawIrc = rawIrc;
-            Channel = channel;
         }
 
         private static bool ConvertToBool(string data)
