@@ -23,5 +23,14 @@ namespace TwitchLib.Client.Models
             if (ircMessage.Message.Contains("auto hosting"))
                 IsAutoHosted = true;
         }
+
+        internal BeingHostedNotification(string channel, string botUsername, string hostedByChannel, int viewers, bool isAutoHosted)
+        {
+            Channel = channel;
+            BotUsername = botUsername;
+            HostedByChannel = hostedByChannel;
+            Viewers = viewers;
+            IsAutoHosted = isAutoHosted;
+        }
     }
 }

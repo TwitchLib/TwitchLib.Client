@@ -15,5 +15,11 @@ namespace TwitchLib.Client.Models
             HostingChannel = ircMessage.Channel;
             Viewers = splitted[1].StartsWith("-") ? 0 : int.Parse(splitted[1]);
         }
+
+        internal HostingStopped(string hostingChannel, int viewers)
+        {
+            HostingChannel = hostingChannel;
+            Viewers = viewers;
+        }
     }
 }
