@@ -42,9 +42,20 @@ namespace TwitchLib.Client.Extensions
             client._raiseEvent("OnChatCleared", model);
         }
 
-        public static void InvokeChatCommandsReceived(this TwitchClient client)
+        public static void InvokeChatCommandsReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName,
+            string colorHex, Color color, EmoteSet emoteSet, string message, UserType userType, string channel, bool isSubscriber, int subscribedMonthCount,
+            string roomId, bool isTurbo, bool isModerator, bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage,
+            List<KeyValuePair<string, string>> badges, CheerBadge cheerBadge, int bits, double bitsInDollars, string commandText, string argumentsAsString,
+            List<string> argumentsAsList, char commandIdentifier)
         {
-            throw new NotImplementedException();
+            var msg = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel,
+                isSubscriber, subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, noisy, rawIrcMessage, emoteReplacedMessage,
+                badges, cheerBadge, bits, bitsInDollars);
+            var model = new OnChatCommandReceivedArgs()
+            {
+                Command = new ChatCommand(msg, commandText, argumentsAsString, argumentsAsList, commandIdentifier)
+            };
+            client._raiseEvent("OnChatCommandsReceived", model);
         }
 
         public static void InvokeConnected(this TwitchClient client, string autoJoinChannel, string botUsername)
@@ -86,9 +97,18 @@ namespace TwitchLib.Client.Extensions
             client._raiseEvent("OnExistingUsersDetected", model);
         }
 
-        public static void InvokeOnGiftedSubscription(this TwitchClient client)
+        public static void InvokeGiftedSubscription(this TwitchClient client, string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
+            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
+            string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
+            string tmiSentTs, bool isTurbo, UserType userType)
         {
-            throw new NotImplementedException();
+            var model = new OnGiftedSubscriptionArgs()
+            {
+                GiftedSubscription = new GiftedSubscription(badges, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
+                msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
+                userType)
+            };
+            client._raiseEvent("OnNewSubscriber", model);
         }
 
         public static void InvokeOnHostingStarted(this TwitchClient client, string hostingChannel, string targetChannel, int viewers)
@@ -208,49 +228,15 @@ namespace TwitchLib.Client.Extensions
             client._raiseEvent("OnModeratorsReceived", model);
         }
 
-        public static void InvokeNewSubscriber(this TwitchClient client, string channel, string colorHex, string displayName, string emotes,
-            string id, string login, bool mod, int msgParamMonths, string msgParamSubPlanName, string roomId, bool subscriber, string systemMsg,
-            string tmiSentTs, bool turbo, string userId, UserType userType)
+        public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName, 
+            string emoteSet, string id, string login, string systemMessage, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
+            string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs, 
+            UserType userType, string rawIrc, string channel)
         {
-            string userTypeStr = "viewer";
-            switch (userType)
-            {
-                case UserType.Moderator:
-                    userTypeStr = "mod";
-                    break;
-                case UserType.GlobalModerator:
-                    userTypeStr = "global_mod";
-                    break;
-                case UserType.Admin:
-                    userTypeStr = "admin";
-                    break;
-                case UserType.Staff:
-                    userTypeStr = "staff";
-                    break;
-            }
-
-            var irc = new IrcMessage(Enums.Internal.IrcCommand.UserNotice, new string[] { channel }, "", new Dictionary<string, string>()
-            {
-                { Tags.Badges, "" },
-                { Tags.Color, colorHex },
-                { Tags.DisplayName, displayName },
-                { Tags.Emotes, emotes },
-                { Tags.Id, id },
-                { Tags.Login, login },
-                { Tags.Mod, mod ? "1" : "0" },
-                { Tags.MsgParamMonths, msgParamMonths.ToString() },
-                { Tags.MsgParamSubPlanName, msgParamSubPlanName },
-                { Tags.RoomId, roomId },
-                { Tags.Subscriber, subscriber ? "1" : "0" },
-                { Tags.SystemMsg, systemMsg },
-                { Tags.TmiSentTs, tmiSentTs },
-                { Tags.Turbo, turbo ? "1" : "0" },
-                { Tags.UserId, userId },
-                { Tags.UserType, userTypeStr }
-            });
             var model = new OnNewSubscriberArgs()
             {
-                Subscriber = new Subscriber(irc)
+                Subscriber = new Subscriber(badges, colorHex, color, displayName, emoteSet, id, login, systemMessage, systemMessageParsed, resubMessage,
+                subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
             };
             client._raiseEvent("OnNewSubscriber", model);
         }
@@ -265,14 +251,29 @@ namespace TwitchLib.Client.Extensions
             client._raiseEvent("OnNowHosting", model);
         }
 
-        public static void InvokeRaidNotification()
+        public static void InvokeRaidNotification(this TwitchClient client, string channel, string badges, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
+            string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType)
         {
-            throw new NotImplementedException();
+            var model = new OnRaidNotificationArgs()
+            {
+                Channel = channel,
+                RaidNotificaiton = new RaidNotification(badges, color, displayName, emotes, id, login, moderator, msgId, msgParamDisplayName, msgParamLogin, msgParamViewerCount,
+                roomId, subscriber, systemMsg, systemMsgParsed, tmiSentTs, turbo, userType)
+            };
+            client._raiseEvent("OnRaidNotification", model);
         }
 
-        public static void InvokeReSubscriber()
+        public static void InvokeReSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName,
+            string emoteSet, string id, string login, string systemMessage, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
+            string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs,
+            UserType userType, string rawIrc, string channel)
         {
-            throw new NotImplementedException();
+            var model = new OnReSubscriberArgs()
+            {
+                ReSubscriber = new ReSubscriber(badges, colorHex, color, displayName, emoteSet, id, login, systemMessage, systemMessageParsed, resubMessage,
+                subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
+            };
+            client._raiseEvent("OnNewSubscriber", model);
         }
 
         public static void InvokeSendReceiveData(this TwitchClient client, string data, SendReceiveDirection direction)

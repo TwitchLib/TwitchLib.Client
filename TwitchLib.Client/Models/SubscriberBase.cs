@@ -177,6 +177,34 @@ namespace TwitchLib.Client.Models
             }
         }
 
+        internal SubscriberBase(List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName, string emoteSet, string id, string login, string systemMessage,
+            string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan, string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo,
+            bool isSubscriber, bool isPartner, string tmiSentTs, UserType userType, string rawIrc, string channel)
+        {
+            Badges = badges;
+            ColorHex = colorHex;
+            Color = color;
+            DisplayName = displayName;
+            EmoteSet = emoteSet;
+            Id = id;
+            Login = login;
+            SystemMessage = systemMessage;
+            SystemMessageParsed = systemMessageParsed;
+            ResubMessage = resubMessage;
+            SubscriptionPlan = subscriptionPlan;
+            SubscriptionPlanName = subscriptionPlanName;
+            RoomId = roomId;
+            UserId = UserId;
+            IsModerator = isModerator;
+            IsTurbo = isTurbo;
+            IsSubscriber = isSubscriber;
+            IsPartner = isPartner;
+            TmiSentTs = tmiSentTs;
+            UserType = userType;
+            RawIrc = rawIrc;
+            Channel = channel;
+        }
+
         private static bool ConvertToBool(string data)
         {
             return data == "1";

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using TwitchLib.Client.Common;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
@@ -133,6 +135,33 @@ namespace TwitchLib.Client.Models
                         break;
                 }
             }
+        }
+        internal GiftedSubscription(string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
+            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
+            string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
+            string tmiSentTs, bool isTurbo, UserType userType)
+        {
+            Badges = badges;
+            Color = color;
+            DisplayName = displayName;
+            Emotes = emotes;
+            Id = id;
+            Login = login;
+            IsModerator = isModerator;
+            MsgId = msgId;
+            MsgParamMonths = msgParamMonths;
+            MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
+            MsgParamRecipientId = msgParamRecipientId;
+            MsgParamRecipientUserName = msgParamRecipientUserName;
+            MsgParamSubPlanName = msgParamSubPlanName;
+            MsgParamSubPlan = msgParamSubPlan;
+            RoomId = roomId;
+            IsSubscriber = isSubscriber;
+            SystemMsg = systemMsg;
+            SystemMsgParsed = systemMsgParsed;
+            TmiSentTs = tmiSentTs;
+            IsTurbo = isTurbo;
+            UserType = userType;
         }
     }
 }
