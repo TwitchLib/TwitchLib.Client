@@ -55,7 +55,7 @@ namespace TwitchLib.Client.Extensions
             {
                 Command = new ChatCommand(msg, commandText, argumentsAsString, argumentsAsList, commandIdentifier)
             };
-            client.RaiseEvent("OnChatCommandsReceived", model);
+            client.RaiseEvent("OnChatCommandReceived", model);
         }
 
         public static void InvokeConnected(this TwitchClient client, string autoJoinChannel, string botUsername)
@@ -108,7 +108,7 @@ namespace TwitchLib.Client.Extensions
                 msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
                 userType)
             };
-            client.RaiseEvent("OnNewSubscriber", model);
+            client.RaiseEvent("OnGiftedSubscription", model);
         }
 
         public static void InvokeOnHostingStarted(this TwitchClient client, string hostingChannel, string targetChannel, int viewers)
@@ -126,7 +126,7 @@ namespace TwitchLib.Client.Extensions
             {
                 HostingStopped = new HostingStopped(hostingChannel, viewers)
             };
-            client.RaiseEvent("OnHostingStoped", model);
+            client.RaiseEvent("OnHostingStopped", model);
         }
 
         public static void InvokeHostLeft(this TwitchClient client)
@@ -273,7 +273,7 @@ namespace TwitchLib.Client.Extensions
                 ReSubscriber = new ReSubscriber(badges, colorHex, color, displayName, emoteSet, id, login, systemMessage, systemMessageParsed, resubMessage,
                 subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
             };
-            client.RaiseEvent("OnNewSubscriber", model);
+            client.RaiseEvent("OnReSubscriber", model);
         }
 
         public static void InvokeSendReceiveData(this TwitchClient client, string data, SendReceiveDirection direction)

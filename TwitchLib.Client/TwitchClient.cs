@@ -353,7 +353,7 @@ namespace TwitchLib.Client
             foreach (Delegate del in multi.GetInvocationList())
             {
                 if (args == null)
-                    del.Method.Invoke(del.Target, new object[] { this });
+                    del.Method.Invoke(del.Target, new object[] { this, new EventArgs() });
                 else
                     del.Method.Invoke(del.Target, new object[] { this, args });
             }
