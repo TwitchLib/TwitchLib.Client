@@ -1,4 +1,4 @@
 # TwitchLib.Client
 Client component of TwitchLib.
 
-For an example refer to https://github.com/TwitchLib/TwitchLib/blob/master/README.md
+For a general overview and example, refer to https://github.com/TwitchLib/TwitchLib/blob/master/README.md
