@@ -385,6 +385,11 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
+            if(message.Length > 500)
+            {
+                LogError("Message length has exceeded the maximum character count. (500)");
+                return;
+            }
 
             var twitchMessage = new OutboundChatMessage
             {
@@ -1138,7 +1143,25 @@ namespace TwitchLib.Client
 
             OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }
+        
+        private void LogError(string message, bool includeDate = false, bool includeTime = false)
+        {
+            string dateTimeStr;
+            if (includeDate && includeTime)
+                dateTimeStr = $"{DateTime.UtcNow}";
+            else if (includeDate)
+                dateTimeStr = $"{DateTime.UtcNow.ToShortDateString()}";
+            else
+                dateTimeStr = $"{DateTime.UtcNow.ToShortTimeString()}";
 
+            if (includeDate || includeTime)
+                _logger?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
+            else
+                _logger?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
+
+            OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
+        }
+        
         public void SendQueuedItem(string message)
         {
             if (!IsInitialized) HandleNotInitialized();
