@@ -74,5 +74,19 @@ namespace TwitchLib.Client.Models
             }
             Channel = ircMessage.Channel;
         }
+
+        internal ChannelState(bool r9k, bool rituals, bool subonly, int slowMode, bool emoteOnly, string broadcasterLanguage, string channel, TimeSpan followersOnly, bool mercury, string roomId)
+        {
+            R9K = r9k;
+            Rituals = rituals;
+            SubOnly = subonly;
+            SlowMode = slowMode;
+            EmoteOnly = emoteOnly;
+            BroadcasterLanguage = broadcasterLanguage;
+            Channel = channel;
+            FollowersOnly = followersOnly;
+            Mercury = mercury;
+            RoomId = roomId;
+        }
     }
 }

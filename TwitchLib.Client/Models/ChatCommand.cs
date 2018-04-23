@@ -30,5 +30,14 @@ namespace TwitchLib.Client.Models
                 ArgumentsAsList = Common.Helpers.ParseQuotesAndNonQuotes(ArgumentsAsString);
             CommandIdentifier = chatMessage.Message[0];
         }
+
+        internal ChatCommand(ChatMessage chatMessage, string commandText, string argumentsAsString, List<string> argumentsAsList, char commandIdentifier)
+        {
+            ChatMessage = chatMessage;
+            CommandText = commandText;
+            ArgumentsAsString = argumentsAsString;
+            ArgumentsAsList = argumentsAsList;
+            CommandIdentifier = commandIdentifier;
+        }
     }
 }

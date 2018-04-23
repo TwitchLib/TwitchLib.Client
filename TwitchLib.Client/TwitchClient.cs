@@ -345,6 +345,19 @@ namespace TwitchLib.Client
         }
 
         #endregion
+        
+        internal void RaiseEvent(string eventName, object args = null)
+        {
+            FieldInfo fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
+            MulticastDelegate multi = fInfo.GetValue(this) as MulticastDelegate;
+            foreach (Delegate del in multi.GetInvocationList())
+            {
+                if (args == null)
+                    del.Method.Invoke(del.Target, new object[] { this, new EventArgs() });
+                else
+                    del.Method.Invoke(del.Target, new object[] { this, args });
+            }
+        }
 
         /// <summary>
         /// Sends a RAW IRC message.
@@ -1054,7 +1067,7 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.ReSubscription:
                     var resubscriber = new ReSubscriber(ircMessage);
-                    OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber });
+                    OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.Ritual:
                     var successRitualName = ircMessage.Tags.TryGetValue(Tags.MsgParamRitualName, out var ritualName);
@@ -1077,11 +1090,11 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.SubGift:
                     var giftedSubscription = new GiftedSubscription(ircMessage);
-                    OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription });
+                    OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.Subscription:
                     var subscriber = new Subscriber(ircMessage);
-                    OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs { Subscriber = subscriber });
+                    OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs { Subscriber = subscriber, Channel = ircMessage.Channel });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });

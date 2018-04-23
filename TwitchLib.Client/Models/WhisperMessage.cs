@@ -44,6 +44,24 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing user type of sender.</summary>
         public UserType UserType { get; }
 
+        internal WhisperMessage(List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
+            string userId, bool isTurbo, string botUsername, string message, UserType userType)
+        {
+            Badges = badges;
+            ColorHex = colorHex;
+            Color = color;
+            Username = username;
+            DisplayName = displayName;
+            EmoteSet = emoteSet;
+            ThreadId = threadId;
+            MessageId = messageId;
+            UserId = userId;
+            IsTurbo = isTurbo;
+            BotUsername = botUsername;
+            Message = message;
+            UserType = userType;
+        }
+
         /// <summary>
         /// WhisperMessage constructor.
         /// </summary>

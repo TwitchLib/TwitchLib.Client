@@ -33,5 +33,13 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
+
+        internal UserTimeout(string channel, string username, int timeoutDuration, string timeoutReason)
+        {
+            Channel = channel;
+            Username = username;
+            TimeoutDuration = timeoutDuration;
+            TimeoutReason = timeoutReason;
+        }
     }
 }
