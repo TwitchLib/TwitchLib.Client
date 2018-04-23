@@ -626,30 +626,6 @@ namespace TwitchLib.Client
             LeaveChannel(channel.Channel);
         }
 
-        /// <summary>
-        /// Sends a request to get channel moderators. You MUST listen to OnModeratorsReceived event./>.
-        /// </summary>
-        /// <param name="channel">JoinedChannel object to designate which channel to send request to.</param>
-        public void GetChannelModerators(JoinedChannel channel)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            if (OnModeratorsReceived == null)
-                Log("[GetChannelModerators] You are not listening to OnModeratorsReceived. The response to this message will not be handled.");
-            SendMessage(channel, "/mods");
-        }
-
-        /// <summary>
-        /// Sends a request to get channel moderators. You MUST listen to OnModeratorsReceived event./>.
-        /// </summary>
-        /// <param name="channel">String representing channel to designate which channel to send request to.</param>
-        public void GetChannelModerators(string channel)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            var joinedChannel = GetJoinedChannel(channel);
-            if (joinedChannel != null)
-                GetChannelModerators(joinedChannel);
-        }
-
         #endregion
 
         /// <summary>

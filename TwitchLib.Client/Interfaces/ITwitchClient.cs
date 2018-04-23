@@ -79,9 +79,6 @@ namespace TwitchLib.Client.Interfaces
         void LeaveChannel(string channel);
         void LeaveRoom(string channelId, string roomId);
 
-        void GetChannelModerators(JoinedChannel channel);
-        void GetChannelModerators(string channel);
-
         void OnReadLineTest(string rawIrc);
 
         void SendMessage(JoinedChannel channel, string message, bool dryRun = false);
