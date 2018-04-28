@@ -557,6 +557,7 @@ namespace TwitchLib.Client
         public void JoinChannel(string channel, bool overrideCheck = false)
         {
             if (!IsInitialized) HandleNotInitialized();
+            if (!IsConnected) HandleNotConnected();
             // Channel MUST be lower case
             channel = channel.ToLower();
             // Check to see if client is already in channel
@@ -1147,6 +1148,11 @@ namespace TwitchLib.Client
         protected static void HandleNotInitialized()
         {
             throw new ClientNotInitializedException("The twitch client has not been initialized and cannot be used. Please call Initialize();");
+        }
+
+        protected static void HandleNotConnected()
+        {
+            throw new ClientNotConnectedException("In order to perform this action, the client must be connected to Twitch. To confirm connection, try performing this action in or after the OnConnected event has been fired.");
         }
     }
 }
