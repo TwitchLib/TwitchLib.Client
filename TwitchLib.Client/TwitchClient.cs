@@ -385,6 +385,11 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
+            if(message.Length > 500)
+            {
+                LogError("Message length has exceeded the maximum character count. (500)");
+                return;
+            }
 
             var twitchMessage = new OutboundChatMessage
             {
@@ -552,6 +557,7 @@ namespace TwitchLib.Client
         public void JoinChannel(string channel, bool overrideCheck = false)
         {
             if (!IsInitialized) HandleNotInitialized();
+            if (!IsConnected) HandleNotConnected();
             // Channel MUST be lower case
             channel = channel.ToLower();
             // Check to see if client is already in channel
@@ -619,30 +625,6 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             LeaveChannel(channel.Channel);
-        }
-
-        /// <summary>
-        /// Sends a request to get channel moderators. You MUST listen to OnModeratorsReceived event./>.
-        /// </summary>
-        /// <param name="channel">JoinedChannel object to designate which channel to send request to.</param>
-        public void GetChannelModerators(JoinedChannel channel)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            if (OnModeratorsReceived == null)
-                Log("[GetChannelModerators] You are not listening to OnModeratorsReceived. The response to this message will not be handled.");
-            SendMessage(channel, "/mods");
-        }
-
-        /// <summary>
-        /// Sends a request to get channel moderators. You MUST listen to OnModeratorsReceived event./>.
-        /// </summary>
-        /// <param name="channel">String representing channel to designate which channel to send request to.</param>
-        public void GetChannelModerators(string channel)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            var joinedChannel = GetJoinedChannel(channel);
-            if (joinedChannel != null)
-                GetChannelModerators(joinedChannel);
         }
 
         #endregion
@@ -1138,7 +1120,25 @@ namespace TwitchLib.Client
 
             OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }
+        
+        private void LogError(string message, bool includeDate = false, bool includeTime = false)
+        {
+            string dateTimeStr;
+            if (includeDate && includeTime)
+                dateTimeStr = $"{DateTime.UtcNow}";
+            else if (includeDate)
+                dateTimeStr = $"{DateTime.UtcNow.ToShortDateString()}";
+            else
+                dateTimeStr = $"{DateTime.UtcNow.ToShortTimeString()}";
 
+            if (includeDate || includeTime)
+                _logger?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
+            else
+                _logger?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
+
+            OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
+        }
+        
         public void SendQueuedItem(string message)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -1148,6 +1148,11 @@ namespace TwitchLib.Client
         protected static void HandleNotInitialized()
         {
             throw new ClientNotInitializedException("The twitch client has not been initialized and cannot be used. Please call Initialize();");
+        }
+
+        protected static void HandleNotConnected()
+        {
+            throw new ClientNotConnectedException("In order to perform this action, the client must be connected to Twitch. To confirm connection, try performing this action in or after the OnConnected event has been fired.");
         }
     }
 }
