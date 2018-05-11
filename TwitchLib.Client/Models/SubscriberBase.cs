@@ -29,36 +29,37 @@ namespace TwitchLib.Client.Models
         public string EmoteSet { get; }
         /// <summary>Property representing resub message id</summary>
         public string Id { get; }
+        /// <summary>Property representing whether or not the resubscriber is a moderator.</summary>
+        public bool IsModerator { get; }
+        /// <summary>Property representing whether or not person is a partner.</summary>
+        public bool IsPartner { get; }
+        /// <summary>Property representing whether or not the resubscriber is a subscriber (YES).</summary>
+        public bool IsSubscriber { get; }
+        /// <summary>Property representing whether or not the resubscriber is a turbo member.</summary>
+        public bool IsTurbo { get; }
         /// <summary>Property representing login of resubscription event.</summary>
         public string Login { get; }
-        /// <summary>Property representing internval system message value.</summary>
-        public string SystemMessage { get; }
-        /// <summary>Property representing internal system message value, parsed.</summary>
-        public string SystemMessageParsed { get; }
+        /// <summary>Property representing the raw IRC message (for debugging/customized parsing)</summary>
+        public string RawIrc { get; }
         /// <summary>Property representing system message.</summary>
         public string ResubMessage { get; }
+        /// <summary>Property representing the room id.</summary>
+        public string RoomId { get; }
         /// <summary>Property representing the plan a user is on.</summary>
         public SubscriptionPlan SubscriptionPlan { get; } = SubscriptionPlan.NotSet;
         /// <summary>Property representing the subscription plan name.</summary>
         public string SubscriptionPlanName { get; }
-        /// <summary>Property representing the room id.</summary>
-        public string RoomId { get; }
+        /// <summary>Property representing internval system message value.</summary>
+        public string SystemMessage { get; }
+        /// <summary>Property representing internal system message value, parsed.</summary>
+        public string SystemMessageParsed { get; }
+        /// <summary>Property representing the tmi-sent-ts value.</summary>
+        public string TmiSentTs { get; }        
         /// <summary>Property representing the user's id.</summary>
         public string UserId { get; }
-        /// <summary>Property representing whether or not the resubscriber is a moderator.</summary>
-        public bool IsModerator { get; }
-        /// <summary>Property representing whether or not the resubscriber is a turbo member.</summary>
-        public bool IsTurbo { get; }
-        /// <summary>Property representing whether or not the resubscriber is a subscriber (YES).</summary>
-        public bool IsSubscriber { get; }
-        /// <summary>Property representing whether or not person is a partner.</summary>
-        public bool IsPartner { get; }
-        /// <summary>Property representing the tmi-sent-ts value.</summary>
-        public string TmiSentTs { get; }
         /// <summary>Property representing the user type of the resubscriber.</summary>
         public UserType UserType { get; }
-        /// <summary>Property representing the raw IRC message (for debugging/customized parsing)</summary>
-        public string RawIrc { get; }
+        
         // @badges=subscriber/1,turbo/1;color=#2B119C;display-name=JustFunkIt;emotes=;id=9dasn-asdibas-asdba-as8as;login=justfunkit;mod=0;msg-id=resub;msg-param-months=2;room-id=44338537;subscriber=1;system-msg=JustFunkIt\ssubscribed\sfor\s2\smonths\sin\sa\srow!;turbo=1;user-id=26526370;user-type= :tmi.twitch.tv USERNOTICE #burkeblack :AVAST YEE SCURVY DOG
 
         protected readonly int months;
