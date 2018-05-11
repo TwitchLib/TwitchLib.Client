@@ -19,28 +19,28 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Property representing dynamic badges assigned to message.</summary>
         public List<KeyValuePair<string, string>> Badges { get; }
-        /// <summary>Property representing HEX representation of color of username.</summary>
-        public string ColorHex { get; }
+        /// <summary>Property representing bot's username.</summary>
+        public string BotUsername { get; }
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
         public Color Color { get; }
-        /// <summary>Property representing sender Username.</summary>
-        public string Username { get; }
+        /// <summary>Property representing HEX representation of color of username.</summary>
+        public string ColorHex { get; }
         /// <summary>Property representing sender DisplayName (can be null/blank).</summary>
         public string DisplayName { get; }
         /// <summary>Property representing list of string emotes in message.</summary>
         public EmoteSet EmoteSet { get; }
-        /// <summary>Property representing identifier of the message thread.</summary>
-        public string ThreadId { get; }
-        /// <summary>Property representing message identifier.</summary>
-        public string MessageId { get; }
-        /// <summary>Property representing sender identifier.</summary>
-        public string UserId { get; }
         /// <summary>Property representing whether or not sender has Turbo.</summary>
         public bool IsTurbo { get; }
-        /// <summary>Property representing bot's username.</summary>
-        public string BotUsername { get; }
         /// <summary>Property representing message contents.</summary>
         public string Message { get; }
+        /// <summary>Property representing message identifier.</summary>
+        public string MessageId { get; }
+        /// <summary>Property representing identifier of the message thread.</summary>
+        public string ThreadId { get; }
+        /// <summary>Property representing sender identifier.</summary>
+        public string UserId { get; }
+        /// <summary>Property representing sender Username.</summary>
+        public string Username { get; }
         /// <summary>Property representing user type of sender.</summary>
         public UserType UserType { get; }
 
