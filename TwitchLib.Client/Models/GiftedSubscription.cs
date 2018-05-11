@@ -14,8 +14,10 @@ namespace TwitchLib.Client.Models
         public string DisplayName { get; }
         public string Emotes { get; }
         public string Id { get; }
-        public string Login { get; }
         public bool IsModerator { get; }
+        public bool IsSubscriber { get; }
+        public bool IsTurbo { get; }
+        public string Login { get; }        
         public string MsgId { get; }
         public string MsgParamMonths { get; }
         public string MsgParamRecipientDisplayName { get; }
@@ -23,12 +25,10 @@ namespace TwitchLib.Client.Models
         public string MsgParamRecipientUserName { get; }
         public string MsgParamSubPlanName { get; }
         public SubscriptionPlan MsgParamSubPlan { get; }
-        public string RoomId { get; }
-        public bool IsSubscriber { get; }
+        public string RoomId { get; }        
         public string SystemMsg { get; }
         public string SystemMsgParsed { get; }
-        public string TmiSentTs { get; }
-        public bool IsTurbo { get; }
+        public string TmiSentTs { get; }        
         public UserType UserType { get; }
 
         public GiftedSubscription(IrcMessage ircMessage)
