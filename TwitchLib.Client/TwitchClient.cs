@@ -558,8 +558,6 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (!IsConnected) HandleNotConnected();
-            // Channel MUST be lower case
-            channel = channel.ToLower();
             // Check to see if client is already in channel
             if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channel && !overrideCheck) != null)
                 return;
@@ -700,7 +698,8 @@ namespace TwitchLib.Client
                 _currentlyJoiningChannels = true;
                 var channelToJoin = _joinChannelQueue.Dequeue();
                 Log($"Joining channel: {channelToJoin.Channel}");
-                _client.Send(Rfc2812.Join($"#{channelToJoin.Channel}"));
+                // important we set channel to lower case when sending join message
+                _client.Send(Rfc2812.Join($"#{channelToJoin.Channel.ToLower()}"));
                 _joinedChannelManager.AddJoinedChannel(new JoinedChannel(channelToJoin.Channel));
                 StartJoinedChannelTimer(channelToJoin.Channel);
             }
