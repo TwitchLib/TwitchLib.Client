@@ -21,9 +21,8 @@ namespace TwitchLib.Client.Manager
 
         public JoinedChannel GetJoinedChannel(string channel)
         {
-            var success = _joinedChannels.TryGetValue(channel, out var joinedChannel);
-
-            return success ? joinedChannel : null;
+            bool success = _joinedChannels.Any(x => x.Key.ToLower() == channel.ToLower());
+            return success ? _joinedChannels.First(x => x.Key.ToLower() == channel.ToLower()).Value : null;
         }
 
         public IReadOnlyList<JoinedChannel> GetJoinedChannels()
