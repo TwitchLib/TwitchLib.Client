@@ -6,12 +6,12 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Channel that had timeout event.</summary>
         public string Channel;
-        /// <summary>Viewer that was timedout.</summary>
-        public string Username;
         /// <summary>Duration of timeout IN SECONDS.</summary>
         public int TimeoutDuration;
         /// <summary>Reason for timeout, if it was provided.</summary>
         public string TimeoutReason;
+        /// <summary>Viewer that was timedout.</summary>
+        public string Username;
 
         public UserTimeout(IrcMessage ircMessage)
         {

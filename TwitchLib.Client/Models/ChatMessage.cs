@@ -20,54 +20,55 @@ namespace TwitchLib.Client.Models
     {
         private readonly MessageEmoteCollection _emoteCollection;
 
-        /// <summary>Twitch username of the bot that received the message.</summary>
-        public string BotUsername { get; }
-        /// <summary>Twitch-unique integer assigned on per account basis.</summary>
-        public string UserId { get; }
-        /// <summary>Username of sender of chat message.</summary>
-        public string Username { get; }
-        /// <summary>Case-sensitive username of sender of chat message.</summary>
-        public string DisplayName { get; }
-        /// <summary>Hex representation of username color in chat (THIS CAN BE NULL IF VIEWER HASN'T SET COLOR).</summary>
-        public string ColorHex { get; }
-        /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public Color Color { get; }
-        /// <summary>Emote Ids that exist in message.</summary>
-        public EmoteSet EmoteSet { get; }
-        /// <summary>Twitch chat message contents.</summary>
-        public string Message { get; }
-        /// <summary>User type can be viewer, moderator, global mod, admin, or staff</summary>
-        public UserType UserType { get; }
-        /// <summary>Twitch channel message was sent from (useful for multi-channel bots).</summary>
-        public string Channel { get; }
-        /// <summary>Channel specific subscriber status.</summary>
-        public bool IsSubscriber { get; }
-        /// <summary>Number of months a person has been subbed.</summary>
-        public int SubscribedMonthCount { get; }
-        /// <summary>Unique identifier of chat room.</summary>
-        public string RoomId { get; }
-        /// <summary>Twitch site-wide turbo status.</summary>
-        public bool IsTurbo { get; }
-        /// <summary>Channel specific moderator status.</summary>
-        public bool IsModerator { get; }
-        /// <summary>Chat message /me identifier flag.</summary>
-        public bool IsMe { get; }
-        /// <summary>Chat message from broadcaster identifier flag</summary>
-        public bool IsBroadcaster { get; }
-        /// <summary>Experimental property noisy determination by Twitch.</summary>
-        public Noisy Noisy { get; } = Noisy.NotSet;
-        /// <summary>Raw IRC-style text received from Twitch.</summary>
-        public string RawIrcMessage { get; }
-        /// <summary>Text after emotes have been handled (if desired). Will be null if replaceEmotes is false.</summary>
-        public string EmoteReplacedMessage { get; }
         /// <summary>List of key-value pair badges.</summary>
         public List<KeyValuePair<string, string>> Badges { get; }
-        /// <summary>If a cheer badge exists, this property represents the raw value and color (more later). Can be null.</summary>
-        public CheerBadge CheerBadge { get; }
         /// <summary>If viewer sent bits in their message, total amount will be here.</summary>
         public int Bits { get; }
         /// <summary>Number of USD (United States Dollars) spent on bits.</summary>
         public double BitsInDollars { get; }
+        /// <summary>Twitch username of the bot that received the message.</summary>
+        public string BotUsername { get; }
+        /// <summary>Twitch channel message was sent from (useful for multi-channel bots).</summary>
+        public string Channel { get; }
+        /// <summary>If a cheer badge exists, this property represents the raw value and color (more later). Can be null.</summary>
+        public CheerBadge CheerBadge { get; }
+        /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
+        public Color Color { get; }
+        /// <summary>Hex representation of username color in chat (THIS CAN BE NULL IF VIEWER HASN'T SET COLOR).</summary>
+        public string ColorHex { get; }
+        /// <summary>Case-sensitive username of sender of chat message.</summary>
+        public string DisplayName { get; }
+        /// <summary>Text after emotes have been handled (if desired). Will be null if replaceEmotes is false.</summary>
+        public string EmoteReplacedMessage { get; }
+        /// <summary>Emote Ids that exist in message.</summary>
+        public EmoteSet EmoteSet { get; }
+        /// <summary>Chat message from broadcaster identifier flag</summary>
+        public bool IsBroadcaster { get; }
+        /// <summary>Chat message /me identifier flag.</summary>
+        public bool IsMe { get; }
+        /// <summary>Channel specific moderator status.</summary>
+        public bool IsModerator { get; }
+        /// <summary>Channel specific subscriber status.</summary>
+        public bool IsSubscriber { get; }
+        /// <summary>Twitch site-wide turbo status.</summary>
+        public bool IsTurbo { get; }
+        /// <summary>Twitch chat message contents.</summary>
+        public string Message { get; }
+        /// <summary>Experimental property noisy determination by Twitch.</summary>
+        public Noisy Noisy { get; } = Noisy.NotSet;
+        /// <summary>Raw IRC-style text received from Twitch.</summary>
+        public string RawIrcMessage { get; }
+        /// <summary>Unique identifier of chat room.</summary>
+        public string RoomId { get; }
+        /// <summary>Number of months a person has been subbed.</summary>
+        public int SubscribedMonthCount { get; }
+        /// <summary>Twitch-unique integer assigned on per account basis.</summary>
+        public string UserId { get; }
+        /// <summary>Username of sender of chat message.</summary>
+        public string Username { get; }
+        /// <summary>User type can be viewer, moderator, global mod, admin, or staff</summary>
+        public UserType UserType { get; }
+        
 
         private readonly string _emoteSetStorage;
 

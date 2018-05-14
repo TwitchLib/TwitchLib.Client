@@ -12,18 +12,18 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Properrty representing the chat badges a specific user has.</summary>
         public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
+        /// <summary>Property representing channel.</summary>
+        public string Channel { get; }
         /// <summary>Properrty representing HEX user's name.</summary>
         public string ColorHex { get; }
         /// <summary>Property representing user's display name.</summary>
         public string DisplayName { get; }
         /// <summary>Property representing emote sets available to user.</summary>
         public string EmoteSet { get; }
-        /// <summary>Property representing channel.</summary>
-        public string Channel { get; }
-        /// <summary>Property representing subscriber status.</summary>
-        public bool IsSubscriber { get; }
         /// <summary>Property representing Turbo status.</summary>
         public bool IsModerator { get; }
+        /// <summary>Property representing subscriber status.</summary>
+        public bool IsSubscriber { get; }        
         /// <summary>Property representing returned user type of user.</summary>
         public UserType UserType { get; }
     
