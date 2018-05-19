@@ -907,6 +907,13 @@ namespace TwitchLib.Client
                 case MsgIds.RaidNoticeMature:
                     OnRaidedChannelIsMatureAudience?.Invoke(this, null);
                     break;
+                case MsgIds.MsgChannelSuspended:
+                    _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
+                    QueueingJoinCheck();
+                    OnFailureToReceiveJoinConfirmation(this, new OnFailureToReceiveJoinConfirmationArgs {
+                        Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
+                        });
+                    break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
                     Log($"Unaccounted for: {ircMessage.ToString()}");
