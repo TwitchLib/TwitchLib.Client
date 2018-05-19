@@ -908,11 +908,10 @@ namespace TwitchLib.Client
                     OnRaidedChannelIsMatureAudience?.Invoke(this, null);
                     break;
                 case MsgIds.MsgChannelSuspended:
-                    string channel = ircMessage.ToString().Split('#')[1].Split(' ')[0];
-                    _awaitingJoins.RemoveAll(x => x.Key.ToLower() == channel);
+                    _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
                     QueueingJoinCheck();
                     OnFailureToReceiveJoinConfirmation(this, new OnFailureToReceiveJoinConfirmationArgs {
-                        Exception = new FailureToReceiveJoinConfirmationException(channel, ircMessage.Message)
+                        Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
                         });
                     break;
                 default:
