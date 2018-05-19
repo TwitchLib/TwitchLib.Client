@@ -738,8 +738,12 @@ namespace TwitchLib.Client
                     }
                 }
             }
-            if (_awaitingJoins.Any())
+            else
+            {
                 _joinTimer.Stop();
+                _currentlyJoiningChannels = false;
+                QueueingJoinCheck();
+            }
         }
 
         #endregion
