@@ -42,6 +42,8 @@ namespace TwitchLib.Client.Models
         public string EmoteReplacedMessage { get; }
         /// <summary>Emote Ids that exist in message.</summary>
         public EmoteSet EmoteSet { get; }
+        /// <summary>Unique message identifier assigned by Twitch</summary>
+        public string Id { get; }
         /// <summary>Chat message from broadcaster identifier flag</summary>
         public bool IsBroadcaster { get; }
         /// <summary>Chat message /me identifier flag.</summary>
@@ -134,6 +136,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Emotes:
                         _emoteSetStorage = tagValue;
+                        break;
+                    case Tags.Id:
+                        Id = tagValue;
                         break;
                     case Tags.Mod:
                         IsModerator = Helpers.ConvertToBool(tagValue);
@@ -243,7 +248,7 @@ namespace TwitchLib.Client.Models
         }
 
         internal ChatMessage(string botUsername, string userId, string userName, string displayName, string colorHex, Color color, EmoteSet emoteSet,
-            string message, UserType userType, string channel, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo, bool isModerator,
+            string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo, bool isModerator,
             bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
             CheerBadge cheerBadge, int bits, double bitsInDollars)
         {
@@ -256,6 +261,7 @@ namespace TwitchLib.Client.Models
             Message = message;
             UserType = userType;
             Channel = channel;
+            Id = id;
             IsSubscriber = isSubscriber;
             SubscribedMonthCount = subscribedMonthCount;
             RoomId = roomId;
