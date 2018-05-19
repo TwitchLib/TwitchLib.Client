@@ -910,7 +910,7 @@ namespace TwitchLib.Client
                 case MsgIds.MsgChannelSuspended:
                     _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
                     QueueingJoinCheck();
-                    OnFailureToReceiveJoinConfirmation(this, new OnFailureToReceiveJoinConfirmationArgs {
+                    OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs {
                         Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
                         });
                     break;
