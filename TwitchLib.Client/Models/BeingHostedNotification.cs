@@ -19,7 +19,7 @@ namespace TwitchLib.Client.Models
             HostedByChannel = ircMessage.Message.Split(' ').First();
 
             if (ircMessage.Message.Contains("up to"))
-                Viewers = int.Parse(ircMessage.Message.Split(' ')[ircMessage.Message.Length - 2]);
+                Viewers = int.Parse(ircMessage.Message.Split(' ')[ircMessage.Message.Split(' ').Count() - 2]);
 
             if (ircMessage.Message.Contains("auto hosting"))
                 IsAutoHosted = true;
