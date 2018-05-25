@@ -292,7 +292,6 @@ namespace TwitchLib.Client
             _client = webSocket;
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
-            _disconnectedFlag = false;
         }
         /// <summary>
         /// Initializes the TwitchChatClient class.
