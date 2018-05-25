@@ -35,6 +35,7 @@ namespace TwitchLib.Client
         private bool _currentlyJoiningChannels;
         private System.Timers.Timer _joinTimer;
         private List<KeyValuePair<string, DateTime>> _awaitingJoins;
+        private bool _disconnectedFlag;
 
         private readonly IrcParser _ircParser;
         private readonly JoinedChannelManager _joinedChannelManager;
@@ -291,6 +292,7 @@ namespace TwitchLib.Client
             _client = webSocket;
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
+            _disconnected = false;
         }
         /// <summary>
         /// Initializes the TwitchChatClient class.
@@ -648,8 +650,12 @@ namespace TwitchLib.Client
 
         private void _client_OnDisconnected(object sender, EventArgs e)
         {
-            OnDisconnected?.Invoke(this, new OnDisconnectedArgs { BotUsername = TwitchUsername });
-            _joinedChannelManager.Clear();
+        if (!_disconnectedFlag)
+            {
+                OnDisconnected?.Invoke(this, new OnDisconnectedArgs { BotUsername = TwitchUsername });
+                _joinedChannelManager.Clear();
+                _disconnectedFlag = true;
+            }
         }
 
         private void _client_OnMessage(object sender, MessageReceivedEventArgs e)
@@ -687,6 +693,7 @@ namespace TwitchLib.Client
             {
                 JoinChannel(_autoJoinChannel);
             }
+            _disconnectedFlag = false;
         }
 
         #endregion
