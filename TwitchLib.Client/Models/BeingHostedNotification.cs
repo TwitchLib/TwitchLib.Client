@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -18,9 +19,13 @@ namespace TwitchLib.Client.Models
             BotUsername = botUsername;
             HostedByChannel = ircMessage.Message.Split(' ').First();
 
-            if (ircMessage.Message.Contains("up to"))
-                Viewers = int.Parse(ircMessage.Message.Split(' ')[ircMessage.Message.Split(' ').Count() - 2]);
-
+            if (ircMessage.Message.Contains("up to "))
+            {
+                var splt = ircMessage.Message.Split(new string[] { "up to " }, StringSplitOptions.None);
+                if (splt[1].Contains(" ") && int.TryParse(splt[1].Split(' ')[0], out int n))
+                    Viewers = n;
+            }
+                
             if (ircMessage.Message.Contains("auto hosting"))
                 IsAutoHosted = true;
         }
