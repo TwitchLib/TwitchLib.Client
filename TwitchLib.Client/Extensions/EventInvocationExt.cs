@@ -43,12 +43,12 @@ namespace TwitchLib.Client.Extensions
         }
 
         public static void InvokeChatCommandsReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName,
-            string colorHex, Color color, EmoteSet emoteSet, string message, UserType userType, string channel, bool isSubscriber, int subscribedMonthCount,
+            string colorHex, Color color, EmoteSet emoteSet, string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount,
             string roomId, bool isTurbo, bool isModerator, bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage,
             List<KeyValuePair<string, string>> badges, CheerBadge cheerBadge, int bits, double bitsInDollars, string commandText, string argumentsAsString,
             List<string> argumentsAsList, char commandIdentifier)
         {
-            var msg = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel,
+            var msg = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, id,
                 isSubscriber, subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, noisy, rawIrcMessage, emoteReplacedMessage,
                 badges, cheerBadge, bits, bitsInDollars);
             var model = new OnChatCommandReceivedArgs()
@@ -175,13 +175,13 @@ namespace TwitchLib.Client.Extensions
         }
 
         public static void InvokeMessageReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName, string colorHex,
-            Color color, EmoteSet emoteSet, string message, UserType userType, string channel, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo,
+            Color color, EmoteSet emoteSet, string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo,
             bool isModerator, bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
             CheerBadge cheerBadge, int bits, double bitsInDollars)
         {
             var model = new OnMessageReceivedArgs()
             {
-                ChatMessage = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, isSubscriber,
+                ChatMessage = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, id, isSubscriber,
                 subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, noisy, rawIrcMessage, emoteReplacedMessage, badges, cheerBadge, bits,
                 bitsInDollars)
             };

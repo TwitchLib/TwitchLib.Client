@@ -738,8 +738,12 @@ namespace TwitchLib.Client
                     }
                 }
             }
-            if (_awaitingJoins.Any())
+            else
+            {
                 _joinTimer.Stop();
+                _currentlyJoiningChannels = false;
+                QueueingJoinCheck();
+            }
         }
 
         #endregion
@@ -848,15 +852,14 @@ namespace TwitchLib.Client
             OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage });
 
             if (_chatCommandIdentifiers != null && _chatCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(chatMessage.Message))
+            {
                 if (_chatCommandIdentifiers.Contains(chatMessage.Message[0]))
                 {
                     var chatCommand = new ChatCommand(chatMessage);
                     OnChatCommandReceived?.Invoke(this, new OnChatCommandReceivedArgs { Command = chatCommand });
                     return;
                 }
-
-            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "PrivMsgHandling", RawIRC = ircMessage.ToString() });
-            Log($"Unaccounted for: {ircMessage.ToString()}");
+            }
         }
 
         private void HandleNotice(IrcMessage ircMessage)
@@ -906,6 +909,14 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.RaidNoticeMature:
                     OnRaidedChannelIsMatureAudience?.Invoke(this, null);
+                    break;
+                case MsgIds.MsgChannelSuspended:
+                    _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
+                    _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
+                    QueueingJoinCheck();
+                    OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs {
+                        Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
+                        });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
