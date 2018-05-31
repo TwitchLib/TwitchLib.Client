@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
-    <PackageId>TwitchLib.Client</PackageId>
+    <PackageId>TwitchLib.Client.Models</PackageId>
     <Version>2.1.3</Version>
     <Description>Client component of TwitchLib. This component allows you to access Twitch chat and whispers, as well as the events that are sent over this connection.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -20,17 +20,6 @@
     <AssemblyVersion>2.1.3.0</AssemblyVersion>
     <FileVersion>2.1.3.0</FileVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
-    <PackageReference Include="WebSocket4Net" Version="0.15.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
-    <ProjectReference Include="..\TwitchLib.Client.Models\TwitchLib.Client.Models.csproj" />
-  </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net452'">
     <DefineConstants>NET452</DefineConstants>
@@ -39,4 +28,8 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
+  </ItemGroup>
 </Project>

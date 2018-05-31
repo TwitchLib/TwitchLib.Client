@@ -1,5 +1,5 @@
 #if NETSTANDARD
-    using TwitchLib.Client.Extensions.NetCore;
+    using TwitchLib.Client.Models.Extensions.NetCore;
 #endif
 using System;
 using System.Collections.Generic;

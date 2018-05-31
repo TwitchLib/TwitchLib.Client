@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TwitchLib.Client.Common;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -60,10 +59,10 @@ namespace TwitchLib.Client.Models
                         EmoteSet = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = Helpers.ConvertToBool(tagValue);
+                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.UserType:
                         switch (tagValue)

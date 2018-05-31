@@ -1,11 +1,10 @@
 ﻿#if NETSTANDARD
-    using TwitchLib.Client.Extensions.NetCore;
+    using TwitchLib.Client.Models.Extensions.NetCore;
 #endif
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TwitchLib.Client.Common;
 using TwitchLib.Client.Enums;
     using TwitchLib.Client.Models.Internal;
 
@@ -141,19 +140,19 @@ namespace TwitchLib.Client.Models
                         Id = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = Helpers.ConvertToBool(tagValue);
+                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.Noisy:
-                        Noisy = Helpers.ConvertToBool(tagValue) ? Noisy.True : Noisy.False;
+                        Noisy = Common.Helpers.ConvertToBool(tagValue) ? Noisy.True : Noisy.False;
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.Turbo:
-                        IsTurbo = Helpers.ConvertToBool(tagValue);
+                        IsTurbo = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;

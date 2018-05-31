@@ -1,16 +1,12 @@
 #if NETSTANDARD
-using TwitchLib.Client.Extensions.NetCore;
+using TwitchLib.Client.Models.Extensions.NetCore;
 #endif
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TwitchLib.Client.Common;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
-#if NET452
-
-#endif
 
 namespace TwitchLib.Client.Models
 {
@@ -107,7 +103,7 @@ namespace TwitchLib.Client.Models
                         ThreadId = tagValue;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = Helpers.ConvertToBool(tagValue);
+                        IsTurbo = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;

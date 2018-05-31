@@ -6,8 +6,8 @@ namespace TwitchLib.Client.Models
     public class ErrorEvent
     {
         /// <summary>Exception object representing the error.</summary>
-        public Exception Exception { get; internal set; }
+        public Exception Exception { get;  set; }
         /// <summary>Message pertaining to the error.</summary>
-        public string Message { get; internal set; }        
+        public string Message { get;  set; }        
     }
 }

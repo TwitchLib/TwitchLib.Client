@@ -1,4 +1,4 @@
-﻿using TwitchLib.Client.Common;
+﻿
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -51,7 +51,7 @@ namespace TwitchLib.Client.Models
                         Login = tagValue;
                         break;
                     case Tags.Mod:
-                        Moderator = Helpers.ConvertToBool(tagValue);
+                        Moderator = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.MsgId:
                         MsgId = tagValue;
@@ -69,7 +69,7 @@ namespace TwitchLib.Client.Models
                         RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        Subscriber = Helpers.ConvertToBool(tagValue);
+                        Subscriber = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.SystemMsg:
                         SystemMsg = tagValue;
@@ -79,7 +79,7 @@ namespace TwitchLib.Client.Models
                         TmiSentTs = tagValue;
                         break;
                     case Tags.Turbo:
-                        Turbo = Helpers.ConvertToBool(tagValue);
+                        Turbo = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
