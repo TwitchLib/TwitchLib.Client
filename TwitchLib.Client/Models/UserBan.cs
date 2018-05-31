@@ -4,12 +4,13 @@ namespace TwitchLib.Client.Models
 {
     public class UserBan
     {
+        /// <summary>Reason for ban, if it was provided.</summary>
+        public string BanReason;
         /// <summary>Channel that had ban event.</summary>
         public string Channel;
         /// <summary>User that was banned.</summary>
         public string Username;
-        /// <summary>Reason for ban, if it was provided.</summary>
-        public string BanReason;
+
 
         public UserBan(IrcMessage ircMessage)
         {

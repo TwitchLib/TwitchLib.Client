@@ -557,6 +557,7 @@ namespace TwitchLib.Client
         public void JoinChannel(string channel, bool overrideCheck = false)
         {
             if (!IsInitialized) HandleNotInitialized();
+            if (!IsConnected) HandleNotConnected();
             // Channel MUST be lower case
             channel = channel.ToLower();
             // Check to see if client is already in channel
@@ -624,30 +625,6 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             LeaveChannel(channel.Channel);
-        }
-
-        /// <summary>
-        /// Sends a request to get channel moderators. You MUST listen to OnModeratorsReceived event./>.
-        /// </summary>
-        /// <param name="channel">JoinedChannel object to designate which channel to send request to.</param>
-        public void GetChannelModerators(JoinedChannel channel)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            if (OnModeratorsReceived == null)
-                Log("[GetChannelModerators] You are not listening to OnModeratorsReceived. The response to this message will not be handled.");
-            SendMessage(channel, "/mods");
-        }
-
-        /// <summary>
-        /// Sends a request to get channel moderators. You MUST listen to OnModeratorsReceived event./>.
-        /// </summary>
-        /// <param name="channel">String representing channel to designate which channel to send request to.</param>
-        public void GetChannelModerators(string channel)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            var joinedChannel = GetJoinedChannel(channel);
-            if (joinedChannel != null)
-                GetChannelModerators(joinedChannel);
         }
 
         #endregion
@@ -761,8 +738,12 @@ namespace TwitchLib.Client
                     }
                 }
             }
-            if (_awaitingJoins.Any())
+            else
+            {
                 _joinTimer.Stop();
+                _currentlyJoiningChannels = false;
+                QueueingJoinCheck();
+            }
         }
 
         #endregion
@@ -871,15 +852,14 @@ namespace TwitchLib.Client
             OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage });
 
             if (_chatCommandIdentifiers != null && _chatCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(chatMessage.Message))
+            {
                 if (_chatCommandIdentifiers.Contains(chatMessage.Message[0]))
                 {
                     var chatCommand = new ChatCommand(chatMessage);
                     OnChatCommandReceived?.Invoke(this, new OnChatCommandReceivedArgs { Command = chatCommand });
                     return;
                 }
-
-            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "PrivMsgHandling", RawIRC = ircMessage.ToString() });
-            Log($"Unaccounted for: {ircMessage.ToString()}");
+            }
         }
 
         private void HandleNotice(IrcMessage ircMessage)
@@ -929,6 +909,14 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.RaidNoticeMature:
                     OnRaidedChannelIsMatureAudience?.Invoke(this, null);
+                    break;
+                case MsgIds.MsgChannelSuspended:
+                    _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
+                    _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
+                    QueueingJoinCheck();
+                    OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs {
+                        Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
+                        });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
@@ -1171,6 +1159,11 @@ namespace TwitchLib.Client
         protected static void HandleNotInitialized()
         {
             throw new ClientNotInitializedException("The twitch client has not been initialized and cannot be used. Please call Initialize();");
+        }
+
+        protected static void HandleNotConnected()
+        {
+            throw new ClientNotConnectedException("In order to perform this action, the client must be connected to Twitch. To confirm connection, try performing this action in or after the OnConnected event has been fired.");
         }
     }
 }

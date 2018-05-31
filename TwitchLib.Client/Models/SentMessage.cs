@@ -19,10 +19,11 @@ namespace TwitchLib.Client.Models
         public bool IsModerator { get; }
         /// <summary>Whether or not the sender is a subscriber.</summary>
         public bool IsSubscriber { get; }
-        /// <summary>The type of user (admin, broadcaster, viewer, moderator)</summary>
-        public Enums.UserType UserType { get; }
         /// <summary>The message contents.</summary>
         public string Message { get; }
+        /// <summary>The type of user (admin, broadcaster, viewer, moderator)</summary>
+        public Enums.UserType UserType { get; }
+
 
         /// <summary>Model constructor.</summary>
         public SentMessage(UserState state, string message)
