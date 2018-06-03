@@ -95,7 +95,7 @@ namespace TwitchLib.Client.Models
                 UserType = UserType.Broadcaster;
         }
 
-        internal UserState(List<KeyValuePair<string, string>> badges, string colorHex, string displayName, string emoteSet, string channel,
+        public UserState(List<KeyValuePair<string, string>> badges, string colorHex, string displayName, string emoteSet, string channel,
             bool isSubscriber, bool isModerator, UserType userType)
         {
             Badges = badges;

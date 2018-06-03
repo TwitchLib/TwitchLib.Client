@@ -135,7 +135,7 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
-        internal GiftedSubscription(string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
+        public GiftedSubscription(string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType)

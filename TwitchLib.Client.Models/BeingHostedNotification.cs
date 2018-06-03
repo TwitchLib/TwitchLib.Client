@@ -4,9 +4,9 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class BeingHostedNotification
+    public partial class BeingHostedNotification
     {
-        public string BotUsername { get; }
+        public string BotUsername { get; private set; }
         public string Channel { get; }        
         public string HostedByChannel { get; }
         public bool IsAutoHosted { get; }
@@ -30,7 +30,7 @@ namespace TwitchLib.Client.Models
                 IsAutoHosted = true;
         }
 
-        internal BeingHostedNotification(string channel, string botUsername, string hostedByChannel, int viewers, bool isAutoHosted)
+        public BeingHostedNotification(string channel, string botUsername, string hostedByChannel, int viewers, bool isAutoHosted)
         {
             Channel = channel;
             BotUsername = botUsername;

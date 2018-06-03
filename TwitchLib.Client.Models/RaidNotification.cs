@@ -107,7 +107,7 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
-        internal RaidNotification(string badges, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
+        public RaidNotification(string badges, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
             string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType)
         {
             Badges = badges;

@@ -39,7 +39,7 @@ namespace TwitchLib.Client.Models
             Message = message;
         }
 
-        internal SentMessage(List<KeyValuePair<string, string>> badges, string channel, string colorHex, string displayName, string emoteSet,
+        public SentMessage(List<KeyValuePair<string, string>> badges, string channel, string colorHex, string displayName, string emoteSet,
             bool isModerator, bool isSubscriber, Enums.UserType userType, string message)
         {
             Badges = badges;

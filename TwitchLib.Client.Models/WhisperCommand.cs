@@ -28,7 +28,7 @@ namespace TwitchLib.Client.Models
             CommandIdentifier = whisperMessage.Message[0];
         }
 
-        internal WhisperCommand(WhisperMessage whisperMessage, string commandText, string argumentsAsString, List<string> argumentsAsList, char commandIdentifier)
+        public WhisperCommand(WhisperMessage whisperMessage, string commandText, string argumentsAsString, List<string> argumentsAsList, char commandIdentifier)
         {
             WhisperMessage = whisperMessage;
             CommandText = commandText;

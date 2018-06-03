@@ -25,9 +25,6 @@
     <PackageReference Include="WebSocket4Net" Version="0.15.2" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
     <ProjectReference Include="..\TwitchLib.Client.Models\TwitchLib.Client.Models.csproj" />
   </ItemGroup>
