@@ -8,7 +8,9 @@
 
         public override string ToString()
         {
-            return $":{Username}!{Username}@{Username}.tmi.twitch.tv PRIVMSG #{Channel} :{Message}";
+            var user = Username.ToLower();
+            var channel = Channel.ToLower();
+            return $":{user}!{user}@{user}.tmi.twitch.tv PRIVMSG #{channel} :{Message}";
         }
     }
 }
