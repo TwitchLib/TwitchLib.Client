@@ -1,39 +1,34 @@
-﻿using System;
-using TwitchLib.Client.Common;
+﻿
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class RitualNewChatter
+    public class RaidNotification
     {
         public string Badges { get; }
         public string Color { get; }
         public string DisplayName { get; }
         public string Emotes { get; }
         public string Id { get; }
-        public bool IsModerator { get; }
-        public bool IsSubscriber { get; }
-        public bool IsTurbo { get; }
-        public string Login { get; }  
-        public string Message { get; }
+        public string Login { get; }
+        public bool Moderator { get; }
         public string MsgId { get; }
-        public string MsgParamRitualName { get; }
-        public string RoomId { get; }        
-        public string SystemMsgParsed { get; }
+        public string MsgParamDisplayName { get; }
+        public string MsgParamLogin { get; }
+        public string MsgParamViewerCount { get; }
+        public string RoomId { get; }
+        public bool Subscriber { get; }
         public string SystemMsg { get; }
-        public string TmiSentTs { get; }        
+        public string SystemMsgParsed { get; }
+        public string TmiSentTs { get; }
+        public bool Turbo { get; }
         public string UserId { get; }
         public UserType UserType { get; }
-        
 
-        // badges=subscriber/0;color=#0000FF;display-name=KittyJinxu;emotes=30259:0-6;id=1154b7c0-8923-464e-a66b-3ef55b1d4e50;
-        // login=kittyjinxu;mod=0;msg-id=ritual;msg-param-ritual-name=new_chatter;room-id=35740817;subscriber=1;
-        // system-msg=@KittyJinxu\sis\snew\shere.\sSay\shello!;tmi-sent-ts=1514387871555;turbo=0;user-id=187446639;
-        // user-type= USERNOTICE #thorlar kittyjinxu > #thorlar: HeyGuys
-        public RitualNewChatter(IrcMessage ircMessage)
+        // @badges=;color=#FF0000;display-name=Heinki;emotes=;id=4fb7ab2d-aa2c-4886-a286-46e20443f3d6;login=heinki;mod=0;msg-id=raid;msg-param-displayName=Heinki;msg-param-login=heinki;msg-param-viewerCount=4;room-id=27229958;subscriber=0;system-msg=4\sraiders\sfrom\sHeinki\shave\sjoined\n!;tmi-sent-ts=1510249711023;turbo=0;user-id=44110799;user-type= :tmi.twitch.tv USERNOTICE #pandablack
+        public RaidNotification(IrcMessage ircMessage)
         {
-            Message = ircMessage.Message;
             foreach (var tag in ircMessage.Tags.Keys)
             {
                 var tagValue = ircMessage.Tags[tag];
@@ -52,26 +47,29 @@ namespace TwitchLib.Client.Models
                     case Tags.Emotes:
                         Emotes = tagValue;
                         break;
-                    case Tags.Id:
-                        Id = tagValue;
-                        break;
                     case Tags.Login:
                         Login = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = Helpers.ConvertToBool(tagValue);
+                        Moderator = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.MsgId:
                         MsgId = tagValue;
                         break;
-                    case Tags.MsgParamRitualName:
-                        MsgParamRitualName = tagValue;
+                    case Tags.MsgParamDisplayname:
+                        MsgParamDisplayName = tagValue;
+                        break;
+                    case Tags.MsgParamLogin:
+                        MsgParamLogin = tagValue;
+                        break;
+                    case Tags.MsgParamViewerCount:
+                        MsgParamViewerCount = tagValue;
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Helpers.ConvertToBool(tagValue);
+                        Subscriber = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.SystemMsg:
                         SystemMsg = tagValue;
@@ -81,7 +79,7 @@ namespace TwitchLib.Client.Models
                         TmiSentTs = tagValue;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = Helpers.ConvertToBool(tagValue);
+                        Turbo = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
@@ -109,5 +107,28 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
+        public RaidNotification(string badges, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
+            string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType)
+        {
+            Badges = badges;
+            Color = color;
+            DisplayName = displayName;
+            Emotes = emotes;
+            Id = id;
+            Login = login;
+            Moderator = moderator;
+            MsgId = msgId;
+            MsgParamDisplayName = msgParamDisplayName;
+            MsgParamLogin = msgParamLogin;
+            MsgParamViewerCount = msgParamViewerCount;
+            RoomId = roomId;
+            Subscriber = subscriber;
+            SystemMsg = systemMsg;
+            SystemMsgParsed = systemMsgParsed;
+            TmiSentTs = tmiSentTs;
+            Turbo = turbo;
+            UserType = userType;
+        }
     }
 }
+

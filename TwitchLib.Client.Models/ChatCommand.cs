@@ -32,7 +32,7 @@ namespace TwitchLib.Client.Models
             CommandIdentifier = chatMessage.Message[0];
         }
 
-        internal ChatCommand(ChatMessage chatMessage, string commandText, string argumentsAsString, List<string> argumentsAsList, char commandIdentifier)
+        public ChatCommand(ChatMessage chatMessage, string commandText, string argumentsAsString, List<string> argumentsAsList, char commandIdentifier)
         {
             ChatMessage = chatMessage;
             CommandText = commandText;

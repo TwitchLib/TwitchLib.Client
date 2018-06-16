@@ -1,11 +1,10 @@
 ﻿#if NETSTANDARD
-    using TwitchLib.Client.Extensions.NetCore;
+    using TwitchLib.Client.Models.Extensions.NetCore;
 #endif
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TwitchLib.Client.Common;
 using TwitchLib.Client.Enums;
     using TwitchLib.Client.Models.Internal;
 
@@ -16,32 +15,20 @@ using TwitchLib.Client.Enums;
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class represents ChatMessage in a Twitch channel.</summary>
-    public class ChatMessage
+    public class ChatMessage : TwitchLibMessage
     {
-        private readonly MessageEmoteCollection _emoteCollection;
+        protected readonly MessageEmoteCollection _emoteCollection;
 
-        /// <summary>List of key-value pair badges.</summary>
-        public List<KeyValuePair<string, string>> Badges { get; }
         /// <summary>If viewer sent bits in their message, total amount will be here.</summary>
         public int Bits { get; }
         /// <summary>Number of USD (United States Dollars) spent on bits.</summary>
         public double BitsInDollars { get; }
-        /// <summary>Twitch username of the bot that received the message.</summary>
-        public string BotUsername { get; }
         /// <summary>Twitch channel message was sent from (useful for multi-channel bots).</summary>
         public string Channel { get; }
         /// <summary>If a cheer badge exists, this property represents the raw value and color (more later). Can be null.</summary>
         public CheerBadge CheerBadge { get; }
-        /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public Color Color { get; }
-        /// <summary>Hex representation of username color in chat (THIS CAN BE NULL IF VIEWER HASN'T SET COLOR).</summary>
-        public string ColorHex { get; }
-        /// <summary>Case-sensitive username of sender of chat message.</summary>
-        public string DisplayName { get; }
         /// <summary>Text after emotes have been handled (if desired). Will be null if replaceEmotes is false.</summary>
         public string EmoteReplacedMessage { get; }
-        /// <summary>Emote Ids that exist in message.</summary>
-        public EmoteSet EmoteSet { get; }
         /// <summary>Unique message identifier assigned by Twitch</summary>
         public string Id { get; }
         /// <summary>Chat message from broadcaster identifier flag</summary>
@@ -52,8 +39,6 @@ namespace TwitchLib.Client.Models
         public bool IsModerator { get; }
         /// <summary>Channel specific subscriber status.</summary>
         public bool IsSubscriber { get; }
-        /// <summary>Twitch site-wide turbo status.</summary>
-        public bool IsTurbo { get; }
         /// <summary>Twitch chat message contents.</summary>
         public string Message { get; }
         /// <summary>Experimental property noisy determination by Twitch.</summary>
@@ -63,14 +48,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Unique identifier of chat room.</summary>
         public string RoomId { get; }
         /// <summary>Number of months a person has been subbed.</summary>
-        public int SubscribedMonthCount { get; }
-        /// <summary>Twitch-unique integer assigned on per account basis.</summary>
-        public string UserId { get; }
-        /// <summary>Username of sender of chat message.</summary>
-        public string Username { get; }
-        /// <summary>User type can be viewer, moderator, global mod, admin, or staff</summary>
-        public UserType UserType { get; }
-        
+        public int SubscribedMonthCount { get; }        
 
         private readonly string _emoteSetStorage;
 
@@ -141,19 +119,19 @@ namespace TwitchLib.Client.Models
                         Id = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = Helpers.ConvertToBool(tagValue);
+                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.Noisy:
-                        Noisy = Helpers.ConvertToBool(tagValue) ? Noisy.True : Noisy.False;
+                        Noisy = Common.Helpers.ConvertToBool(tagValue) ? Noisy.True : Noisy.False;
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.Turbo:
-                        IsTurbo = Helpers.ConvertToBool(tagValue);
+                        IsTurbo = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
@@ -247,7 +225,7 @@ namespace TwitchLib.Client.Models
             }
         }
 
-        internal ChatMessage(string botUsername, string userId, string userName, string displayName, string colorHex, Color color, EmoteSet emoteSet,
+        public ChatMessage(string botUsername, string userId, string userName, string displayName, string colorHex, Color color, EmoteSet emoteSet,
             string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo, bool isModerator,
             bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
             CheerBadge cheerBadge, int bits, double bitsInDollars)

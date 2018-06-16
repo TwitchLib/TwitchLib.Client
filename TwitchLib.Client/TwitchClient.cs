@@ -673,11 +673,6 @@ namespace TwitchLib.Client
 
         private void _client_OnConnected(object sender, object e)
         {
-            // Make sure proper formatting is applied to oauth
-            if (!ConnectionCredentials.TwitchOAuth.Contains(":"))
-            {
-                ConnectionCredentials.TwitchOAuth = $"oauth:{ConnectionCredentials.TwitchOAuth.Replace("oauth", "")}";
-            }
             _client.Send(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
             _client.Send(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));
             _client.Send(Rfc2812.User(ConnectionCredentials.TwitchUsername, 0, ConnectionCredentials.TwitchUsername));

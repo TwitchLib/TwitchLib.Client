@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
-using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
-using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Extensions
 {
@@ -21,7 +18,7 @@ namespace TwitchLib.Client.Extensions
             client.RaiseEvent("OnBeingHosted", model);
         }
 
-        public static void InvokeChannelStateChanged(this TwitchClient client, string channel, bool r9k, bool rituals, 
+        public static void InvokeChannelStateChanged(this TwitchClient client, string channel, bool r9k, bool rituals,
             bool subOnly, int slowMode, bool emoteOnly, string broadcasterLanguage, TimeSpan followersOnly, bool mercury, string roomId)
         {
             var state = new ChannelState(r9k, rituals, subOnly, slowMode, emoteOnly, broadcasterLanguage, channel, followersOnly, mercury, roomId);
@@ -228,9 +225,9 @@ namespace TwitchLib.Client.Extensions
             client.RaiseEvent("OnModeratorsReceived", model);
         }
 
-        public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName, 
+        public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName,
             string emoteSet, string id, string login, string systemMessage, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
-            string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs, 
+            string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs,
             UserType userType, string rawIrc, string channel)
         {
             var model = new OnNewSubscriberArgs()
