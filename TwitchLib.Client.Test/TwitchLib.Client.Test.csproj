@@ -100,6 +100,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj">
+      <Project>{ba43ed8e-04b3-4f04-b828-ec5d7684feed}</Project>
+      <Name>TwitchLib.Client.Enums</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TwitchLib.Client.Models\TwitchLib.Client.Models.csproj">
+      <Project>{c77438a0-7745-4f4f-bb8a-cffa52dc5e18}</Project>
+      <Name>TwitchLib.Client.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TwitchLib.Client\TwitchLib.Client.csproj">
       <Project>{44b88efa-1500-4005-af27-a9bcb9dd79c1}</Project>
       <Name>TwitchLib.Client</Name>
