@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using TwitchLib.Client.Models;
@@ -11,7 +12,7 @@ namespace TwitchLib.Client.Manager
 
         public JoinedChannelManager()
         {
-            _joinedChannels = new ConcurrentDictionary<string, JoinedChannel>();
+            _joinedChannels = new ConcurrentDictionary<string, JoinedChannel>(StringComparer.OrdinalIgnoreCase);
         }
 
         public void AddJoinedChannel(JoinedChannel joinedChannel)
@@ -21,9 +22,8 @@ namespace TwitchLib.Client.Manager
 
         public JoinedChannel GetJoinedChannel(string channel)
         {
-            var success = _joinedChannels.TryGetValue(channel, out var joinedChannel);
-
-            return success ? joinedChannel : null;
+            _joinedChannels.TryGetValue(channel, out var joinedChannel);
+            return joinedChannel;
         }
 
         public IReadOnlyList<JoinedChannel> GetJoinedChannels()
