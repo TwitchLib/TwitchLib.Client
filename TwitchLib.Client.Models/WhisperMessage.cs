@@ -1,50 +1,26 @@
 #if NETSTANDARD
-using TwitchLib.Client.Extensions.NetCore;
+using TwitchLib.Client.Models.Extensions.NetCore;
 #endif
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TwitchLib.Client.Common;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
-#if NET452
-
-#endif
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing a received whisper from TwitchWhisperClient</summary>
-    public class WhisperMessage
+    public class WhisperMessage : TwitchLibMessage
     {
-        /// <summary>Property representing dynamic badges assigned to message.</summary>
-        public List<KeyValuePair<string, string>> Badges { get; }
-        /// <summary>Property representing bot's username.</summary>
-        public string BotUsername { get; }
-        /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public Color Color { get; }
-        /// <summary>Property representing HEX representation of color of username.</summary>
-        public string ColorHex { get; }
-        /// <summary>Property representing sender DisplayName (can be null/blank).</summary>
-        public string DisplayName { get; }
-        /// <summary>Property representing list of string emotes in message.</summary>
-        public EmoteSet EmoteSet { get; }
-        /// <summary>Property representing whether or not sender has Turbo.</summary>
-        public bool IsTurbo { get; }
-        /// <summary>Property representing message contents.</summary>
-        public string Message { get; }
         /// <summary>Property representing message identifier.</summary>
         public string MessageId { get; }
         /// <summary>Property representing identifier of the message thread.</summary>
         public string ThreadId { get; }
-        /// <summary>Property representing sender identifier.</summary>
-        public string UserId { get; }
-        /// <summary>Property representing sender Username.</summary>
-        public string Username { get; }
-        /// <summary>Property representing user type of sender.</summary>
-        public UserType UserType { get; }
+        /// <summary>Property representing identifier of the message thread.</summary>
+        public string Message { get; }
 
-        internal WhisperMessage(List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
+        public WhisperMessage(List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
             string userId, bool isTurbo, string botUsername, string message, UserType userType)
         {
             Badges = badges;
@@ -107,7 +83,7 @@ namespace TwitchLib.Client.Models
                         ThreadId = tagValue;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = Helpers.ConvertToBool(tagValue);
+                        IsTurbo = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;

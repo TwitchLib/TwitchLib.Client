@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Globalization;
 
-namespace TwitchLib.Client.Extensions.NetCore
+namespace TwitchLib.Client.Models.Extensions.NetCore
 {
     public static class ColorTranslator
     {

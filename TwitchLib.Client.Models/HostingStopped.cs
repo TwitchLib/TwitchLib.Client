@@ -16,7 +16,7 @@ namespace TwitchLib.Client.Models
             Viewers = splitted[1].StartsWith("-") ? 0 : int.Parse(splitted[1]);
         }
 
-        internal HostingStopped(string hostingChannel, int viewers)
+        public HostingStopped(string hostingChannel, int viewers)
         {
             HostingChannel = hostingChannel;
             Viewers = viewers;

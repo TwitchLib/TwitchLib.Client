@@ -24,7 +24,7 @@ namespace TwitchLib.Client.Models
             }
         }
 
-        internal UserBan(string channel, string username, string banReason)
+        public UserBan(string channel, string username, string banReason)
         {
             Channel = channel;
             Username = username;

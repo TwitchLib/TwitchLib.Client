@@ -1,5 +1,4 @@
 ﻿using System;
-using TwitchLib.Client.Common;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -43,20 +42,20 @@ namespace TwitchLib.Client.Models
                         BroadcasterLanguage = tagValue;
                         break;
                     case Tags.EmoteOnly:
-                        EmoteOnly = Helpers.ConvertToBool(tagValue);
+                        EmoteOnly = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.R9K:
-                        R9K = Helpers.ConvertToBool(tagValue);
+                        R9K = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.Rituals:
-                        Rituals = Helpers.ConvertToBool(tagValue);
+                        Rituals = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.Slow:
                         var success = int.TryParse(tagValue, out var slowDuration);
                         SlowMode = success ? slowDuration : (int?) null;
                         break;
                     case Tags.SubsOnly:
-                        SubOnly = Helpers.ConvertToBool(tagValue);
+                        SubOnly = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.FollowersOnly:
                         var minutes = int.Parse(tagValue);
@@ -66,7 +65,7 @@ namespace TwitchLib.Client.Models
                         RoomId = tagValue;
                         break;
                     case Tags.Mercury:
-                        Mercury = Helpers.ConvertToBool(tagValue);
+                        Mercury = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     default:
                         Console.WriteLine("[TwitchLib][ChannelState] Unaccounted for: " + tag);
@@ -76,7 +75,7 @@ namespace TwitchLib.Client.Models
             Channel = ircMessage.Channel;
         }
 
-        internal ChannelState(bool r9k, bool rituals, bool subonly, int slowMode, bool emoteOnly, string broadcasterLanguage, string channel, TimeSpan followersOnly, bool mercury, string roomId)
+        public ChannelState(bool r9k, bool rituals, bool subonly, int slowMode, bool emoteOnly, string broadcasterLanguage, string channel, TimeSpan followersOnly, bool mercury, string roomId)
         {
             R9K = r9k;
             Rituals = rituals;
@@ -89,5 +88,6 @@ namespace TwitchLib.Client.Models
             Mercury = mercury;
             RoomId = roomId;
         }
+        
     }
 }

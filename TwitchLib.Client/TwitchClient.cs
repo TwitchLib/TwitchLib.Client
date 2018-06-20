@@ -35,6 +35,7 @@ namespace TwitchLib.Client
         private bool _currentlyJoiningChannels;
         private System.Timers.Timer _joinTimer;
         private List<KeyValuePair<string, DateTime>> _awaitingJoins;
+        private bool _disconnectedFlag;
 
         private readonly IrcParser _ircParser;
         private readonly JoinedChannelManager _joinedChannelManager;
@@ -558,8 +559,6 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (!IsConnected) HandleNotConnected();
-            // Channel MUST be lower case
-            channel = channel.ToLower();
             // Check to see if client is already in channel
             if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channel && !overrideCheck) != null)
                 return;
@@ -648,8 +647,12 @@ namespace TwitchLib.Client
 
         private void _client_OnDisconnected(object sender, EventArgs e)
         {
-            OnDisconnected?.Invoke(this, new OnDisconnectedArgs { BotUsername = TwitchUsername });
-            _joinedChannelManager.Clear();
+        if (!_disconnectedFlag)
+            {
+                OnDisconnected?.Invoke(this, new OnDisconnectedArgs { BotUsername = TwitchUsername });
+                _joinedChannelManager.Clear();
+                _disconnectedFlag = true;
+            }
         }
 
         private void _client_OnMessage(object sender, MessageReceivedEventArgs e)
@@ -670,11 +673,6 @@ namespace TwitchLib.Client
 
         private void _client_OnConnected(object sender, object e)
         {
-            // Make sure proper formatting is applied to oauth
-            if (!ConnectionCredentials.TwitchOAuth.Contains(":"))
-            {
-                ConnectionCredentials.TwitchOAuth = $"oauth:{ConnectionCredentials.TwitchOAuth.Replace("oauth", "")}";
-            }
             _client.Send(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
             _client.Send(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));
             _client.Send(Rfc2812.User(ConnectionCredentials.TwitchUsername, 0, ConnectionCredentials.TwitchUsername));
@@ -687,6 +685,7 @@ namespace TwitchLib.Client
             {
                 JoinChannel(_autoJoinChannel);
             }
+            _disconnectedFlag = false;
         }
 
         #endregion
@@ -700,7 +699,8 @@ namespace TwitchLib.Client
                 _currentlyJoiningChannels = true;
                 var channelToJoin = _joinChannelQueue.Dequeue();
                 Log($"Joining channel: {channelToJoin.Channel}");
-                _client.Send(Rfc2812.Join($"#{channelToJoin.Channel}"));
+                // important we set channel to lower case when sending join message
+                _client.Send(Rfc2812.Join($"#{channelToJoin.Channel.ToLower()}"));
                 _joinedChannelManager.AddJoinedChannel(new JoinedChannel(channelToJoin.Channel));
                 StartJoinedChannelTimer(channelToJoin.Channel);
             }
