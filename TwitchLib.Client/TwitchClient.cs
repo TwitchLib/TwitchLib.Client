@@ -7,7 +7,6 @@ using TwitchLib.Client.Internal;
 using Microsoft.Extensions.Logging;
 using WebSocket4Net;
 using SuperSocket.ClientEngine;
-using SuperSocket.ClientEngine.Proxy;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
@@ -329,9 +328,6 @@ namespace TwitchLib.Client
             _client.MessageReceived += _client_OnMessage;
             _client.Closed += _client_OnDisconnected;
             _client.Error += _client_OnError;
-
-            if (ConnectionCredentials.Proxy != null)
-                _client.Proxy = new HttpConnectProxy(ConnectionCredentials.Proxy);
         }
 
         private void InitializeMockWebsocketClient()
@@ -340,9 +336,6 @@ namespace TwitchLib.Client
             _client.MessageReceived += _client_OnMessage;
             _client.Closed += _client_OnDisconnected;
             _client.Error += _client_OnError;
-
-            if (ConnectionCredentials.Proxy != null)
-                _client.Proxy = new HttpConnectProxy(ConnectionCredentials.Proxy);
         }
 
         #endregion
