@@ -201,6 +201,9 @@ namespace TwitchLib.Client.Models
                 }
             }
 
+            if (EmoteSet == null)
+                EmoteSet = new EmoteSet(null, Message);
+
             // Check if display name was set, and if it wasn't, set it to username
             if (string.IsNullOrEmpty(DisplayName))
                 DisplayName = Username;
