@@ -50,8 +50,6 @@ namespace TwitchLib.Client.Models
         /// <summary>Number of months a person has been subbed.</summary>
         public int SubscribedMonthCount { get; }        
 
-        private readonly string _emoteSetStorage;
-
         //Example IRC message: @badges=moderator/1,warcraft/alliance;color=;display-name=Swiftyspiffyv4;emotes=;mod=1;room-id=40876073;subscriber=0;turbo=0;user-id=103325214;user-type=mod :swiftyspiffyv4!swiftyspiffyv4@swiftyspiffyv4.tmi.twitch.tv PRIVMSG #swiftyspiffy :asd
         /// <summary>Constructor for ChatMessage object.</summary>
         /// <param name="botUsername">The username of the bot that received the message.</param>
@@ -112,7 +110,7 @@ namespace TwitchLib.Client.Models
                         DisplayName = tagValue;
                         break;
                     case Tags.Emotes:
-                        _emoteSetStorage = tagValue;
+                        EmoteSet = new EmoteSet(tagValue, Message);
                         break;
                     case Tags.Id:
                         Id = tagValue;
@@ -157,8 +155,6 @@ namespace TwitchLib.Client.Models
                         break;
                 }
             }
-
-            EmoteSet = new EmoteSet(_emoteSetStorage, Message);
 
             if (Message.Length > 0 && (byte)Message[0] == 1 && (byte)Message[Message.Length - 1] == 1)
             {
