@@ -64,7 +64,6 @@ namespace TwitchLib.Client.Models
             RawIrcMessage = ircMessage.ToString();
             Message = ircMessage.Message;
             _emoteCollection = emoteCollection;
-            EmoteSet = new EmoteSet(_emoteSetStorage, Message);
 
             Username = ircMessage.User;
             Channel = ircMessage.Channel;
@@ -158,6 +157,8 @@ namespace TwitchLib.Client.Models
                         break;
                 }
             }
+
+            EmoteSet = new EmoteSet(_emoteSetStorage, Message);
 
             if (Message.Length > 0 && (byte)Message[0] == 1 && (byte)Message[Message.Length - 1] == 1)
             {
