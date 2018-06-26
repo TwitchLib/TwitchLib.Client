@@ -107,6 +107,9 @@ namespace TwitchLib.Client.Models
                         break;
                 }
             }
+
+            if (EmoteSet == null)
+                EmoteSet = new EmoteSet(null, Message);
         }
     }
 }
