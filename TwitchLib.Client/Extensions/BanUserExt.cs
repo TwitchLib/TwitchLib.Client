@@ -33,18 +33,5 @@ namespace TwitchLib.Client.Extensions
             if (joinedChannel != null)
                 BanUser(client, joinedChannel, viewer, message, dryRun);
         }
-
-        /// <summary>
-        /// Bans a user in chat using the first joined channel
-        /// </summary>
-        /// <param name="viewer">Viewer name to ban</param>
-        /// <param name="message">Message to accompany the ban and show the user.</param>
-        /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void BanUser(this ITwitchClient client, string viewer, string message = "", bool dryRun = false)
-        {
-            if (client.JoinedChannels.Count > 0)
-                BanUser(client, client.JoinedChannels[0], viewer, message, dryRun);
-        }
     }
 }
