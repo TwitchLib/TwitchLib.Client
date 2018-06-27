@@ -17,3 +17,5 @@
 @msg-id=raid_notice_mature :tmi.twitch.tv NOTICE #swiftyspiffy :This channel is intended for mature audiences.
 
 @badges=subscriber/0;color=#0000FF;display-name=KittyJinxu;emotes=30259:0-6;id=1154b7c0-8923-464e-a66b-3ef55b1d4e50;login=kittyjinxu;mod=0;msg-id=ritual;msg-param-ritual-name=new_chatter;room-id=35740817;subscriber=1;system-msg=@KittyJinxu\sis\snew\shere.\sSay\shello!;tmi-sent-ts=1514387871555;turbo=0;user-id=187446639;user-type=USERNOTICE #thorlar kittyjinxu > #thorlar: HeyGuys
+
+@badges=subscriber/0,premium/1;color=#005C0B;display-name=KIJUI;emotes=;id=fefffeeb-1e87-4adf-9912-ca371a18cbfd;mod=0;room-id=22510310;subscriber=1;tmi-sent-ts=1530128909202;turbo=0;user-id=25517628;user-type= :kijui!kijui@kijui.tmi.twitch.tv PRIVMSG #testchannel :TEST MESSAGE
