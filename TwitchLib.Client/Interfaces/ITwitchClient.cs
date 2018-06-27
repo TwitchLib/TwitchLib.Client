@@ -4,6 +4,8 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 #if NET452
 using TwitchLib.Client.Services;
+#elif NETSTANDARD
+using TwitchLib.Websockets.Events;
 #endif
 
 namespace TwitchLib.Client.Interfaces
@@ -61,6 +63,10 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
         event EventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
         event EventHandler<OnWhisperSentArgs> OnWhisperSent;
+
+        #if NETSTANDARD
+        event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
+#endif
 
         void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
 

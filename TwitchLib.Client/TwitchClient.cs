@@ -13,21 +13,22 @@ using TwitchLib.Client.Internal.Parsing;
 using TwitchLib.Client.Manager;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
-using TwitchLib.Client.Services;
 #if NET452
 using WebSocket4Net;
 using SuperSocket.ClientEngine;
 using SuperSocket.ClientEngine.Proxy;
+using TwitchLib.Client.Services;
 #elif NETSTANDARD
 using System.Net.WebSockets;
 using TwitchLib.Websockets;
+using TwitchLib.Websockets.Events;
 #endif
 #endregion
 
 namespace TwitchLib.Client
 {
     /// <summary>Represents a client connected to a Twitch channel.</summary>
-    public class TwitchClient : ITwitchClient 
+    public class TwitchClient : ITwitchClient
     {
         #region Private Variables
 #if NET452
@@ -289,9 +290,14 @@ namespace TwitchLib.Client
 
         /// <summary>Fires when data is received from Twitch that is not able to be parsed.</summary>
         public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+#if NETSTANDARD
+        /// <summary>Fires when a message has been throttled by the websocket client.</summary>
+        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
+#endif
+
 #endregion
 
-#region Construction Work
+        #region Construction Work
 #if NET452
         /// <summary>
         /// Initializes the TwitchChatClient class.
@@ -366,6 +372,7 @@ namespace TwitchLib.Client
             _client.OnMessage += _client_OnMessage;
             _client.OnDisconnected += _client_OnDisconnected;
             _client.OnError += _client_OnError;
+            _client.OnMessageThrottled += _client_OnMessageThrottled;
 #endif
         }
 
@@ -384,6 +391,7 @@ namespace TwitchLib.Client
             _client.OnMessage += _client_OnMessage;
             _client.OnDisconnected += _client_OnDisconnected;
             _client.OnError += _client_OnError;
+            _client.OnMessageThrottled += _client_OnMessageThrottled;
 #endif
         }
 
@@ -779,6 +787,11 @@ namespace TwitchLib.Client
                 HandleIrcMessage(_ircParser.ParseIrcMessage(line));
             }
 
+        }
+
+        private void _client_OnMessageThrottled(object sender, OnMessageThrottledEventArgs e)
+        {
+            OnMessageThrottled?.Invoke(sender, e);
         }
 
         private void _client_OnConnected(object sender, Websockets.Events.OnConnectedEventArgs e)

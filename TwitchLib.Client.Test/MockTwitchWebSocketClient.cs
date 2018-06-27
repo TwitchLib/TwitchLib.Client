@@ -21,6 +21,7 @@ namespace TwitchLib.Client.Test
         public event EventHandler<OnMessageEventArgs> OnMessage;
         public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
         public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
+        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
 
         public void Close(WebSocketCloseStatus reason)
         {

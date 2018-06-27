@@ -75,7 +75,7 @@ namespace TwitchLib.Client.Test
             var finish = DateTime.Now.AddSeconds(10);
             var client = new TwitchClient(testClient: _mockTwitchWebSocketClient);
             var emoteCount = 0;
-            client.OnConnected += (sender, e) => ReceivedUserNoticeMessage();
+            client.OnConnected += (sender, e) => ReceivedTestMessage();
             client.OnMessageReceived += (sender, e) => emoteCount = e.ChatMessage.EmoteSet.Emotes.Count;
 
             client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
@@ -159,7 +159,7 @@ namespace TwitchLib.Client.Test
 
         private void ReceivedTestMessage()
         {
-            _mockTwitchWebSocketClient.ReceiveMessage($"@badges=subscriber/0,premium/1;color=#005C0B;display-name=KIJUI;emotes=;id=fefffeeb-1e87-4adf-9912-ca371a18cbfd;mod=0;room-id=22510310;subscriber=1;tmi-sent-ts=1530128909202;turbo=0;user-id=25517628;user-type= :kijui!kijui@kijui.tmi.twitch.tv PRIVMSG #testchannel :TEST MESSAGE");
+            _mockTwitchWebSocketClient.ReceiveMessage($"@badges=subscriber/0,premium/1;color=#005C0B;display-name=KIJUI;emotes=30259:0-6;id=fefffeeb-1e87-4adf-9912-ca371a18cbfd;mod=0;room-id=22510310;subscriber=1;tmi-sent-ts=1530128909202;turbo=0;user-id=25517628;user-type= :kijui!kijui@kijui.tmi.twitch.tv PRIVMSG #testchannel :TEST MESSAGE");
         }
 
         private void ReceivedTwitchConnected()
