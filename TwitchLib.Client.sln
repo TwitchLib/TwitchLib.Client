@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Models", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Enums", "TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj", "{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Websockets", "..\TwitchLib.Websockets\TwitchLib.Websockets.csproj", "{3D0E053D-671F-4FB4-922C-6EE7AECA50A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.WebSocket", "..\TwitchLib.Websockets\TwitchLib.WebSocket.csproj", "{3D0E053D-671F-4FB4-922C-6EE7AECA50A2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Test", "TwitchLib.Client.Test\TwitchLib.Client.Test.csproj", "{EBAA6C8E-C0BA-4A85-B2DC-2281B9D5618B}"
 EndProject

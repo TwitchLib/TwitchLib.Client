@@ -5,7 +5,7 @@ using TwitchLib.Client.Models;
 #if NET452
 using TwitchLib.Client.Services;
 #elif NETSTANDARD
-using TwitchLib.Websockets.Events;
+using TwitchLib.WebSocket.Events;
 #endif
 
 namespace TwitchLib.Client.Interfaces

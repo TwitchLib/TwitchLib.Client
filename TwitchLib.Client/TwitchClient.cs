@@ -20,8 +20,8 @@ using SuperSocket.ClientEngine.Proxy;
 using TwitchLib.Client.Services;
 #elif NETSTANDARD
 using System.Net.WebSockets;
-using TwitchLib.Websockets;
-using TwitchLib.Websockets.Events;
+using TwitchLib.WebSocket;
+using TwitchLib.WebSocket.Events;
 #endif
 #endregion
 
@@ -320,7 +320,7 @@ namespace TwitchLib.Client
         public TwitchClient(IWebsocketClientOptions webSocketOptions = null, IWebsocketClient testClient = null, ILogger<TwitchClient> logger = null)
         {
             _logger = logger;
-            _socketOptions = webSocketOptions ?? new WebsocketClientOptions();
+            _socketOptions = webSocketOptions ?? new WebSocketClientOptions();
             _client = testClient;
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
@@ -367,7 +367,7 @@ namespace TwitchLib.Client
             if (ConnectionCredentials.Proxy != null)
                 _client.Proxy = new HttpConnectProxy(ConnectionCredentials.Proxy);
 #elif NETSTANDARD
-            _client = new WebsocketClient(_socketOptions);
+            _client = new WebSocketClient(_socketOptions);
             _client.OnConnected += _client_OnConnected; ;
             _client.OnMessage += _client_OnMessage;
             _client.OnDisconnected += _client_OnDisconnected;
@@ -757,13 +757,13 @@ namespace TwitchLib.Client
             _disconnectedFlag = false;
         }
 #elif NETSTANDARD
-        private void _client_OnError(object sender, Websockets.Events.OnErrorEventArgs e)
+        private void _client_OnError(object sender, WebSocket.Events.OnErrorEventArgs e)
         {
             OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Exception = e.Exception, Message = e.Exception.Message } });
             Reconnect();
         }
 
-        private void _client_OnDisconnected(object sender, Websockets.Events.OnDisconnectedEventArgs e)
+        private void _client_OnDisconnected(object sender, WebSocket.Events.OnDisconnectedEventArgs e)
         {
             if (!_disconnectedFlag)
             {
@@ -773,7 +773,7 @@ namespace TwitchLib.Client
             }
         }
 
-        private void _client_OnMessage(object sender, Websockets.Events.OnMessageEventArgs e)
+        private void _client_OnMessage(object sender, WebSocket.Events.OnMessageEventArgs e)
         {
             var stringSeparators = new[] { "\r\n" };
             var lines = e.Message.Split(stringSeparators, StringSplitOptions.None);
@@ -794,7 +794,7 @@ namespace TwitchLib.Client
             OnMessageThrottled?.Invoke(sender, e);
         }
 
-        private void _client_OnConnected(object sender, Websockets.Events.OnConnectedEventArgs e)
+        private void _client_OnConnected(object sender, WebSocket.Events.OnConnectedEventArgs e)
         {
             _client.Send(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
             _client.Send(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));

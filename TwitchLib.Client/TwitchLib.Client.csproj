@@ -37,9 +37,9 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-    <ProjectReference Include="..\..\TwitchLib.Websockets\TwitchLib.Websockets.csproj" />
+    <ProjectReference Include="..\..\TwitchLib.Websockets\TwitchLib.WebSocket.csproj" />
   </ItemGroup>
-
+    
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452'">
     <PackageReference Include="WebSocket4Net" Version="0.15.2" />
   </ItemGroup>
