@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
+#if NET452
 using TwitchLib.Client.Services;
+#endif
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -19,8 +21,10 @@ namespace TwitchLib.Client.Interfaces
         WhisperMessage PreviousWhisper { get; }
         string TwitchUsername { get; }
         bool WillReplaceEmotes { get; set; }
+#if NET452
         MessageThrottler ChatThrottler { get; set; }
         MessageThrottler WhisperThrottler { get; set; }
+#endif
 
         event EventHandler<OnBeingHostedArgs> OnBeingHosted;
         event EventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;

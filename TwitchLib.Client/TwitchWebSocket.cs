@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Security.Authentication;
 using TwitchLib.Client.Interfaces;
+
+#if NET452
 using WebSocket4Net;
+#endif
 
 namespace TwitchLib.Client
 {
+#if NET452
     public class TwitchWebSocket : WebSocket, ITwitchWebSocket
     {
         public TwitchWebSocket(string uri, string subProtocol, WebSocketVersion version) : base(uri, subProtocol, version)
@@ -17,6 +22,6 @@ namespace TwitchLib.Client
         {
 
         }
-
     }
+#endif
 }

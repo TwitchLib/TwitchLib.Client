@@ -1,13 +1,17 @@
-﻿using SuperSocket.ClientEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+#if NET452
+using SuperSocket.ClientEngine;
 using WebSocket4Net;
+#endif
+
 
 namespace TwitchLib.Client.Interfaces
 {
     public interface ITwitchWebSocket
     {
+#if NET452
         event EventHandler<ErrorEventArgs> Error;
         event EventHandler<DataReceivedEventArgs> DataReceived;
         event EventHandler<MessageReceivedEventArgs> MessageReceived;
@@ -23,5 +27,6 @@ namespace TwitchLib.Client.Interfaces
         void Close();
         void Dispose();
         void Open();
+#endif
     }
 }

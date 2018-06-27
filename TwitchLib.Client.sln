@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client", "TwitchL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.Client.Test", "TwitchLib.Client.Test\TwitchLib.Client.Test.csproj", "{FBC77918-103C-4820-89C8-89C9B3D17ECC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.Client.Models", "TwitchLib.Client.Models\TwitchLib.Client.Models.csproj", "{C77438A0-7745-4F4F-BB8A-CFFA52DC5E18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Models", "TwitchLib.Client.Models\TwitchLib.Client.Models.csproj", "{C77438A0-7745-4F4F-BB8A-CFFA52DC5E18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.Client.Enums", "TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj", "{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Enums", "TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj", "{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.Websockets", "..\TwitchLib.Websockets\TwitchLib.Websockets.csproj", "{3D0E053D-671F-4FB4-922C-6EE7AECA50A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D0E053D-671F-4FB4-922C-6EE7AECA50A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D0E053D-671F-4FB4-922C-6EE7AECA50A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D0E053D-671F-4FB4-922C-6EE7AECA50A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D0E053D-671F-4FB4-922C-6EE7AECA50A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

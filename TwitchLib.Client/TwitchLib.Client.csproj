@@ -22,7 +22,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
-    <PackageReference Include="WebSocket4Net" Version="0.15.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
@@ -36,4 +35,12 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="..\..\TwitchLib.Websockets\TwitchLib.Websockets.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452'">
+    <PackageReference Include="WebSocket4Net" Version="0.15.2" />
+  </ItemGroup>
 </Project>
