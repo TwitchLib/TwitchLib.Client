@@ -34,7 +34,7 @@ namespace TwitchLib.Client
         private ITwitchWebSocket _client;
 #elif NETSTANDARD
         private readonly IWebsocketClientOptions _socketOptions;
-        private WebsocketClient _client;
+        private IWebsocketClient _client;
 #endif
         private MessageEmoteCollection _channelEmotes = new MessageEmoteCollection();
         private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
@@ -59,11 +59,7 @@ namespace TwitchLib.Client
         /// <summary>Assembly version of TwitchLib.Client.</summary>
         public Version Version => Assembly.GetEntryAssembly().GetName().Version;
         /// <summary>Checks if underlying client has been initialized.</summary>
-#if NET452
         public bool IsInitialized => _client != null;
-#elif NETSTANDARD
-        public bool IsInitialized => _client != null;
-#endif
         /// <summary>A list of all channels the client is currently in.</summary>
         public IReadOnlyList<JoinedChannel> JoinedChannels => _joinedChannelManager.GetJoinedChannels();
         /// <summary>Username of the user connected via this library.</summary>
@@ -315,10 +311,11 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="webSocketOptions">Websocket Client Options. Handle Reconnect Times etc.</param>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
-        public TwitchClient(IWebsocketClientOptions webSocketOptions = null, ILogger<TwitchClient> logger = null)
+        public TwitchClient(IWebsocketClientOptions webSocketOptions = null, IWebsocketClient testClient = null, ILogger<TwitchClient> logger = null)
         {
             _logger = logger;
             _socketOptions = webSocketOptions ?? new WebsocketClientOptions();
+            _client = testClient;
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
         }

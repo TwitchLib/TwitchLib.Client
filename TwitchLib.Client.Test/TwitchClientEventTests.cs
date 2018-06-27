@@ -1,20 +1,20 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TwitchLib.Websockets;
+using Xunit;
 
 namespace TwitchLib.Client.Test
 {
-    [TestClass]
     public class TwitchClientEventTests
     {
         private const string TWITCH_BOT_USERNAME = "testuser";
         private const string TWITCH_CHANNEL = "testchannel";
 
-        [TestMethod]
+        [Fact]
         public void ClientCanReceiveData()
         {
             var finish = DateTime.Now.AddSeconds(10);
-            var websocket = new MockTwitchWebSocket();
-            var client = new TwitchClient(websocket);
+            var websocket = new MockTwitchWebSocketClient();
+            var client = new TwitchClient(testClient: websocket);
 
             var onSendReceiveDataFired = false;
 
@@ -35,15 +35,15 @@ namespace TwitchLib.Client.Test
 
             }
 
-            Assert.IsTrue(onSendReceiveDataFired);
+            Assert.True(onSendReceiveDataFired);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClientConnectedTest()
         {
             var finish = DateTime.Now.AddSeconds(10);
-            var websocket = new MockTwitchWebSocket();
-            var client = new TwitchClient(websocket);
+            var websocket = new MockTwitchWebSocketClient();
+            var client = new TwitchClient(testClient: websocket);
 
             var onConnectedFired = false;
 
@@ -71,15 +71,15 @@ namespace TwitchLib.Client.Test
 
             }
           
-            Assert.IsTrue(onConnectedFired);
+            Assert.True(onConnectedFired);
         }
         
-        [TestMethod]
+        [Fact]
         public void ClientCanJoinChannels()
         {
             var finish = DateTime.Now.AddSeconds(10);
-            var websocket = new MockTwitchWebSocket();
-            var client = new TwitchClient(websocket);
+            var websocket = new MockTwitchWebSocketClient();
+            var client = new TwitchClient(testClient: websocket);
 
             var onJoinChannelFired = false;
 
@@ -115,15 +115,15 @@ namespace TwitchLib.Client.Test
 
             }
 
-            Assert.IsTrue(onJoinChannelFired);
+            Assert.True(onJoinChannelFired);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClientNewChatterRitualTest()
         {
             var finish = DateTime.Now.AddSeconds(10);
-            var websocket = new MockTwitchWebSocket();
-            var client = new TwitchClient(websocket);
+            var websocket = new MockTwitchWebSocketClient();
+            var client = new TwitchClient(testClient: websocket);
 
             var newChatterRitualFired = false;
 
@@ -157,7 +157,7 @@ namespace TwitchLib.Client.Test
 
             }
 
-            Assert.IsTrue(newChatterRitualFired);
+            Assert.True(newChatterRitualFired);
         }
     }
 }
