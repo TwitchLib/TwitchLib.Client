@@ -20,8 +20,9 @@
     <AssemblyVersion>2.1.4.0</AssemblyVersion>
     <FileVersion>2.1.4.0</FileVersion>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
