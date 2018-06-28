@@ -50,8 +50,6 @@ namespace TwitchLib.Client.Models
         /// <summary>Number of months a person has been subbed.</summary>
         public int SubscribedMonthCount { get; }        
 
-        private readonly string _emoteSetStorage;
-
         //Example IRC message: @badges=moderator/1,warcraft/alliance;color=;display-name=Swiftyspiffyv4;emotes=;mod=1;room-id=40876073;subscriber=0;turbo=0;user-id=103325214;user-type=mod :swiftyspiffyv4!swiftyspiffyv4@swiftyspiffyv4.tmi.twitch.tv PRIVMSG #swiftyspiffy :asd
         /// <summary>Constructor for ChatMessage object.</summary>
         /// <param name="botUsername">The username of the bot that received the message.</param>
@@ -64,7 +62,6 @@ namespace TwitchLib.Client.Models
             RawIrcMessage = ircMessage.ToString();
             Message = ircMessage.Message;
             _emoteCollection = emoteCollection;
-            EmoteSet = new EmoteSet(_emoteSetStorage, Message);
 
             Username = ircMessage.User;
             Channel = ircMessage.Channel;
@@ -113,7 +110,7 @@ namespace TwitchLib.Client.Models
                         DisplayName = tagValue;
                         break;
                     case Tags.Emotes:
-                        _emoteSetStorage = tagValue;
+                        EmoteSet = new EmoteSet(tagValue, Message);
                         break;
                     case Tags.Id:
                         Id = tagValue;
@@ -203,6 +200,9 @@ namespace TwitchLib.Client.Models
                     EmoteReplacedMessage = _emoteCollection.ReplaceEmotes(Message);
                 }
             }
+
+            if (EmoteSet == null)
+                EmoteSet = new EmoteSet(null, Message);
 
             // Check if display name was set, and if it wasn't, set it to username
             if (string.IsNullOrEmpty(DisplayName))

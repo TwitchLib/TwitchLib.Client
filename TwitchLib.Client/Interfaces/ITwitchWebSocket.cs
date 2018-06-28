@@ -14,7 +14,6 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler Closed;
         event EventHandler Opened;
         WebSocketState State { get; }
-        IProxyConnector Proxy { get; set; }
         void Send(byte[] data, int offset, int length);
         void Send(string message);
         void Send(IList<ArraySegment<byte>> segments);

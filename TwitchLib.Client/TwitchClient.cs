@@ -7,7 +7,6 @@ using TwitchLib.Client.Internal;
 using Microsoft.Extensions.Logging;
 using WebSocket4Net;
 using SuperSocket.ClientEngine;
-using SuperSocket.ClientEngine.Proxy;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
@@ -324,14 +323,11 @@ namespace TwitchLib.Client
 
         private void InitializeWebsocketClient()
         {
-            _client = new TwitchWebSocket($"ws://{ConnectionCredentials.TwitchHost}:{ConnectionCredentials.TwitchPort}");
+            _client = new TwitchWebSocket(ConnectionCredentials.TwitchWebsocketURI);
             _client.Opened += _client_OnConnected;
             _client.MessageReceived += _client_OnMessage;
             _client.Closed += _client_OnDisconnected;
             _client.Error += _client_OnError;
-
-            if (ConnectionCredentials.Proxy != null)
-                _client.Proxy = new HttpConnectProxy(ConnectionCredentials.Proxy);
         }
 
         private void InitializeMockWebsocketClient()
@@ -340,9 +336,6 @@ namespace TwitchLib.Client
             _client.MessageReceived += _client_OnMessage;
             _client.Closed += _client_OnDisconnected;
             _client.Error += _client_OnError;
-
-            if (ConnectionCredentials.Proxy != null)
-                _client.Proxy = new HttpConnectProxy(ConnectionCredentials.Proxy);
         }
 
         #endregion
@@ -453,7 +446,7 @@ namespace TwitchLib.Client
         public void Connect()
         {
             if (!IsInitialized) HandleNotInitialized();
-            Log("Connecting to: " + ConnectionCredentials.TwitchHost + ":" + ConnectionCredentials.TwitchPort);
+            Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
             _client.Open();
 
@@ -481,7 +474,7 @@ namespace TwitchLib.Client
         public void Reconnect()
         {
             if (!IsInitialized) HandleNotInitialized();
-            Log("Reconnecting to: " + ConnectionCredentials.TwitchHost + ":" + ConnectionCredentials.TwitchPort);
+            Log($"Reconnecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
             _client.Dispose();
 
