@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TwitchLib.Websockets\TwitchLib.WebSocket.csproj" />
+    <ProjectReference Include="..\..\TwitchLib.WebSocket\TwitchLib.WebSocket.csproj" />
     <ProjectReference Include="..\TwitchLib.Client\TwitchLib.Client.csproj" />
   </ItemGroup>
 
