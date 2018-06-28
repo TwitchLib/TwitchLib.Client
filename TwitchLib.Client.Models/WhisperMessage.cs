@@ -1,4 +1,6 @@
+#if NETSTANDARD
 using TwitchLib.Client.Models.Extensions.NetCore;
+#endif
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;

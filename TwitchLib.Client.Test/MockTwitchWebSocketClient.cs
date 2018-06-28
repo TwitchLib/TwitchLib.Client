@@ -1,78 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.WebSockets;
-using System.Text;
-using TwitchLib.WebSocket;
-using TwitchLib.WebSocket.Events;
+using SuperSocket.ClientEngine;
+using TwitchLib.Client.Interfaces;
+using WebSocket4Net;
 
 namespace TwitchLib.Client.Test
 {
-    public class MockTwitchWebSocketClient : IWebSocketClient
+    public class MockTwitchWebSocket : ITwitchWebSocket
     {
-        public TimeSpan DefaultKeepAliveInterval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public int SendQueueLength => throw new NotImplementedException();
-
-        public WebSocketState State => WebSocketState.Open;
-
-        public int WhisperQueueLength => throw new NotImplementedException();
-
-        public event EventHandler<OnConnectedEventArgs> OnConnected;
-        public event EventHandler<OnDataEventArgs> OnData;
-        public event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
-        public event EventHandler<OnErrorEventArgs> OnError;
-        public event EventHandler<OnFatalErrorEventArgs> OnFatality;
-        public event EventHandler<OnMessageEventArgs> OnMessage;
-        public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
-        public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
-        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
-        public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
-
-        public void Close(WebSocketCloseStatus reason)
+        private WebSocketState _state;
+        public WebSocketState State
         {
-            OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { Reason = reason });
+            get { return _state; }
+        }
+
+        public IProxyConnector Proxy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        
+        public event EventHandler<ErrorEventArgs> Error;
+        public event EventHandler<DataReceivedEventArgs> DataReceived;
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        public event EventHandler Closed;
+        public event EventHandler Opened;
+
+        public void Close(int statusCode, string reason)
+        {
+        }
+
+        public void Close(string reason)
+        {
+            throw new NotImplementedException();
         }
 
         public void Close()
         {
-            OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { Reason = WebSocketCloseStatus.Empty });
+            throw new NotImplementedException();
         }
 
         public void Dispose()
-        { }
-
-        public void Dispose(bool waitForSendsToComplete)
-        { }
-
-        public bool Open()
-        {
-            OnConnected?.Invoke(this, new OnConnectedEventArgs());
-            return true;
-        }
-
-        public bool Send(byte[] data)
         {
             throw new NotImplementedException();
         }
 
-        public bool Send(string data)
+        public void Open()
         {
-            return true;
+            _state = WebSocketState.Open;
+            Opened?.Invoke(this, new EventArgs());
+        }
+
+        public void Send(byte[] data, int offset, int length)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Send(string message)
+        {
+        }
+
+        public void Send(IList<ArraySegment<byte>> segments)
+        {
         }
 
         public void ReceiveMessage(string message)
         {
-            OnMessage?.Invoke(this, new OnMessageEventArgs { Message = message });
-        }
-
-        public bool SendWhisper(string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SendWhisper(byte[] data)
-        {
-            throw new NotImplementedException();
+            MessageReceived?.Invoke(this, new MessageReceivedEventArgs(message));
         }
     }
 }
