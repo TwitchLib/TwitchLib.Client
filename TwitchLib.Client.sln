@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Enums", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.WebSocket", "TwitchLib.WebSocket\TwitchLib.WebSocket.csproj", "{0173F1D7-B7BB-4969-9A6D-FD8957E8A296}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.Client.Test", "TwitchLib.Client.Test\TwitchLib.Client.Test.csproj", "{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Test", "TwitchLib.Client.Test\TwitchLib.Client.Test.csproj", "{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8C69E628-6CFC-4F25-8CAC-EC63927C0120}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +46,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{44B88EFA-1500-4005-AF27-A9BCB9DD79C1} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
+		{C77438A0-7745-4F4F-BB8A-CFFA52DC5E18} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
+		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
+		{0173F1D7-B7BB-4969-9A6D-FD8957E8A296} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
+		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C} = {8C69E628-6CFC-4F25-8CAC-EC63927C0120}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {019DD8EE-F4C0-4687-AD7C-FFBB0C8B5DA6}

@@ -7,13 +7,15 @@ using TwitchLib.WebSocket.Events;
 
 namespace TwitchLib.Client.Test
 {
-    public class MockTwitchWebSocketClient : IWebsocketClient
+    public class MockTwitchWebSocketClient : IWebSocketClient
     {
         public TimeSpan DefaultKeepAliveInterval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public int SendQueueLength => throw new NotImplementedException();
 
         public WebSocketState State => WebSocketState.Open;
+
+        public int WhisperQueueLength => throw new NotImplementedException();
 
         public event EventHandler<OnConnectedEventArgs> OnConnected;
         public event EventHandler<OnDataEventArgs> OnData;
@@ -24,6 +26,7 @@ namespace TwitchLib.Client.Test
         public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
         public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
         public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
+        public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
 
         public void Close(WebSocketCloseStatus reason)
         {
@@ -60,6 +63,16 @@ namespace TwitchLib.Client.Test
         public void ReceiveMessage(string message)
         {
             OnMessage?.Invoke(this, new OnMessageEventArgs { Message = message });
+        }
+
+        public bool SendWhisper(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SendWhisper(byte[] data)
+        {
+            throw new NotImplementedException();
         }
     }
 }
