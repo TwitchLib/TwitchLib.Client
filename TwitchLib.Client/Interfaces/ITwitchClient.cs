@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
-using TwitchLib.Client.Services;
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -19,8 +18,6 @@ namespace TwitchLib.Client.Interfaces
         WhisperMessage PreviousWhisper { get; }
         string TwitchUsername { get; }
         bool WillReplaceEmotes { get; set; }
-        MessageThrottler ChatThrottler { get; set; }
-        MessageThrottler WhisperThrottler { get; set; }
 
         event EventHandler<OnBeingHostedArgs> OnBeingHosted;
         event EventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;

@@ -1,12 +1,9 @@
-﻿#region using directives
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TwitchLib.Client.Internal;
 using Microsoft.Extensions.Logging;
-using WebSocket4Net;
-using SuperSocket.ClientEngine;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
@@ -15,8 +12,8 @@ using TwitchLib.Client.Internal.Parsing;
 using TwitchLib.Client.Manager;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
-using TwitchLib.Client.Services;
-#endregion
+using TwitchLib.WebSocket;
+using System.Net.WebSockets;
 
 namespace TwitchLib.Client
 {
@@ -24,7 +21,7 @@ namespace TwitchLib.Client
     public class TwitchClient : ITwitchClient 
     {
         #region Private Variables
-        private ITwitchWebSocket _client;
+        private IWebsocketClient _client;
         private MessageEmoteCollection _channelEmotes = new MessageEmoteCollection();
         private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
         private readonly ICollection<char> _whisperCommandIdentifiers = new HashSet<char>();
@@ -57,10 +54,7 @@ namespace TwitchLib.Client
         public WhisperMessage PreviousWhisper { get; private set; }
         /// <summary>The current connection status of the client.</summary>
         public bool IsConnected => _client.State == WebSocketState.Open;
-        /// <summary>Assign this property a valid MessageThrottler to apply message throttling on chat messages.</summary>
-        public MessageThrottler ChatThrottler { get; set; }
-        /// <summary>Assign this property a valid MessageThrottler to apply message throttling on whispers.</summary>
-        public MessageThrottler WhisperThrottler { get; set; }
+       
         /// <summary>The emotes this channel replaces.</summary>
         /// <remarks>
         ///     Twitch-handled emotes are automatically added to this collection (which also accounts for
@@ -285,7 +279,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="webSocket">Optional mock websocket for use with the testing framework. (Dont set this!)</param>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
-        public TwitchClient(ITwitchWebSocket webSocket = null, ILogger<TwitchClient> logger = null)
+        public TwitchClient(IWebsocketClient webSocket = null, ILogger<TwitchClient> logger = null)
         {
             _logger = logger;
             _client = webSocket;
@@ -323,23 +317,25 @@ namespace TwitchLib.Client
 
         private void InitializeWebsocketClient()
         {
-            _client = new TwitchWebSocket(ConnectionCredentials.TwitchWebsocketURI);
-            _client.Opened += _client_OnConnected;
-            _client.MessageReceived += _client_OnMessage;
-            _client.Closed += _client_OnDisconnected;
-            _client.Error += _client_OnError;
+            _client = new WebSocketClient(new WebSocketClientOptions());
+            _client.OnConnected += _client_OnConnected;
+            _client.OnMessage += _client_OnMessage;
+            _client.OnDisconnected += _client_OnDisconnected;
+            _client.OnFatality += _client_OnFatality;
         }
 
         private void InitializeMockWebsocketClient()
         {
-            _client.Opened += _client_OnConnected;
-            _client.MessageReceived += _client_OnMessage;
-            _client.Closed += _client_OnDisconnected;
-            _client.Error += _client_OnError;
+            _client.OnConnected += _client_OnConnected;
+            _client.OnMessage += _client_OnMessage; 
+            _client.OnDisconnected += _client_OnDisconnected;
+            _client.OnFatality += _client_OnFatality; 
         }
 
+  
+
         #endregion
-        
+
         internal void RaiseEvent(string eventName, object args = null)
         {
             FieldInfo fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
@@ -362,8 +358,7 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
 
             Log($"Writing: {message}");
-            if (ChatThrottler == null || !ChatThrottler.ApplyThrottlingToRawMessages)
-                _client.Send(message);
+            _client.Send(message);
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
 
@@ -379,7 +374,7 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
-            if(message.Length > 500)
+            if (message.Length > 500)
             {
                 LogError("Message length has exceeded the maximum character count. (500)");
                 return;
@@ -394,10 +389,8 @@ namespace TwitchLib.Client
 
             _lastMessageSent = message;
 
-            if (ChatThrottler != null)
-                ChatThrottler.QueueSend(twitchMessage.ToString());
-            else
-                _client.Send(twitchMessage.ToString());
+
+            _client.Send(twitchMessage.ToString());
         }
 
         /// <summary>
@@ -429,10 +422,7 @@ namespace TwitchLib.Client
                 Message = message
             };
             
-            if (WhisperThrottler != null)
-                WhisperThrottler.QueueSend(twitchMessage.ToString());
-            else
-                _client.Send(twitchMessage.ToString());
+            _client.Send(twitchMessage.ToString());
 
             OnWhisperSent?.Invoke(this, new OnWhisperSentArgs { Receiver = receiver, Message = message });
         }
@@ -632,15 +622,16 @@ namespace TwitchLib.Client
         }
 
         #region Client Events
-        private void _client_OnError(object sender, ErrorEventArgs e)
+      
+        private void _client_OnFatality(object sender, WebSocket.Events.OnFatalErrorEventArgs e)
         {
-            OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Exception = e.Exception, Message = e.Exception.Message } });
+            OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Message = e.Reason } });
             Reconnect();
         }
 
         private void _client_OnDisconnected(object sender, EventArgs e)
         {
-        if (!_disconnectedFlag)
+            if (!_disconnectedFlag)
             {
                 OnDisconnected?.Invoke(this, new OnDisconnectedArgs { BotUsername = TwitchUsername });
                 _joinedChannelManager.Clear();
@@ -648,7 +639,7 @@ namespace TwitchLib.Client
             }
         }
 
-        private void _client_OnMessage(object sender, MessageReceivedEventArgs e)
+        private void _client_OnMessage(object sender, WebSocket.Events.OnMessageEventArgs e)
         {
             var stringSeparators = new[] { "\r\n" };
             var lines = e.Message.Split(stringSeparators, StringSplitOptions.None);
@@ -661,7 +652,6 @@ namespace TwitchLib.Client
                 OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Received, Data = line });
                 HandleIrcMessage(_ircParser.ParseIrcMessage(line));
             }
-
         }
 
         private void _client_OnConnected(object sender, object e)

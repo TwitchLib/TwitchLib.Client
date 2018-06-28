@@ -1,0 +1,3 @@
+[submodule "TwitchLib.WebSocket"]
+	path = TwitchLib.WebSocket
+	url = https://github.com/TwitchLib/TwitchLib.WebSocket
