@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
-using TwitchLib.Client.Services;
+using TwitchLib.WebSocket.Events;
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -19,8 +19,6 @@ namespace TwitchLib.Client.Interfaces
         WhisperMessage PreviousWhisper { get; }
         string TwitchUsername { get; }
         bool WillReplaceEmotes { get; set; }
-        MessageThrottler ChatThrottler { get; set; }
-        MessageThrottler WhisperThrottler { get; set; }
 
         event EventHandler<OnBeingHostedArgs> OnBeingHosted;
         event EventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
@@ -57,6 +55,8 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
         event EventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
         event EventHandler<OnWhisperSentArgs> OnWhisperSent;
+        event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
+        event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
 
         void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
 

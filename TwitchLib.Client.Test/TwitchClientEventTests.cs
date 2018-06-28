@@ -1,163 +1,186 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using Xunit;
+using TwitchLib.Client.Events;
 
 namespace TwitchLib.Client.Test
 {
-    [TestClass]
     public class TwitchClientEventTests
     {
         private const string TWITCH_BOT_USERNAME = "testuser";
         private const string TWITCH_CHANNEL = "testchannel";
+        private readonly MockTwitchWebSocketClient _mockTwitchWebSocketClient;
 
-        [TestMethod]
+        public TwitchClientEventTests()
+        {
+            _mockTwitchWebSocketClient = new MockTwitchWebSocketClient();
+        }
+
+        [Fact]
         public void ClientCanReceiveData()
         {
-            var finish = DateTime.Now.AddSeconds(10);
-            var websocket = new MockTwitchWebSocket();
-            var client = new TwitchClient(websocket);
-
-            var onSendReceiveDataFired = false;
-
-            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
-
-            client.OnSendReceiveData += (sender, e) =>
-
-            {
-                onSendReceiveDataFired = true;
-            };
-
-
-            client.Connect();
-            websocket.ReceiveMessage($":tmi.twitch.tv 001 {TWITCH_BOT_USERNAME} :Welcome, GLHF!");
-
-            while (!onSendReceiveDataFired && DateTime.Now < finish)
-            {
-
-            }
-
-            Assert.IsTrue(onSendReceiveDataFired);
+            var client = new TwitchClient(_mockTwitchWebSocketClient);
+            Assert.Raises<OnSendReceiveDataArgs>(
+                    h => client.OnSendReceiveData += h,
+                    h => client.OnSendReceiveData -= h,
+                    () =>
+                    {
+                        client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                        client.Connect();
+                        _mockTwitchWebSocketClient.ReceiveMessage($":tmi.twitch.tv 001 {TWITCH_BOT_USERNAME} :Welcome, GLHF!");
+                    });
         }
 
-        [TestMethod]
-        public void ClientConnectedTest()
-        {
-            var finish = DateTime.Now.AddSeconds(10);
-            var websocket = new MockTwitchWebSocket();
-            var client = new TwitchClient(websocket);
-
-            var onConnectedFired = false;
-
-            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
-
-            client.OnConnected += (sender, e) =>
-            {
-                onConnectedFired = true;
-            };
-         
-            client.Connect();
-            websocket.ReceiveMessage($":tmi.twitch.tv 001 {TWITCH_BOT_USERNAME} :Welcome, GLHF!");
-            websocket.ReceiveMessage($":tmi.twitch.tv 002 {TWITCH_BOT_USERNAME} :Your host is tmi.twitch.tv");
-            websocket.ReceiveMessage($":tmi.twitch.tv 003 {TWITCH_BOT_USERNAME} :This server is rather new");
-            websocket.ReceiveMessage($":tmi.twitch.tv 004 {TWITCH_BOT_USERNAME} :-");
-            websocket.ReceiveMessage($":tmi.twitch.tv 375 {TWITCH_BOT_USERNAME} :-");
-            websocket.ReceiveMessage($":tmi.twitch.tv 372 {TWITCH_BOT_USERNAME} :You are in a maze of twisty passages, all alike.");
-            websocket.ReceiveMessage($":tmi.twitch.tv 376 {TWITCH_BOT_USERNAME} :>");
-            websocket.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/membership");
-            websocket.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/commands");
-            websocket.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/tags");
-            
-            while (!onConnectedFired && DateTime.Now< finish)
-            {
-
-            }
-          
-            Assert.IsTrue(onConnectedFired);
-        }
-        
-        [TestMethod]
+        [Fact]
         public void ClientCanJoinChannels()
         {
-            var finish = DateTime.Now.AddSeconds(10);
-            var websocket = new MockTwitchWebSocket();
-            var client = new TwitchClient(websocket);
-
-            var onJoinChannelFired = false;
-
-            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
-
+            var client = new TwitchClient( _mockTwitchWebSocketClient);
             client.OnConnected += (sender, e) =>
             {
                 client.JoinChannel(TWITCH_CHANNEL);
-
-                websocket.ReceiveMessage($"@broadcaster-lang=;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}");
+                ReceivedRoomState();
             };
 
-            client.OnJoinedChannel += (sender, e) =>
-            {
-                onJoinChannelFired = true;
-            };
+            Assert.Raises<OnJoinedChannelArgs>(
+                   h => client.OnJoinedChannel += h,
+                   h => client.OnJoinedChannel -= h,
+                   () =>
+                   {
+                       client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                       client.Connect();
+                       ReceivedTwitchConnected();
+                   });
 
-
-            client.Connect();
-            websocket.ReceiveMessage($":tmi.twitch.tv 001 {TWITCH_BOT_USERNAME} :Welcome, GLHF!");
-            websocket.ReceiveMessage($":tmi.twitch.tv 002 {TWITCH_BOT_USERNAME} :Your host is tmi.twitch.tv");
-            websocket.ReceiveMessage($":tmi.twitch.tv 003 {TWITCH_BOT_USERNAME} :This server is rather new");
-            websocket.ReceiveMessage($":tmi.twitch.tv 004 {TWITCH_BOT_USERNAME} :-");
-            websocket.ReceiveMessage($":tmi.twitch.tv 375 {TWITCH_BOT_USERNAME} :-");
-            websocket.ReceiveMessage($":tmi.twitch.tv 372 {TWITCH_BOT_USERNAME} :You are in a maze of twisty passages, all alike.");
-            websocket.ReceiveMessage($":tmi.twitch.tv 376 {TWITCH_BOT_USERNAME} :>");
-            websocket.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/membership");
-            websocket.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/commands");
-            websocket.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/tags");
-
-            while (!onJoinChannelFired && DateTime.Now < finish)
-            {
-
-            }
-
-            Assert.IsTrue(onJoinChannelFired);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClientNewChatterRitualTest()
         {
-            var finish = DateTime.Now.AddSeconds(10);
-            var websocket = new MockTwitchWebSocket();
-            var client = new TwitchClient(websocket);
+            var client = new TwitchClient( _mockTwitchWebSocketClient);
+            client.OnConnected += (sender, e) => ReceivedUserNoticeMessage();
 
-            var newChatterRitualFired = false;
+            Assert.Raises<OnRitualNewChatterArgs>(
+                  h => client.OnRitualNewChatter += h,
+                  h => client.OnRitualNewChatter -= h,
+                  () =>
+                  {
+                      client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                      client.Connect();
+                      ReceivedTwitchConnected();
+                  });
+        }
+
+        [Fact]
+        public void MessageEmoteCollectionFilled()
+        {
+            var finish = DateTime.Now.AddSeconds(10);
+            var client = new TwitchClient( _mockTwitchWebSocketClient);
+            var emoteCount = 0;
+            client.OnConnected += (sender, e) => ReceivedTestMessage();
+            client.OnMessageReceived += (sender, e) => emoteCount = e.ChatMessage.EmoteSet.Emotes.Count;
 
             client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
-
-            client.OnRitualNewChatter += (sender, e) =>
-            {
-                newChatterRitualFired = true;
-            };
-
-            client.OnConnected += (sender, e) =>
-            {
-                websocket.ReceiveMessage(
-                    "@badges=subscriber/0;color=#0000FF;display-name=KittyJinxu;emotes=30259:0-6;id=1154b7c0-8923-464e-a66b-3ef55b1d4e50;login=kittyjinxu;mod=0;msg-id=ritual;msg-param-ritual-name=new_chatter;room-id=35740817;subscriber=1;system-msg=@KittyJinxu\\sis\\snew\\shere.\\sSay\\shello!;tmi-sent-ts=1514387871555;turbo=0;user-id=187446639;user-type= USERNOTICE #thorlar kittyjinxu > #thorlar: HeyGuys");
-            };
-
             client.Connect();
-            websocket.ReceiveMessage($":tmi.twitch.tv 001 {TWITCH_BOT_USERNAME} :Welcome, GLHF!");
-            websocket.ReceiveMessage($":tmi.twitch.tv 002 {TWITCH_BOT_USERNAME} :Your host is tmi.twitch.tv");
-            websocket.ReceiveMessage($":tmi.twitch.tv 003 {TWITCH_BOT_USERNAME} :This server is rather new");
-            websocket.ReceiveMessage($":tmi.twitch.tv 004 {TWITCH_BOT_USERNAME} :-");
-            websocket.ReceiveMessage($":tmi.twitch.tv 375 {TWITCH_BOT_USERNAME} :-");
-            websocket.ReceiveMessage($":tmi.twitch.tv 372 {TWITCH_BOT_USERNAME} :You are in a maze of twisty passages, all alike.");
-            websocket.ReceiveMessage($":tmi.twitch.tv 376 {TWITCH_BOT_USERNAME} :>");
-            websocket.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/membership");
-            websocket.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/commands");
-            websocket.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/tags");
+            ReceivedTwitchConnected();
 
-            while (!newChatterRitualFired && DateTime.Now < finish)
-            {
+            while (emoteCount == 0 && DateTime.Now < finish)
+            { }
 
-            }
-
-            Assert.IsTrue(newChatterRitualFired);
+            Assert.NotEqual(0, emoteCount);
         }
+
+        [Fact]
+        public void ClientRaisesOnConnected()
+        {
+            var client = new TwitchClient( _mockTwitchWebSocketClient);
+
+            Assert.Raises<OnConnectedArgs>(
+                    h => client.OnConnected += h,
+                    h => client.OnConnected -= h,
+                    () =>
+                    {
+                        client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                        client.Connect();
+                        ReceivedTwitchConnected();
+                    });
+        }
+
+        [Fact]
+        public void ClientRaisesOnMessageReceived()
+        {
+            var client = new TwitchClient( _mockTwitchWebSocketClient);
+
+            Assert.Raises<OnMessageReceivedArgs>(
+                  h => client.OnMessageReceived += h,
+                  h => client.OnMessageReceived -= h,
+                  () =>
+                  {
+                      client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                      client.Connect();
+                      ReceivedTestMessage();
+                  });
+        }
+
+        [Fact]
+        public void ClientRaisesOnJoinedChannel()
+        {
+            var client = new TwitchClient( _mockTwitchWebSocketClient);
+
+            Assert.Raises<OnJoinedChannelArgs>(
+                  h => client.OnJoinedChannel += h,
+                  h => client.OnJoinedChannel -= h,
+                  () =>
+                  {
+                      client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                      client.Connect();
+                      ReceivedTwitchConnected();
+                      client.JoinChannel(TWITCH_CHANNEL);
+                      ReceivedRoomState();
+                  });
+        }
+
+        [Fact]
+        public void ClientChannelAddedToJoinedChannels()
+        {
+            var client = new TwitchClient( _mockTwitchWebSocketClient);
+            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+            client.Connect();
+            ReceivedTwitchConnected();
+            client.JoinChannel(TWITCH_CHANNEL);
+
+            Assert.Equal(1, client.JoinedChannels.Count);
+        }
+
+        #region Messages for Tests
+
+        private void ReceivedUserNoticeMessage()
+        {
+            _mockTwitchWebSocketClient.ReceiveMessage("@badges=subscriber/0;color=#0000FF;display-name=KittyJinxu;emotes=30259:0-6;id=1154b7c0-8923-464e-a66b-3ef55b1d4e50;login=kittyjinxu;mod=0;msg-id=ritual;msg-param-ritual-name=new_chatter;room-id=35740817;subscriber=1;system-msg=@KittyJinxu\\sis\\snew\\shere.\\sSay\\shello!;tmi-sent-ts=1514387871555;turbo=0;user-id=187446639;user-type= USERNOTICE #testchannel kittyjinxu > #testchannel: HeyGuys");
+        }
+
+        private void ReceivedTestMessage()
+        {
+            _mockTwitchWebSocketClient.ReceiveMessage($"@badges=subscriber/0,premium/1;color=#005C0B;display-name=KIJUI;emotes=30259:0-6;id=fefffeeb-1e87-4adf-9912-ca371a18cbfd;mod=0;room-id=22510310;subscriber=1;tmi-sent-ts=1530128909202;turbo=0;user-id=25517628;user-type= :kijui!kijui@kijui.tmi.twitch.tv PRIVMSG #testchannel :TEST MESSAGE");
+        }
+
+        private void ReceivedTwitchConnected()
+        {
+            _mockTwitchWebSocketClient.ReceiveMessage($":tmi.twitch.tv 001 {TWITCH_BOT_USERNAME} :Welcome, GLHF!");
+            _mockTwitchWebSocketClient.ReceiveMessage($":tmi.twitch.tv 002 {TWITCH_BOT_USERNAME} :Your host is tmi.twitch.tv");
+            _mockTwitchWebSocketClient.ReceiveMessage($":tmi.twitch.tv 003 {TWITCH_BOT_USERNAME} :This server is rather new");
+            _mockTwitchWebSocketClient.ReceiveMessage($":tmi.twitch.tv 004 {TWITCH_BOT_USERNAME} :-");
+            _mockTwitchWebSocketClient.ReceiveMessage($":tmi.twitch.tv 375 {TWITCH_BOT_USERNAME} :-");
+            _mockTwitchWebSocketClient.ReceiveMessage($":tmi.twitch.tv 372 {TWITCH_BOT_USERNAME} :You are in a maze of twisty passages, all alike.");
+            _mockTwitchWebSocketClient.ReceiveMessage($":tmi.twitch.tv 376 {TWITCH_BOT_USERNAME} :>");
+            _mockTwitchWebSocketClient.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/membership");
+            _mockTwitchWebSocketClient.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/commands");
+            _mockTwitchWebSocketClient.ReceiveMessage(":tmi.twitch.tv CAP * ACK :twitch.tv/tags");
+        }
+
+        private void ReceivedRoomState()
+        {
+            _mockTwitchWebSocketClient.ReceiveMessage($"@broadcaster-lang=;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}");
+        }
+
+        #endregion
     }
 }
