@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.WebSockets;
-using System.Text;
-using TwitchLib.WebSocket;
-using TwitchLib.WebSocket.Events;
+using TwitchLib.Communication;
+using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client.Test
 {
-    public class MockTwitchWebSocketClient : IWebSocketClient
+    public class MockIClient : IClient
     {
         public TimeSpan DefaultKeepAliveInterval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public int SendQueueLength => throw new NotImplementedException();
 
-        public WebSocketState State => WebSocketState.Open;
+        public bool IsConnected => true;
 
         public int WhisperQueueLength => throw new NotImplementedException();
 
@@ -28,14 +26,9 @@ namespace TwitchLib.Client.Test
         public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
         public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
 
-        public void Close(WebSocketCloseStatus reason)
-        {
-            OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { Reason = reason });
-        }
-
         public void Close()
         {
-            OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { Reason = WebSocketCloseStatus.Empty });
+            OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs());
         }
 
         public void Dispose()
@@ -50,10 +43,6 @@ namespace TwitchLib.Client.Test
             return true;
         }
 
-        public bool Send(byte[] data)
-        {
-            throw new NotImplementedException();
-        }
 
         public bool Send(string data)
         {
@@ -66,11 +55,6 @@ namespace TwitchLib.Client.Test
         }
 
         public bool SendWhisper(string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SendWhisper(byte[] data)
         {
             throw new NotImplementedException();
         }

@@ -12,9 +12,10 @@ using TwitchLib.Client.Internal.Parsing;
 using TwitchLib.Client.Manager;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
-using TwitchLib.WebSocket;
+using TwitchLib.Communication;
 using System.Net.WebSockets;
-using TwitchLib.WebSocket.Events;
+using TwitchLib.Communication.Events;
+using TwitchLib.Client.Enums;
 
 namespace TwitchLib.Client
 {
@@ -22,17 +23,17 @@ namespace TwitchLib.Client
     public class TwitchClient : ITwitchClient 
     {
         #region Private Variables
-        private IWebSocketClient _client;
+        private IClient _client;
         private MessageEmoteCollection _channelEmotes = new MessageEmoteCollection();
         private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
         private readonly ICollection<char> _whisperCommandIdentifiers = new HashSet<char>();
         private readonly Queue<JoinedChannel> _joinChannelQueue = new Queue<JoinedChannel>();
         private readonly ILogger<TwitchClient> _logger;
+        private readonly ClientProtocol _protocol;
         private string _autoJoinChannel;
         private bool _currentlyJoiningChannels;
         private System.Timers.Timer _joinTimer;
         private List<KeyValuePair<string, DateTime>> _awaitingJoins;
-        private bool _disconnectedFlag;
 
         private readonly IrcParser _ircParser;
         private readonly JoinedChannelManager _joinedChannelManager;
@@ -54,7 +55,7 @@ namespace TwitchLib.Client
         /// <summary>The most recent whisper received.</summary>
         public WhisperMessage PreviousWhisper { get; private set; }
         /// <summary>The current connection status of the client.</summary>
-        public bool IsConnected => _client.State == WebSocketState.Open;
+        public bool IsConnected => IsInitialized && _client != null ? _client.IsConnected : false;
        
         /// <summary>The emotes this channel replaces.</summary>
         /// <remarks>
@@ -72,7 +73,6 @@ namespace TwitchLib.Client
         public bool OverrideBeingHostedCheck { get; set; } = false;
         /// <summary>Provides access to connection credentials object.</summary>
         public ConnectionCredentials ConnectionCredentials { get; private set; }
-
         /// <summary>Provides access to autorelistiononexception on off boolean.</summary>
         public bool AutoReListenOnException { get; set; }
 
@@ -192,7 +192,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when bot has disconnected.
         /// </summary>
-        public event EventHandler<OnDisconnectedArgs> OnDisconnected;
+        public event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
 
         /// <summary>
         /// Forces when bot suffers conneciton error.
@@ -264,6 +264,11 @@ namespace TwitchLib.Client
         /// </summary>
         public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
 
+        /// <summary>
+        /// Occurs when an Error is thrown in the protocol client
+        /// </summary>
+        public event EventHandler<OnErrorEventArgs> OnError;
+
         /// <summary>Fires when TwitchClient attempts to host a channel it is in.</summary>
         public EventHandler OnSelfRaidError;
 
@@ -288,12 +293,13 @@ namespace TwitchLib.Client
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
-        /// <param name="webSocket">Optional mock websocket for use with the testing framework. (Dont set this!)</param>
+        /// <param name="client">Protocol Client to use for connection from TwitchLib.Communication. Possible Options Are the TcpClient client or WebSocket client.</param>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
-        public TwitchClient(IWebSocketClient webSocket = null, ILogger<TwitchClient> logger = null)
+        public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger < TwitchClient> logger = null)
         {
             _logger = logger;
-            _client = webSocket;
+            _client = client;
+            _protocol = protocol;
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
         }
@@ -319,14 +325,23 @@ namespace TwitchLib.Client
 
             AutoReListenOnException = autoReListenOnExceptions;
 
-            InitializeWebSocketClient();
+            InitializeClient();
         }
 
-        private void InitializeWebSocketClient()
+        private void InitializeClient()
         {
             if (_client == null)
-                _client = new WebSocketClient();
-
+            {
+                switch (_protocol)
+                {
+                    case ClientProtocol.TCP:
+                        _client = new TcpClient();
+                        break;
+                    case ClientProtocol.WebSocket:
+                        _client = new WebSocketClient();
+                        break;
+                }
+            }
             _client.OnConnected += _client_OnConnected;
             _client.OnMessage += _client_OnMessage;
             _client.OnDisconnected += _client_OnDisconnected;
@@ -471,7 +486,7 @@ namespace TwitchLib.Client
 
             _joinedChannelManager.Clear();
 
-            InitializeWebSocketClient();
+            InitializeClient();
 
             _client.Open();
         }
@@ -640,14 +655,10 @@ namespace TwitchLib.Client
             Reconnect();
         }
 
-        private void _client_OnDisconnected(object sender, EventArgs e)
+        private void _client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
-            if (!_disconnectedFlag)
-            {
-                OnDisconnected?.Invoke(this, new OnDisconnectedArgs { BotUsername = TwitchUsername });
-                _joinedChannelManager.Clear();
-                _disconnectedFlag = true;
-            }
+            OnDisconnected?.Invoke(sender, e);
+            _joinedChannelManager.Clear();
         }
 
         private void _client_OnMessage(object sender, OnMessageEventArgs e)
@@ -679,7 +690,6 @@ namespace TwitchLib.Client
             {
                 JoinChannel(_autoJoinChannel);
             }
-            _disconnectedFlag = false;
         }
 
         #endregion

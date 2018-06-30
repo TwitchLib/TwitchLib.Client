@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
-using TwitchLib.WebSocket.Events;
+using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -27,7 +27,7 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
         event EventHandler<OnConnectedArgs> OnConnected;
         event EventHandler<OnConnectionErrorArgs> OnConnectionError;
-        event EventHandler<OnDisconnectedArgs> OnDisconnected;
+        event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
         event EventHandler<OnExistingUsersDetectedArgs> OnExistingUsersDetected;
         event EventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
         event EventHandler<OnHostingStartedArgs> OnHostingStarted;
@@ -57,6 +57,7 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnWhisperSentArgs> OnWhisperSent;
         event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
         event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
+        event EventHandler<OnErrorEventArgs> OnError;
 
         void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
 
