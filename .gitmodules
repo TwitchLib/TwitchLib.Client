@@ -1,0 +1,3 @@
+[submodule "TwitchLib.Communication"]
+	path = TwitchLib.Communication
+	url = https://github.com/TwitchLib/TwitchLib.Communication.git
