@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -17,7 +17,7 @@
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
     <ProjectReference Include="..\TwitchLib.Client.Models\TwitchLib.Client.Models.csproj" />
     <ProjectReference Include="..\TwitchLib.Client\TwitchLib.Client.csproj" />
-    <ProjectReference Include="..\TwitchLib.WebSocket\TwitchLib.WebSocket.csproj" />
+    <ProjectReference Include="..\TwitchLib.Communication\TwitchLib.Communication.csproj" />
   </ItemGroup>
 
 </Project>
