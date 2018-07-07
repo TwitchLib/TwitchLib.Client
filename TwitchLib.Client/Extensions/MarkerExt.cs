@@ -14,7 +14,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">JoinedChannel representation of the channel to send the marker command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void Unhost(this ITwitchClient client, JoinedChannel channel)
+        public static void Marker(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".marker");
         }
@@ -24,7 +24,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="channel">String representation of the channel to send the marker command to.</param>
         /// <param name="client">Client reference used to identify extension.</param>
-        public static void Unhost(this ITwitchClient client, string channel)
+        public static void Marker(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".marker");
         }
