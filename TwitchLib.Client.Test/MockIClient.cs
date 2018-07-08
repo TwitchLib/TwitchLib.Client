@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Net.WebSockets;
-using TwitchLib.Communication;
 using TwitchLib.Communication.Events;
+using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client.Test
 {

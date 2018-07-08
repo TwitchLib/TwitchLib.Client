@@ -13,9 +13,9 @@ using TwitchLib.Client.Manager;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
 using TwitchLib.Communication;
-using System.Net.WebSockets;
 using TwitchLib.Communication.Events;
 using TwitchLib.Client.Enums;
+using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client
 {
