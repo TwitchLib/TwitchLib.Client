@@ -22,10 +22,11 @@ namespace TwitchLib.Client.Test
         public event EventHandler<OnMessageEventArgs> OnMessage;
         public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
         public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
+        public event EventHandler<OnReconnectedEventArgs> OnReconnected;
         public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
         public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
 
-        public void Close()
+        public void Close(bool callDisconnect = true)
         {
             OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs());
         }
