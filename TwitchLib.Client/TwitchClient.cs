@@ -482,8 +482,8 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             Log($"Reconnecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
-            _client.Dispose();
-
+            _client.Dispose(false);
+            
             _joinedChannelManager.Clear();
 
             InitializeClient();
@@ -652,7 +652,6 @@ namespace TwitchLib.Client
         private void _client_OnFatality(object sender, OnFatalErrorEventArgs e)
         {
             OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Message = e.Reason } });
-            Reconnect();
         }
 
         private void _client_OnDisconnected(object sender, OnDisconnectedEventArgs e)

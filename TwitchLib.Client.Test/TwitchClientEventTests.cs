@@ -2,7 +2,7 @@ using System;
 using Xunit;
 using TwitchLib.Client.Events;
 using TwitchLib.Communication.Events;
-using System.Net.WebSockets;
+using System.Threading;
 
 namespace TwitchLib.Client.Test
 {
@@ -169,6 +169,29 @@ namespace TwitchLib.Client.Test
                       ReceivedRoomState();
                       client.Disconnect();
                   });
+        }
+
+        [Fact]
+        public void ClientReconnectsOk()
+        {
+            var client = new TwitchClient(_mockClient);
+            var reconnectedEvent = new ManualResetEvent(false);
+
+            client.OnDisconnected += (s, e) =>
+            {
+                client.Reconnect();
+                reconnectedEvent.Set();
+            };
+
+            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+            client.Connect();
+            ReceivedTwitchConnected();
+            client.JoinChannel(TWITCH_CHANNEL);
+            ReceivedRoomState();
+            client.Disconnect();
+
+            Assert.True(reconnectedEvent.WaitOne(5000));
+            Assert.True(client.IsConnected);
         }
 
         #region Messages for Tests
