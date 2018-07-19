@@ -480,15 +480,9 @@ namespace TwitchLib.Client
         public void Reconnect()
         {
             if (!IsInitialized) HandleNotInitialized();
-            Log($"Reconnecting to: {ConnectionCredentials.TwitchWebsocketURI}");
-
-            _client.Dispose(false);
-            
+            Log($"Reconnecting to Twitch");
             _joinedChannelManager.Clear();
-
-            InitializeClient();
-
-            _client.Open();
+            _client.Reconnect();
         }
         #endregion
 
