@@ -3,6 +3,7 @@ using Xunit;
 using TwitchLib.Client.Events;
 using TwitchLib.Communication.Events;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TwitchLib.Client.Test
 {
@@ -175,23 +176,30 @@ namespace TwitchLib.Client.Test
         public void ClientReconnectsOk()
         {
             var client = new TwitchClient(_mockClient);
-            var reconnectedEvent = new ManualResetEvent(false);
+            var pauseConnected = new ManualResetEvent(false);
+            var pauseReconnected = new ManualResetEvent(false);
 
-            client.OnDisconnected += (s, e) =>
-            {
-                client.Reconnect();
-                reconnectedEvent.Set();
-            };
+            Assert.Raises<OnReconnectedEventArgs>(
+                h => client.OnReconnected += h,
+                h => client.OnReconnected -= h,
+                () =>
+                {
+                    client.OnConnected += (s, e) =>
+                    {
+                        pauseConnected.Set();
+                        client.Disconnect();
+                    };
 
-            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
-            client.Connect();
-            ReceivedTwitchConnected();
-            client.JoinChannel(TWITCH_CHANNEL);
-            ReceivedRoomState();
-            client.Disconnect();
+                    client.OnDisconnected += (s, e) => { client.Reconnect(); };
+                    client.OnReconnected += (s, e) => { pauseReconnected.Set(); };
+                    
+                    client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                    client.Connect();
+                    ReceivedTwitchConnected();
 
-            Assert.True(reconnectedEvent.WaitOne(5000));
-            Assert.True(client.IsConnected);
+                    Assert.True(pauseConnected.WaitOne(5000));
+                    Assert.True(pauseReconnected.WaitOne(60000));
+                });
         }
 
         #region Messages for Tests

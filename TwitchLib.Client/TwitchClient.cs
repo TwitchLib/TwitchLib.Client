@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using TwitchLib.Client.Internal;
@@ -269,6 +270,11 @@ namespace TwitchLib.Client
         /// </summary>
         public event EventHandler<OnErrorEventArgs> OnError;
 
+        /// <summary>
+        /// Occurs when a reconnection occurs.
+        /// </summary>
+        public event EventHandler<OnReconnectedEventArgs> OnReconnected;
+
         /// <summary>Fires when TwitchClient attempts to host a channel it is in.</summary>
         public EventHandler OnSelfRaidError;
 
@@ -342,26 +348,27 @@ namespace TwitchLib.Client
                         break;
                 }
             }
+
+            Debug.Assert(_client != null, nameof(_client) + " != null");
+
             _client.OnConnected += _client_OnConnected;
             _client.OnMessage += _client_OnMessage;
             _client.OnDisconnected += _client_OnDisconnected;
             _client.OnFatality += _client_OnFatality;
             _client.OnMessageThrottled += _client_OnMessageThrottled;
             _client.OnWhisperThrottled += _client_OnWhisperThrottled;
+            _client.OnReconnected += _client_OnReconnected;
         }
 
         #endregion
 
         internal void RaiseEvent(string eventName, object args = null)
         {
-            FieldInfo fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
-            MulticastDelegate multi = fInfo.GetValue(this) as MulticastDelegate;
+            var fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
+            var multi = fInfo.GetValue(this) as MulticastDelegate;
             foreach (Delegate del in multi.GetInvocationList())
             {
-                if (args == null)
-                    del.Method.Invoke(del.Target, new object[] { this, new EventArgs() });
-                else
-                    del.Method.Invoke(del.Target, new object[] { this, args });
+                del.Method.Invoke(del.Target, args == null ? new object[] {this, new EventArgs()} : new[] {this, args});
             }
         }
 
@@ -652,6 +659,11 @@ namespace TwitchLib.Client
         {
             OnDisconnected?.Invoke(sender, e);
             _joinedChannelManager.Clear();
+        }
+
+        private void _client_OnReconnected(object sender, OnReconnectedEventArgs e)
+        {
+            OnReconnected?.Invoke(sender, e);
         }
 
         private void _client_OnMessage(object sender, OnMessageEventArgs e)

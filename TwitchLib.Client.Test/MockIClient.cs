@@ -47,8 +47,8 @@ namespace TwitchLib.Client.Test
 
         public void Reconnect()
         {
-            Close();
-            Open();
+            IsConnected = true;
+            OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
         }
         
         public bool Send(string data)
