@@ -10,7 +10,7 @@ namespace TwitchLib.Client.Test
 
         public int SendQueueLength => throw new NotImplementedException();
 
-        public bool IsConnected => true;
+        public bool IsConnected { get; private set; }
 
         public int WhisperQueueLength => throw new NotImplementedException();
 
@@ -28,6 +28,7 @@ namespace TwitchLib.Client.Test
 
         public void Close(bool callDisconnect = true)
         {
+            IsConnected = false;
             OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs());
         }
 
@@ -39,11 +40,17 @@ namespace TwitchLib.Client.Test
 
         public bool Open()
         {
+            IsConnected = true;
             OnConnected?.Invoke(this, new OnConnectedEventArgs());
             return true;
         }
 
-
+        public void Reconnect()
+        {
+            IsConnected = true;
+            OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
+        }
+        
         public bool Send(string data)
         {
             return true;
