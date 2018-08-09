@@ -29,6 +29,8 @@
         public const string MsgParamRecipientId = "msg-param-recipient-id";
         public const string MsgParamRecipientUsername = "msg-param-recipient-user-name";
         public const string MsgParamRitualName = "msg-param-ritual-name";
+        public const string MsgParamMassGiftCount = "msg-param-mass-gift-count";
+        public const string MsgParamSenderCount = "msg-param-sender-count";
         public const string Noisy = "noisy";
         public const string Rituals = "rituals";
         public const string RoomId = "room-id";
