@@ -256,6 +256,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
 
         /// <summary>
+        /// Fires when a community subscription is announced in chat
+        /// </summary>
+        public event EventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
+
+        /// <summary>
         /// Fires when a Message has been throttled.
         /// </summary>
         public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
@@ -1093,6 +1098,10 @@ namespace TwitchLib.Client
                 case MsgIds.SubGift:
                     var giftedSubscription = new GiftedSubscription(ircMessage);
                     OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription, Channel = ircMessage.Channel });
+                    break;
+                case MsgIds.CommunitySubscription:
+                    var communitySubscription = new CommunitySubscription(ircMessage);
+                    OnCommunitySubscription?.Invoke(this, new OnCommunitySubscriptionArgs { GiftedSubscription = communitySubscription, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.Subscription:
                     var subscriber = new Subscriber(ircMessage);
