@@ -247,7 +247,7 @@ namespace TwitchLib.Client.Models
             Badges = badges;
             CheerBadge = cheerBadge;
             Bits = bits;
-            BitsInDollars = BitsInDollars;
+            BitsInDollars = bitsInDollars;
         }
 
         private static double ConvertBitsToUsd(int bits)
