@@ -1,16 +1,10 @@
-﻿#if NETSTANDARD
-    using TwitchLib.Client.Models.Extensions.NetCore;
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TwitchLib.Client.Enums;
-    using TwitchLib.Client.Models.Internal;
-
-#if NET452
-
-#endif
+using TwitchLib.Client.Models.Extensions.NetCore;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
@@ -253,7 +247,7 @@ namespace TwitchLib.Client.Models
             Badges = badges;
             CheerBadge = cheerBadge;
             Bits = bits;
-            BitsInDollars = BitsInDollars;
+            BitsInDollars = bitsInDollars;
         }
 
         private static double ConvertBitsToUsd(int bits)

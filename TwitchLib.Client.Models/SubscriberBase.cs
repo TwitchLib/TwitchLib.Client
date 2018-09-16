@@ -1,16 +1,12 @@
-#if NETSTANDARD
-    using TwitchLib.Client.Models.Extensions.NetCore;
-#endif
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-    using TwitchLib.Client.Enums;
-    using TwitchLib.Client.Models.Internal;
+using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Internal;
+using TwitchLib.Client.Models.Extensions.NetCore;
 
-#if NET452
-
-#endif
 
 namespace TwitchLib.Client.Models
 {

@@ -1,12 +1,10 @@
-﻿#region using directives
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using TwitchLib.Client.Internal;
 using Microsoft.Extensions.Logging;
-using WebSocket4Net;
-using SuperSocket.ClientEngine;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
@@ -15,8 +13,10 @@ using TwitchLib.Client.Internal.Parsing;
 using TwitchLib.Client.Manager;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
-using TwitchLib.Client.Services;
-#endregion
+using TwitchLib.Communication;
+using TwitchLib.Communication.Events;
+using TwitchLib.Client.Enums;
+using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client
 {
@@ -24,17 +24,17 @@ namespace TwitchLib.Client
     public class TwitchClient : ITwitchClient 
     {
         #region Private Variables
-        private ITwitchWebSocket _client;
+        private IClient _client;
         private MessageEmoteCollection _channelEmotes = new MessageEmoteCollection();
         private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
         private readonly ICollection<char> _whisperCommandIdentifiers = new HashSet<char>();
         private readonly Queue<JoinedChannel> _joinChannelQueue = new Queue<JoinedChannel>();
         private readonly ILogger<TwitchClient> _logger;
+        private readonly ClientProtocol _protocol;
         private string _autoJoinChannel;
         private bool _currentlyJoiningChannels;
         private System.Timers.Timer _joinTimer;
         private List<KeyValuePair<string, DateTime>> _awaitingJoins;
-        private bool _disconnectedFlag;
 
         private readonly IrcParser _ircParser;
         private readonly JoinedChannelManager _joinedChannelManager;
@@ -56,11 +56,8 @@ namespace TwitchLib.Client
         /// <summary>The most recent whisper received.</summary>
         public WhisperMessage PreviousWhisper { get; private set; }
         /// <summary>The current connection status of the client.</summary>
-        public bool IsConnected => _client.State == WebSocketState.Open;
-        /// <summary>Assign this property a valid MessageThrottler to apply message throttling on chat messages.</summary>
-        public MessageThrottler ChatThrottler { get; set; }
-        /// <summary>Assign this property a valid MessageThrottler to apply message throttling on whispers.</summary>
-        public MessageThrottler WhisperThrottler { get; set; }
+        public bool IsConnected => IsInitialized && _client != null ? _client.IsConnected : false;
+       
         /// <summary>The emotes this channel replaces.</summary>
         /// <remarks>
         ///     Twitch-handled emotes are automatically added to this collection (which also accounts for
@@ -77,7 +74,6 @@ namespace TwitchLib.Client
         public bool OverrideBeingHostedCheck { get; set; } = false;
         /// <summary>Provides access to connection credentials object.</summary>
         public ConnectionCredentials ConnectionCredentials { get; private set; }
-
         /// <summary>Provides access to autorelistiononexception on off boolean.</summary>
         public bool AutoReListenOnException { get; set; }
 
@@ -197,7 +193,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when bot has disconnected.
         /// </summary>
-        public event EventHandler<OnDisconnectedArgs> OnDisconnected;
+        public event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
 
         /// <summary>
         /// Forces when bot suffers conneciton error.
@@ -259,6 +255,31 @@ namespace TwitchLib.Client
         /// </summary>
         public event EventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
 
+        /// <summary>
+        /// Fires when a community subscription is announced in chat
+        /// </summary>
+        public event EventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
+
+        /// <summary>
+        /// Fires when a Message has been throttled.
+        /// </summary>
+        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
+
+        /// <summary>
+        /// Fires when a Whisper has been throttled.
+        /// </summary>
+        public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
+
+        /// <summary>
+        /// Occurs when an Error is thrown in the protocol client
+        /// </summary>
+        public event EventHandler<OnErrorEventArgs> OnError;
+
+        /// <summary>
+        /// Occurs when a reconnection occurs.
+        /// </summary>
+        public event EventHandler<OnReconnectedEventArgs> OnReconnected;
+
         /// <summary>Fires when TwitchClient attempts to host a channel it is in.</summary>
         public EventHandler OnSelfRaidError;
 
@@ -283,15 +304,17 @@ namespace TwitchLib.Client
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
-        /// <param name="webSocket">Optional mock websocket for use with the testing framework. (Dont set this!)</param>
+        /// <param name="client">Protocol Client to use for connection from TwitchLib.Communication. Possible Options Are the TcpClient client or WebSocket client.</param>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
-        public TwitchClient(ITwitchWebSocket webSocket = null, ILogger<TwitchClient> logger = null)
+        public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger < TwitchClient> logger = null)
         {
             _logger = logger;
-            _client = webSocket;
+            _client = client;
+            _protocol = protocol;
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
         }
+
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
@@ -313,43 +336,44 @@ namespace TwitchLib.Client
 
             AutoReListenOnException = autoReListenOnExceptions;
 
+            InitializeClient();
+        }
+
+        private void InitializeClient()
+        {
             if (_client == null)
-                InitializeWebsocketClient();
-            else
             {
-                InitializeMockWebsocketClient();
+                switch (_protocol)
+                {
+                    case ClientProtocol.TCP:
+                        _client = new TcpClient();
+                        break;
+                    case ClientProtocol.WebSocket:
+                        _client = new WebSocketClient();
+                        break;
+                }
             }
-        }
 
-        private void InitializeWebsocketClient()
-        {
-            _client = new TwitchWebSocket(ConnectionCredentials.TwitchWebsocketURI);
-            _client.Opened += _client_OnConnected;
-            _client.MessageReceived += _client_OnMessage;
-            _client.Closed += _client_OnDisconnected;
-            _client.Error += _client_OnError;
-        }
+            Debug.Assert(_client != null, nameof(_client) + " != null");
 
-        private void InitializeMockWebsocketClient()
-        {
-            _client.Opened += _client_OnConnected;
-            _client.MessageReceived += _client_OnMessage;
-            _client.Closed += _client_OnDisconnected;
-            _client.Error += _client_OnError;
+            _client.OnConnected += _client_OnConnected;
+            _client.OnMessage += _client_OnMessage;
+            _client.OnDisconnected += _client_OnDisconnected;
+            _client.OnFatality += _client_OnFatality;
+            _client.OnMessageThrottled += _client_OnMessageThrottled;
+            _client.OnWhisperThrottled += _client_OnWhisperThrottled;
+            _client.OnReconnected += _client_OnReconnected;
         }
 
         #endregion
-        
+
         internal void RaiseEvent(string eventName, object args = null)
         {
-            FieldInfo fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
-            MulticastDelegate multi = fInfo.GetValue(this) as MulticastDelegate;
+            var fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
+            var multi = fInfo.GetValue(this) as MulticastDelegate;
             foreach (Delegate del in multi.GetInvocationList())
             {
-                if (args == null)
-                    del.Method.Invoke(del.Target, new object[] { this, new EventArgs() });
-                else
-                    del.Method.Invoke(del.Target, new object[] { this, args });
+                del.Method.Invoke(del.Target, args == null ? new object[] {this, new EventArgs()} : new[] {this, args});
             }
         }
 
@@ -362,8 +386,7 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
 
             Log($"Writing: {message}");
-            if (ChatThrottler == null || !ChatThrottler.ApplyThrottlingToRawMessages)
-                _client.Send(message);
+            _client.Send(message);
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
 
@@ -379,7 +402,7 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
-            if(message.Length > 500)
+            if (message.Length > 500)
             {
                 LogError("Message length has exceeded the maximum character count. (500)");
                 return;
@@ -394,10 +417,8 @@ namespace TwitchLib.Client
 
             _lastMessageSent = message;
 
-            if (ChatThrottler != null)
-                ChatThrottler.QueueSend(twitchMessage.ToString());
-            else
-                _client.Send(twitchMessage.ToString());
+
+            _client.Send(twitchMessage.ToString());
         }
 
         /// <summary>
@@ -429,10 +450,7 @@ namespace TwitchLib.Client
                 Message = message
             };
             
-            if (WhisperThrottler != null)
-                WhisperThrottler.QueueSend(twitchMessage.ToString());
-            else
-                _client.Send(twitchMessage.ToString());
+            _client.SendWhisper(twitchMessage.ToString());
 
             OnWhisperSent?.Invoke(this, new OnWhisperSentArgs { Receiver = receiver, Message = message });
         }
@@ -474,15 +492,9 @@ namespace TwitchLib.Client
         public void Reconnect()
         {
             if (!IsInitialized) HandleNotInitialized();
-            Log($"Reconnecting to: {ConnectionCredentials.TwitchWebsocketURI}");
-
-            _client.Dispose();
-
+            Log($"Reconnecting to Twitch");
             _joinedChannelManager.Clear();
-
-            InitializeWebsocketClient();
-
-            _client.Open();
+            _client.Reconnect();
         }
         #endregion
 
@@ -632,23 +644,34 @@ namespace TwitchLib.Client
         }
 
         #region Client Events
-        private void _client_OnError(object sender, ErrorEventArgs e)
+
+        private void _client_OnWhisperThrottled(object sender, OnWhisperThrottledEventArgs e)
         {
-            OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Exception = e.Exception, Message = e.Exception.Message } });
-            Reconnect();
+            OnWhisperThrottled?.Invoke(sender, e);
         }
 
-        private void _client_OnDisconnected(object sender, EventArgs e)
+        private void _client_OnMessageThrottled(object sender, OnMessageThrottledEventArgs e)
         {
-        if (!_disconnectedFlag)
-            {
-                OnDisconnected?.Invoke(this, new OnDisconnectedArgs { BotUsername = TwitchUsername });
-                _joinedChannelManager.Clear();
-                _disconnectedFlag = true;
-            }
+            OnMessageThrottled?.Invoke(sender, e);
         }
 
-        private void _client_OnMessage(object sender, MessageReceivedEventArgs e)
+        private void _client_OnFatality(object sender, OnFatalErrorEventArgs e)
+        {
+            OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Message = e.Reason } });
+        }
+
+        private void _client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
+        {
+            OnDisconnected?.Invoke(sender, e);
+            _joinedChannelManager.Clear();
+        }
+
+        private void _client_OnReconnected(object sender, OnReconnectedEventArgs e)
+        {
+            OnReconnected?.Invoke(sender, e);
+        }
+
+        private void _client_OnMessage(object sender, OnMessageEventArgs e)
         {
             var stringSeparators = new[] { "\r\n" };
             var lines = e.Message.Split(stringSeparators, StringSplitOptions.None);
@@ -661,7 +684,6 @@ namespace TwitchLib.Client
                 OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Received, Data = line });
                 HandleIrcMessage(_ircParser.ParseIrcMessage(line));
             }
-
         }
 
         private void _client_OnConnected(object sender, object e)
@@ -678,7 +700,6 @@ namespace TwitchLib.Client
             {
                 JoinChannel(_autoJoinChannel);
             }
-            _disconnectedFlag = false;
         }
 
         #endregion
@@ -1077,6 +1098,10 @@ namespace TwitchLib.Client
                 case MsgIds.SubGift:
                     var giftedSubscription = new GiftedSubscription(ircMessage);
                     OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription, Channel = ircMessage.Channel });
+                    break;
+                case MsgIds.CommunitySubscription:
+                    var communitySubscription = new CommunitySubscription(ircMessage);
+                    OnCommunitySubscription?.Invoke(this, new OnCommunitySubscriptionArgs { GiftedSubscription = communitySubscription, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.Subscription:
                     var subscriber = new Subscriber(ircMessage);
