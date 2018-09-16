@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>TwitchLib.Client</PackageId>
-    <Version>2.1.4</Version>
+    <Version>3.0.0</Version>
     <Description>Client component of TwitchLib. This component allows you to access Twitch chat and whispers, as well as the events that are sent over this connection.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>swiftyspiffy, Prom3theu5, Syzuna, LuckyNoS7evin</Authors>
@@ -12,13 +12,13 @@
     <PackageProjectUrl>https://github.com/TwitchLib/TwitchLib.Client</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <Copyright>Copyright 2018</Copyright>
-    <PackageReleaseNotes>OnDisconnect event temp fix, index out of bounds problems fixed, new projects for enums and models.</PackageReleaseNotes>
+    <PackageReleaseNotes>Replace websocket4net with TwitchLib.Communication, support for creating marker via extension command, use internal reconnection method for each client, support for community subscriptions, BitsInDollars self assignment fixed.</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/TwitchLib/TwitchLib.Client</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>twitch library irc chat c# csharp api events pubsub net standard 2.0</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>2.1.4.0</AssemblyVersion>
-    <FileVersion>2.1.4.0</FileVersion>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
