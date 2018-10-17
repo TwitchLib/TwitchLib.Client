@@ -27,7 +27,8 @@ namespace TwitchLib.Client.Models
         public string RoomId { get; }        
         public string SystemMsg { get; }
         public string SystemMsgParsed { get; }
-        public string TmiSentTs { get; }        
+        public string TmiSentTs { get; }   
+        public string UserId { get; }
         public UserType UserType { get; }
 
         public GiftedSubscription(IrcMessage ircMessage)
@@ -111,6 +112,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Turbo:
                         IsTurbo = Common.Helpers.ConvertToBool(tagValue);
+                        break;
+                    case Tags.UserId:
+                        UserId = tagValue;
                         break;
                     case Tags.UserType:
                         switch (tagValue)
