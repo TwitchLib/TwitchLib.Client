@@ -1043,7 +1043,9 @@ namespace TwitchLib.Client
 
         private void HandleRoomState(IrcMessage ircMessage)
         {
-            if (ircMessage.Tags.ContainsKey(Tags.SubsOnly) && ircMessage.Tags.ContainsKey(Tags.Slow))
+            // If ROOMSTATE is sent because a mode (subonly/slow/emote/etc) is being toggled, it has two tags: room-id, and the specific mode being toggled
+            // If ROOMSTATE is sent because of a join confirmation, all tags (ie greater than 2) are sent
+            if (ircMessage.Tags.Count > 2)
             {
                 var channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
                 _awaitingJoins.Remove(channel);
