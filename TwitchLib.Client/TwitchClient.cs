@@ -251,6 +251,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnRaidNotificationArgs> OnRaidNotification;
 
         /// <summary>
+        /// Fires when a subscription is gifted  and anonymously in chat
+        /// </summary>
+        public event EventHandler<OnAnonGiftedSubscriptionArgs> OnAnonGiftedSubscription;
+
+        /// <summary>
         /// Fires when a subscription is gifted and announced in chat
         /// </summary>
         public event EventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
@@ -1096,6 +1101,10 @@ namespace TwitchLib.Client
                             Log($"Unaccounted for: {ircMessage.ToString()}");
                             break;
                     }
+                    break;
+                case MsgIds.AnonSubGift:
+                var anonGiftedSubscription = new AnonGiftedSubscription(ircMessage);
+                OnAnonGiftedSubscription?.Invoke(this, new OnAnonGiftedSubscriptionArgs { AnonGiftedSubscription = anonGiftedSubscription, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.SubGift:
                     var giftedSubscription = new GiftedSubscription(ircMessage);
