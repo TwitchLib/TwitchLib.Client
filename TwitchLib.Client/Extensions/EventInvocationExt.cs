@@ -108,20 +108,6 @@ namespace TwitchLib.Client.Extensions
             client.RaiseEvent("OnGiftedSubscription", model);
         }
 
-        public static void InvokeAnonGiftedSubscription(this TwitchClient client, string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
-            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
-            string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
-            string tmiSentTs, bool isTurbo, UserType userType)
-        {
-            var model = new OnAnonGiftedSubscriptionArgs()
-            {
-                AnonGiftedSubscription = new AnonGiftedSubscription(badges, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
-                msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
-                userType)
-            };
-            client.RaiseEvent("OnAnonGiftedSubscription", model);
-        }
-
         public static void InvokeOnHostingStarted(this TwitchClient client, string hostingChannel, string targetChannel, int viewers)
         {
             var model = new OnHostingStartedArgs()
