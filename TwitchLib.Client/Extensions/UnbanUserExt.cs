@@ -31,17 +31,5 @@ namespace TwitchLib.Client.Extensions
             if (joinedChannel != null)
                 UnbanUser(client, joinedChannel, viewer, dryRun);
         }
-
-        /// <summary>
-        /// Unbans a user in chat using first joined channel.
-        /// </summary>
-        /// <param name="viewer">Viewer name to unban</param>
-        /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
-        /// <param name="client">Client reference used to identify extension.</param>
-        public static void UnbanUser(this ITwitchClient client, string viewer, bool dryRun = false)
-        {
-            if (client.JoinedChannels.Count > 0)
-                UnbanUser(client, client.JoinedChannels[0], viewer, dryRun);
-        }
     }
 }

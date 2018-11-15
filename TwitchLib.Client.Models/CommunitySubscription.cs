@@ -1,37 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Text;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class GiftedSubscription
+    public class CommunitySubscription
     {
-        public string Badges { get; }
-        public string Color { get; }
-        public string DisplayName { get; }
-        public string Emotes { get; }
-        public string Id { get; }
-        public bool IsModerator { get; }
-        public bool IsSubscriber { get; }
-        public bool IsTurbo { get; }
-        public string Login { get; }        
-        public string MsgId { get; }
-        public string MsgParamMonths { get; }
-        public string MsgParamRecipientDisplayName { get; }
-        public string MsgParamRecipientId { get; }
-        public string MsgParamRecipientUserName { get; }
-        public string MsgParamSubPlanName { get; }
-        public SubscriptionPlan MsgParamSubPlan { get; }
-        public string RoomId { get; }        
-        public string SystemMsg { get; }
-        public string SystemMsgParsed { get; }
-        public string TmiSentTs { get; }   
-        public string UserId { get; }
-        public UserType UserType { get; }
+        public string Badges;
+        public string Color;
+        public string DisplayName;
+        public string Emotes;
+        public string Id;
+        public string Login;
+        public bool IsModerator;
+        public string MsgId;
+        public int MsgParamMassGiftCount;
+        public int MsgParamSenderCount;
+        public SubscriptionPlan MsgParamSubPlan;
+        public string RoomId;
+        public bool IsSubscriber;
+        public string SystemMsg;
+        public string SystemMsgParsed;
+        public string TmiSentTs;
+        public bool IsTurbo;
+        public string UserId;
+        public UserType UserType;
 
-        public GiftedSubscription(IrcMessage ircMessage)
+        public CommunitySubscription(IrcMessage ircMessage)
         {
             foreach (var tag in ircMessage.Tags.Keys)
             {
@@ -63,21 +60,6 @@ namespace TwitchLib.Client.Models
                     case Tags.MsgId:
                         MsgId = tagValue;
                         break;
-                    case Tags.MsgParamMonths:
-                        MsgParamMonths = tagValue;
-                        break;
-                    case Tags.MsgParamRecipientDisplayname:
-                        MsgParamRecipientDisplayName = tagValue;
-                        break;
-                    case Tags.MsgParamRecipientId:
-                        MsgParamRecipientId = tagValue;
-                        break;
-                    case Tags.MsgParamRecipientUsername:
-                        MsgParamRecipientUserName = tagValue;
-                        break;
-                    case Tags.MsgParamSubPlanName:
-                        MsgParamSubPlanName = tagValue;
-                        break;
                     case Tags.MsgParamSubPlan:
                         switch (tagValue)
                         {
@@ -96,6 +78,12 @@ namespace TwitchLib.Client.Models
                             default:
                                 throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
                         }
+                        break;
+                    case Tags.MsgParamMassGiftCount:
+                        MsgParamMassGiftCount = int.Parse(tagValue);
+                        break;
+                    case Tags.MsgParamSenderCount:
+                        MsgParamSenderCount = int.Parse(tagValue);
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
@@ -138,33 +126,6 @@ namespace TwitchLib.Client.Models
                         break;
                 }
             }
-        }
-        public GiftedSubscription(string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
-            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
-            string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
-            string tmiSentTs, bool isTurbo, UserType userType)
-        {
-            Badges = badges;
-            Color = color;
-            DisplayName = displayName;
-            Emotes = emotes;
-            Id = id;
-            Login = login;
-            IsModerator = isModerator;
-            MsgId = msgId;
-            MsgParamMonths = msgParamMonths;
-            MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
-            MsgParamRecipientId = msgParamRecipientId;
-            MsgParamRecipientUserName = msgParamRecipientUserName;
-            MsgParamSubPlanName = msgParamSubPlanName;
-            MsgParamSubPlan = msgParamSubPlan;
-            RoomId = roomId;
-            IsSubscriber = isSubscriber;
-            SystemMsg = systemMsg;
-            SystemMsgParsed = systemMsgParsed;
-            TmiSentTs = tmiSentTs;
-            IsTurbo = isTurbo;
-            UserType = userType;
         }
     }
 }

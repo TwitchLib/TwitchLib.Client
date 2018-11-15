@@ -1,6 +1,4 @@
-#if NETSTANDARD
 using TwitchLib.Client.Models.Extensions.NetCore;
-#endif
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -107,6 +105,9 @@ namespace TwitchLib.Client.Models
                         break;
                 }
             }
+
+            if (EmoteSet == null)
+                EmoteSet = new EmoteSet(null, Message);
         }
     }
 }
