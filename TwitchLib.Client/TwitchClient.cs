@@ -904,10 +904,17 @@ namespace TwitchLib.Client
                     OnHostLeft?.Invoke(this, null);
                     break;
                 case MsgIds.ModeratorsReceived:
-                    OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList() });
-                    break;
-                case MsgIds.NoMods:
-                    OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = new List<string>() });
+                    OnModeratorsReceived?.Invoke(this, ircMessage.Message.Contains("There are no moderators of this room.")
+                            ? new OnModeratorsReceivedArgs
+                            {
+                                Channel = ircMessage.Channel,
+                                Moderators = new List<string>()
+                            }
+                            : new OnModeratorsReceivedArgs
+                            {
+                                Channel = ircMessage.Channel,
+                                Moderators = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList()
+                            });
                     break;
                 case MsgIds.NoPermission:
                     OnNoPermissionError?.Invoke(this, null);
