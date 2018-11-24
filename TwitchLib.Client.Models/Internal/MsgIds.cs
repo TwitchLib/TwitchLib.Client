@@ -19,7 +19,6 @@
         public const string HostOn = "host_on";
         public const string HostsRemaining = "host_remaining";
         public const string ModeratorsReceived = "room_mods";
-        public const string NoMods = "no_mods";
         public const string MsgChannelSuspended = "msg_channel_suspended";
         public const string NoPermission = "no_permission";
         public const string Raid = "raid";
