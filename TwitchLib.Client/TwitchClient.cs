@@ -81,6 +81,11 @@ namespace TwitchLib.Client
 
         #region Events
         /// <summary>
+        /// Fires when VIPs are received from chat
+        /// </summary>
+        public event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
+
+        /// <summary>
         /// Fires whenever a log write happens.
         /// </summary>
         public event EventHandler<OnLogArgs> OnLog;
@@ -929,6 +934,12 @@ namespace TwitchLib.Client
                     OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs {
                         Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
                         });
+                    break;
+                case MsgIds.NoVIPs:
+                    OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = new List<string>() });
+                    break;
+                case MsgIds.VIPsSuccess:
+                    OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList() });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
