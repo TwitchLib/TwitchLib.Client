@@ -11,6 +11,7 @@
         Part,
         HostTarget,
         ClearChat,
+        ClearMsg,
         UserState,
         GlobalUserState,
         Nick,

@@ -6,7 +6,7 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class GiftedSubscription
+    public class AnonGiftedSubscription
     {
         public string Badges { get; }
         public string Color { get; }
@@ -31,7 +31,7 @@ namespace TwitchLib.Client.Models
         public string UserId { get; }
         public UserType UserType { get; }
 
-        public GiftedSubscription(IrcMessage ircMessage)
+        public AnonGiftedSubscription(IrcMessage ircMessage)
         {
             foreach (var tag in ircMessage.Tags.Keys)
             {
@@ -139,7 +139,7 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
-        public GiftedSubscription(string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
+        public AnonGiftedSubscription(string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType)

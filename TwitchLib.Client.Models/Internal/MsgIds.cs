@@ -19,6 +19,8 @@
         public const string HostOn = "host_on";
         public const string HostsRemaining = "host_remaining";
         public const string ModeratorsReceived = "room_mods";
+        public const string NoMods = "no_mods";
+        public const string NoVIPs = "no_vips";
         public const string MsgChannelSuspended = "msg_channel_suspended";
         public const string NoPermission = "no_permission";
         public const string Raid = "raid";
@@ -28,6 +30,7 @@
         public const string Ritual = "ritual";
         public const string R9KOff = "r9k_off";
         public const string R9KOn = "r9k_on";
+        public const string AnonSubGift = "anonsubgift";
         public const string SubGift = "subgift";
         public const string CommunitySubscription = "submysterygift";
         public const string Subscription = "sub";
@@ -36,5 +39,6 @@
         public const string TimeoutSuccess = "timeout_success";
         public const string UnbanSuccess = "unban_success";
         public const string UnrecognizedCmd = "unrecognized_cmd";
+        public const string VIPsSuccess = "vips_success";
     }
 }

@@ -101,6 +101,9 @@ namespace TwitchLib.Client.Models
                     case Tags.Turbo:
                         IsTurbo = Common.Helpers.ConvertToBool(tagValue);
                         break;
+                    case Tags.UserId:
+                        UserId = tagValue;
+                        break;
                     case Tags.UserType:
                         switch (tagValue)
                         {
