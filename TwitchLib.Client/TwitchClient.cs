@@ -161,6 +161,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnModeratorLeftArgs> OnModeratorLeft;
 
         /// <summary>
+        /// Fires when a message gets deleted in chat.
+        /// </summary>
+        public event EventHandler<OnMessageClearedArgs> OnMessageCleared;
+
+        /// <summary>
         /// Fires when new subscriber is announced in chat, returns Subscriber.
         /// </summary>
         public event EventHandler<OnNewSubscriberArgs> OnNewSubscriber;
@@ -807,6 +812,9 @@ namespace TwitchLib.Client
                 case IrcCommand.ClearChat:
                     HandleClearChat(ircMessage);
                     break;
+                case IrcCommand.ClearMsg:
+                    HandleClearMsg(ircMessage);
+                    break;
                 case IrcCommand.UserState:
                     HandleUserState(ircMessage);
                     break;
@@ -999,6 +1007,11 @@ namespace TwitchLib.Client
 
             var userBan = new UserBan(ircMessage);
             OnUserBanned?.Invoke(this, new OnUserBannedArgs { UserBan = userBan });
+        }
+
+        private void HandleClearMsg(IrcMessage ircMessage)
+        {
+            OnMessageCleared?.Invoke(this, new OnMessageClearedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, TargetMessageId = ircMessage.ToString().Split('=')[2].Split(' ')[0] });
         }
 
         private void HandleUserState(IrcMessage ircMessage)
