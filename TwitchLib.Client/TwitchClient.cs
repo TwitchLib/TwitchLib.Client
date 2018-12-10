@@ -1011,7 +1011,7 @@ namespace TwitchLib.Client
 
         private void HandleClearMsg(IrcMessage ircMessage)
         {
-            OnMessageCleared?.Invoke(this, new OnMessageClearedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+            OnMessageCleared?.Invoke(this, new OnMessageClearedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, TargetMessageId = ircMessage.ToString().Split('=')[2].Split(' ')[0] });
         }
 
         private void HandleUserState(IrcMessage ircMessage)

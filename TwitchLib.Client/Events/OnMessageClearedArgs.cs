@@ -13,5 +13,8 @@ namespace TwitchLib.Client.Events
 
         /// <summary>Message contents that received clear message</summary>
         public string Message;
+
+        /// <summary>Message ID representing the message that was cleared</summary>
+        public string TargetMessageId;
     }
 }
