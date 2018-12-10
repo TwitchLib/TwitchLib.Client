@@ -17,6 +17,7 @@ using TwitchLib.Communication;
 using TwitchLib.Communication.Events;
 using TwitchLib.Client.Enums;
 using TwitchLib.Communication.Interfaces;
+using TwitchLib.Communication.Clients;
 
 namespace TwitchLib.Client
 {
