@@ -285,6 +285,15 @@ namespace TwitchLib.Client
         /// </summary>
         public event EventHandler<OnReconnectedEventArgs> OnReconnected;
 
+        /// <summary>Fires when a ritual for a new chatter is received.</summary>
+        public event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
+
+        /// <summary>Fires when the client was unable to join a channel.</summary>
+        public event EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
+
+        /// <summary>Fires when data is received from Twitch that is not able to be parsed.</summary>
+        public event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+
         /// <summary>Fires when TwitchClient attempts to host a channel it is in.</summary>
         public EventHandler OnSelfRaidError;
 
@@ -294,14 +303,7 @@ namespace TwitchLib.Client
         /// <summary>Fires when newly raided channel is mature audience only.</summary>
         public EventHandler OnRaidedChannelIsMatureAudience;
 
-        /// <summary>Fires when a ritual for a new chatter is received.</summary>
-        public EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
 
-        /// <summary>Fires when the client was unable to join a channel.</summary>
-        public EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
-
-        /// <summary>Fires when data is received from Twitch that is not able to be parsed.</summary>
-        public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
         #endregion
 
         #region Construction Work
