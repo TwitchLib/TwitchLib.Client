@@ -20,61 +20,144 @@ using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client
 {
-    /// <summary>Represents a client connected to a Twitch channel.</summary>
+    /// <summary>
+    /// Represents a client connected to a Twitch channel.
+    /// Implements the <see cref="TwitchLib.Client.Interfaces.ITwitchClient" />
+    /// </summary>
+    /// <seealso cref="TwitchLib.Client.Interfaces.ITwitchClient" />
     public class TwitchClient : ITwitchClient
     {
         #region Private Variables
+        /// <summary>
+        /// The client
+        /// </summary>
         private IClient _client;
+        /// <summary>
+        /// The channel emotes
+        /// </summary>
         private MessageEmoteCollection _channelEmotes = new MessageEmoteCollection();
+        /// <summary>
+        /// The chat command identifiers
+        /// </summary>
         private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
+        /// <summary>
+        /// The whisper command identifiers
+        /// </summary>
         private readonly ICollection<char> _whisperCommandIdentifiers = new HashSet<char>();
+        /// <summary>
+        /// The join channel queue
+        /// </summary>
         private readonly Queue<JoinedChannel> _joinChannelQueue = new Queue<JoinedChannel>();
+        /// <summary>
+        /// The logger
+        /// </summary>
         private readonly ILogger<TwitchClient> _logger;
+        /// <summary>
+        /// The protocol
+        /// </summary>
         private readonly ClientProtocol _protocol;
+        /// <summary>
+        /// The automatic join channel
+        /// </summary>
         private string _autoJoinChannel;
+        /// <summary>
+        /// The currently joining channels
+        /// </summary>
         private bool _currentlyJoiningChannels;
+        /// <summary>
+        /// The join timer
+        /// </summary>
         private System.Timers.Timer _joinTimer;
+        /// <summary>
+        /// The awaiting joins
+        /// </summary>
         private List<KeyValuePair<string, DateTime>> _awaitingJoins;
 
+        /// <summary>
+        /// The irc parser
+        /// </summary>
         private readonly IrcParser _ircParser;
+        /// <summary>
+        /// The joined channel manager
+        /// </summary>
         private readonly JoinedChannelManager _joinedChannelManager;
 
         // variables used for constructing OnMessageSent properties
+        /// <summary>
+        /// The has seen joined channels
+        /// </summary>
         private readonly List<string> _hasSeenJoinedChannels = new List<string>();
+        /// <summary>
+        /// The last message sent
+        /// </summary>
         private string _lastMessageSent;
         #endregion
 
         #region Public Variables
-        /// <summary>Assembly version of TwitchLib.Client.</summary>
+        /// <summary>
+        /// Assembly version of TwitchLib.Client.
+        /// </summary>
+        /// <value>The version.</value>
         public Version Version => Assembly.GetEntryAssembly().GetName().Version;
-        /// <summary>Checks if underlying client has been initialized.</summary>
+        /// <summary>
+        /// Checks if underlying client has been initialized.
+        /// </summary>
+        /// <value><c>true</c> if this instance is initialized; otherwise, <c>false</c>.</value>
         public bool IsInitialized => _client != null;
-        /// <summary>A list of all channels the client is currently in.</summary>
+        /// <summary>
+        /// A list of all channels the client is currently in.
+        /// </summary>
+        /// <value>The joined channels.</value>
         public IReadOnlyList<JoinedChannel> JoinedChannels => _joinedChannelManager.GetJoinedChannels();
-        /// <summary>Username of the user connected via this library.</summary>
+        /// <summary>
+        /// Username of the user connected via this library.
+        /// </summary>
+        /// <value>The twitch username.</value>
         public string TwitchUsername { get; private set; }
-        /// <summary>The most recent whisper received.</summary>
+        /// <summary>
+        /// The most recent whisper received.
+        /// </summary>
+        /// <value>The previous whisper.</value>
         public WhisperMessage PreviousWhisper { get; private set; }
-        /// <summary>The current connection status of the client.</summary>
+        /// <summary>
+        /// The current connection status of the client.
+        /// </summary>
+        /// <value><c>true</c> if this instance is connected; otherwise, <c>false</c>.</value>
         public bool IsConnected => IsInitialized && _client != null ? _client.IsConnected : false;
 
-        /// <summary>The emotes this channel replaces.</summary>
-        /// <remarks>
-        ///     Twitch-handled emotes are automatically added to this collection (which also accounts for
-        ///     managing user emote permissions such as sub-only emotes). Third-party emotes will have to be manually
-        ///     added according to the availability rules defined by the third-party.
-        /// </remarks>
+        /// <summary>
+        /// The emotes this channel replaces.
+        /// </summary>
+        /// <value>The channel emotes.</value>
+        /// <remarks>Twitch-handled emotes are automatically added to this collection (which also accounts for
+        /// managing user emote permissions such as sub-only emotes). Third-party emotes will have to be manually
+        /// added according to the availability rules defined by the third-party.</remarks>
         public MessageEmoteCollection ChannelEmotes => _channelEmotes;
 
-        /// <summary>Will disable the client from sending automatic PONG responses to PING</summary>
+        /// <summary>
+        /// Will disable the client from sending automatic PONG responses to PING
+        /// </summary>
+        /// <value><c>true</c> if [disable automatic pong]; otherwise, <c>false</c>.</value>
         public bool DisableAutoPong { get; set; } = false;
-        /// <summary>Determines whether Emotes will be replaced in messages.</summary>
+        /// <summary>
+        /// Determines whether Emotes will be replaced in messages.
+        /// </summary>
+        /// <value><c>true</c> if [will replace emotes]; otherwise, <c>false</c>.</value>
         public bool WillReplaceEmotes { get; set; } = false;
-        /// <summary>If set to true, the library will not check upon channel join that if BeingHosted event is subscribed, that the bot is connected as broadcaster. Only override if the broadcaster is joining multiple channels, including the broadcaster's.</summary>
+        /// <summary>
+        /// If set to true, the library will not check upon channel join that if BeingHosted event is subscribed, that the bot is connected as broadcaster. Only override if the broadcaster is joining multiple channels, including the broadcaster's.
+        /// </summary>
+        /// <value><c>true</c> if [override being hosted check]; otherwise, <c>false</c>.</value>
         public bool OverrideBeingHostedCheck { get; set; } = false;
-        /// <summary>Provides access to connection credentials object.</summary>
+        /// <summary>
+        /// Provides access to connection credentials object.
+        /// </summary>
+        /// <value>The connection credentials.</value>
         public ConnectionCredentials ConnectionCredentials { get; private set; }
-        /// <summary>Provides access to autorelistiononexception on off boolean.</summary>
+        /// <summary>
+        /// Provides access to autorelistiononexception on off boolean.
+        /// </summary>
+        /// <value><c>true</c> if [automatic re listen on exception]; otherwise, <c>false</c>.</value>
         public bool AutoReListenOnException { get; set; }
 
         #endregion
@@ -295,22 +378,34 @@ namespace TwitchLib.Client
         /// </summary>
         public event EventHandler<OnReconnectedEventArgs> OnReconnected;
 
-        /// <summary>Fires when TwitchClient attempts to host a channel it is in.</summary>
+        /// <summary>
+        /// Fires when TwitchClient attempts to host a channel it is in.
+        /// </summary>
         public EventHandler OnSelfRaidError;
 
-        /// <summary>Fires when TwitchClient receives generic no permission error from Twitch.</summary>
+        /// <summary>
+        /// Fires when TwitchClient receives generic no permission error from Twitch.
+        /// </summary>
         public EventHandler OnNoPermissionError;
 
-        /// <summary>Fires when newly raided channel is mature audience only.</summary>
+        /// <summary>
+        /// Fires when newly raided channel is mature audience only.
+        /// </summary>
         public EventHandler OnRaidedChannelIsMatureAudience;
 
-        /// <summary>Fires when a ritual for a new chatter is received.</summary>
+        /// <summary>
+        /// Fires when a ritual for a new chatter is received.
+        /// </summary>
         public EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
 
-        /// <summary>Fires when the client was unable to join a channel.</summary>
+        /// <summary>
+        /// Fires when the client was unable to join a channel.
+        /// </summary>
         public EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
 
-        /// <summary>Fires when data is received from Twitch that is not able to be parsed.</summary>
+        /// <summary>
+        /// Fires when data is received from Twitch that is not able to be parsed.
+        /// </summary>
         public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
         #endregion
 
@@ -320,6 +415,7 @@ namespace TwitchLib.Client
         /// Initializes the TwitchChatClient class.
         /// </summary>
         /// <param name="client">Protocol Client to use for connection from TwitchLib.Communication. Possible Options Are the TcpClient client or WebSocket client.</param>
+        /// <param name="protocol">The protocol.</param>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
         public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger<TwitchClient> logger = null)
         {
@@ -333,8 +429,8 @@ namespace TwitchLib.Client
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
-        /// <param name="channel">The channel to connect to.</param>
         /// <param name="credentials">The credentials to use to log in.</param>
+        /// <param name="channel">The channel to connect to.</param>
         /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
         /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
@@ -354,6 +450,9 @@ namespace TwitchLib.Client
             InitializeClient();
         }
 
+        /// <summary>
+        /// Initializes the client.
+        /// </summary>
         private void InitializeClient()
         {
             if (_client == null)
@@ -382,6 +481,11 @@ namespace TwitchLib.Client
 
         #endregion
 
+        /// <summary>
+        /// Raises the event.
+        /// </summary>
+        /// <param name="eventName">Name of the event.</param>
+        /// <param name="args">The arguments.</param>
         internal void RaiseEvent(string eventName, object args = null)
         {
             FieldInfo fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
@@ -410,9 +514,9 @@ namespace TwitchLib.Client
         /// <summary>
         /// Sends a formatted Twitch channel chat message.
         /// </summary>
+        /// <param name="channel">Channel to send message to.</param>
         /// <param name="message">The message to be sent.</param>
         /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
-        /// <param name="channel">Channel to send message to.</param>
         public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -439,6 +543,9 @@ namespace TwitchLib.Client
         /// <summary>
         /// SendMessage wrapper that accepts channel in string form.
         /// </summary>
+        /// <param name="channel">The channel.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
             SendMessage(GetJoinedChannel(channel), message, dryRun);
@@ -557,6 +664,11 @@ namespace TwitchLib.Client
 
         #region ConnectionCredentials
 
+        /// <summary>
+        /// Sets the connection credentials.
+        /// </summary>
+        /// <param name="credentials">The credentials.</param>
+        /// <exception cref="TwitchLib.Client.Exceptions.IllegalAssignmentException">While the client is connected, you are unable to change the connection credentials. Please disconnect first and then change them.</exception>
         public void SetConnectionCredentials(ConnectionCredentials credentials)
         {
             if (!IsInitialized)
@@ -571,7 +683,7 @@ namespace TwitchLib.Client
 
         #region Channel Calls
         /// <summary>
-        /// Join the Twitch IRC chat of <paramref name="channel"/>.
+        /// Join the Twitch IRC chat of <paramref name="channel" />.
         /// </summary>
         /// <param name="channel">The channel to join.</param>
         /// <param name="overrideCheck">Override a join check.</param>
@@ -587,6 +699,12 @@ namespace TwitchLib.Client
                 QueueingJoinCheck();
         }
 
+        /// <summary>
+        /// Joins the room.
+        /// </summary>
+        /// <param name="channelId">The channel identifier.</param>
+        /// <param name="roomId">The room identifier.</param>
+        /// <param name="overrideCheck">if set to <c>true</c> [override check].</param>
         public void JoinRoom(string channelId, string roomId, bool overrideCheck = false)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -598,9 +716,11 @@ namespace TwitchLib.Client
                 QueueingJoinCheck();
         }
         /// <summary>
-        /// Returns a JoinedChannel object using a passed string/>.
+        /// Returns a JoinedChannel object using a passed string/&gt;.
         /// </summary>
         /// <param name="channel">String channel to search for.</param>
+        /// <returns>JoinedChannel.</returns>
+        /// <exception cref="TwitchLib.Client.Exceptions.BadStateException">Must be connected to at least one channel.</exception>
         public JoinedChannel GetJoinedChannel(string channel)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -610,7 +730,7 @@ namespace TwitchLib.Client
         }
 
         /// <summary>
-        /// Leaves (PART) the Twitch IRC chat of <paramref name="channel"/>.
+        /// Leaves (PART) the Twitch IRC chat of <paramref name="channel" />.
         /// </summary>
         /// <param name="channel">The channel to leave.</param>
         /// <returns>True is returned if the passed channel was found, false if channel not found.</returns>
@@ -625,6 +745,11 @@ namespace TwitchLib.Client
                 _client.Send(Rfc2812.Part($"#{channel}"));
         }
 
+        /// <summary>
+        /// Leaves the room.
+        /// </summary>
+        /// <param name="channelId">The channel identifier.</param>
+        /// <param name="roomId">The room identifier.</param>
         public void LeaveRoom(string channelId, string roomId)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -636,7 +761,7 @@ namespace TwitchLib.Client
         }
 
         /// <summary>
-        /// Leaves (PART) the Twitch IRC chat of <paramref name="channel"/>.
+        /// Leaves (PART) the Twitch IRC chat of <paramref name="channel" />.
         /// </summary>
         /// <param name="channel">The JoinedChannel object to leave.</param>
         /// <returns>True is returned if the passed channel was found, false if channel not found.</returns>
@@ -660,32 +785,62 @@ namespace TwitchLib.Client
 
         #region Client Events
 
+        /// <summary>
+        /// Handles the OnWhisperThrottled event of the _client control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="OnWhisperThrottledEventArgs" /> instance containing the event data.</param>
         private void _client_OnWhisperThrottled(object sender, OnWhisperThrottledEventArgs e)
         {
             OnWhisperThrottled?.Invoke(sender, e);
         }
 
+        /// <summary>
+        /// Handles the OnMessageThrottled event of the _client control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="OnMessageThrottledEventArgs" /> instance containing the event data.</param>
         private void _client_OnMessageThrottled(object sender, OnMessageThrottledEventArgs e)
         {
             OnMessageThrottled?.Invoke(sender, e);
         }
 
+        /// <summary>
+        /// Handles the OnFatality event of the _client control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="OnFatalErrorEventArgs" /> instance containing the event data.</param>
         private void _client_OnFatality(object sender, OnFatalErrorEventArgs e)
         {
             OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Message = e.Reason } });
         }
 
+        /// <summary>
+        /// Handles the OnDisconnected event of the _client control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="OnDisconnectedEventArgs" /> instance containing the event data.</param>
         private void _client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             OnDisconnected?.Invoke(sender, e);
             _joinedChannelManager.Clear();
         }
 
+        /// <summary>
+        /// Handles the OnReconnected event of the _client control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="OnReconnectedEventArgs" /> instance containing the event data.</param>
         private void _client_OnReconnected(object sender, OnReconnectedEventArgs e)
         {
             OnReconnected?.Invoke(sender, e);
         }
 
+        /// <summary>
+        /// Handles the OnMessage event of the _client control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="OnMessageEventArgs" /> instance containing the event data.</param>
         private void _client_OnMessage(object sender, OnMessageEventArgs e)
         {
             string[] stringSeparators = new[] { "\r\n" };
@@ -701,6 +856,11 @@ namespace TwitchLib.Client
             }
         }
 
+        /// <summary>
+        /// Clients the on connected.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
         private void _client_OnConnected(object sender, object e)
         {
             _client.Send(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
@@ -721,6 +881,9 @@ namespace TwitchLib.Client
 
         #region Joining Stuff
 
+        /// <summary>
+        /// Queueings the join check.
+        /// </summary>
         private void QueueingJoinCheck()
         {
             if (_joinChannelQueue.Count > 0)
@@ -739,6 +902,10 @@ namespace TwitchLib.Client
             }
         }
 
+        /// <summary>
+        /// Starts the joined channel timer.
+        /// </summary>
+        /// <param name="channel">The channel.</param>
         private void StartJoinedChannelTimer(string channel)
         {
             if (_joinTimer == null)
@@ -752,6 +919,11 @@ namespace TwitchLib.Client
                 _joinTimer.Start();
         }
 
+        /// <summary>
+        /// Joins the channel timeout.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.Timers.ElapsedEventArgs" /> instance containing the event data.</param>
         private void JoinChannelTimeout(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (_awaitingJoins.Any())
@@ -779,6 +951,10 @@ namespace TwitchLib.Client
 
         #region IrcMessage Handling
 
+        /// <summary>
+        /// Handles the irc message.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleIrcMessage(IrcMessage ircMessage)
         {
             if (ircMessage.Message.Contains("Login authentication failed"))
@@ -869,6 +1045,10 @@ namespace TwitchLib.Client
 
         #region IrcCommand Handling
 
+        /// <summary>
+        /// Handles the priv MSG.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandlePrivMsg(IrcMessage ircMessage)
         {
             if (ircMessage.Hostmask.Equals("jtv!jtv@jtv.tmi.twitch.tv"))
@@ -894,6 +1074,10 @@ namespace TwitchLib.Client
             }
         }
 
+        /// <summary>
+        /// Handles the notice.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleNotice(IrcMessage ircMessage)
         {
             if (ircMessage.Message.Contains("Improperly formatted auth"))
@@ -957,11 +1141,19 @@ namespace TwitchLib.Client
             }
         }
 
+        /// <summary>
+        /// Handles the join.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleJoin(IrcMessage ircMessage)
         {
             OnUserJoined?.Invoke(this, new OnUserJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
         }
 
+        /// <summary>
+        /// Handles the part.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandlePart(IrcMessage ircMessage)
         {
             if (string.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
@@ -976,6 +1168,10 @@ namespace TwitchLib.Client
             }
         }
 
+        /// <summary>
+        /// Handles the host target.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleHostTarget(IrcMessage ircMessage)
         {
             if (ircMessage.Message.StartsWith("-"))
@@ -990,6 +1186,10 @@ namespace TwitchLib.Client
             }
         }
 
+        /// <summary>
+        /// Handles the clear chat.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleClearChat(IrcMessage ircMessage)
         {
             if (string.IsNullOrWhiteSpace(ircMessage.Message))
@@ -1010,11 +1210,19 @@ namespace TwitchLib.Client
             OnUserBanned?.Invoke(this, new OnUserBannedArgs { UserBan = userBan });
         }
 
+        /// <summary>
+        /// Handles the clear MSG.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleClearMsg(IrcMessage ircMessage)
         {
             OnMessageCleared?.Invoke(this, new OnMessageClearedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, TargetMessageId = ircMessage.ToString().Split('=')[2].Split(' ')[0] });
         }
 
+        /// <summary>
+        /// Handles the state of the user.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleUserState(IrcMessage ircMessage)
         {
             UserState userState = new UserState(ircMessage);
@@ -1027,11 +1235,18 @@ namespace TwitchLib.Client
                 OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, _lastMessageSent) });
         }
 
+        /// <summary>
+        /// Handle004s this instance.
+        /// </summary>
         private void Handle004()
         {
             OnConnected?.Invoke(this, new OnConnectedArgs { AutoJoinChannel = _autoJoinChannel, BotUsername = TwitchUsername });
         }
 
+        /// <summary>
+        /// Handle353s the specified irc message.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void Handle353(IrcMessage ircMessage)
         {
             if (string.Equals(ircMessage.Channel, TwitchUsername, StringComparison.InvariantCultureIgnoreCase))
@@ -1040,12 +1255,19 @@ namespace TwitchLib.Client
             }
         }
 
+        /// <summary>
+        /// Handle366s this instance.
+        /// </summary>
         private void Handle366()
         {
             _currentlyJoiningChannels = false;
             QueueingJoinCheck();
         }
 
+        /// <summary>
+        /// Handles the whisper.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleWhisper(IrcMessage ircMessage)
         {
             WhisperMessage whisperMessage = new WhisperMessage(ircMessage, TwitchUsername);
@@ -1063,6 +1285,10 @@ namespace TwitchLib.Client
             Log($"Unaccounted for: {ircMessage.ToString()}");
         }
 
+        /// <summary>
+        /// Handles the state of the room.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleRoomState(IrcMessage ircMessage)
         {
             // If ROOMSTATE is sent because a mode (subonly/slow/emote/etc) is being toggled, it has two tags: room-id, and the specific mode being toggled
@@ -1081,6 +1307,10 @@ namespace TwitchLib.Client
             OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage), Channel = ircMessage.Channel });
         }
 
+        /// <summary>
+        /// Handles the user notice.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleUserNotice(IrcMessage ircMessage)
         {
             bool successMsgId = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
@@ -1143,6 +1373,10 @@ namespace TwitchLib.Client
             }
         }
 
+        /// <summary>
+        /// Handles the mode.
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
         private void HandleMode(IrcMessage ircMessage)
         {
             if (ircMessage.Message.StartsWith("+o"))
@@ -1161,6 +1395,12 @@ namespace TwitchLib.Client
 
         #endregion
 
+        /// <summary>
+        /// Logs the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="includeDate">if set to <c>true</c> [include date].</param>
+        /// <param name="includeTime">if set to <c>true</c> [include time].</param>
         private void Log(string message, bool includeDate = false, bool includeTime = false)
         {
             string dateTimeStr;
@@ -1179,6 +1419,12 @@ namespace TwitchLib.Client
             OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }
 
+        /// <summary>
+        /// Logs the error.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="includeDate">if set to <c>true</c> [include date].</param>
+        /// <param name="includeTime">if set to <c>true</c> [include time].</param>
         private void LogError(string message, bool includeDate = false, bool includeTime = false)
         {
             string dateTimeStr;
@@ -1197,17 +1443,29 @@ namespace TwitchLib.Client
             OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }
 
+        /// <summary>
+        /// Sends the queued item.
+        /// </summary>
+        /// <param name="message">The message.</param>
         public void SendQueuedItem(string message)
         {
             if (!IsInitialized) HandleNotInitialized();
             _client.Send(message);
         }
 
+        /// <summary>
+        /// Handles the not initialized.
+        /// </summary>
+        /// <exception cref="TwitchLib.Client.Exceptions.ClientNotInitializedException">The twitch client has not been initialized and cannot be used. Please call Initialize();</exception>
         protected static void HandleNotInitialized()
         {
             throw new ClientNotInitializedException("The twitch client has not been initialized and cannot be used. Please call Initialize();");
         }
 
+        /// <summary>
+        /// Handles the not connected.
+        /// </summary>
+        /// <exception cref="TwitchLib.Client.Exceptions.ClientNotConnectedException">In order to perform this action, the client must be connected to Twitch. To confirm connection, try performing this action in or after the OnConnected event has been fired.</exception>
         protected static void HandleNotConnected()
         {
             throw new ClientNotConnectedException("In order to perform this action, the client must be connected to Twitch. To confirm connection, try performing this action in or after the OnConnected event has been fired.");

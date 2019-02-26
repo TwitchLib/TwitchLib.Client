@@ -2,11 +2,17 @@
 
 namespace TwitchLib.Client.Events
 {
+    /// <summary>
+    /// Args representing a successful chat color change request.
+    /// Implements the <see cref="System.EventArgs" />
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    /// <summary>Args representing a successful chat color change request.</summary>
     public class OnChatColorChangedArgs : EventArgs
     {
-        /// <summary>Property reprenting the channel the event was received in.</summary>
+        /// <summary>
+        /// Property reprenting the channel the event was received in.
+        /// </summary>
         public string Channel;
     }
 }
