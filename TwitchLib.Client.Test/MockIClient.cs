@@ -6,11 +6,17 @@ namespace TwitchLib.Client.Test
 {
     public class MockIClient : IClient
     {
+        public void WhisperThrottled(OnWhisperThrottledEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+
         public TimeSpan DefaultKeepAliveInterval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public int SendQueueLength => throw new NotImplementedException();
 
         public bool IsConnected { get; private set; }
+        public IClientOptions Options { get; set; }
 
         public int WhisperQueueLength => throw new NotImplementedException();
 
@@ -50,7 +56,22 @@ namespace TwitchLib.Client.Test
             IsConnected = true;
             OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
         }
-        
+
+        public void MessageThrottled(OnMessageThrottledEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendFailed(OnSendFailedEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error(OnErrorEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Send(string data)
         {
             return true;
