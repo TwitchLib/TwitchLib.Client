@@ -3,10 +3,17 @@ using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
+    /// <summary>
+    /// Args representing a user was banned event.
+    /// Implements the <see cref="System.EventArgs" />
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    /// <summary>Args representing a user was banned event.</summary>
     public class OnUserBannedArgs : EventArgs
     {
+        /// <summary>
+        /// The user ban
+        /// </summary>
         public UserBan UserBan;
     }
 }

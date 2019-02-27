@@ -4,7 +4,9 @@ using System.Linq;
 
 namespace TwitchLib.Client.Common
 {
-    /// <summary>Static class of helper functions used around the project.</summary>
+    /// <summary>
+    /// Static class of helper functions used around the project.
+    /// </summary>
     public static class Helpers
     {
         /// <summary>
@@ -14,15 +16,15 @@ namespace TwitchLib.Client.Common
         /// <returns>List of contents of quotes from the input string</returns>
         public static List<string> ParseQuotesAndNonQuotes(string message)
         {
-            var args = new List<string>();
+            List<string> args = new List<string>();
 
             // Return if empty string
             if (message == "")
                 return new List<string>();
 
-            var previousQuoted = message[0] != '"';
+            bool previousQuoted = message[0] != '"';
             // Parse quoted text as a single argument
-            foreach (var arg in message.Split('"'))
+            foreach (string arg in message.Split('"'))
             {
                 if (string.IsNullOrEmpty(arg))
                     continue;
@@ -39,7 +41,7 @@ namespace TwitchLib.Client.Common
                     continue;
 
                 // This arg is non-quoted, iterate through each split and add it if it's not empty/whitespace
-                foreach (var dynArg in arg.Split(' '))
+                foreach (string dynArg in arg.Split(' '))
                 {
                     if (string.IsNullOrWhiteSpace(dynArg))
                         continue;
@@ -51,11 +53,17 @@ namespace TwitchLib.Client.Common
             return args;
         }
 
+        /// <summary>
+        /// Parses the token.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <param name="message">The message.</param>
+        /// <returns>System.String.</returns>
         public static string ParseToken(string token, string message)
         {
-            var tokenValue = string.Empty;
+            string tokenValue = string.Empty;
 
-            for (var i = message.IndexOf(token, StringComparison.InvariantCultureIgnoreCase);
+            for (int i = message.IndexOf(token, StringComparison.InvariantCultureIgnoreCase);
                 i > -1;
                 i = message.IndexOf(token, i + token.Length, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -70,6 +78,11 @@ namespace TwitchLib.Client.Common
             return tokenValue;
         }
 
+        /// <summary>
+        /// Converts to bool.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool ConvertToBool(string data)
         {
             return data == "1";
