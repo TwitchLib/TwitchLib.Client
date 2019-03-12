@@ -188,7 +188,7 @@ namespace TwitchLib.Client.Models
             SubscriptionPlan = subscriptionPlan;
             SubscriptionPlanName = subscriptionPlanName;
             RoomId = roomId;
-            UserId = UserId;
+            UserId = userId;
             IsModerator = isModerator;
             IsTurbo = isTurbo;
             IsSubscriber = isSubscriber;
