@@ -15,6 +15,8 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Property representing list of badges assigned.</summary>
         public List<KeyValuePair<string, string>> Badges { get; }
+        /// <summary>Metadata associated with each badge</summary>
+        public List<KeyValuePair<string, string>> BadgeInfo { get; }
         /// <summary>Property representing the colorhex of the resubscriber.</summary>
         public string ColorHex { get; }
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
@@ -72,16 +74,16 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        Badges = new List<KeyValuePair<string, string>>();
-                        foreach (var badgeValue in tagValue.Split(','))
-                            if (badgeValue.Contains('/'))
-                                Badges.Add(new KeyValuePair<string, string>(badgeValue.Split('/')[0], badgeValue.Split('/')[1]));
+                        Badges = Common.Helpers.ParseBadges(tagValue);
                         // iterate through badges for special circumstances
                         foreach (var badge in Badges)
                         {
                             if (badge.Key == "partner")
                                 IsPartner = true;
                         }
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Color:
                         ColorHex = tagValue;
@@ -171,11 +173,12 @@ namespace TwitchLib.Client.Models
             }
         }
 
-        internal SubscriberBase(List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName, string emoteSet, string id, string login, string systemMessage,
+        internal SubscriberBase(List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, Color color, string displayName, string emoteSet, string id, string login, string systemMessage,
             string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan, string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo,
             bool isSubscriber, bool isPartner, string tmiSentTs, UserType userType, string rawIrc, string channel)
         {
             Badges = badges;
+            BadgeInfo = badgeInfo;
             ColorHex = colorHex;
             Color = color;
             DisplayName = displayName;

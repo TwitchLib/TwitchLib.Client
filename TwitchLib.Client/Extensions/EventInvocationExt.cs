@@ -206,14 +206,14 @@ namespace TwitchLib.Client.Extensions
         /// <param name="tmiSentTs">The tmi sent ts.</param>
         /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
         /// <param name="userType">Type of the user.</param>
-        public static void InvokeGiftedSubscription(this TwitchClient client, string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
+        public static void InvokeGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType)
         {
             OnGiftedSubscriptionArgs model = new OnGiftedSubscriptionArgs()
             {
-                GiftedSubscription = new GiftedSubscription(badges, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
+                GiftedSubscription = new GiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
                 msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
                 userType)
             };
@@ -245,14 +245,14 @@ namespace TwitchLib.Client.Extensions
         /// <param name="tmiSentTs">The tmi sent ts.</param>
         /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
         /// <param name="userType">Type of the user.</param>
-        public static void InvokeAnonGiftedSubscription(this TwitchClient client, string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
+        public static void InvokeAnonGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType)
         {
             OnAnonGiftedSubscriptionArgs model = new OnAnonGiftedSubscriptionArgs()
             {
-                AnonGiftedSubscription = new AnonGiftedSubscription(badges, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
+                AnonGiftedSubscription = new AnonGiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
                 msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
                 userType)
             };
@@ -503,14 +503,14 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userType">Type of the user.</param>
         /// <param name="rawIrc">The raw irc.</param>
         /// <param name="channel">The channel.</param>
-        public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName,
+        public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string,string>> badgeInfo, string colorHex, Color color, string displayName,
             string emoteSet, string id, string login, string systemMessage, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
             string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs,
             UserType userType, string rawIrc, string channel)
         {
             OnNewSubscriberArgs model = new OnNewSubscriberArgs()
             {
-                Subscriber = new Subscriber(badges, colorHex, color, displayName, emoteSet, id, login, systemMessage, systemMessageParsed, resubMessage,
+                Subscriber = new Subscriber(badges, badgeInfo, colorHex, color, displayName, emoteSet, id, login, systemMessage, systemMessageParsed, resubMessage,
                 subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
             };
             client.RaiseEvent("OnNewSubscriber", model);
@@ -555,13 +555,13 @@ namespace TwitchLib.Client.Extensions
         /// <param name="tmiSentTs">The tmi sent ts.</param>
         /// <param name="turbo">if set to <c>true</c> [turbo].</param>
         /// <param name="userType">Type of the user.</param>
-        public static void InvokeRaidNotification(this TwitchClient client, string channel, string badges, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
+        public static void InvokeRaidNotification(this TwitchClient client, string channel, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
             string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType)
         {
             OnRaidNotificationArgs model = new OnRaidNotificationArgs()
             {
                 Channel = channel,
-                RaidNotificaiton = new RaidNotification(badges, color, displayName, emotes, id, login, moderator, msgId, msgParamDisplayName, msgParamLogin, msgParamViewerCount,
+                RaidNotificaiton = new RaidNotification(badges, badgeInfo, color, displayName, emotes, id, login, moderator, msgId, msgParamDisplayName, msgParamLogin, msgParamViewerCount,
                 roomId, subscriber, systemMsg, systemMsgParsed, tmiSentTs, turbo, userType)
             };
             client.RaiseEvent("OnRaidNotification", model);
@@ -593,14 +593,14 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userType">Type of the user.</param>
         /// <param name="rawIrc">The raw irc.</param>
         /// <param name="channel">The channel.</param>
-        public static void InvokeReSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName,
+        public static void InvokeReSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, Color color, string displayName,
             string emoteSet, string id, string login, string systemMessage, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
             string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs,
             UserType userType, string rawIrc, string channel)
         {
             OnReSubscriberArgs model = new OnReSubscriberArgs()
             {
-                ReSubscriber = new ReSubscriber(badges, colorHex, color, displayName, emoteSet, id, login, systemMessage, systemMessageParsed, resubMessage,
+                ReSubscriber = new ReSubscriber(badges, badgeInfo, colorHex, color, displayName, emoteSet, id, login, systemMessage, systemMessageParsed, resubMessage,
                 subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
             };
             client.RaiseEvent("OnReSubscriber", model);
@@ -682,12 +682,12 @@ namespace TwitchLib.Client.Extensions
         /// <param name="isSubscriber">if set to <c>true</c> [is subscriber].</param>
         /// <param name="isModerator">if set to <c>true</c> [is moderator].</param>
         /// <param name="userType">Type of the user.</param>
-        public static void InvokeUserStateChanged(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, string displayName,
+        public static void InvokeUserStateChanged(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, string displayName,
             string emoteSet, string channel, bool isSubscriber, bool isModerator, UserType userType)
         {
             OnUserStateChangedArgs model = new OnUserStateChangedArgs()
             {
-                UserState = new UserState(badges, colorHex, displayName, emoteSet, channel, isSubscriber, isModerator, userType)
+                UserState = new UserState(badges, badgeInfo, colorHex, displayName, emoteSet, channel, isSubscriber, isModerator, userType)
             };
             client.RaiseEvent("OnUserStateChanged", model);
         }
