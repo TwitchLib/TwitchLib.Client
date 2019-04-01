@@ -223,6 +223,27 @@ namespace TwitchLib.Client.Interfaces
         /// Occurs when [on reconnected].
         /// </summary>
         event EventHandler<OnReconnectedEventArgs> OnReconnected;
+        /// <summary>
+        /// Occurs when [on vip received].
+        /// </summary>
+        event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
+        /// <summary>
+        /// Occurs when [on community subscription announcement received].
+        /// </summary>
+        event EventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
+        /// <summary>
+        /// Occurs when [on gifted subscription usernotice received].
+        /// </summary>
+        event EventHandler<OnAnonGiftedSubscriptionArgs> OnAnonGiftedSubscription;
+        /// <summary>
+        /// Occurs when [on message deleted].
+        /// </summary>
+        event EventHandler<OnMessageClearedArgs> OnMessageCleared;
+
+        /// <summary>
+        /// Occurs when [on ritual for new chatter received].
+        /// </summary>
+        event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
 
         /// <summary>
         /// Initializes the specified credentials.
