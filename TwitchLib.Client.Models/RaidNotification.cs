@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -6,7 +7,8 @@ namespace TwitchLib.Client.Models
 {
     public class RaidNotification
     {
-        public string Badges { get; }
+        public List<KeyValuePair<string, string>> Badges { get; }
+        public List<KeyValuePair<string, string>> BadgeInfo { get; }
         public string Color { get; }
         public string DisplayName { get; }
         public string Emotes { get; }
@@ -36,7 +38,10 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        Badges = tagValue;
+                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Color:
                         Color = tagValue;
@@ -107,10 +112,11 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
-        public RaidNotification(string badges, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
+        public RaidNotification(List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
             string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType)
         {
             Badges = badges;
+            BadgeInfo = badgeInfo;
             Color = color;
             DisplayName = displayName;
             Emotes = emotes;

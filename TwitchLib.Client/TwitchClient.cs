@@ -1034,11 +1034,11 @@ namespace TwitchLib.Client
                     break;
                 case IrcCommand.Unknown:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = null, Location = "HandleIrcMessage", RawIRC = ircMessage.ToString() });
-                    Log($"Unaccounted for: {ircMessage.ToString()}");
+                    UnaccountedFor(ircMessage.ToString());
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = null, Location = "HandleIrcMessage", RawIRC = ircMessage.ToString() });
-                    Log($"Unaccounted for: {ircMessage.ToString()}");
+                    UnaccountedFor(ircMessage.ToString());
                     break;
             }
         }
@@ -1090,7 +1090,7 @@ namespace TwitchLib.Client
             if (!success)
             {
                 OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
-                Log($"Unaccounted for: {ircMessage.ToString()}");
+                UnaccountedFor(ircMessage.ToString());
             }
 
             switch (msgId)
@@ -1136,7 +1136,7 @@ namespace TwitchLib.Client
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
-                    Log($"Unaccounted for: {ircMessage.ToString()}");
+                    UnaccountedFor(ircMessage.ToString());
                     break;
             }
         }
@@ -1282,7 +1282,7 @@ namespace TwitchLib.Client
                     return;
                 }
             OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "WhispergHandling", RawIRC = ircMessage.ToString() });
-            Log($"Unaccounted for: {ircMessage.ToString()}");
+            UnaccountedFor(ircMessage.ToString());
         }
 
         /// <summary>
@@ -1317,7 +1317,7 @@ namespace TwitchLib.Client
             if (!successMsgId)
             {
                 OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
-                Log($"Unaccounted for: {ircMessage.ToString()}");
+                UnaccountedFor(ircMessage.ToString());
                 return;
             }
 
@@ -1336,7 +1336,7 @@ namespace TwitchLib.Client
                     if (!successRitualName)
                     {
                         OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeRitualHandling", RawIRC = ircMessage.ToString() });
-                        Log($"Unaccounted for: {ircMessage.ToString()}");
+                        UnaccountedFor(ircMessage.ToString());
                         return;
                     }
                     switch (ritualName)
@@ -1346,7 +1346,7 @@ namespace TwitchLib.Client
                             break;
                         default:
                             OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
-                            Log($"Unaccounted for: {ircMessage.ToString()}");
+                            UnaccountedFor(ircMessage.ToString());
                             break;
                     }
                     break;
@@ -1368,7 +1368,7 @@ namespace TwitchLib.Client
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
-                    Log($"Unaccounted for: {ircMessage.ToString()}");
+                    UnaccountedFor(ircMessage.ToString());
                     break;
             }
         }
@@ -1394,6 +1394,11 @@ namespace TwitchLib.Client
         #endregion
 
         #endregion
+
+        private void UnaccountedFor(string ircString)
+        {
+            Log($"Unaccounted for: {ircString} (please create a TwitchLib GitHub issue :P)");
+        }
 
         /// <summary>
         /// Logs the specified message.
