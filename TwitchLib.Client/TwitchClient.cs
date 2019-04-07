@@ -379,6 +379,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnReconnectedEventArgs> OnReconnected;
 
         /// <summary>
+        /// Fires when a ritual for a new chatter is received.
+        /// </summary>
+        public event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
+
+        /// <summary>
         /// Fires when TwitchClient attempts to host a channel it is in.
         /// </summary>
         public EventHandler OnSelfRaidError;
@@ -392,11 +397,6 @@ namespace TwitchLib.Client
         /// Fires when newly raided channel is mature audience only.
         /// </summary>
         public EventHandler OnRaidedChannelIsMatureAudience;
-
-        /// <summary>
-        /// Fires when a ritual for a new chatter is received.
-        /// </summary>
-        public EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
 
         /// <summary>
         /// Fires when the client was unable to join a channel.
