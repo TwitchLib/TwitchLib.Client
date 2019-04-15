@@ -1095,7 +1095,7 @@ namespace TwitchLib.Client
             {
                 case MsgIds.Raid:
                     var raidNotification = new RaidNotification(ircMessage);
-                    OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotificaiton = raidNotification });
+                    OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotification = raidNotification });
                     break;
                 case MsgIds.ReSubscription:
                     var resubscriber = new ReSubscriber(ircMessage);
