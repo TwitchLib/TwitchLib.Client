@@ -22,10 +22,10 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing Turbo status.</summary>
         public bool IsModerator { get; }
         /// <summary>Property representing subscriber status.</summary>
-        public bool IsSubscriber { get; }        
+        public bool IsSubscriber { get; }
         /// <summary>Property representing returned user type of user.</summary>
         public UserType UserType { get; }
-    
+
         /// <summary>
         /// Constructor for UserState.
         /// </summary>
@@ -105,7 +105,7 @@ namespace TwitchLib.Client.Models
             Channel = channel;
             IsSubscriber = isSubscriber;
             IsModerator = isModerator;
-            UserType = UserType;
+            UserType = userType;
         }
     }
 }
