@@ -3,7 +3,6 @@ using System.Drawing;
 
 using TwitchLib.Client.Enums;
 
-
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class represents Message.</summary>
