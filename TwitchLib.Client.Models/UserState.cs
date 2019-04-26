@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -11,21 +12,28 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Properrty representing the chat badges a specific user has.</summary>
         public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
+
         /// <summary>Property representing channel.</summary>
         public string Channel { get; }
+
         /// <summary>Properrty representing HEX user's name.</summary>
         public string ColorHex { get; }
+
         /// <summary>Property representing user's display name.</summary>
         public string DisplayName { get; }
+
         /// <summary>Property representing emote sets available to user.</summary>
         public string EmoteSet { get; }
+
         /// <summary>Property representing Turbo status.</summary>
         public bool IsModerator { get; }
+
         /// <summary>Property representing subscriber status.</summary>
-        public bool IsSubscriber { get; }        
+        public bool IsSubscriber { get; }
+
         /// <summary>Property representing returned user type of user.</summary>
         public UserType UserType { get; }
-    
+
         /// <summary>
         /// Constructor for UserState.
         /// </summary>
@@ -95,8 +103,15 @@ namespace TwitchLib.Client.Models
                 UserType = UserType.Broadcaster;
         }
 
-        public UserState(List<KeyValuePair<string, string>> badges, string colorHex, string displayName, string emoteSet, string channel,
-            bool isSubscriber, bool isModerator, UserType userType)
+        public UserState(
+            List<KeyValuePair<string, string>> badges,
+            string colorHex,
+            string displayName,
+            string emoteSet,
+            string channel,
+            bool isSubscriber,
+            bool isModerator,
+            UserType userType)
         {
             Badges = badges;
             ColorHex = colorHex;
@@ -105,7 +120,7 @@ namespace TwitchLib.Client.Models
             Channel = channel;
             IsSubscriber = isSubscriber;
             IsModerator = isModerator;
-            UserType = UserType;
+            UserType = userType;
         }
     }
 }
