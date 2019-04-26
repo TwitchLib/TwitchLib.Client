@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+
 using TwitchLib.Client.Enums.Internal;
 
 namespace TwitchLib.Client.Models.Internal
@@ -65,7 +66,11 @@ namespace TwitchLib.Client.Models.Internal
         /// <param name="parameters">Command params</param>
         /// <param name="hostmask">User</param>
         /// <param name="tags">IRCv3 tags</param>
-        public IrcMessage(IrcCommand command, string[] parameters, string hostmask, Dictionary<string, string> tags = null)
+        public IrcMessage(
+            IrcCommand command,
+            string[] parameters,
+            string hostmask,
+            Dictionary<string, string> tags = null)
         {
             var idx = hostmask.IndexOf('!');
             User = idx != -1 ? hostmask.Substring(0, idx) : hostmask;
