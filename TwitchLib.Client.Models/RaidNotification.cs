@@ -7,23 +7,41 @@ namespace TwitchLib.Client.Models
     public class RaidNotification
     {
         public string Badges { get; }
+
         public string Color { get; }
+
         public string DisplayName { get; }
+
         public string Emotes { get; }
+
         public string Id { get; }
+
         public string Login { get; }
+
         public bool Moderator { get; }
+
         public string MsgId { get; }
+
         public string MsgParamDisplayName { get; }
+
         public string MsgParamLogin { get; }
+
         public string MsgParamViewerCount { get; }
+
         public string RoomId { get; }
+
         public bool Subscriber { get; }
+
         public string SystemMsg { get; }
+
         public string SystemMsgParsed { get; }
+
         public string TmiSentTs { get; }
+
         public bool Turbo { get; }
+
         public string UserId { get; }
+
         public UserType UserType { get; }
 
         // @badges=;color=#FF0000;display-name=Heinki;emotes=;id=4fb7ab2d-aa2c-4886-a286-46e20443f3d6;login=heinki;mod=0;msg-id=raid;msg-param-displayName=Heinki;msg-param-login=heinki;msg-param-viewerCount=4;room-id=27229958;subscriber=0;system-msg=4\sraiders\sfrom\sHeinki\shave\sjoined\n!;tmi-sent-ts=1510249711023;turbo=0;user-id=44110799;user-type= :tmi.twitch.tv USERNOTICE #pandablack
@@ -107,8 +125,26 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
-        public RaidNotification(string badges, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
-            string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType)
+
+        public RaidNotification(
+            string badges,
+            string color,
+            string displayName,
+            string emotes,
+            string id,
+            string login,
+            bool moderator,
+            string msgId,
+            string msgParamDisplayName,
+            string msgParamLogin,
+            string msgParamViewerCount,
+            string roomId,
+            bool subscriber,
+            string systemMsg,
+            string systemMsgParsed,
+            string tmiSentTs,
+            bool turbo,
+            UserType userType)
         {
             Badges = badges;
             Color = color;

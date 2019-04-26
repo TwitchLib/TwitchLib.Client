@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Text.RegularExpressions;
 
 namespace TwitchLib.Client.Models
@@ -9,11 +8,12 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Property representing URI used to connect to Twitch websocket service.</summary>
         public string TwitchWebsocketURI { get; }
+
         /// <summary>Property representing bot's oauth.</summary>
         public string TwitchOAuth { get; }
+
         /// <summary>Property representing bot's username.</summary>
         public string TwitchUsername { get; }
-        
 
         /// <summary>Constructor for ConnectionCredentials object.</summary>
         public ConnectionCredentials(string twitchUsername, string twitchOAuth, string twitchWebsocketURI = "wss://irc-ws.chat.twitch.tv:443", bool disableUsernameCheck = false)
@@ -29,6 +29,5 @@ namespace TwitchLib.Client.Models
             }
             TwitchWebsocketURI = twitchWebsocketURI;
         }
-        
     }
 }

@@ -7,6 +7,7 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>List containing all emotes in the message.</summary>
         public List<Emote> Emotes { get; }
+
         /// <summary>The raw emote set string obtained from Twitch, for legacy purposes.</summary>
         public string RawEmoteSetString { get; }
 
@@ -30,7 +31,6 @@ namespace TwitchLib.Client.Models
                         // Multiple copies of a single emote: 25:5-9,28-32
                         foreach (var emote in emoteData.Replace($"{emoteId}:", "").Split(','))
                             AddEmote(emote, emoteId, message);
-
                     }
                     else
                     {
@@ -48,7 +48,8 @@ namespace TwitchLib.Client.Models
                     // Multiple copies of a single emote: 25:5-9,28-32
                     foreach (var emote in emoteSetData.Replace($"{emoteId}:", "").Split(','))
                         AddEmote(emote, emoteId, message);
-                } else
+                }
+                else
                 {
                     // Single copy of single emote: 25:5-9
                     AddEmote(emoteSetData, emoteId, message, true);
@@ -63,7 +64,8 @@ namespace TwitchLib.Client.Models
             {
                 startIndex = int.Parse(emoteData.Split(':')[1].Split('-')[0]);
                 endIndex = int.Parse(emoteData.Split(':')[1].Split('-')[1]);
-            } else
+            }
+            else
             {
                 startIndex = int.Parse(emoteData.Split('-')[0]);
                 endIndex = int.Parse(emoteData.Split('-')[1]);
@@ -78,12 +80,16 @@ namespace TwitchLib.Client.Models
         {
             /// <summary>Twitch-assigned emote Id.</summary>
             public int Id { get; }
+
             /// <summary>The name of the emote. For example, if the message was "This is Kappa test.", the name would be 'Kappa'.</summary>
             public string Name { get; }
+
             /// <summary>Character starting index. For example, if the message was "This is Kappa test.", the start index would be 8 for 'Kappa'.</summary>
             public int StartIndex { get; }
+
             /// <summary>Character ending index. For example, if the message was "This is Kappa test.", the start index would be 12 for 'Kappa'.</summary>
             public int EndIndex { get; }
+
             /// <summary>URL to Twitch hosted emote image.</summary>
             public string ImageUrl { get; }
 

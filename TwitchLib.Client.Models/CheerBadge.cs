@@ -5,6 +5,7 @@
     {
         /// <summary>Property representing raw cheer amount represented by badge.</summary>
         public int CheerAmount { get; }
+
         /// <summary>Property representing the color of badge via an enum.</summary>
         public Enums.BadgeColor Color { get; }
 
