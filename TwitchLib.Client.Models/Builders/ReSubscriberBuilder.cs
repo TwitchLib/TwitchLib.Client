@@ -1,6 +1,4 @@
-﻿using TwitchLib.Client.Models.Internal;
-
-namespace TwitchLib.Client.Models.Builders
+﻿namespace TwitchLib.Client.Models.Builders
 {
     public sealed class ReSubscriberBuilder : SubscriberBaseBuilder, IBuilder<ReSubscriber>, IFromIrcMessageBuilder<ReSubscriber>
     {
@@ -13,9 +11,9 @@ namespace TwitchLib.Client.Models.Builders
             return new ReSubscriberBuilder();
         }
 
-        public ReSubscriber BuildFromIrcMessage(IrcMessage ircMessage)
+        public ReSubscriber BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)
         {
-            return new ReSubscriber(ircMessage);
+            return new ReSubscriber(fromIrcMessageBuilderDataObject.Message);
         }
 
         ReSubscriber IBuilder<ReSubscriber>.Build()

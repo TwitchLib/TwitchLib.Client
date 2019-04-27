@@ -1,6 +1,4 @@
-﻿using TwitchLib.Client.Models.Internal;
-
-namespace TwitchLib.Client.Models.Builders
+﻿namespace TwitchLib.Client.Models.Builders
 {
     public sealed class UserBanBuilder : IBuilder<UserBan>, IFromIrcMessageBuilder<UserBan>
     {
@@ -35,9 +33,9 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public UserBan BuildFromIrcMessage(IrcMessage ircMessage)
+        public UserBan BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)
         {
-            return new UserBan(ircMessage);
+            return new UserBan(fromIrcMessageBuilderDataObject.Message);
         }
 
         public UserBan Build()

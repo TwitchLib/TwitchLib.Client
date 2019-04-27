@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 
 using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models.Builders
 {
     public sealed class UserStateBuilder : IBuilder<UserState>, IFromIrcMessageBuilder<UserState>
     {
-        private List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
+        private readonly List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
         private string _channel;
         private string _colorHex;
         private string _displayName;
@@ -73,9 +72,9 @@ namespace TwitchLib.Client.Models.Builders
             return new UserStateBuilder();
         }
 
-        public UserState BuildFromIrcMessage(IrcMessage ircMessage)
+        public UserState BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)
         {
-            return new UserState(ircMessage);
+            return new UserState(fromIrcMessageBuilderDataObject.Message);
         }
 
         public UserState Build()

@@ -1,10 +1,8 @@
-﻿using TwitchLib.Client.Models.Internal;
-
-namespace TwitchLib.Client.Models.Builders
+﻿namespace TwitchLib.Client.Models.Builders
 {
     public sealed class SubscriberBuilder : SubscriberBaseBuilder, IBuilder<Subscriber>, IFromIrcMessageBuilder<Subscriber>
     {
-        public SubscriberBuilder()
+        private SubscriberBuilder()
         {
         }
 
@@ -13,9 +11,9 @@ namespace TwitchLib.Client.Models.Builders
             return new SubscriberBuilder();
         }
 
-        public Subscriber BuildFromIrcMessage(IrcMessage ircMessage)
+        public Subscriber BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)
         {
-            return new Subscriber(ircMessage);
+            return new Subscriber(fromIrcMessageBuilderDataObject.Message);
         }
 
         Subscriber IBuilder<Subscriber>.Build()

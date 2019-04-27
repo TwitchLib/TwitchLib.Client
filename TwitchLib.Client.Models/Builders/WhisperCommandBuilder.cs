@@ -4,7 +4,7 @@ namespace TwitchLib.Client.Models.Builders
 {
     public sealed class WhisperCommandBuilder : IBuilder<WhisperCommand>
     {
-        private List<string> _argumentsAsList = new List<string>();
+        private readonly List<string> _argumentsAsList = new List<string>();
         private string _argumentsAsString;
         private char _commandIdentifier;
         private string _commandText;

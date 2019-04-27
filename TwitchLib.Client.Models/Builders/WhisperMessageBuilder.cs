@@ -1,8 +1,6 @@
-﻿using TwitchLib.Client.Models.Internal;
-
-namespace TwitchLib.Client.Models.Builders
+﻿namespace TwitchLib.Client.Models.Builders
 {
-    public sealed class WhisperMessageBuilder : IBuilder<WhisperMessage>
+    public sealed class WhisperMessageBuilder : IBuilder<WhisperMessage>, IFromIrcMessageBuilder<WhisperMessage>
     {
         private TwitchLibMessage _twitchLibMessage;
         private string _messageId;
@@ -42,9 +40,10 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public WhisperMessage BuildFromIrcMessage(IrcMessage ircMessage, string botName)
+        public WhisperMessage BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)
         {
-            return new WhisperMessage(ircMessage, botName);
+            string botName = fromIrcMessageBuilderDataObject.AditionalData.ToString();
+            return new WhisperMessage(fromIrcMessageBuilderDataObject.Message, botName);
         }
 
         public WhisperMessage Build()

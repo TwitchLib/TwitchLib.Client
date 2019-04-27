@@ -1,6 +1,4 @@
-﻿using TwitchLib.Client.Models.Internal;
-
-namespace TwitchLib.Client.Models.Builders
+﻿namespace TwitchLib.Client.Models.Builders
 {
     public sealed class UserTimeoutBuilder : IBuilder<UserTimeout>, IFromIrcMessageBuilder<UserTimeout>
     {
@@ -42,9 +40,9 @@ namespace TwitchLib.Client.Models.Builders
             return new UserTimeoutBuilder();
         }
 
-        public UserTimeout BuildFromIrcMessage(IrcMessage ircMessage)
+        public UserTimeout BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)
         {
-            return new UserTimeout(ircMessage);
+            return new UserTimeout(fromIrcMessageBuilderDataObject.Message);
         }
 
         public UserTimeout Build()
