@@ -2,7 +2,7 @@
 
 namespace TwitchLib.Client.Models.Builders
 {
-    public sealed class UserTimeoutBuilder : IBuilder<UserTimeout>
+    public sealed class UserTimeoutBuilder : IBuilder<UserTimeout>, IFromIrcMessageBuilder<UserTimeout>
     {
         private string _channel;
         private int _timeoutDuration;

@@ -5,7 +5,7 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models.Builders
 {
-    public sealed class UserStateBuilder : IBuilder<UserState>
+    public sealed class UserStateBuilder : IBuilder<UserState>, IFromIrcMessageBuilder<UserState>
     {
         private List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
         private string _channel;
@@ -20,9 +20,9 @@ namespace TwitchLib.Client.Models.Builders
         {
         }
 
-        public UserStateBuilder WithBadges(params KeyValuePair<string, string>[] pairs)
+        public UserStateBuilder WithBadges(params KeyValuePair<string, string>[] badges)
         {
-            _badges.AddRange(_badges);
+            _badges.AddRange(badges);
             return this;
         }
 

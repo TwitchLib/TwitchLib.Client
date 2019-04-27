@@ -2,7 +2,7 @@
 
 namespace TwitchLib.Client.Models.Builders
 {
-    public sealed class UserBanBuilder : IBuilder<UserBan>
+    public sealed class UserBanBuilder : IBuilder<UserBan>, IFromIrcMessageBuilder<UserBan>
     {
         private string _channelName;
         private string _userName;
