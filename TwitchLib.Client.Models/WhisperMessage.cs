@@ -1,10 +1,10 @@
-using TwitchLib.Client.Models.Extensions.NetCore;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Internal;
 
+using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Extensions.NetCore;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
@@ -13,13 +13,27 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Property representing message identifier.</summary>
         public string MessageId { get; }
+
         /// <summary>Property representing identifier of the message thread.</summary>
         public string ThreadId { get; }
+
         /// <summary>Property representing identifier of the message thread.</summary>
         public string Message { get; }
 
-        public WhisperMessage(List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
-            string userId, bool isTurbo, string botUsername, string message, UserType userType)
+        public WhisperMessage(
+            List<KeyValuePair<string, string>> badges,
+            string colorHex,
+            Color color,
+            string username,
+            string displayName,
+            EmoteSet emoteSet,
+            string threadId,
+            string messageId,
+            string userId,
+            bool isTurbo,
+            string botUsername,
+            string message,
+            UserType userType)
         {
             Badges = badges;
             ColorHex = colorHex;

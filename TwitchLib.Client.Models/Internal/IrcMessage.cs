@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+
 using TwitchLib.Client.Enums.Internal;
 
 namespace TwitchLib.Client.Models.Internal
@@ -87,26 +88,32 @@ namespace TwitchLib.Client.Models.Internal
                     tags[i] = tag.Key + "=" + tag.Value;
                     ++i;
                 }
+
                 if (tags.Length > 0)
                 {
                     raw.Append("@").Append(string.Join(";", tags)).Append(" ");
                 }
             }
+
             if (!string.IsNullOrEmpty(Hostmask))
             {
                 raw.Append(":").Append(Hostmask).Append(" ");
             }
+
             raw.Append(Command.ToString().ToUpper().Replace("RPL_", ""));
-            if (_parameters.Length <= 0) return raw.ToString();
+            if (_parameters.Length <= 0)
+                return raw.ToString();
 
             if (_parameters[0] != null && _parameters[0].Length > 0)
             {
                 raw.Append(" ").Append(_parameters[0]);
             }
+
             if (_parameters.Length > 1 && _parameters[1] != null && _parameters[1].Length > 0)
             {
                 raw.Append(" :").Append(_parameters[1]);
             }
+
             return raw.ToString();
         }
     }

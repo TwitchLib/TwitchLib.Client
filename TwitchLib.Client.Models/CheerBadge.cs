@@ -5,6 +5,7 @@
     {
         /// <summary>Property representing raw cheer amount represented by badge.</summary>
         public int CheerAmount { get; }
+
         /// <summary>Property representing the color of badge via an enum.</summary>
         public Enums.BadgeColor Color { get; }
 
@@ -12,10 +13,10 @@
         public CheerBadge(int cheerAmount)
         {
             CheerAmount = cheerAmount;
-            Color = getColor(cheerAmount);
+            Color = GetColor(cheerAmount);
         }
 
-        private Enums.BadgeColor getColor(int cheerAmount)
+        private Enums.BadgeColor GetColor(int cheerAmount)
         {
             if (cheerAmount >= 10000)
                 return Enums.BadgeColor.Red;

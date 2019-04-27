@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -9,27 +9,49 @@ namespace TwitchLib.Client.Models
     public class AnonGiftedSubscription
     {
         public List<KeyValuePair<string, string>> Badges { get; }
+
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
+
         public string Color { get; }
+
         public string DisplayName { get; }
+
         public string Emotes { get; }
+
         public string Id { get; }
+
         public bool IsModerator { get; }
+
         public bool IsSubscriber { get; }
+
         public bool IsTurbo { get; }
-        public string Login { get; }        
+
+        public string Login { get; }
+
         public string MsgId { get; }
+
         public string MsgParamMonths { get; }
+
         public string MsgParamRecipientDisplayName { get; }
+
         public string MsgParamRecipientId { get; }
+
         public string MsgParamRecipientUserName { get; }
+
         public string MsgParamSubPlanName { get; }
+
         public SubscriptionPlan MsgParamSubPlan { get; }
-        public string RoomId { get; }        
+
+        public string RoomId { get; }
+
         public string SystemMsg { get; }
+
         public string SystemMsgParsed { get; }
-        public string TmiSentTs { get; }   
+
+        public string TmiSentTs { get; }
+
         public string UserId { get; }
+
         public UserType UserType { get; }
 
         public AnonGiftedSubscription(IrcMessage ircMessage)
@@ -143,10 +165,30 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
-        public AnonGiftedSubscription(List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
-            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
-            string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
-            string tmiSentTs, bool isTurbo, UserType userType)
+
+        public AnonGiftedSubscription(
+            List<KeyValuePair<string, string>> badges,
+            List<KeyValuePair<string, string>> badgeInfo,
+            string color,
+            string displayName,
+            string emotes,
+            string id,
+            string login,
+            bool isModerator,
+            string msgId,
+            string msgParamMonths,
+            string msgParamRecipientDisplayName,
+            string msgParamRecipientId,
+            string msgParamRecipientUserName,
+            string msgParamSubPlanName,
+            SubscriptionPlan msgParamSubPlan,
+            string roomId,
+            bool isSubscriber,
+            string systemMsg,
+            string systemMsgParsed,
+            string tmiSentTs,
+            bool isTurbo,
+            UserType userType)
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
