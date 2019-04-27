@@ -60,7 +60,6 @@ namespace TwitchLib.Client.Models
 
         /// <summary>Number of months a person has been subbed.</summary>
         public int SubscribedMonthCount { get; }
-        public string UserName { get; }
 
         //Example IRC message: @badges=moderator/1,warcraft/alliance;color=;display-name=Swiftyspiffyv4;emotes=;mod=1;room-id=40876073;subscriber=0;turbo=0;user-id=103325214;user-type=mod :swiftyspiffyv4!swiftyspiffyv4@swiftyspiffyv4.tmi.twitch.tv PRIVMSG #swiftyspiffy :asd
         /// <summary>Constructor for ChatMessage object.</summary>
@@ -286,7 +285,7 @@ namespace TwitchLib.Client.Models
             CheerBadge = cheerBadge;
             Bits = bits;
             BitsInDollars = bitsInDollars;
-            UserName = userName;
+            Username = userName;
         }
 
         private static double ConvertBitsToUsd(int bits)
