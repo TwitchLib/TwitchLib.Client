@@ -8,9 +8,9 @@ namespace TwitchLib.Client.Models.Builders
     public sealed class IrcMessageBuilder : IBuilder<IrcMessage>
     {
         private IrcCommand _ircCommand;
+        private readonly List<string> _parameters = new List<string>();
         private string _hostmask;
         private Dictionary<string, string> _tags;
-        private readonly List<string> _parameters = new List<string>();
 
         public static IrcMessageBuilder Create()
         {
