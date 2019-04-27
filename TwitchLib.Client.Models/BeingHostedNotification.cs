@@ -4,9 +4,9 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public partial class BeingHostedNotification
+    public class BeingHostedNotification
     {
-        public string BotUsername { get; private set; }
+        public string BotUsername { get; }
 
         public string Channel { get; }
 

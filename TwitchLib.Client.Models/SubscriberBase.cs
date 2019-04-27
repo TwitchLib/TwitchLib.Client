@@ -77,11 +77,11 @@ namespace TwitchLib.Client.Models
 
         /// <summary>Property representing the user type of the resubscriber.</summary>
         public UserType UserType { get; }
+
         public string Channel { get; }
 
         // @badges=subscriber/1,turbo/1;color=#2B119C;display-name=JustFunkIt;emotes=;id=9dasn-asdibas-asdba-as8as;login=justfunkit;mod=0;msg-id=resub;msg-param-months=2;room-id=44338537;subscriber=1;system-msg=JustFunkIt\ssubscribed\sfor\s2\smonths\sin\sa\srow!;turbo=1;user-id=26526370;user-type= :tmi.twitch.tv USERNOTICE #burkeblack :AVAST YEE SCURVY DOG
-
-        protected readonly int months;
+        protected readonly int _months;
 
         /// <summary>Subscriber object constructor.</summary>
         protected SubscriberBase(IrcMessage ircMessage)
@@ -127,7 +127,7 @@ namespace TwitchLib.Client.Models
                         IsModerator = ConvertToBool(tagValue);
                         break;
                     case Tags.MsgParamMonths:
-                        months = int.Parse(tagValue);
+                        _months = int.Parse(tagValue);
                         break;
                     case Tags.MsgParamSubPlan:
                         switch (tagValue.ToLower())
@@ -217,7 +217,8 @@ namespace TwitchLib.Client.Models
             string tmiSentTs,
             UserType userType,
             string rawIrc,
-            string channel)
+            string channel,
+            int months)
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
@@ -243,6 +244,7 @@ namespace TwitchLib.Client.Models
             RawIrc = rawIrc;
             UserId = userId;
             Channel = channel;
+            _months = months;
         }
 
         private static bool ConvertToBool(string data)
@@ -254,7 +256,7 @@ namespace TwitchLib.Client.Models
         public override string ToString()
         {
             return $"Badges: {Badges.Count}, color hex: {ColorHex}, display name: {DisplayName}, emote set: {EmoteSet}, login: {Login}, system message: {SystemMessage}, " +
-                $"resub message: {ResubMessage}, months: {months}, room id: {RoomId}, user id: {UserId}, mod: {IsModerator}, turbo: {IsTurbo}, sub: {IsSubscriber}, user type: {UserType}, raw irc: {RawIrc}";
+                $"resub message: {ResubMessage}, months: {_months}, room id: {RoomId}, user id: {UserId}, mod: {IsModerator}, turbo: {IsTurbo}, sub: {IsSubscriber}, user type: {UserType}, raw irc: {RawIrc}";
         }
     }
 }
