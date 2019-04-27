@@ -8,13 +8,10 @@ namespace TwitchLib.Client.Models
 {
     public class ReSubscriber : SubscriberBase
     {
-        public int Months { get; }
+        public int Months => months;
 
         public ReSubscriber(IrcMessage ircMessage) : base(ircMessage)
         {
-            //TODO peterM: this is bit smelly
-            // maybe use public int Months => months;
-            Months = months;
         }
 
         public ReSubscriber(
