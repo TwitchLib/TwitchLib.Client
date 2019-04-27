@@ -25,7 +25,7 @@
 
         public ConnectionCredentialsBuilder WithTwitchWebSocketUri(string twitchWebSocketUri)
         {
-            _twitchUsername = twitchWebSocketUri;
+            _twitchWebsocketURI = twitchWebSocketUri;
             return this;
         }
 
