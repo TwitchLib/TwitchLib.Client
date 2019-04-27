@@ -57,7 +57,8 @@ namespace TwitchLib.Client.Models
                   tmiSentTs,
                   userType,
                   rawIrc,
-                  channel)
+                  channel,
+                  months: 0)
         {
         }
     }

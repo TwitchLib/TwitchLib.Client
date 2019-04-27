@@ -75,8 +75,9 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing the user type of the resubscriber.</summary>
         public UserType UserType { get; }
 
-        // @badges=subscriber/1,turbo/1;color=#2B119C;display-name=JustFunkIt;emotes=;id=9dasn-asdibas-asdba-as8as;login=justfunkit;mod=0;msg-id=resub;msg-param-months=2;room-id=44338537;subscriber=1;system-msg=JustFunkIt\ssubscribed\sfor\s2\smonths\sin\sa\srow!;turbo=1;user-id=26526370;user-type= :tmi.twitch.tv USERNOTICE #burkeblack :AVAST YEE SCURVY DOG
+        public string Channel { get; }
 
+        // @badges=subscriber/1,turbo/1;color=#2B119C;display-name=JustFunkIt;emotes=;id=9dasn-asdibas-asdba-as8as;login=justfunkit;mod=0;msg-id=resub;msg-param-months=2;room-id=44338537;subscriber=1;system-msg=JustFunkIt\ssubscribed\sfor\s2\smonths\sin\sa\srow!;turbo=1;user-id=26526370;user-type= :tmi.twitch.tv USERNOTICE #burkeblack :AVAST YEE SCURVY DOG
         protected readonly int months;
 
         /// <summary>Subscriber object constructor.</summary>
@@ -204,7 +205,7 @@ namespace TwitchLib.Client.Models
             SubscriptionPlan subscriptionPlan,
             string subscriptionPlanName,
             string roomId,
-            string userId, //unused
+            string userId,
             bool isModerator,
             bool isTurbo,
             bool isSubscriber,
@@ -212,7 +213,8 @@ namespace TwitchLib.Client.Models
             string tmiSentTs,
             UserType userType,
             string rawIrc,
-            string channel) //unused
+            string channel,
+            int months)
         {
             Badges = badges;
             ColorHex = colorHex;
@@ -227,7 +229,7 @@ namespace TwitchLib.Client.Models
             SubscriptionPlan = subscriptionPlan;
             SubscriptionPlanName = subscriptionPlanName;
             RoomId = roomId;
-            UserId = UserId;
+            UserId = userId;
             IsModerator = isModerator;
             IsTurbo = isTurbo;
             IsSubscriber = isSubscriber;
@@ -235,6 +237,7 @@ namespace TwitchLib.Client.Models
             TmiSentTs = tmiSentTs;
             UserType = userType;
             RawIrc = rawIrc;
+            Channel = channel;
         }
 
         private static bool ConvertToBool(string data)

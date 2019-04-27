@@ -12,6 +12,8 @@ namespace TwitchLib.Client.Models
 
         public ReSubscriber(IrcMessage ircMessage) : base(ircMessage)
         {
+            //TODO peterM: this is bit smelly
+            // maybe use public int Months => months;
             Months = months;
         }
 
@@ -37,7 +39,8 @@ namespace TwitchLib.Client.Models
             string tmiSentTs,
             UserType userType,
             string rawIrc,
-            string channel)
+            string channel,
+            int months)
             : base(badges,
                   colorHex,
                   color,
@@ -59,7 +62,8 @@ namespace TwitchLib.Client.Models
                   tmiSentTs,
                   userType,
                   rawIrc,
-                  channel)
+                  channel,
+                  months)
         {
         }
     }
