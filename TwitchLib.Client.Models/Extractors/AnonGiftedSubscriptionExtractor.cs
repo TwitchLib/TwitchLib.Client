@@ -6,7 +6,7 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models.Extractors
 {
-    public class AnonGiftedSubscriptionExtractor
+    public class AnonGiftedSubscriptionExtractor : IExtractor<AnonGiftedSubscription>
     {
         public AnonGiftedSubscription Extract(IrcMessage ircMessage)
         {
