@@ -3,6 +3,7 @@ using System.Linq;
 
 using TwitchLib.Client.Models.Common;
 
+// TODO: Builder is missing
 namespace TwitchLib.Client.Models
 {
     /// <summary>Object representing emote set from a chat message.</summary>
