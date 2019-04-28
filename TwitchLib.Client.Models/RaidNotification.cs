@@ -3,6 +3,7 @@
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
+// TODO: Missing builder
 namespace TwitchLib.Client.Models
 {
     public class RaidNotification

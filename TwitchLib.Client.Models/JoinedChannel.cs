@@ -1,5 +1,8 @@
 ﻿namespace TwitchLib.Client.Models
 {
+    // TODO: Strange class
+    // TODO: Missing builder
+
     /// <summary>Class representing a joined channel.</summary>
     public class JoinedChannel
     {

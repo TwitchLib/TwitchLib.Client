@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 
+// TODO: Missing builder
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class for maintaining emotes that may be substituted into messages.</summary>
