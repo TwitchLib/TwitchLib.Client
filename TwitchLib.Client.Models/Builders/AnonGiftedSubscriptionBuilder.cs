@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Extractors;
 
 namespace TwitchLib.Client.Models.Builders
 {
@@ -206,7 +207,8 @@ namespace TwitchLib.Client.Models.Builders
 
         public AnonGiftedSubscription BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)
         {
-            return new AnonGiftedSubscription(fromIrcMessageBuilderDataObject.Message);
+            AnonGiftedSubscriptionExtractor anonGiftedSubscriptionExtractor = new AnonGiftedSubscriptionExtractor();
+            return anonGiftedSubscriptionExtractor.Extract(fromIrcMessageBuilderDataObject.Message);
         }
     }
 }

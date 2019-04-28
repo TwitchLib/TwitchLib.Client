@@ -54,6 +54,7 @@ namespace TwitchLib.Client.Models
 
         public UserType UserType { get; }
 
+        // todo: this ctor should be removed and initialization should be made by Extractor or builder
         public AnonGiftedSubscription(IrcMessage ircMessage)
         {
             foreach (var tag in ircMessage.Tags.Keys)
