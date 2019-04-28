@@ -31,7 +31,144 @@ namespace TwitchLib.Client.Models.Builders
 
         private AnonGiftedSubscriptionBuilder()
         {
-            // TODO: Add with* methods
+        }
+
+        public AnonGiftedSubscriptionBuilder WithBadges(params KeyValuePair<string, string>[] badges)
+        {
+            _badges.AddRange(badges);
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithBadgeInfos(params KeyValuePair<string, string>[] badgeInfos)
+        {
+            _badgeInfo.AddRange(badgeInfos);
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithColor(string color)
+        {
+            _color = color;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithDisplayName(string displayName)
+        {
+            _displayName = displayName;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithEmotes(string emotes)
+        {
+            _emotes = emotes;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithId(string id)
+        {
+            _id = id;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithIsModerator(bool isModerator)
+        {
+            _isModerator = isModerator;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithIsSubscriber(bool isSubscriber)
+        {
+            _isSubscriber = isSubscriber;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithIsTurbo(bool isTurbo)
+        {
+            _isTurbo = isTurbo;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithLogin(string login)
+        {
+            _login = login;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithMessageId(string msgId)
+        {
+            _msgId = msgId;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithMsgParamMonths(string msgParamMonths)
+        {
+            _msgParamMonths = msgParamMonths;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithMsgParamRecipientDisplayName(string msgParamRecipientDisplayName)
+        {
+            _msgParamRecipientDisplayName = msgParamRecipientDisplayName;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithMsgParamRecipientId(string msgParamRecipientId)
+        {
+            _msgParamRecipientId = msgParamRecipientId;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithMsgParamRecipientUserName(string msgParamRecipientUserName)
+        {
+            _msgParamRecipientUserName = msgParamRecipientUserName;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithMsgParamSubPlanName(string msgParamSubPlanName)
+        {
+            _msgParamSubPlanName = msgParamSubPlanName;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithMsgParamSubPlan(SubscriptionPlan msgParamSubPlan)
+        {
+            _msgParamSubPlan = msgParamSubPlan;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithRoomId(string roomId)
+        {
+            _roomId = roomId;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithSystemMsg(string systemMsg)
+        {
+            _systemMsg = systemMsg;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithSystemMsgParsed(string systemMsgParsed)
+        {
+            _systemMsgParsed = systemMsgParsed;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithTmiSentTs(string tmiSentTs)
+        {
+            _tmiSentTs = tmiSentTs;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithUserId(string userId)
+        {
+            _userId = userId;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithUserType(UserType userType)
+        {
+            _userType = userType;
+            return this;
         }
 
         public static AnonGiftedSubscriptionBuilder Create()
