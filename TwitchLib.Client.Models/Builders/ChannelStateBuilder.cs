@@ -17,7 +17,66 @@ namespace TwitchLib.Client.Models.Builders
 
         private ChannelStateBuilder()
         {
-            //todo: add with8 methods
+        }
+
+        public ChannelStateBuilder WithBroadcasterLanguage(string broadcasterLanguage)
+        {
+            _broadcasterLanguage = broadcasterLanguage;
+            return this;
+        }
+
+        public ChannelStateBuilder WithChannel(string channel)
+        {
+            _channel = channel;
+            return this;
+        }
+
+        public ChannelStateBuilder WithEmoteOnly(bool emoteOnly)
+        {
+            _emoteOnly = emoteOnly;
+            return this;
+        }
+
+        public ChannelStateBuilder WIthFollowersOnly(TimeSpan followersOnly)
+        {
+            _followersOnly = followersOnly;
+            return this;
+        }
+
+        public ChannelStateBuilder WithMercury(bool mercury)
+        {
+            _mercury = mercury;
+            return this;
+        }
+
+        public ChannelStateBuilder WithR9K(bool r9k)
+        {
+            _r9K = r9k;
+            return this;
+        }
+
+        public ChannelStateBuilder WithRituals(bool rituals)
+        {
+            _rituals = rituals;
+            return this;
+        }
+
+        public ChannelStateBuilder WithRoomId(string roomId)
+        {
+            _roomId = roomId;
+            return this;
+        }
+
+        public ChannelStateBuilder WithSlowMode(int slowMode)
+        {
+            _slowMode = slowMode;
+            return this;
+        }
+
+        public ChannelStateBuilder WithSubOnly(bool subOnly)
+        {
+            _subOnly = subOnly;
+            return this;
         }
 
         public static ChannelStateBuilder Create()
