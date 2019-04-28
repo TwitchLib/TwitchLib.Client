@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using TwitchLib.Client.Models.Builders;
+
 namespace TwitchLib.Client.Models
 {
     /// <summary>Object representing emote set from a chat message.</summary>
@@ -18,8 +20,12 @@ namespace TwitchLib.Client.Models
         {
             Emotes = new List<Emote>();
             RawEmoteSetString = emoteSetData;
-            if (string.IsNullOrEmpty(emoteSetData))
+            if (string.IsNullOrEmpty(emoteSetData)
+               || string.IsNullOrEmpty(message))
+            {
                 return;
+            }
+
             if (emoteSetData.Contains("/"))
             {
                 // Message contains multiple different emotes, first parse by unique emotes: 28087:15-21/25:5-9,28-32
@@ -31,7 +37,6 @@ namespace TwitchLib.Client.Models
                         // Multiple copies of a single emote: 25:5-9,28-32
                         foreach (var emote in emoteData.Replace($"{emoteId}:", "").Split(','))
                             AddEmote(emote, emoteId, message);
-
                     }
                     else
                     {
@@ -60,7 +65,9 @@ namespace TwitchLib.Client.Models
 
         private void AddEmote(string emoteData, int emoteId, string message, bool single = false)
         {
-            int startIndex = -1, endIndex = -1;
+            int startIndex = -1;
+            int endIndex = -1;
+
             if (single)
             {
                 startIndex = int.Parse(emoteData.Split(':')[1].Split('-')[0]);
@@ -71,48 +78,20 @@ namespace TwitchLib.Client.Models
                 startIndex = int.Parse(emoteData.Split('-')[0]);
                 endIndex = int.Parse(emoteData.Split('-')[1]);
             }
-            Emotes.Add(new Emote(emoteId, message.Substring(startIndex, (endIndex - startIndex) + 1), startIndex, endIndex));
+
+            string name = message.Substring(startIndex, (endIndex - startIndex) + 1);
+
+            EmoteBuilder emoteBuilder = EmoteBuilder.Create()
+                                                    .WithId(emoteId)
+                                                    .WithName(name)
+                                                    .WithStartIndex(startIndex)
+                                                    .WithEndIndex(endIndex);
+
+            Emotes.Add(emoteBuilder.Build());
         }
 
         /// <summary>
         /// Object representing an emote in an EmoteSet in a chat message.
         /// </summary>
-        public class Emote
-        {
-            /// <summary>Twitch-assigned emote Id.</summary>
-            public int Id { get; }
-
-            /// <summary>The name of the emote. For example, if the message was "This is Kappa test.", the name would be 'Kappa'.</summary>
-            public string Name { get; }
-
-            /// <summary>Character starting index. For example, if the message was "This is Kappa test.", the start index would be 8 for 'Kappa'.</summary>
-            public int StartIndex { get; }
-
-            /// <summary>Character ending index. For example, if the message was "This is Kappa test.", the start index would be 12 for 'Kappa'.</summary>
-            public int EndIndex { get; }
-
-            /// <summary>URL to Twitch hosted emote image.</summary>
-            public string ImageUrl { get; }
-
-            /// <summary>
-            /// Emote constructor.
-            /// </summary>
-            /// <param name="emoteId"></param>
-            /// <param name="name"></param>
-            /// <param name="emoteStartIndex"></param>
-            /// <param name="emoteEndIndex"></param>
-            public Emote(
-                int emoteId,
-                string name,
-                int emoteStartIndex,
-                int emoteEndIndex)
-            {
-                Id = emoteId;
-                Name = name;
-                StartIndex = emoteStartIndex;
-                EndIndex = emoteEndIndex;
-                ImageUrl = $"https://static-cdn.jtvnw.net/emoticons/v1/{emoteId}/1.0";
-            }
-        }
     }
 }
