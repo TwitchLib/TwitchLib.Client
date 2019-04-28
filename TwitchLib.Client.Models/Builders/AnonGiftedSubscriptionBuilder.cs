@@ -6,8 +6,8 @@ namespace TwitchLib.Client.Models.Builders
 {
     public sealed class AnonGiftedSubscriptionBuilder : IBuilder<AnonGiftedSubscription>, IFromIrcMessageBuilder<AnonGiftedSubscription>
     {
-        public List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
-        public List<KeyValuePair<string, string>> _badgeInfo = new List<KeyValuePair<string, string>>();
+        public readonly List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
+        public readonly List<KeyValuePair<string, string>> _badgeInfo = new List<KeyValuePair<string, string>>();
         public string _color;
         public string _displayName;
         public string _emotes;
