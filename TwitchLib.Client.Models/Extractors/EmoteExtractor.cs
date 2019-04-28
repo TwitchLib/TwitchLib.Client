@@ -2,7 +2,7 @@
 
 using TwitchLib.Client.Models.Builders;
 
-namespace TwitchLib.Client.Models.Common
+namespace TwitchLib.Client.Models.Extractors
 {
     public class EmoteExtractor
     {

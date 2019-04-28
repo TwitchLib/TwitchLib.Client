@@ -121,7 +121,7 @@ namespace TwitchLib.Client.Models
             }
 
             if (EmoteSet == null)
-                EmoteSet = new EmoteSet(null, Message);
+                EmoteSet = new EmoteSet(default(string), Message);
         }
     }
 }

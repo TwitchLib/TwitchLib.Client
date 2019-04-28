@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using TwitchLib.Client.Models.Common;
+using TwitchLib.Client.Models.Extractors;
 
 // TODO: Builder is missing
 namespace TwitchLib.Client.Models
