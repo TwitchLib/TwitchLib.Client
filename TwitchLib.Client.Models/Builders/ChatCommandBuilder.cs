@@ -4,7 +4,7 @@ namespace TwitchLib.Client.Models.Builders
 {
     public sealed class ChatCommandBuilder : IBuilder<ChatCommand>
     {
-        private List<string> _argumentsAsList;
+        private readonly List<string> _argumentsAsList = new List<string>();
         private string _argumentsAsString;
         private ChatMessage _chatMessage;
         private char _commandIdentifier;
@@ -12,7 +12,36 @@ namespace TwitchLib.Client.Models.Builders
 
         private ChatCommandBuilder()
         {
-            // todo: add with* methods
+        }
+
+        public ChatCommandBuilder WithArgumentsAsList(params string[] argumentsList)
+        {
+            _argumentsAsList.AddRange(argumentsList);
+            return this;
+        }
+
+        public ChatCommandBuilder WithArgumentsAsString(string argumentsAsString)
+        {
+            _argumentsAsString = argumentsAsString;
+            return this;
+        }
+
+        public ChatCommandBuilder WithChatMessage(ChatMessage chatMessage)
+        {
+            _chatMessage = chatMessage;
+            return this;
+        }
+
+        public ChatCommandBuilder WithCommandIdentifier(char commandIdentifier)
+        {
+            _commandIdentifier = commandIdentifier;
+            return this;
+        }
+
+        public ChatCommandBuilder WithCommandText(string commandText)
+        {
+            _commandText = commandText;
+            return this;
         }
 
         public static ChatCommandBuilder Create()
