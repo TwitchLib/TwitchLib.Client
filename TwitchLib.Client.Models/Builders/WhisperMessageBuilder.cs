@@ -9,6 +9,7 @@
 
         private WhisperMessageBuilder()
         {
+            _twitchLibMessage = TwitchLibMessageBuilder.Create().Build();
         }
 
         public static WhisperMessageBuilder Create()
