@@ -201,7 +201,8 @@ namespace TwitchLib.Client.Models.Builders
                 _systemMsgParsed,
                 _tmiSentTs,
                 _isTurbo,
-                _userType);
+                _userType,
+                _userId);
         }
 
         public GiftedSubscription BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)

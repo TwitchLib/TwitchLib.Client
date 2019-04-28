@@ -188,7 +188,8 @@ namespace TwitchLib.Client.Models
             string systemMsgParsed,
             string tmiSentTs,
             bool isTurbo,
-            UserType userType)
+            UserType userType,
+            string userId)
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
@@ -212,6 +213,7 @@ namespace TwitchLib.Client.Models
             TmiSentTs = tmiSentTs;
             IsTurbo = isTurbo;
             UserType = userType;
+            UserId = userId;
         }
     }
 }
