@@ -21,6 +21,7 @@ namespace TwitchLib.Client.Models
         public EmoteSet(string rawEmoteSetString, string message)
         {
             // this should be removed and used outside of object
+            RawEmoteSetString = rawEmoteSetString;
             EmoteExtractor emoteExtractor = new EmoteExtractor();
             Emotes = emoteExtractor.Extract(rawEmoteSetString, message).ToList();
         }
