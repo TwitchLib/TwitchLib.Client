@@ -8,7 +8,8 @@ namespace TwitchLib.Client.Models
 {
     public class AnonGiftedSubscription
     {
-        public string Badges { get; }
+        public List<KeyValuePair<string, string>> Badges { get; }
+        public List<KeyValuePair<string, string>> BadgeInfo { get; }
         public string Color { get; }
         public string DisplayName { get; }
         public string Emotes { get; }
@@ -42,7 +43,10 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        Badges = tagValue;
+                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Color:
                         Color = tagValue;
@@ -147,12 +151,18 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
+<<<<<<< HEAD
         public AnonGiftedSubscription(string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
+=======
+        public AnonGiftedSubscription(List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
+            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
+>>>>>>> 4d2555adb78a06041962bb37a557380064ca5a75
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType)
         {
             Badges = badges;
+            BadgeInfo = badgeInfo;
             Color = color;
             DisplayName = displayName;
             Emotes = emotes;

@@ -3,11 +3,17 @@ using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
+    /// <summary>
+    /// Args representing message sent event.
+    /// Implements the <see cref="System.EventArgs" />
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    /// <summary>Args representing message sent event.</summary>
     public class OnMessageSentArgs : EventArgs
     {
-        /// <summary>Property representing a chat message that was just sent (check null on properties before using).</summary>
+        /// <summary>
+        /// Property representing a chat message that was just sent (check null on properties before using).
+        /// </summary>
         public SentMessage SentMessage;
     }
 }

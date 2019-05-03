@@ -3,6 +3,7 @@
     public static class Tags
     {
         public const string Badges = "badges";
+        public const string BadgeInfo = "badge-info";
         public const string BanDuration = "ban-duration";
         public const string BanReason = "ban-reason";
         public const string BroadcasterLang = "broadcaster-lang";

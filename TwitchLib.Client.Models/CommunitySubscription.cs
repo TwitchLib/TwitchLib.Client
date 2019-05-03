@@ -8,7 +8,8 @@ namespace TwitchLib.Client.Models
 {
     public class CommunitySubscription
     {
-        public string Badges;
+        public List<KeyValuePair<string, string>> Badges;
+        public List<KeyValuePair<string, string>> BadgeInfo;
         public string Color;
         public string DisplayName;
         public string Emotes;
@@ -37,7 +38,10 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        Badges = tagValue;
+                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Color:
                         Color = tagValue;

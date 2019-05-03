@@ -12,7 +12,8 @@ namespace TwitchLib.Client.Models
     public class ChatMessage : TwitchLibMessage
     {
         protected readonly MessageEmoteCollection _emoteCollection;
-
+        /// <summary>Information associated with badges. Not all badges will be in this list. Use carefully.</summary>
+        public List<KeyValuePair<string, string>> BadgeInfo { get; }
         /// <summary>If viewer sent bits in their message, total amount will be here.</summary>
         public int Bits { get; }
         /// <summary>Number of USD (United States Dollars) spent on bits.</summary>
@@ -67,16 +68,7 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        Badges = new List<KeyValuePair<string, string>>();
-                        var badges = tagValue;
-                        if (badges.Contains('/'))
-                        {
-                            if (!badges.Contains(","))
-                                Badges.Add(new KeyValuePair<string, string>(badges.Split('/')[0], badges.Split('/')[1]));
-                            else
-                                foreach (var badge in badges.Split(','))
-                                    Badges.Add(new KeyValuePair<string, string>(badge.Split('/')[0], badge.Split('/')[1]));
-                        }
+                        Badges = Common.Helpers.ParseBadges(tagValue);
                         // Iterate through saved badges for special circumstances
                         foreach (var badge in Badges)
                         {
@@ -90,6 +82,9 @@ namespace TwitchLib.Client.Models
                                     break;
                             }
                         }
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Bits:
                         Bits = int.Parse(tagValue);
