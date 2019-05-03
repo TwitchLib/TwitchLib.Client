@@ -22,7 +22,9 @@
         public const string MsgId = "msg-id";
         public const string MsgParamDisplayname = "msg-param-displayName";
         public const string MsgParamLogin = "msg-param-login";
-        public const string MsgParamMonths = "msg-param-months";
+        public const string MsgParamCumulativeMonths = "msg-param-cumulative-months";
+        public const string MsgParamShouldShareStreak = "msg-param-should-share-streak";
+        public const string MsgParamStreakMonths = "msg-param-streak-months";
         public const string MsgParamSubPlan = "msg-param-sub-plan";
         public const string MsgParamSubPlanName = "msg-param-sub-plan-name";
         public const string MsgParamViewerCount = "msg-param-viewerCount";
