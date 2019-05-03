@@ -151,13 +151,8 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
-<<<<<<< HEAD
         public AnonGiftedSubscription(List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
-            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
-=======
-        public AnonGiftedSubscription(string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
->>>>>>> patch-5
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType)
         {
