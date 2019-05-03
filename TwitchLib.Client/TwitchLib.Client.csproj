@@ -12,13 +12,18 @@
     <PackageProjectUrl>https://github.com/TwitchLib/TwitchLib.Client</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <Copyright>Copyright 2018</Copyright>
-    <PackageReleaseNotes>Replace websocket4net with TwitchLib.Communication, support for creating marker via extension command, use internal reconnection method for each client, support for community subscriptions, BitsInDollars self assignment fixed.</PackageReleaseNotes>
+    <PackageReleaseNotes>UserId added to community sub and gifted sub. RoomState bug fixed preventing join confirmation for some rooms. Anonymous gift support. OnModeratorsReceived bug preventing firing when list empty. Support for adding, removing and fetching VIPs, support for detecting removed messages.</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/TwitchLib/TwitchLib.Client</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>twitch library irc chat c# csharp api events pubsub net standard 2.0</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
+<<<<<<< HEAD
     <AssemblyVersion>3.0.4</AssemblyVersion>
     <FileVersion>3.0.4</FileVersion>
+=======
+    <AssemblyVersion>3.0.4.0</AssemblyVersion>
+    <FileVersion>3.0.4.0</FileVersion>
+>>>>>>> patch-5
   </PropertyGroup>
 
   <ItemGroup>

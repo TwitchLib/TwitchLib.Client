@@ -17,6 +17,7 @@ using TwitchLib.Client.Models.Internal;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
+using TwitchLib.Communication.Clients;
 
 namespace TwitchLib.Client
 {

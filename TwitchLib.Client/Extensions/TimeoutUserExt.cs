@@ -21,7 +21,11 @@ namespace TwitchLib.Client.Extensions
         /// <param name="dryRun">Indicates a dryrun (will not sened if true)</param>
         public static void TimeoutUser(this ITwitchClient client, JoinedChannel channel, string viewer, TimeSpan duration, string message = "", bool dryRun = false)
         {
-            client.SendMessage(channel, $".timeout {viewer} {duration.TotalSeconds} {message}", dryRun);
+            if (duration < TimeSpan.FromSeconds(1))
+            {
+                throw new Exceptions.InvalidParameterException("timeout duration must be longer than 1 second", client.TwitchUsername);
+            }
+            client.SendMessage(channel, $".timeout {viewer} {duration.Days}d{duration.Hours}h{duration.Minutes}m{duration.Seconds}s {message}", dryRun);
         }
 
         /// <summary>

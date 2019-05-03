@@ -20,6 +20,8 @@ namespace TwitchLib.Client.Test
 
         public int WhisperQueueLength => throw new NotImplementedException();
 
+        public IClientOptions Options => throw new NotImplementedException();
+
         public event EventHandler<OnConnectedEventArgs> OnConnected;
         public event EventHandler<OnDataEventArgs> OnData;
         public event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
@@ -83,6 +85,26 @@ namespace TwitchLib.Client.Test
         }
 
         public bool SendWhisper(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MessageThrottled(OnMessageThrottledEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendFailed(OnSendFailedEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error(OnErrorEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WhisperThrottled(OnWhisperThrottledEventArgs eventArgs)
         {
             throw new NotImplementedException();
         }
