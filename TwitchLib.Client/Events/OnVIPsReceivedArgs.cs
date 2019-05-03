@@ -4,20 +4,20 @@ using System.Collections.Generic;
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing existing user(s) detected event.
+    /// Args representing a list of VIPs received from chat.
     /// Implements the <see cref="System.EventArgs" />
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    public class OnExistingUsersDetectedArgs : EventArgs
+    public class OnVIPsReceivedArgs : EventArgs
     {
         /// <summary>
-        /// Property representing string list of existing users.
-        /// </summary>
-        public List<string> Users;
-        /// <summary>
-        /// Property representing channel bot is connected to.
+        /// Property representing the channel the VIPs list came from.
         /// </summary>
         public string Channel;
+        /// <summary>
+        /// Property representing the list of VIPs.
+        /// </summary>
+        public List<string> VIPs;
     }
 }

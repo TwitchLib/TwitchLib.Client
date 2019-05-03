@@ -11,6 +11,8 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Properrty representing the chat badges a specific user has.</summary>
         public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
+        /// <summary>Metadata associated badgest</summary>
+        public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
         /// <summary>Property representing channel.</summary>
         public string Channel { get; }
         /// <summary>Properrty representing HEX user's name.</summary>
@@ -40,14 +42,10 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        if (tagValue.Contains('/'))
-                        {
-                            if (!tagValue.Contains(","))
-                                Badges.Add(new KeyValuePair<string, string>(tagValue.Split('/')[0], tagValue.Split('/')[1]));
-                            else
-                                foreach (var badge in tagValue.Split(','))
-                                    Badges.Add(new KeyValuePair<string, string>(badge.Split('/')[0], badge.Split('/')[1]));
-                        }
+                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Color:
                         ColorHex = tagValue;
@@ -95,10 +93,11 @@ namespace TwitchLib.Client.Models
                 UserType = UserType.Broadcaster;
         }
 
-        public UserState(List<KeyValuePair<string, string>> badges, string colorHex, string displayName, string emoteSet, string channel,
+        public UserState(List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, string displayName, string emoteSet, string channel,
             bool isSubscriber, bool isModerator, UserType userType)
         {
             Badges = badges;
+            BadgeInfo = badgeInfo;
             ColorHex = colorHex;
             DisplayName = displayName;
             EmoteSet = emoteSet;

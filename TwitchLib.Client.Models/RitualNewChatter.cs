@@ -1,11 +1,13 @@
-﻿using TwitchLib.Client.Enums;
+﻿using System.Collections.Generic;
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     public class RitualNewChatter
     {
-        public string Badges { get; }
+        public List<KeyValuePair<string, string>> Badges { get; }
+        public List<KeyValuePair<string, string>> BadgeInfo { get; }
         public string Color { get; }
         public string DisplayName { get; }
         public string Emotes { get; }
@@ -39,7 +41,10 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        Badges = tagValue;
+                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Color:
                         Color = tagValue;

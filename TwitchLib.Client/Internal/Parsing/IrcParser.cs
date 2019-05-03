@@ -4,6 +4,9 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Internal.Parsing
 {
+    /// <summary>
+    /// Class IrcParser.
+    /// </summary>
     internal class IrcParser
     {
 
@@ -14,12 +17,12 @@ namespace TwitchLib.Client.Internal.Parsing
         /// <returns>IrcMessage object</returns>
         public IrcMessage ParseIrcMessage(string raw)
         {
-            var tagDict = new Dictionary<string, string>();
+            Dictionary<string, string> tagDict = new Dictionary<string, string>();
 
-            var state = ParserState.STATE_NONE;
-            var starts = new [] { 0, 0, 0, 0, 0, 0 };
-            var lens = new [] { 0, 0, 0, 0, 0, 0 };
-            for (var i = 0; i < raw.Length; ++i)
+            ParserState state = ParserState.STATE_NONE;
+            int[] starts = new[] { 0, 0, 0, 0, 0, 0 };
+            int[] lens = new[] { 0, 0, 0, 0, 0, 0 };
+            for (int i = 0; i < raw.Length; ++i)
             {
                 lens[(int)state] = i - starts[(int)state] - 1;
                 if (state == ParserState.STATE_NONE && raw[i] == '@')
@@ -27,7 +30,7 @@ namespace TwitchLib.Client.Internal.Parsing
                     state = ParserState.STATE_V3;
                     starts[(int)state] = ++i;
 
-                    var start = i;
+                    int start = i;
                     string key = null;
                     for (; i < raw.Length; ++i)
                     {
@@ -87,10 +90,10 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             lens[(int)state] = raw.Length - starts[(int)state];
-            var cmd = raw.Substring(starts[(int)ParserState.STATE_COMMAND],
+            string cmd = raw.Substring(starts[(int)ParserState.STATE_COMMAND],
                 lens[(int)ParserState.STATE_COMMAND]);
 
-            var command = IrcCommand.Unknown;
+            IrcCommand command = IrcCommand.Unknown;
             switch (cmd)
             {
                 case "PRIVMSG":
@@ -110,6 +113,9 @@ namespace TwitchLib.Client.Internal.Parsing
                     break;
                 case "CLEARCHAT":
                     command = IrcCommand.ClearChat;
+                    break;
+                case "CLEARMSG":
+                    command = IrcCommand.ClearMsg;
                     break;
                 case "USERSTATE":
                     command = IrcCommand.UserState;
@@ -179,22 +185,43 @@ namespace TwitchLib.Client.Internal.Parsing
                     break;
             }
 
-            var parameters = raw.Substring(starts[(int)ParserState.STATE_PARAM],
+            string parameters = raw.Substring(starts[(int)ParserState.STATE_PARAM],
                 lens[(int)ParserState.STATE_PARAM]);
-            var message = raw.Substring(starts[(int)ParserState.STATE_TRAILING],
+            string message = raw.Substring(starts[(int)ParserState.STATE_TRAILING],
                 lens[(int)ParserState.STATE_TRAILING]);
-            var hostmask = raw.Substring(starts[(int)ParserState.STATE_PREFIX],
+            string hostmask = raw.Substring(starts[(int)ParserState.STATE_PREFIX],
                 lens[(int)ParserState.STATE_PREFIX]);
             return new IrcMessage(command, new[] { parameters, message }, hostmask, tagDict);
         }
 
+        /// <summary>
+        /// Enum ParserState
+        /// </summary>
         private enum ParserState
         {
+            /// <summary>
+            /// The state none
+            /// </summary>
             STATE_NONE,
+            /// <summary>
+            /// The state v3
+            /// </summary>
             STATE_V3,
+            /// <summary>
+            /// The state prefix
+            /// </summary>
             STATE_PREFIX,
+            /// <summary>
+            /// The state command
+            /// </summary>
             STATE_COMMAND,
+            /// <summary>
+            /// The state parameter
+            /// </summary>
             STATE_PARAM,
+            /// <summary>
+            /// The state trailing
+            /// </summary>
             STATE_TRAILING
         };
     }
