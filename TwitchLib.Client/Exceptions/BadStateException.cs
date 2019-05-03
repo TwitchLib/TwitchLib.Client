@@ -2,12 +2,19 @@
 
 namespace TwitchLib.Client.Exceptions
 {
+    /// <summary>
+    /// Exception thrown when the state of the client cannot allow an operation to be run.
+    /// Implements the <see cref="System.Exception" />
+    /// </summary>
+    /// <seealso cref="System.Exception" />
     /// <inheritdoc />
-    /// <summary>Exception thrown when the state of the client cannot allow an operation to be run.</summary>
     public class BadStateException : Exception
     {
+        /// <summary>
+        /// Exception constructor
+        /// </summary>
+        /// <param name="details">The details.</param>
         /// <inheritdoc />
-        /// <summary>Exception constructor</summary>
         public BadStateException(string details)
             : base(details)
         {

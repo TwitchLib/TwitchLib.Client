@@ -2,13 +2,21 @@
 
 namespace TwitchLib.Client.Events
 {
+    /// <summary>
+    /// Args representing on connected event.
+    /// Implements the <see cref="System.EventArgs" />
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    /// <summary>Args representing on connected event.</summary>
     public class OnConnectedArgs : EventArgs
     {
-        /// <summary>Property representing bot username.</summary>
+        /// <summary>
+        /// Property representing bot username.
+        /// </summary>
         public string BotUsername;
-        /// <summary>Property representing connected channel.</summary>
+        /// <summary>
+        /// Property representing connected channel.
+        /// </summary>
         public string AutoJoinChannel;
     }
 }
