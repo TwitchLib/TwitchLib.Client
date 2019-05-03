@@ -111,6 +111,9 @@ namespace TwitchLib.Client.Internal.Parsing
                 case "CLEARCHAT":
                     command = IrcCommand.ClearChat;
                     break;
+                case "CLEARMSG":
+                    command = IrcCommand.ClearMsg;
+                    break;
                 case "USERSTATE":
                     command = IrcCommand.UserState;
                     break;

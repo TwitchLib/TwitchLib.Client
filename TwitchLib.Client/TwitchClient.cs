@@ -17,6 +17,7 @@ using TwitchLib.Communication;
 using TwitchLib.Communication.Events;
 using TwitchLib.Client.Enums;
 using TwitchLib.Communication.Interfaces;
+using TwitchLib.Communication.Clients;
 
 namespace TwitchLib.Client
 {
@@ -80,6 +81,11 @@ namespace TwitchLib.Client
         #endregion
 
         #region Events
+        /// <summary>
+        /// Fires when VIPs are received from chat
+        /// </summary>
+        public event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
+
         /// <summary>
         /// Fires whenever a log write happens.
         /// </summary>
@@ -154,6 +160,11 @@ namespace TwitchLib.Client
         /// Fires when a moderator joins the channel's chat room, returns username and channel.
         /// </summary>
         public event EventHandler<OnModeratorLeftArgs> OnModeratorLeft;
+
+        /// <summary>
+        /// Fires when a message gets deleted in chat.
+        /// </summary>
+        public event EventHandler<OnMessageClearedArgs> OnMessageCleared;
 
         /// <summary>
         /// Fires when new subscriber is announced in chat, returns Subscriber.
@@ -804,6 +815,9 @@ namespace TwitchLib.Client
                 case IrcCommand.ClearChat:
                     HandleClearChat(ircMessage);
                     break;
+                case IrcCommand.ClearMsg:
+                    HandleClearMsg(ircMessage);
+                    break;
                 case IrcCommand.UserState:
                     HandleUserState(ircMessage);
                     break;
@@ -910,17 +924,10 @@ namespace TwitchLib.Client
                     OnHostLeft?.Invoke(this, null);
                     break;
                 case MsgIds.ModeratorsReceived:
-                    OnModeratorsReceived?.Invoke(this, ircMessage.Message.Contains("There are no moderators of this room.")
-                            ? new OnModeratorsReceivedArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Moderators = new List<string>()
-                            }
-                            : new OnModeratorsReceivedArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Moderators = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList()
-                            });
+                    OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList() });
+                    break;
+                case MsgIds.NoMods:
+                    OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = new List<string>() });
                     break;
                 case MsgIds.NoPermission:
                     OnNoPermissionError?.Invoke(this, null);
@@ -938,6 +945,12 @@ namespace TwitchLib.Client
                     OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs {
                         Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
                         });
+                    break;
+                case MsgIds.NoVIPs:
+                    OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = new List<string>() });
+                    break;
+                case MsgIds.VIPsSuccess:
+                    OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = ircMessage.Message.Replace(" ", "").Replace(".", "").Split(':')[1].Split(',').ToList() });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
@@ -997,6 +1010,11 @@ namespace TwitchLib.Client
 
             var userBan = new UserBan(ircMessage);
             OnUserBanned?.Invoke(this, new OnUserBannedArgs { UserBan = userBan });
+        }
+
+        private void HandleClearMsg(IrcMessage ircMessage)
+        {
+            OnMessageCleared?.Invoke(this, new OnMessageClearedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, TargetMessageId = ircMessage.ToString().Split('=')[2].Split(' ')[0] });
         }
 
         private void HandleUserState(IrcMessage ircMessage)
