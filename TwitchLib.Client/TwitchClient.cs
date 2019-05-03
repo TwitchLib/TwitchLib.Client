@@ -407,6 +407,7 @@ namespace TwitchLib.Client
         /// Fires when data is received from Twitch that is not able to be parsed.
         /// </summary>
         public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+
         #endregion
 
         #region Construction Work
