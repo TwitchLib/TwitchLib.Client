@@ -51,9 +51,17 @@ namespace TwitchLib.Client.Models.Builders
 
         protected UserType UserType { get; set; }
 
-        protected int Months { get; set; }
-
         protected string Channel { get; set; }
+
+        protected string MessageId { get; set; }
+
+        protected string MsgParamCumulativeMonths { get; set; }
+
+        protected string MsgParamStreakMonths { get; set; }
+
+        protected bool MsgParamShouldShareStreak { get; set; }
+
+        protected int Months { get; set; }
 
         protected SubscriberBaseBuilder()
         {
@@ -202,6 +210,30 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
+        public SubscriberBaseBuilder WithMessageId(string messageId)
+        {
+            MessageId = messageId;
+            return this;
+        }
+
+        public SubscriberBaseBuilder WithMsgParamCumulativeMonths(string msgParamCumulativeMonths)
+        {
+            MsgParamCumulativeMonths = msgParamCumulativeMonths;
+            return this;
+        }
+
+        public SubscriberBaseBuilder WithMsgParamStreakMonths(string msgParamStreakMonths)
+        {
+            MsgParamStreakMonths = msgParamStreakMonths;
+            return this;
+        }
+
+        public SubscriberBaseBuilder WithMsgParamShouldShareStreak(bool msgParamShouldShareStreak)
+        {
+            MsgParamShouldShareStreak = msgParamShouldShareStreak;
+            return this;
+        }
+
         public SubscriberBaseBuilder WithChannel(string channel)
         {
             Channel = channel;
@@ -220,6 +252,10 @@ namespace TwitchLib.Client.Models.Builders
                 Id,
                 Login,
                 SystemMessage,
+                MessageId,
+                MsgParamCumulativeMonths,
+                MsgParamStreakMonths,
+                MsgParamShouldShareStreak,
                 ParsedSystemMessage,
                 ResubMessage,
                 SubscriptionPlan,

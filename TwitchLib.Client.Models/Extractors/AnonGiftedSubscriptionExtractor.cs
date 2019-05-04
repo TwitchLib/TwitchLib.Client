@@ -45,8 +45,8 @@ namespace TwitchLib.Client.Models.Extractors
                     case Tags.MsgId:
                         builder.WithMessageId(tagValue);
                         break;
-                    case Tags.MsgParamMonths:
-                        builder.WithMsgParamMonths(tagValue);
+                    case Tags.MsgParamCumulativeMonths:
+                        builder.WithMsgParamCumulativeMonths(tagValue);
                         break;
                     case Tags.MsgParamRecipientDisplayname:
                         builder.WithMsgParamRecipientDisplayName(tagValue);

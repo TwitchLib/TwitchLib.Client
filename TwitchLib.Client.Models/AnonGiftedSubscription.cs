@@ -30,7 +30,11 @@ namespace TwitchLib.Client.Models
 
         public string MsgId { get; }
 
-        public string MsgParamMonths { get; }
+        public string MsgParamCumulativeMonths { get; }
+
+        public bool MsgParamShouldShareStreak { get; }
+
+        public string MsgParamStreakMonths { get; }
 
         public string MsgParamRecipientDisplayName { get; }
 
@@ -54,7 +58,6 @@ namespace TwitchLib.Client.Models
 
         public UserType UserType { get; }
 
-        // todo: this ctor should be removed and initialization should be made by Extractor or builder
         public AnonGiftedSubscription(IrcMessage ircMessage)
         {
             foreach (var tag in ircMessage.Tags.Keys)
@@ -90,8 +93,14 @@ namespace TwitchLib.Client.Models
                     case Tags.MsgId:
                         MsgId = tagValue;
                         break;
-                    case Tags.MsgParamMonths:
-                        MsgParamMonths = tagValue;
+                    case Tags.MsgParamCumulativeMonths:
+                        MsgParamCumulativeMonths = tagValue;
+                        break;
+                    case Tags.MsgParamStreakMonths:
+                        MsgParamStreakMonths = tagValue;
+                        break;
+                    case Tags.MsgParamShouldShareStreak:
+                        MsgParamShouldShareStreak = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.MsgParamRecipientDisplayname:
                         MsgParamRecipientDisplayName = tagValue;
@@ -177,19 +186,21 @@ namespace TwitchLib.Client.Models
             string login,
             bool isModerator,
             string msgId,
-            string msgParamMonths,
+            string msgParamCumulativeMonths,
+            string msgParamStreakMonths,
+            bool msgParamShouldShareStreak,
             string msgParamRecipientDisplayName,
             string msgParamRecipientId,
             string msgParamRecipientUserName,
             string msgParamSubPlanName,
             SubscriptionPlan msgParamSubPlan,
-            string roomId,
-            bool isSubscriber,
+            string roomId, bool isSubscriber,
             string systemMsg,
             string systemMsgParsed,
             string tmiSentTs,
             bool isTurbo,
-            UserType userType)
+            UserType userType,
+            string userId)
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
@@ -200,7 +211,9 @@ namespace TwitchLib.Client.Models
             Login = login;
             IsModerator = isModerator;
             MsgId = msgId;
-            MsgParamMonths = msgParamMonths;
+            MsgParamCumulativeMonths = msgParamCumulativeMonths;
+            MsgParamStreakMonths = msgParamStreakMonths;
+            MsgParamShouldShareStreak = msgParamShouldShareStreak;
             MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
             MsgParamRecipientId = msgParamRecipientId;
             MsgParamRecipientUserName = msgParamRecipientUserName;
@@ -213,6 +226,7 @@ namespace TwitchLib.Client.Models
             TmiSentTs = tmiSentTs;
             IsTurbo = isTurbo;
             UserType = userType;
+            UserId = userId;
         }
     }
 }

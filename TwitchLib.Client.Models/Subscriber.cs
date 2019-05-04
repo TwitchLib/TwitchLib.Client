@@ -8,7 +8,8 @@ namespace TwitchLib.Client.Models
 {
     public class Subscriber : SubscriberBase
     {
-        public Subscriber(IrcMessage ircMessage) : base(ircMessage)
+        public Subscriber(IrcMessage ircMessage)
+            : base(ircMessage)
         {
         }
 
@@ -22,6 +23,10 @@ namespace TwitchLib.Client.Models
             string id,
             string login,
             string systemMessage,
+            string msgId,
+            string msgParamCumulativeMonths,
+            string msgParamStreakMonths,
+            bool msgParamShouldShareStreak,
             string systemMessageParsed,
             string resubMessage,
             SubscriptionPlan subscriptionPlan,
@@ -45,6 +50,10 @@ namespace TwitchLib.Client.Models
                   id,
                   login,
                   systemMessage,
+                  msgId,
+                  msgParamCumulativeMonths,
+                  msgParamStreakMonths,
+                  msgParamShouldShareStreak,
                   systemMessageParsed,
                   resubMessage,
                   subscriptionPlan,

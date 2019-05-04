@@ -7,29 +7,31 @@ namespace TwitchLib.Client.Models.Builders
 {
     public sealed class AnonGiftedSubscriptionBuilder : IBuilder<AnonGiftedSubscription>, IFromIrcMessageBuilder<AnonGiftedSubscription>
     {
-        public readonly List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
-        public readonly List<KeyValuePair<string, string>> _badgeInfo = new List<KeyValuePair<string, string>>();
-        public string _color;
-        public string _displayName;
-        public string _emotes;
-        public string _id;
-        public bool _isModerator;
-        public bool _isSubscriber;
-        public bool _isTurbo;
-        public string _login;
-        public string _msgId;
-        public string _msgParamMonths;
-        public string _msgParamRecipientDisplayName;
-        public string _msgParamRecipientId;
-        public string _msgParamRecipientUserName;
-        public string _msgParamSubPlanName;
-        public SubscriptionPlan _msgParamSubPlan;
-        public string _roomId;
-        public string _systemMsg;
-        public string _systemMsgParsed;
-        public string _tmiSentTs;
-        public string _userId;
-        public UserType _userType;
+        private readonly List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
+        private readonly List<KeyValuePair<string, string>> _badgeInfo = new List<KeyValuePair<string, string>>();
+        private string _color;
+        private string _displayName;
+        private string _emotes;
+        private string _id;
+        private bool _isModerator;
+        private bool _isSubscriber;
+        private bool _isTurbo;
+        private string _login;
+        private string _msgId;
+        private string _msgParamCumulativeMonths;
+        private string _msgParamStreakMonths;
+        private bool _msgParamShouldShareStreak;
+        private string _msgParamRecipientDisplayName;
+        private string _msgParamRecipientId;
+        private string _msgParamRecipientUserName;
+        private string _msgParamSubPlanName;
+        private SubscriptionPlan _msgParamSubPlan;
+        private string _roomId;
+        private string _systemMsg;
+        private string _systemMsgParsed;
+        private string _tmiSentTs;
+        private string _userId;
+        private UserType _userType;
 
         private AnonGiftedSubscriptionBuilder()
         {
@@ -101,9 +103,21 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public AnonGiftedSubscriptionBuilder WithMsgParamMonths(string msgParamMonths)
+        public AnonGiftedSubscriptionBuilder WithMsgParamCumulativeMonths(string msgParamCumulativeMonths)
         {
-            _msgParamMonths = msgParamMonths;
+            _msgParamCumulativeMonths = msgParamCumulativeMonths;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithMsgParamStreakMonths(string msgParamStreakMonths)
+        {
+            _msgParamStreakMonths = msgParamStreakMonths;
+            return this;
+        }
+
+        public AnonGiftedSubscriptionBuilder WithMsgParamShouldShareStreak(bool msgParamShouldShareStreak)
+        {
+            _msgParamShouldShareStreak = msgParamShouldShareStreak;
             return this;
         }
 
@@ -190,7 +204,9 @@ namespace TwitchLib.Client.Models.Builders
                 _login,
                 _isModerator,
                 _msgId,
-                _msgParamMonths,
+                _msgParamCumulativeMonths,
+                _msgParamStreakMonths,
+                _msgParamShouldShareStreak,
                 _msgParamRecipientDisplayName,
                 _msgParamRecipientId,
                 _msgParamRecipientUserName,
@@ -202,7 +218,8 @@ namespace TwitchLib.Client.Models.Builders
                 _systemMsgParsed,
                 _tmiSentTs,
                 _isTurbo,
-                _userType);
+                _userType,
+                _userId);
         }
 
         public AnonGiftedSubscription BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)
