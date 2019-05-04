@@ -86,6 +86,8 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing the user type of the resubscriber.</summary>
         public UserType UserType { get; }
 
+        public string Channel { get; }
+
         // @badges=subscriber/1,turbo/1;color=#2B119C;display-name=JustFunkIt;emotes=;id=9dasn-asdibas-asdba-as8as;login=justfunkit;mod=0;msg-id=resub;msg-param-months=2;room-id=44338537;subscriber=1;system-msg=JustFunkIt\ssubscribed\sfor\s2\smonths\sin\sa\srow!;turbo=1;user-id=26526370;user-type= :tmi.twitch.tv USERNOTICE #burkeblack :AVAST YEE SCURVY DOG
 
         protected readonly int monthsInternal;
@@ -210,9 +212,35 @@ namespace TwitchLib.Client.Models
             }
         }
 
-        internal SubscriberBase(List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, Color color, string displayName, string emoteSet, string id, string login, string systemMessage,
-            string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan, string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo,
-            bool isSubscriber, bool isPartner, string tmiSentTs, UserType userType, string rawIrc, string channel, int months)
+        internal SubscriberBase(
+            List<KeyValuePair<string, string>> badges,
+            List<KeyValuePair<string, string>> badgeInfo,
+            string colorHex,
+            Color color,
+            string displayName,
+            string emoteSet,
+            string id,
+            string login,
+            string systemMessage,
+            string msgId,
+            string msgParamCumulativeMonths,
+            string msgParamStreakMonths,
+            bool msgParamShouldShareStreak,
+            string systemMessageParsed,
+            string resubMessage,
+            SubscriptionPlan subscriptionPlan,
+            string subscriptionPlanName,
+            string roomId,
+            string userId,
+            bool isModerator,
+            bool isTurbo,
+            bool isSubscriber,
+            bool isPartner,
+            string tmiSentTs,
+            UserType userType,
+            string rawIrc,
+            string channel,
+            int months)
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
@@ -241,6 +269,8 @@ namespace TwitchLib.Client.Models
             UserType = userType;
             RawIrc = rawIrc;
             monthsInternal = months;
+            UserId = userId;
+            Channel = channel;
         }
 
         private static bool ConvertToBool(string data)
