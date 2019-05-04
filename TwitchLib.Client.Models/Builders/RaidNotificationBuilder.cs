@@ -6,26 +6,26 @@ namespace TwitchLib.Client.Models.Builders
 {
     public sealed class RaidNotificationBuilder : IBuilder<RaidNotification>, IFromIrcMessageBuilder<RaidNotification>
     {
-        public readonly List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
-        public readonly List<KeyValuePair<string, string>> _badgeInfo = new List<KeyValuePair<string, string>>();
-        public string _color;
-        public string _displayName;
-        public string _emotes;
-        public string _id;
-        public bool _isModerator;
-        public bool _isSubscriber;
-        public bool _isTurbo;
-        public string _login;
-        public string _msgId;
-        public string _msgParamDisplayName;
-        public string _msgParamLogin;
-        public string _msgParamViewerCount;
-        public string _roomId;
-        public string _systemMsg;
-        public string _systemMsgParsed;
-        public string _tmiSentTs;
-        public string _userId;
-        public UserType _userType;
+        private readonly List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
+        private readonly List<KeyValuePair<string, string>> _badgeInfo = new List<KeyValuePair<string, string>>();
+        private string _color;
+        private string _displayName;
+        private string _emotes;
+        private string _id;
+        private bool _isModerator;
+        private bool _isSubscriber;
+        private bool _isTurbo;
+        private string _login;
+        private string _msgId;
+        private string _msgParamDisplayName;
+        private string _msgParamLogin;
+        private string _msgParamViewerCount;
+        private string _roomId;
+        private string _systemMsg;
+        private string _systemMsgParsed;
+        private string _tmiSentTs;
+        private string _userId;
+        private UserType _userType;
 
         public RaidNotificationBuilder WithBadges(params KeyValuePair<string, string>[] badges)
         {
