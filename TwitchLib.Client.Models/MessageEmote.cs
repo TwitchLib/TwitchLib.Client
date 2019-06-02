@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 
+// TODO: Missing builder
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class for maintaining emotes that may be substituted into messages.</summary>
@@ -55,6 +56,7 @@ namespace TwitchLib.Client.Models
                 "//cdn.frankerfacez.com/emoticon/{0}/4"
             }
         );
+
         /// <summary>
         ///     Collection of Composite Format Strings which will substitute
         ///     an emote ID to get a URL for an image from the BTTV CDN
@@ -100,8 +102,10 @@ namespace TwitchLib.Client.Models
         {
             /// <summary>Emotes hosted by Twitch.tv natively</summary>
             Twitch,
+
             /// <summary>Emotes hosted by FrankerFaceZ.com</summary>
             FrankerFaceZ,
+
             /// <summary>Emotes hosted by BetterTTV.net</summary>
             BetterTwitchTv
         }
@@ -114,11 +118,13 @@ namespace TwitchLib.Client.Models
             ///     Small-sized emotes are the standard size used in the Twitch web chat.
             /// </summary>
             Small = 0,
+
             /// <summary>
             ///     Medium-sized emotes are not supported by all browsers, and
             ///     FrankerFaceZ does not require emotes to be submitted in this size
             /// </summary>
             Medium = 1,
+
             /// <summary>
             ///     Large-sized emotes are not supported by all browsers, and
             ///     FrankerFaceZ does not require emotes to be submitted in this size
@@ -190,7 +196,9 @@ namespace TwitchLib.Client.Models
         ///     <paramref name="id"/>) which will be used instead of any of the emote URLs.
         ///     Default: null
         /// </param>
-        public MessageEmote(string id, string text,
+        public MessageEmote(
+            string id,
+            string text,
             EmoteSource source = EmoteSource.Twitch,
             EmoteSize size = EmoteSize.Small,
             ReplaceEmoteDelegate replacementDelegate = null)
@@ -214,6 +222,7 @@ namespace TwitchLib.Client.Models
     {
         private readonly SortedList<string, MessageEmote> _emoteList;
         private const string BasePattern = @"(\b{0}\b)";
+
         /// <summary> Do not access directly! Backing field for <see cref="CurrentPattern"/> </summary>
         private string _currentPattern;
         private Regex _regex;
@@ -289,7 +298,6 @@ namespace TwitchLib.Client.Models
             {
                 _emoteList.Add(emote.Text, emote);
             }
-
 
             if (CurrentPattern == null)
             {
