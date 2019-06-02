@@ -11,9 +11,9 @@ namespace TwitchLib.Client.Events
     public class OnRaidNotificationArgs : EventArgs
     {
         /// <summary>
-        /// The raid notificaiton
+        /// The raid notification
         /// </summary>
-        public RaidNotification RaidNotificaiton;
+        public RaidNotification RaidNotification;
         /// <summary>
         /// The channel
         /// </summary>
