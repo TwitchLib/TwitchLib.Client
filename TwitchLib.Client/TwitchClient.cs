@@ -588,6 +588,8 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
+			// Clear instance data
+            _joinedChannelManager.Clear();
             _client.Open();
 
             Log("Should be connected!");
