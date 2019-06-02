@@ -564,7 +564,7 @@ namespace TwitchLib.Client.Extensions
             OnRaidNotificationArgs model = new OnRaidNotificationArgs()
             {
                 Channel = channel,
-                RaidNotificaiton = new RaidNotification(badges, badgeInfo, color, displayName, emotes, id, login, moderator, msgId, msgParamDisplayName, msgParamLogin, msgParamViewerCount,
+                RaidNotification = new RaidNotification(badges, badgeInfo, color, displayName, emotes, id, login, moderator, msgId, msgParamDisplayName, msgParamLogin, msgParamViewerCount,
                 roomId, subscriber, systemMsg, systemMsgParsed, tmiSentTs, turbo, userType, userId)
             };
             client.RaiseEvent("OnRaidNotification", model);
