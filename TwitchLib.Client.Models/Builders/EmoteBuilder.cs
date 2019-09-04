@@ -4,7 +4,7 @@ namespace TwitchLib.Client.Models.Builders
 {
     public sealed class EmoteBuilder : IBuilder<Emote>
     {
-        private int _id;
+        private string _id;
         private string _name;
         private int _startIndex;
         private int _endIndex;
@@ -18,7 +18,7 @@ namespace TwitchLib.Client.Models.Builders
             return new EmoteBuilder();
         }
 
-        public EmoteBuilder WithId(int id)
+        public EmoteBuilder WithId(string id)
         {
             _id = id;
             return this;

@@ -6,7 +6,7 @@
     public class Emote
     {
         /// <summary>Twitch-assigned emote Id.</summary>
-        public int Id { get; }
+        public string Id { get; }
 
         /// <summary>The name of the emote. For example, if the message was "This is Kappa test.", the name would be 'Kappa'.</summary>
         public string Name { get; }
@@ -28,7 +28,7 @@
         /// <param name="emoteStartIndex"></param>
         /// <param name="emoteEndIndex"></param>
         public Emote(
-            int emoteId,
+            string emoteId,
             string name,
             int emoteStartIndex,
             int emoteEndIndex)

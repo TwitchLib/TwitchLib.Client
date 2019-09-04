@@ -19,7 +19,7 @@ namespace TwitchLib.Client.Models.Extractors
                 // Message contains multiple different emotes, first parse by unique emotes: 28087:15-21/25:5-9,28-32
                 foreach (var emoteData in rawEmoteSetString.Split('/'))
                 {
-                    var emoteId = int.Parse(emoteData.Split(':')[0]);
+                    var emoteId = emoteData.Split(':')[0];
                     if (emoteData.Contains(","))
                     {
                         // Multiple copies of a single emote: 25:5-9,28-32
@@ -35,7 +35,7 @@ namespace TwitchLib.Client.Models.Extractors
             }
             else
             {
-                var emoteId = int.Parse(rawEmoteSetString.Split(':')[0]);
+                var emoteId = rawEmoteSetString.Split(':')[0];
                 // Message contains a single, or multiple of the same emote
                 if (rawEmoteSetString.Contains(","))
                 {
@@ -51,7 +51,7 @@ namespace TwitchLib.Client.Models.Extractors
             }
         }
 
-        private Emote GetEmote(string emoteData, int emoteId, string message, bool single = false)
+        private Emote GetEmote(string emoteData, string emoteId, string message, bool single = false)
         {
             int startIndex = -1;
             int endIndex = -1;
