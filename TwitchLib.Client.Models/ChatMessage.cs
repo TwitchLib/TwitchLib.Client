@@ -37,11 +37,17 @@ namespace TwitchLib.Client.Models
         /// <summary>Chat message from broadcaster identifier flag</summary>
         public bool IsBroadcaster { get; }
 
+        /// <summary>Chat message is highlighted in chat via channel points</summary>
+        public bool IsHighlighted { get; internal set; }
+
         /// <summary>Chat message /me identifier flag.</summary>
         public bool IsMe { get; }
 
         /// <summary>Channel specific moderator status.</summary>
         public bool IsModerator { get; }
+
+        /// <summary>Message used channel points to skip sub mode</summary>
+        public bool IsSkippingSubMode { get; internal set; }
 
         /// <summary>Channel specific subscriber status.</summary>
         public bool IsSubscriber { get; }
@@ -123,6 +129,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Id:
                         Id = tagValue;
+                        break;
+                    case Tags.MsgId:
+                        handleMsgId(tagValue);
                         break;
                     case Tags.Mod:
                         IsModerator = Common.Helpers.ConvertToBool(tagValue);
@@ -286,6 +295,18 @@ namespace TwitchLib.Client.Models
             Bits = bits;
             BitsInDollars = bitsInDollars;
             Username = userName;
+        }
+
+        private void handleMsgId(string val)
+        {
+            switch(val) {
+                case MsgIds.HighlightedMessage:
+                    IsHighlighted = true;
+                    break;
+                case MsgIds.SkipSubsModeMessage:
+                    IsSkippingSubMode = true;
+                    break;
+            }
         }
 
         private static double ConvertBitsToUsd(int bits)
