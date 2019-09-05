@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Extensions.NetCore;
 using TwitchLib.Client.Models.Internal;
@@ -13,36 +13,59 @@ namespace TwitchLib.Client.Models
     {
         protected readonly MessageEmoteCollection _emoteCollection;
 
+        /// <summary>Information associated with badges. Not all badges will be in this list. Use carefully.</summary>
+        public List<KeyValuePair<string, string>> BadgeInfo { get; }
+
         /// <summary>If viewer sent bits in their message, total amount will be here.</summary>
         public int Bits { get; }
+
         /// <summary>Number of USD (United States Dollars) spent on bits.</summary>
         public double BitsInDollars { get; }
+
         /// <summary>Twitch channel message was sent from (useful for multi-channel bots).</summary>
         public string Channel { get; }
+
         /// <summary>If a cheer badge exists, this property represents the raw value and color (more later). Can be null.</summary>
         public CheerBadge CheerBadge { get; }
+
         /// <summary>Text after emotes have been handled (if desired). Will be null if replaceEmotes is false.</summary>
         public string EmoteReplacedMessage { get; }
+
         /// <summary>Unique message identifier assigned by Twitch</summary>
         public string Id { get; }
+
         /// <summary>Chat message from broadcaster identifier flag</summary>
         public bool IsBroadcaster { get; }
+
+        /// <summary>Chat message is highlighted in chat via channel points</summary>
+        public bool IsHighlighted { get; internal set; }
+
         /// <summary>Chat message /me identifier flag.</summary>
         public bool IsMe { get; }
+
         /// <summary>Channel specific moderator status.</summary>
         public bool IsModerator { get; }
+
+        /// <summary>Message used channel points to skip sub mode</summary>
+        public bool IsSkippingSubMode { get; internal set; }
+
         /// <summary>Channel specific subscriber status.</summary>
         public bool IsSubscriber { get; }
+
         /// <summary>Twitch chat message contents.</summary>
         public string Message { get; }
+
         /// <summary>Experimental property noisy determination by Twitch.</summary>
-        public Noisy Noisy { get; } = Noisy.NotSet;
+        public Noisy Noisy { get; }
+
         /// <summary>Raw IRC-style text received from Twitch.</summary>
         public string RawIrcMessage { get; }
+
         /// <summary>Unique identifier of chat room.</summary>
         public string RoomId { get; }
+
         /// <summary>Number of months a person has been subbed.</summary>
-        public int SubscribedMonthCount { get; }        
+        public int SubscribedMonthCount { get; }
 
         //Example IRC message: @badges=moderator/1,warcraft/alliance;color=;display-name=Swiftyspiffyv4;emotes=;mod=1;room-id=40876073;subscriber=0;turbo=0;user-id=103325214;user-type=mod :swiftyspiffyv4!swiftyspiffyv4@swiftyspiffyv4.tmi.twitch.tv PRIVMSG #swiftyspiffy :asd
         /// <summary>Constructor for ChatMessage object.</summary>
@@ -50,7 +73,11 @@ namespace TwitchLib.Client.Models
         /// <param name="ircMessage">The IRC message from Twitch to be processed.</param>
         /// <param name="emoteCollection">The <see cref="MessageEmoteCollection"/> to register new emotes on and, if desired, use for emote replacement.</param>
         /// <param name="replaceEmotes">Whether to replace emotes for this chat message. Defaults to false.</param>
-        public ChatMessage(string botUsername, IrcMessage ircMessage, ref MessageEmoteCollection emoteCollection, bool replaceEmotes = false)
+        public ChatMessage(
+            string botUsername,
+            IrcMessage ircMessage,
+            ref MessageEmoteCollection emoteCollection,
+            bool replaceEmotes = false)
         {
             BotUsername = botUsername;
             RawIrcMessage = ircMessage.ToString();
@@ -67,16 +94,7 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        Badges = new List<KeyValuePair<string, string>>();
-                        var badges = tagValue;
-                        if (badges.Contains('/'))
-                        {
-                            if (!badges.Contains(","))
-                                Badges.Add(new KeyValuePair<string, string>(badges.Split('/')[0], badges.Split('/')[1]));
-                            else
-                                foreach (var badge in badges.Split(','))
-                                    Badges.Add(new KeyValuePair<string, string>(badge.Split('/')[0], badge.Split('/')[1]));
-                        }
+                        Badges = Common.Helpers.ParseBadges(tagValue);
                         // Iterate through saved badges for special circumstances
                         foreach (var badge in Badges)
                         {
@@ -90,6 +108,9 @@ namespace TwitchLib.Client.Models
                                     break;
                             }
                         }
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Bits:
                         Bits = int.Parse(tagValue);
@@ -108,6 +129,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Id:
                         Id = tagValue;
+                        break;
+                    case Tags.MsgId:
+                        handleMsgId(tagValue);
                         break;
                     case Tags.Mod:
                         IsModerator = Common.Helpers.ConvertToBool(tagValue);
@@ -196,7 +220,7 @@ namespace TwitchLib.Client.Models
             }
 
             if (EmoteSet == null)
-                EmoteSet = new EmoteSet(null, Message);
+                EmoteSet = new EmoteSet(default(string), Message);
 
             // Check if display name was set, and if it wasn't, set it to username
             if (string.IsNullOrEmpty(DisplayName))
@@ -219,10 +243,32 @@ namespace TwitchLib.Client.Models
             }
         }
 
-        public ChatMessage(string botUsername, string userId, string userName, string displayName, string colorHex, Color color, EmoteSet emoteSet,
-            string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo, bool isModerator,
-            bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
-            CheerBadge cheerBadge, int bits, double bitsInDollars)
+        public ChatMessage(
+            string botUsername,
+            string userId,
+            string userName,
+            string displayName,
+            string colorHex,
+            Color color,
+            EmoteSet emoteSet,
+            string message,
+            UserType userType,
+            string channel,
+            string id,
+            bool isSubscriber,
+            int subscribedMonthCount,
+            string roomId,
+            bool isTurbo,
+            bool isModerator,
+            bool isMe,
+            bool isBroadcaster,
+            Noisy noisy,
+            string rawIrcMessage,
+            string emoteReplacedMessage,
+            List<KeyValuePair<string, string>> badges,
+            CheerBadge cheerBadge,
+            int bits,
+            double bitsInDollars)
         {
             BotUsername = botUsername;
             UserId = userId;
@@ -241,13 +287,26 @@ namespace TwitchLib.Client.Models
             IsModerator = isModerator;
             IsMe = isMe;
             IsBroadcaster = isBroadcaster;
-            Noisy = Noisy;
+            Noisy = noisy;
             RawIrcMessage = rawIrcMessage;
             EmoteReplacedMessage = emoteReplacedMessage;
             Badges = badges;
             CheerBadge = cheerBadge;
             Bits = bits;
             BitsInDollars = bitsInDollars;
+            Username = userName;
+        }
+
+        private void handleMsgId(string val)
+        {
+            switch(val) {
+                case MsgIds.HighlightedMessage:
+                    IsHighlighted = true;
+                    break;
+                case MsgIds.SkipSubsModeMessage:
+                    IsSkippingSubMode = true;
+                    break;
+            }
         }
 
         private static double ConvertBitsToUsd(int bits)

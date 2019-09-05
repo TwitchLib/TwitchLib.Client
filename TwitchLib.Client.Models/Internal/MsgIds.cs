@@ -15,6 +15,7 @@
         public const string ColorChanged = "color_changed";
         public const string EmoteOnlyOff = "emote_only_off";
         public const string EmoteOnlyOn = "emote_only_on";
+        public const string HighlightedMessage = "highlighted-message";
         public const string HostOff = "host_off";
         public const string HostOn = "host_on";
         public const string HostsRemaining = "host_remaining";
@@ -40,5 +41,6 @@
         public const string UnbanSuccess = "unban_success";
         public const string UnrecognizedCmd = "unrecognized_cmd";
         public const string VIPsSuccess = "vips_success";
+        public const string SkipSubsModeMessage = "skip-subs-mode-message";
     }
 }

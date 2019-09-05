@@ -6,15 +6,19 @@ namespace TwitchLib.Client.Test
 {
     public class MockIClient : IClient
     {
+        public void WhisperThrottled(OnWhisperThrottledEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+
         public TimeSpan DefaultKeepAliveInterval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public int SendQueueLength => throw new NotImplementedException();
 
         public bool IsConnected { get; private set; }
+        public IClientOptions Options { get; set; }
 
         public int WhisperQueueLength => throw new NotImplementedException();
-
-        public IClientOptions Options => throw new NotImplementedException();
 
         public event EventHandler<OnConnectedEventArgs> OnConnected;
         public event EventHandler<OnDataEventArgs> OnData;
@@ -52,21 +56,6 @@ namespace TwitchLib.Client.Test
             IsConnected = true;
             OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
         }
-        
-        public bool Send(string data)
-        {
-            return true;
-        }
-
-        public void ReceiveMessage(string message)
-        {
-            OnMessage?.Invoke(this, new OnMessageEventArgs { Message = message });
-        }
-
-        public bool SendWhisper(string data)
-        {
-            throw new NotImplementedException();
-        }
 
         public void MessageThrottled(OnMessageThrottledEventArgs eventArgs)
         {
@@ -83,7 +72,17 @@ namespace TwitchLib.Client.Test
             throw new NotImplementedException();
         }
 
-        public void WhisperThrottled(OnWhisperThrottledEventArgs eventArgs)
+        public bool Send(string data)
+        {
+            return true;
+        }
+
+        public void ReceiveMessage(string message)
+        {
+            OnMessage?.Invoke(this, new OnMessageEventArgs { Message = message });
+        }
+
+        public bool SendWhisper(string data)
         {
             throw new NotImplementedException();
         }

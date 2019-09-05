@@ -12,21 +12,21 @@
     <PackageProjectUrl>https://github.com/TwitchLib/TwitchLib.Client</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <Copyright>Copyright 2018</Copyright>
-    <PackageReleaseNotes>UserId added to community sub and gifted sub. RoomState bug fixed preventing join confirmation for some rooms. Anonymous gift support. OnModeratorsReceived bug preventing firing when list empty. Support for adding, removing and fetching VIPs, support for detecting removed messages.</PackageReleaseNotes>
+    <PackageReleaseNotes>Replace websocket4net with TwitchLib.Communication, support for creating marker via extension command, use internal reconnection method for each client, support for community subscriptions, BitsInDollars self assignment fixed.</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/TwitchLib/TwitchLib.Client</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>twitch library irc chat c# csharp api events pubsub net standard 2.0</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>3.0.4.0</AssemblyVersion>
-    <FileVersion>3.0.4.0</FileVersion>
+    <AssemblyVersion>3.0.4</AssemblyVersion>
+    <FileVersion>3.0.4</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
+    <PackageReference Include="TwitchLib.Communication" Version="1.0.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
     <ProjectReference Include="..\TwitchLib.Client.Models\TwitchLib.Client.Models.csproj" />
-    <ProjectReference Include="..\TwitchLib.Communication\src\TwitchLib.Communication\TwitchLib.Communication.csproj" />
   </ItemGroup>
 </Project>

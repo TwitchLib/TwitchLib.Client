@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Internal;
-using TwitchLib.Client.Models.Extensions.NetCore;
 
+using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Extensions.NetCore;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
@@ -15,50 +14,83 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Property representing list of badges assigned.</summary>
         public List<KeyValuePair<string, string>> Badges { get; }
+
+        /// <summary>Metadata associated with each badge</summary>
+        public List<KeyValuePair<string, string>> BadgeInfo { get; }
+
         /// <summary>Property representing the colorhex of the resubscriber.</summary>
         public string ColorHex { get; }
+
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
         public Color Color { get; }
+
         /// <summary>Property representing resubscriber's customized display name.</summary>
         public string DisplayName { get; }
+
         /// <summary>Property representing emote set of resubscriber.</summary>
         public string EmoteSet { get; }
+
         /// <summary>Property representing resub message id</summary>
         public string Id { get; }
+
         /// <summary>Property representing whether or not the resubscriber is a moderator.</summary>
         public bool IsModerator { get; }
+
         /// <summary>Property representing whether or not person is a partner.</summary>
         public bool IsPartner { get; }
+
         /// <summary>Property representing whether or not the resubscriber is a subscriber (YES).</summary>
         public bool IsSubscriber { get; }
+
         /// <summary>Property representing whether or not the resubscriber is a turbo member.</summary>
         public bool IsTurbo { get; }
+
         /// <summary>Property representing login of resubscription event.</summary>
         public string Login { get; }
+
+        public string MsgId { get; }
+
+        public string MsgParamCumulativeMonths { get; }
+
+        public bool MsgParamShouldShareStreak { get; }
+
+        public string MsgParamStreakMonths { get; }
+
         /// <summary>Property representing the raw IRC message (for debugging/customized parsing)</summary>
         public string RawIrc { get; }
+
         /// <summary>Property representing system message.</summary>
         public string ResubMessage { get; }
+
         /// <summary>Property representing the room id.</summary>
         public string RoomId { get; }
+
         /// <summary>Property representing the plan a user is on.</summary>
         public SubscriptionPlan SubscriptionPlan { get; } = SubscriptionPlan.NotSet;
+
         /// <summary>Property representing the subscription plan name.</summary>
         public string SubscriptionPlanName { get; }
+
         /// <summary>Property representing internval system message value.</summary>
         public string SystemMessage { get; }
+
         /// <summary>Property representing internal system message value, parsed.</summary>
         public string SystemMessageParsed { get; }
+
         /// <summary>Property representing the tmi-sent-ts value.</summary>
-        public string TmiSentTs { get; }        
+        public string TmiSentTs { get; }
+
         /// <summary>Property representing the user's id.</summary>
         public string UserId { get; }
+
         /// <summary>Property representing the user type of the resubscriber.</summary>
         public UserType UserType { get; }
-        
+
+        public string Channel { get; }
+
         // @badges=subscriber/1,turbo/1;color=#2B119C;display-name=JustFunkIt;emotes=;id=9dasn-asdibas-asdba-as8as;login=justfunkit;mod=0;msg-id=resub;msg-param-months=2;room-id=44338537;subscriber=1;system-msg=JustFunkIt\ssubscribed\sfor\s2\smonths\sin\sa\srow!;turbo=1;user-id=26526370;user-type= :tmi.twitch.tv USERNOTICE #burkeblack :AVAST YEE SCURVY DOG
 
-        protected readonly int months;
+        protected readonly int monthsInternal;
 
         /// <summary>Subscriber object constructor.</summary>
         protected SubscriberBase(IrcMessage ircMessage)
@@ -72,16 +104,16 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        Badges = new List<KeyValuePair<string, string>>();
-                        foreach (var badgeValue in tagValue.Split(','))
-                            if (badgeValue.Contains('/'))
-                                Badges.Add(new KeyValuePair<string, string>(badgeValue.Split('/')[0], badgeValue.Split('/')[1]));
+                        Badges = Common.Helpers.ParseBadges(tagValue);
                         // iterate through badges for special circumstances
                         foreach (var badge in Badges)
                         {
                             if (badge.Key == "partner")
                                 IsPartner = true;
                         }
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Color:
                         ColorHex = tagValue;
@@ -103,8 +135,17 @@ namespace TwitchLib.Client.Models
                     case Tags.Mod:
                         IsModerator = ConvertToBool(tagValue);
                         break;
-                    case Tags.MsgParamMonths:
-                        months = int.Parse(tagValue);
+                    case Tags.MsgId:
+                        MsgId = tagValue;
+                        break;
+                    case Tags.MsgParamCumulativeMonths:
+                        MsgParamCumulativeMonths = tagValue;
+                        break;
+                    case Tags.MsgParamStreakMonths:
+                        MsgParamStreakMonths = tagValue;
+                        break;
+                    case Tags.MsgParamShouldShareStreak:
+                        MsgParamShouldShareStreak = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.MsgParamSubPlan:
                         switch (tagValue.ToLower())
@@ -171,17 +212,48 @@ namespace TwitchLib.Client.Models
             }
         }
 
-        internal SubscriberBase(List<KeyValuePair<string, string>> badges, string colorHex, Color color, string displayName, string emoteSet, string id, string login, string systemMessage,
-            string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan, string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo,
-            bool isSubscriber, bool isPartner, string tmiSentTs, UserType userType, string rawIrc, string channel)
+        internal SubscriberBase(
+            List<KeyValuePair<string, string>> badges,
+            List<KeyValuePair<string, string>> badgeInfo,
+            string colorHex,
+            Color color,
+            string displayName,
+            string emoteSet,
+            string id,
+            string login,
+            string systemMessage,
+            string msgId,
+            string msgParamCumulativeMonths,
+            string msgParamStreakMonths,
+            bool msgParamShouldShareStreak,
+            string systemMessageParsed,
+            string resubMessage,
+            SubscriptionPlan subscriptionPlan,
+            string subscriptionPlanName,
+            string roomId,
+            string userId,
+            bool isModerator,
+            bool isTurbo,
+            bool isSubscriber,
+            bool isPartner,
+            string tmiSentTs,
+            UserType userType,
+            string rawIrc,
+            string channel,
+            int months)
         {
             Badges = badges;
+            BadgeInfo = badgeInfo;
             ColorHex = colorHex;
             Color = color;
             DisplayName = displayName;
             EmoteSet = emoteSet;
             Id = id;
             Login = login;
+            MsgId = msgId;
+            MsgParamCumulativeMonths = msgParamCumulativeMonths;
+            MsgParamStreakMonths = msgParamStreakMonths;
+            MsgParamShouldShareStreak = msgParamShouldShareStreak;
             SystemMessage = systemMessage;
             SystemMessageParsed = systemMessageParsed;
             ResubMessage = resubMessage;
@@ -196,6 +268,9 @@ namespace TwitchLib.Client.Models
             TmiSentTs = tmiSentTs;
             UserType = userType;
             RawIrc = rawIrc;
+            monthsInternal = months;
+            UserId = userId;
+            Channel = channel;
         }
 
         private static bool ConvertToBool(string data)
@@ -206,8 +281,8 @@ namespace TwitchLib.Client.Models
         /// <summary>Overriden ToString method, prints out all properties related to resub.</summary>
         public override string ToString()
         {
-            return $"Badges: {Badges.Count}, color hex: {ColorHex}, display name: {DisplayName}, emote set: {EmoteSet}, login: {Login}, system message: {SystemMessage}, " +
-                $"resub message: {ResubMessage}, months: {months}, room id: {RoomId}, user id: {UserId}, mod: {IsModerator}, turbo: {IsTurbo}, sub: {IsSubscriber}, user type: {UserType}, raw irc: {RawIrc}";
+            return $"Badges: {Badges.Count}, color hex: {ColorHex}, display name: {DisplayName}, emote set: {EmoteSet}, login: {Login}, system message: {SystemMessage}, msgId: {MsgId}, msgParamCumulativeMonths: {MsgParamCumulativeMonths}" +
+                $"msgParamStreakMonths: {MsgParamStreakMonths}, msgParamShouldShareStreak: {MsgParamShouldShareStreak}, resub message: {ResubMessage}, months: {monthsInternal}, room id: {RoomId}, user id: {UserId}, mod: {IsModerator}, turbo: {IsTurbo}, sub: {IsSubscriber}, user type: {UserType}, raw irc: {RawIrc}";
         }
     }
 }

@@ -3,11 +3,17 @@ using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
+    /// <summary>
+    /// Class OnWhisperReceivedArgs.
+    /// Implements the <see cref="System.EventArgs" />
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    /// <summary></summary>
     public class OnWhisperReceivedArgs : EventArgs
     {
-        /// <summary></summary>
+        /// <summary>
+        /// The whisper message
+        /// </summary>
         public WhisperMessage WhisperMessage;
     }
 }

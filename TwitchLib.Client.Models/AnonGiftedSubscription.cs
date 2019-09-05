@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -8,27 +8,54 @@ namespace TwitchLib.Client.Models
 {
     public class AnonGiftedSubscription
     {
-        public string Badges { get; }
+        public List<KeyValuePair<string, string>> Badges { get; }
+
+        public List<KeyValuePair<string, string>> BadgeInfo { get; }
+
         public string Color { get; }
+
         public string DisplayName { get; }
+
         public string Emotes { get; }
+
         public string Id { get; }
+
         public bool IsModerator { get; }
+
         public bool IsSubscriber { get; }
+
         public bool IsTurbo { get; }
-        public string Login { get; }        
+
+        public string Login { get; }
+
         public string MsgId { get; }
-        public string MsgParamMonths { get; }
+
+        public string MsgParamCumulativeMonths { get; }
+
+        public bool MsgParamShouldShareStreak { get; }
+
+        public string MsgParamStreakMonths { get; }
+
         public string MsgParamRecipientDisplayName { get; }
+
         public string MsgParamRecipientId { get; }
+
         public string MsgParamRecipientUserName { get; }
+
         public string MsgParamSubPlanName { get; }
+
         public SubscriptionPlan MsgParamSubPlan { get; }
-        public string RoomId { get; }        
+
+        public string RoomId { get; }
+
         public string SystemMsg { get; }
+
         public string SystemMsgParsed { get; }
-        public string TmiSentTs { get; }   
+
+        public string TmiSentTs { get; }
+
         public string UserId { get; }
+
         public UserType UserType { get; }
 
         public AnonGiftedSubscription(IrcMessage ircMessage)
@@ -40,7 +67,10 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.Badges:
-                        Badges = tagValue;
+                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        break;
+                    case Tags.BadgeInfo:
+                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         break;
                     case Tags.Color:
                         Color = tagValue;
@@ -63,8 +93,14 @@ namespace TwitchLib.Client.Models
                     case Tags.MsgId:
                         MsgId = tagValue;
                         break;
-                    case Tags.MsgParamMonths:
-                        MsgParamMonths = tagValue;
+                    case Tags.MsgParamCumulativeMonths:
+                        MsgParamCumulativeMonths = tagValue;
+                        break;
+                    case Tags.MsgParamStreakMonths:
+                        MsgParamStreakMonths = tagValue;
+                        break;
+                    case Tags.MsgParamShouldShareStreak:
+                        MsgParamShouldShareStreak = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.MsgParamRecipientDisplayname:
                         MsgParamRecipientDisplayName = tagValue;
@@ -139,12 +175,35 @@ namespace TwitchLib.Client.Models
                 }
             }
         }
-        public AnonGiftedSubscription(string badges, string color, string displayName, string emotes, string id, string login, bool isModerator,
-            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
-            string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
-            string tmiSentTs, bool isTurbo, UserType userType)
+
+        public AnonGiftedSubscription(
+            List<KeyValuePair<string, string>> badges,
+            List<KeyValuePair<string, string>> badgeInfo,
+            string color,
+            string displayName,
+            string emotes,
+            string id,
+            string login,
+            bool isModerator,
+            string msgId,
+            string msgParamCumulativeMonths,
+            string msgParamStreakMonths,
+            bool msgParamShouldShareStreak,
+            string msgParamRecipientDisplayName,
+            string msgParamRecipientId,
+            string msgParamRecipientUserName,
+            string msgParamSubPlanName,
+            SubscriptionPlan msgParamSubPlan,
+            string roomId, bool isSubscriber,
+            string systemMsg,
+            string systemMsgParsed,
+            string tmiSentTs,
+            bool isTurbo,
+            UserType userType,
+            string userId)
         {
             Badges = badges;
+            BadgeInfo = badgeInfo;
             Color = color;
             DisplayName = displayName;
             Emotes = emotes;
@@ -152,7 +211,9 @@ namespace TwitchLib.Client.Models
             Login = login;
             IsModerator = isModerator;
             MsgId = msgId;
-            MsgParamMonths = msgParamMonths;
+            MsgParamCumulativeMonths = msgParamCumulativeMonths;
+            MsgParamStreakMonths = msgParamStreakMonths;
+            MsgParamShouldShareStreak = msgParamShouldShareStreak;
             MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
             MsgParamRecipientId = msgParamRecipientId;
             MsgParamRecipientUserName = msgParamRecipientUserName;
@@ -165,6 +226,7 @@ namespace TwitchLib.Client.Models
             TmiSentTs = tmiSentTs;
             IsTurbo = isTurbo;
             UserType = userType;
+            UserId = userId;
         }
     }
 }

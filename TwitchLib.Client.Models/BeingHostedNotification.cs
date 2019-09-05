@@ -4,14 +4,17 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public partial class BeingHostedNotification
+    public class BeingHostedNotification
     {
-        public string BotUsername { get; private set; }
-        public string Channel { get; }        
+        public string BotUsername { get; }
+
+        public string Channel { get; }
+
         public string HostedByChannel { get; }
+
         public bool IsAutoHosted { get; }
+
         public int Viewers { get; }
-        
 
         public BeingHostedNotification(string botUsername, IrcMessage ircMessage)
         {
@@ -25,12 +28,17 @@ namespace TwitchLib.Client.Models
                 if (splt[1].Contains(" ") && int.TryParse(splt[1].Split(' ')[0], out int n))
                     Viewers = n;
             }
-                
+
             if (ircMessage.Message.Contains("auto hosting"))
                 IsAutoHosted = true;
         }
 
-        public BeingHostedNotification(string channel, string botUsername, string hostedByChannel, int viewers, bool isAutoHosted)
+        public BeingHostedNotification(
+            string channel,
+            string botUsername,
+            string hostedByChannel,
+            int viewers,
+            bool isAutoHosted)
         {
             Channel = channel;
             BotUsername = botUsername;

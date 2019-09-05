@@ -3,11 +3,17 @@ using TwitchLib.Client.Exceptions;
 
 namespace TwitchLib.Client.Events
 {
+    /// <summary>
+    /// Args representing an incorrect login event.
+    /// Implements the <see cref="System.EventArgs" />
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    /// <summary>Args representing an incorrect login event.</summary>
     public class OnIncorrectLoginArgs : EventArgs
     {
-        /// <summary>Property representing exception object.</summary>
+        /// <summary>
+        /// Property representing exception object.
+        /// </summary>
         public ErrorLoggingInException Exception;
     }
 }

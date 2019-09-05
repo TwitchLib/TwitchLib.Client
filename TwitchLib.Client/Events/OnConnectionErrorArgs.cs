@@ -3,13 +3,21 @@ using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
+    /// <summary>
+    /// Args representing client connection error event.
+    /// Implements the <see cref="System.EventArgs" />
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    /// <summary>Args representing client connection error event.</summary>
     public class OnConnectionErrorArgs : EventArgs
     {
-        /// <summary></summary>
+        /// <summary>
+        /// The error
+        /// </summary>
         public ErrorEvent Error;
-        /// <summary>Username of the bot that suffered connection error.</summary>
+        /// <summary>
+        /// Username of the bot that suffered connection error.
+        /// </summary>
         public string BotUsername;
     }
 }

@@ -3,7 +3,9 @@
     public class OutboundWhisperMessage
     {
         public string Username { get; set; }
+
         public string Receiver { get; set; }
+
         public string Message { get; set; }
 
         public override string ToString()
