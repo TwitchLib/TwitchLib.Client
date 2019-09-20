@@ -386,27 +386,27 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when TwitchClient attempts to host a channel it is in.
         /// </summary>
-        public EventHandler OnSelfRaidError;
+        public event EventHandler OnSelfRaidError;
 
         /// <summary>
         /// Fires when TwitchClient receives generic no permission error from Twitch.
         /// </summary>
-        public EventHandler OnNoPermissionError;
+        public event EventHandler OnNoPermissionError;
 
         /// <summary>
         /// Fires when newly raided channel is mature audience only.
         /// </summary>
-        public EventHandler OnRaidedChannelIsMatureAudience;
+        public event EventHandler OnRaidedChannelIsMatureAudience;
 
         /// <summary>
         /// Fires when the client was unable to join a channel.
         /// </summary>
-        public EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
+        public event EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
 
         /// <summary>
         /// Fires when data is received from Twitch that is not able to be parsed.
         /// </summary>
-        public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+        public event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
         #endregion
 
         #region Construction Work
