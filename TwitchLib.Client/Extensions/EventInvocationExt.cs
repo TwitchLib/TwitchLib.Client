@@ -206,16 +206,17 @@ namespace TwitchLib.Client.Extensions
         /// <param name="tmiSentTs">The tmi sent ts.</param>
         /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
         /// <param name="userType">Type of the user.</param>
+        /// <param name="userId">Id of the user.</param>
         public static void InvokeGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
-            string tmiSentTs, bool isTurbo, UserType userType)
+            string tmiSentTs, bool isTurbo, UserType userType, string userId)
         {
             OnGiftedSubscriptionArgs model = new OnGiftedSubscriptionArgs()
             {
                 GiftedSubscription = new GiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, msgParamRecipientDisplayName,
                 msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
-                userType)
+                userType, userId)
             };
             client.RaiseEvent("OnGiftedSubscription", model);
         }
@@ -245,16 +246,17 @@ namespace TwitchLib.Client.Extensions
         /// <param name="tmiSentTs">The tmi sent ts.</param>
         /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
         /// <param name="userType">Type of the user.</param>
+        /// <param name="userId">Id of user.</param>
         public static void InvokeAnonGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
-            string tmiSentTs, bool isTurbo, UserType userType)
+            string tmiSentTs, bool isTurbo, UserType userType, string userId)
         {
             OnAnonGiftedSubscriptionArgs model = new OnAnonGiftedSubscriptionArgs()
             {
                 AnonGiftedSubscription = new AnonGiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, msgParamRecipientDisplayName,
                 msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
-                userType)
+                userType, userId)
             };
             client.RaiseEvent("OnAnonGiftedSubscription", model);
         }
@@ -503,7 +505,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userType">Type of the user.</param>
         /// <param name="rawIrc">The raw irc.</param>
         /// <param name="channel">The channel.</param>
-        public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string,string>> badgeInfo, string colorHex, Color color, string displayName,
+        public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, Color color, string displayName,
             string emoteSet, string id, string login, string systemMessage, string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
             string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs,
             UserType userType, string rawIrc, string channel)
@@ -555,14 +557,15 @@ namespace TwitchLib.Client.Extensions
         /// <param name="tmiSentTs">The tmi sent ts.</param>
         /// <param name="turbo">if set to <c>true</c> [turbo].</param>
         /// <param name="userType">Type of the user.</param>
+        /// <param name="userType">Id of user.</param>
         public static void InvokeRaidNotification(this TwitchClient client, string channel, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
-            string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType)
+            string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType, string userId)
         {
             OnRaidNotificationArgs model = new OnRaidNotificationArgs()
             {
                 Channel = channel,
-                RaidNotificaiton = new RaidNotification(badges, badgeInfo, color, displayName, emotes, id, login, moderator, msgId, msgParamDisplayName, msgParamLogin, msgParamViewerCount,
-                roomId, subscriber, systemMsg, systemMsgParsed, tmiSentTs, turbo, userType)
+                RaidNotification = new RaidNotification(badges, badgeInfo, color, displayName, emotes, id, login, moderator, msgId, msgParamDisplayName, msgParamLogin, msgParamViewerCount,
+                roomId, subscriber, systemMsg, systemMsgParsed, tmiSentTs, turbo, userType, userId)
             };
             client.RaiseEvent("OnRaidNotification", model);
         }

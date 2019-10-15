@@ -6,6 +6,7 @@ namespace TwitchLib.Client.Models
     {
         /// <summary>Property representing hosting channel.</summary>
         public string HostingChannel;
+
         /// <summary>Property representing number of viewers that were in hosting channel.</summary>
         public int Viewers;
 
@@ -16,7 +17,9 @@ namespace TwitchLib.Client.Models
             Viewers = splitted[1].StartsWith("-") ? 0 : int.Parse(splitted[1]);
         }
 
-        public HostingStopped(string hostingChannel, int viewers)
+        public HostingStopped(
+            string hostingChannel,
+            int viewers)
         {
             HostingChannel = hostingChannel;
             Viewers = viewers;

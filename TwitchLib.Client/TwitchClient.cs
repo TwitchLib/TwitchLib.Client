@@ -588,6 +588,8 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
+			// Clear instance data
+            _joinedChannelManager.Clear();
             _client.Open();
 
             Log("Should be connected!");
@@ -1325,7 +1327,7 @@ namespace TwitchLib.Client
             {
                 case MsgIds.Raid:
                     RaidNotification raidNotification = new RaidNotification(ircMessage);
-                    OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotificaiton = raidNotification });
+                    OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotification = raidNotification });
                     break;
                 case MsgIds.ReSubscription:
                     ReSubscriber resubscriber = new ReSubscriber(ircMessage);
