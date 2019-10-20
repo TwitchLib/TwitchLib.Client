@@ -383,10 +383,17 @@ namespace TwitchLib.Client
         /// </summary>
         public event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
 
-        /// <summary>
-        /// Fires when TwitchClient attempts to host a channel it is in.
-        /// </summary>
-        public EventHandler OnSelfRaidError;
+		/// <summary>
+		/// Fires when PONG is recieved.
+		/// </summary>
+		public event EventHandler<OnPingPongArgs> OnPongRecieved;
+
+		public event EventHandler<OnPingPongArgs> OnPingRecieved;
+
+		/// <summary>
+		/// Fires when TwitchClient attempts to host a channel it is in.
+		/// </summary>
+		public EventHandler OnSelfRaidError;
 
         /// <summary>
         /// Fires when TwitchClient receives generic no permission error from Twitch.
@@ -406,7 +413,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when data is received from Twitch that is not able to be parsed.
         /// </summary>
-        public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+        public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;		
         #endregion
 
         #region Construction Work
@@ -973,10 +980,10 @@ namespace TwitchLib.Client
                     HandleNotice(ircMessage);
                     break;
                 case IrcCommand.Ping:
-                    if (!DisableAutoPong)
-                        SendRaw("PONG");
+					HandlePing(ircMessage);
                     return;
                 case IrcCommand.Pong:
+					HandlePong(ircMessage);
                     return;
                 case IrcCommand.Join:
                     HandleJoin(ircMessage);
@@ -1392,6 +1399,31 @@ namespace TwitchLib.Client
                 OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.Message.Split(' ')[1] });
             }
         }
+
+		/// <summary>
+		/// Handles the ping
+		/// </summary>
+		/// <param name="ircMessage">The irc message.</param>
+		private void HandlePing(IrcMessage ircMessage)
+		{
+			if (!DisableAutoPong)
+			{
+				SendRaw("PONG");
+			}
+			else
+			{
+				OnPingRecieved?.Invoke(this, new OnPingPongArgs { RawMessage = ircMessage.Message });
+			}
+		}
+
+		/// <summary>
+		/// Handles the pong
+		/// </summary>
+		/// <param name="ircMessage">The irc message.</param>
+		private void HandlePong(IrcMessage ircMessage)
+		{
+			OnPongRecieved?.Invoke(this, new OnPingPongArgs { RawMessage = ircMessage.Message });
+		}
 
         #endregion
 
