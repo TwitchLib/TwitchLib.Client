@@ -388,6 +388,9 @@ namespace TwitchLib.Client
 		/// </summary>
 		public event EventHandler<OnPingPongArgs> OnPongRecieved;
 
+		/// <summary>
+		/// Fires when PING is recieved, if DisabledAutoPong is true
+		/// </summary>
 		public event EventHandler<OnPingPongArgs> OnPingRecieved;
 
 		/// <summary>
