@@ -383,10 +383,21 @@ namespace TwitchLib.Client
         /// </summary>
         public event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
 
-        /// <summary>
-        /// Fires when TwitchClient attempts to host a channel it is in.
-        /// </summary>
-        public event EventHandler OnSelfRaidError;
+		/// <summary>
+		/// Fires when PONG is recieved.
+		/// </summary>
+		public event EventHandler<OnPingPongArgs> OnPongRecieved;
+
+		/// <summary>
+		/// Fires when PING is recieved, if DisabledAutoPong is true
+		/// </summary>
+		public event EventHandler<OnPingPongArgs> OnPingRecieved;
+
+
+		/// <summary>
+		/// Fires when TwitchClient attempts to host a channel it is in.
+		/// </summary>
+		public event EventHandler OnSelfRaidError;
 
         /// <summary>
         /// Fires when TwitchClient receives generic no permission error from Twitch.
@@ -972,13 +983,13 @@ namespace TwitchLib.Client
                 case IrcCommand.Notice:
                     HandleNotice(ircMessage);
                     break;
-                case IrcCommand.Ping:
-                    if (!DisableAutoPong)
-                        SendRaw("PONG");
-                    return;
-                case IrcCommand.Pong:
-                    return;
-                case IrcCommand.Join:
+				case IrcCommand.Ping:
+					HandlePing(ircMessage);
+					return;
+				case IrcCommand.Pong:
+					HandlePong(ircMessage);
+					return;
+				case IrcCommand.Join:
                     HandleJoin(ircMessage);
                     break;
                 case IrcCommand.Part:
@@ -1287,11 +1298,36 @@ namespace TwitchLib.Client
             UnaccountedFor(ircMessage.ToString());
         }
 
-        /// <summary>
-        /// Handles the state of the room.
-        /// </summary>
-        /// <param name="ircMessage">The irc message.</param>
-        private void HandleRoomState(IrcMessage ircMessage)
+		/// <summary>
+		/// Handles the ping
+		/// </summary>
+		/// <param name="ircMessage">The irc message.</param>
+		private void HandlePing(IrcMessage ircMessage)
+		{
+			if (!DisableAutoPong)
+			{
+				SendRaw("PONG");
+			}
+			else
+			{
+				OnPingRecieved?.Invoke(this, new OnPingPongArgs { RawMessage = ircMessage.Message });
+			}
+		}
+
+		/// <summary>
+		/// Handles the pong
+		/// </summary>
+		/// <param name="ircMessage">The irc message.</param>
+		private void HandlePong(IrcMessage ircMessage)
+		{
+			OnPongRecieved?.Invoke(this, new OnPingPongArgs { RawMessage = ircMessage.Message });
+		}
+
+		/// <summary>
+		/// Handles the state of the room.
+		/// </summary>
+		/// <param name="ircMessage">The irc message.</param>
+		private void HandleRoomState(IrcMessage ircMessage)
         {
             // If ROOMSTATE is sent because a mode (subonly/slow/emote/etc) is being toggled, it has two tags: room-id, and the specific mode being toggled
             // If ROOMSTATE is sent because of a join confirmation, all tags (ie greater than 2) are sent
