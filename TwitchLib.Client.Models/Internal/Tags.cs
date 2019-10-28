@@ -9,6 +9,7 @@
         public const string BroadcasterLang = "broadcaster-lang";
         public const string Bits = "bits";
         public const string Color = "color";
+        public const string CustomRewardId = "custom-reward-id";
         public const string DisplayName = "display-name";
         public const string Emotes = "emotes";
         public const string EmoteOnly = "emote-only";

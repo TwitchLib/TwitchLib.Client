@@ -28,6 +28,9 @@ namespace TwitchLib.Client.Models
         /// <summary>If a cheer badge exists, this property represents the raw value and color (more later). Can be null.</summary>
         public CheerBadge CheerBadge { get; }
 
+        /// <summary>If a custom reward is present with the message, the ID will be set (null by default)</summary>
+        public string CustomRewardId { get; }
+
         /// <summary>Text after emotes have been handled (if desired). Will be null if replaceEmotes is false.</summary>
         public string EmoteReplacedMessage { get; }
 
@@ -120,6 +123,9 @@ namespace TwitchLib.Client.Models
                         ColorHex = tagValue;
                         if (!string.IsNullOrWhiteSpace(ColorHex))
                             Color = ColorTranslator.FromHtml(ColorHex);
+                        break;
+                    case Tags.CustomRewardId:
+                        CustomRewardId = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;
