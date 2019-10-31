@@ -1,11 +1,15 @@
-﻿using TwitchLib.Client.Models;
+﻿using System;
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Class OnCommunitySubscriptionArgs.
+    /// Args representing community subscription received event.
+    /// Implements the <see cref="System.EventArgs" />
     /// </summary>
-    public class OnCommunitySubscriptionArgs
+    /// <seealso cref="System.EventArgs" />
+    /// <inheritdoc />
+    public class OnCommunitySubscriptionArgs : EventArgs
     {
         /// <summary>
         /// Property representing the information of the community subscription.
