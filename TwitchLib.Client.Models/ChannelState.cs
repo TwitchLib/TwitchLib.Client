@@ -16,8 +16,8 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing whether EmoteOnly mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public bool? EmoteOnly { get; }
 
-        /// <summary>Property representing how long needed to be following to talk </summary>
-        public TimeSpan FollowersOnly { get; }
+        /// <summary>Property representing how long needed to be following to talk. If null, FollowersOnly is not enabled.</summary>
+        public TimeSpan? FollowersOnly { get; } = null;
 
         /// <summary>Property representing mercury value. Not sure what it's for.</summary>
         public bool Mercury { get; }
@@ -67,8 +67,10 @@ namespace TwitchLib.Client.Models
                         SubOnly = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.FollowersOnly:
-                        var minutes = int.Parse(tagValue);
-                        FollowersOnly = TimeSpan.FromMinutes(minutes == -1 ? 0 : minutes);
+                        if(int.TryParse(tagValue, out int minutes) && minutes > -1)
+                        {
+                            FollowersOnly = TimeSpan.FromMinutes(minutes);
+                        }
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
