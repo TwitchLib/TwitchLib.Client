@@ -120,10 +120,6 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event EventHandler OnHostLeft;
         /// <summary>
-        /// Occurs when [on incorrect login].
-        /// </summary>
-        event EventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
-        /// <summary>
         /// Occurs when [on joined channel].
         /// </summary>
         event EventHandler<OnJoinedChannelArgs> OnJoinedChannel;

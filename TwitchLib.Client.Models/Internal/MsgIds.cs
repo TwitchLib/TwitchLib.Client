@@ -42,5 +42,7 @@
         public const string UnrecognizedCmd = "unrecognized_cmd";
         public const string VIPsSuccess = "vips_success";
         public const string SkipSubsModeMessage = "skip-subs-mode-message";
+        public const string WhisperRestricted = "whisper_restricted";
+        public const string WhisperRestrictedRecipient = "whisper_restricted_recipient";
     }
 }

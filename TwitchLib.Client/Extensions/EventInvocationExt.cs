@@ -306,13 +306,14 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">The client.</param>
         /// <param name="ex">The ex.</param>
-        public static void InvokeIncorrectLogin(this TwitchClient client, Exceptions.ErrorLoggingInException ex)
+        public static void InvokeIncorrectLogin(this TwitchClient client, ClientErrorType errorType, Exception exception)
         {
-            OnIncorrectLoginArgs model = new OnIncorrectLoginArgs()
+            OnClientErrorArgs model = new OnClientErrorArgs()
             {
-                Exception = ex
+                ErrorType = errorType,
+                Error = exception
             };
-            client.RaiseEvent("OnIncorrectLogin", model);
+            client.RaiseEvent("OnClientError", model);
         }
 
         /// <summary>
