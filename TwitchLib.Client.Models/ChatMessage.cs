@@ -117,6 +117,13 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.BadgeInfo:
                         BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        // check if founder is one of them, and get months from that
+                        var founderBadge = BadgeInfo.Find(b => b.Key == "founder");
+                        if(!founderBadge.Equals(default(KeyValuePair<string, string>)))
+                        {
+                            IsSubscriber = true;
+                            SubscribedMonthCount = int.Parse(founderBadge.Value);
+                        }
                         break;
                     case Tags.Bits:
                         Bits = int.Parse(tagValue);
@@ -152,7 +159,8 @@ namespace TwitchLib.Client.Models
                         RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
+                        // this check because when founder is set, the subscriber value is actually 0, which is problematic
+                        IsSubscriber = IsSubscriber == false ? Common.Helpers.ConvertToBool(tagValue) : true;
                         break;
                     case Tags.TmiSentTs:
                         TmiSentTs = tagValue;
