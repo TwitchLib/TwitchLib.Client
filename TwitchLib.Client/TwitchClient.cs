@@ -1127,7 +1127,7 @@ namespace TwitchLib.Client
                     OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.WhisperRestricted, Error = new WhisperRestrictedException(TwitchUsername, ircMessage.ToString()) });
                     break;
                 case MsgIds.WhisperRestrictedRecipient:
-                    OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.WhisperRestrictedClient, Error = new WhisperRestrictedRecipientException(TwitchUsername, ircMessage.ToString().Split(' ')[0].Split('=')[2], ircMessage.ToString()) });
+                    OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.WhisperRestrictedRecipient, Error = new WhisperRestrictedRecipientException(TwitchUsername, ircMessage.ToString().Split(' ')[0].Split('=')[2], ircMessage.ToString()) });
                     break;
                 default:
                     OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, ircMessage.Channel, "NoticeHandling", ircMessage.ToString()) });

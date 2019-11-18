@@ -10,6 +10,6 @@ namespace TwitchLib.Client.Enums
         InvalidLogin,
         FailureToReceiveJoinConfirmation,
         WhisperRestricted,
-        WhisperRestrictedClient
+        WhisperRestrictedRecipient
     }
 }
