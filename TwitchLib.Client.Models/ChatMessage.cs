@@ -110,7 +110,11 @@ namespace TwitchLib.Client.Models
                                     CheerBadge = new CheerBadge(int.Parse(badge.Value));
                                     break;
                                 case "subscriber":
-                                    SubscribedMonthCount = int.Parse(badge.Value);
+                                    // Prioritize BadgeInfo subscribe count, as its more accurate
+                                    if(SubscribedMonthCount == 0)
+                                    {
+                                        SubscribedMonthCount = int.Parse(badge.Value);
+                                    }
                                     break;
                             }
                         }
@@ -123,6 +127,14 @@ namespace TwitchLib.Client.Models
                         {
                             IsSubscriber = true;
                             SubscribedMonthCount = int.Parse(founderBadge.Value);
+                        } else
+                        {
+                            var subBadge = BadgeInfo.Find(b => b.Key == "subscriber");
+                            // BadgeInfo has better accuracy than Badges subscriber value
+                            if (!subBadge.Equals(default(KeyValuePair<string, string>)))
+                            {
+                                SubscribedMonthCount = int.Parse(subBadge.Value);
+                            }
                         }
                         break;
                     case Tags.Bits:
