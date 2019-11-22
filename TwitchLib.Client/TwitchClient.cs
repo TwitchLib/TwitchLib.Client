@@ -885,7 +885,11 @@ namespace TwitchLib.Client
                 _joinTimer.Elapsed += JoinChannelTimeout;
                 _awaitingJoins = new List<KeyValuePair<string, DateTime>>();
             }
-            _awaitingJoins.Add(new KeyValuePair<string, DateTime>(channel, DateTime.Now));
+            // channel is ToLower()'d because ROOMSTATE (which is the event the client uses to remove
+            // this channel from _awaitingJoins list) contains the username as always lowercase. This means
+            // if we don't ToLower(), the channel never gets removed, and FailureToReceiveJoinConfirmation
+            // fires.
+            _awaitingJoins.Add(new KeyValuePair<string, DateTime>(channel.ToLower(), DateTime.Now));
             if (!_joinTimer.Enabled)
                 _joinTimer.Start();
         }
