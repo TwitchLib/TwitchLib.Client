@@ -702,22 +702,6 @@ namespace TwitchLib.Client
         }
 
         /// <summary>
-        /// Joins the room.
-        /// </summary>
-        /// <param name="channelId">The channel identifier.</param>
-        /// <param name="roomId">The room identifier.</param>
-        /// <param name="overrideCheck">if set to <c>true</c> [override check].</param>
-        public void JoinRoom(string channelId, string roomId, bool overrideCheck = false)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            // Check to see if client is already in channel
-            if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == $"chatrooms:{channelId}:{roomId}" && !overrideCheck) != null)
-                return;
-            _joinChannelQueue.Enqueue(new JoinedChannel($"chatrooms:{channelId}:{roomId}"));
-            if (!_currentlyJoiningChannels)
-                QueueingJoinCheck();
-        }
-        /// <summary>
         /// Returns a JoinedChannel object using a passed string/&gt;.
         /// </summary>
         /// <param name="channel">String channel to search for.</param>
@@ -745,21 +729,6 @@ namespace TwitchLib.Client
             JoinedChannel joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
             if (joinedChannel != null)
                 _client.Send(Rfc2812.Part($"#{channel}"));
-        }
-
-        /// <summary>
-        /// Leaves the room.
-        /// </summary>
-        /// <param name="channelId">The channel identifier.</param>
-        /// <param name="roomId">The room identifier.</param>
-        public void LeaveRoom(string channelId, string roomId)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            string room = $"chatrooms:{channelId}:{roomId}";
-            Log($"Leaving channel: {room}");
-            JoinedChannel joinedChannel = _joinedChannelManager.GetJoinedChannel(room);
-            if (joinedChannel != null)
-                _client.Send(Rfc2812.Part($"#{room}"));
         }
 
         /// <summary>
