@@ -55,6 +55,9 @@ namespace TwitchLib.Client.Models
         /// <summary>Channel specific subscriber status.</summary>
         public bool IsSubscriber { get; }
 
+        /// <summary>Message is from channel VIP</summary>
+        public bool IsVip { get; }
+
         /// <summary>Twitch chat message contents.</summary>
         public string Message { get; }
 
@@ -115,6 +118,9 @@ namespace TwitchLib.Client.Models
                                     {
                                         SubscribedMonthCount = int.Parse(badge.Value);
                                     }
+                                    break;
+                                case "vip":
+                                    IsVip = true;
                                     break;
                             }
                         }
