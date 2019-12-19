@@ -386,27 +386,27 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when TwitchClient attempts to host a channel it is in.
         /// </summary>
-        public EventHandler OnSelfRaidError;
+        public event EventHandler OnSelfRaidError;
 
         /// <summary>
         /// Fires when TwitchClient receives generic no permission error from Twitch.
         /// </summary>
-        public EventHandler OnNoPermissionError;
+        public event EventHandler OnNoPermissionError;
 
         /// <summary>
         /// Fires when newly raided channel is mature audience only.
         /// </summary>
-        public EventHandler OnRaidedChannelIsMatureAudience;
+        public event EventHandler OnRaidedChannelIsMatureAudience;
 
         /// <summary>
         /// Fires when the client was unable to join a channel.
         /// </summary>
-        public EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
+        public event EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
 
         /// <summary>
         /// Fires when data is received from Twitch that is not able to be parsed.
         /// </summary>
-        public EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+        public event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
         #endregion
 
         #region Construction Work
@@ -702,22 +702,6 @@ namespace TwitchLib.Client
         }
 
         /// <summary>
-        /// Joins the room.
-        /// </summary>
-        /// <param name="channelId">The channel identifier.</param>
-        /// <param name="roomId">The room identifier.</param>
-        /// <param name="overrideCheck">if set to <c>true</c> [override check].</param>
-        public void JoinRoom(string channelId, string roomId, bool overrideCheck = false)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            // Check to see if client is already in channel
-            if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == $"chatrooms:{channelId}:{roomId}" && !overrideCheck) != null)
-                return;
-            _joinChannelQueue.Enqueue(new JoinedChannel($"chatrooms:{channelId}:{roomId}"));
-            if (!_currentlyJoiningChannels)
-                QueueingJoinCheck();
-        }
-        /// <summary>
         /// Returns a JoinedChannel object using a passed string/&gt;.
         /// </summary>
         /// <param name="channel">String channel to search for.</param>
@@ -745,21 +729,6 @@ namespace TwitchLib.Client
             JoinedChannel joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
             if (joinedChannel != null)
                 _client.Send(Rfc2812.Part($"#{channel}"));
-        }
-
-        /// <summary>
-        /// Leaves the room.
-        /// </summary>
-        /// <param name="channelId">The channel identifier.</param>
-        /// <param name="roomId">The room identifier.</param>
-        public void LeaveRoom(string channelId, string roomId)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            string room = $"chatrooms:{channelId}:{roomId}";
-            Log($"Leaving channel: {room}");
-            JoinedChannel joinedChannel = _joinedChannelManager.GetJoinedChannel(room);
-            if (joinedChannel != null)
-                _client.Send(Rfc2812.Part($"#{room}"));
         }
 
         /// <summary>
@@ -916,7 +885,11 @@ namespace TwitchLib.Client
                 _joinTimer.Elapsed += JoinChannelTimeout;
                 _awaitingJoins = new List<KeyValuePair<string, DateTime>>();
             }
-            _awaitingJoins.Add(new KeyValuePair<string, DateTime>(channel, DateTime.Now));
+            // channel is ToLower()'d because ROOMSTATE (which is the event the client uses to remove
+            // this channel from _awaitingJoins list) contains the username as always lowercase. This means
+            // if we don't ToLower(), the channel never gets removed, and FailureToReceiveJoinConfirmation
+            // fires.
+            _awaitingJoins.Add(new KeyValuePair<string, DateTime>(channel.ToLower(), DateTime.Now));
             if (!_joinTimer.Enabled)
                 _joinTimer.Start();
         }
@@ -1218,7 +1191,7 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private void HandleClearMsg(IrcMessage ircMessage)
         {
-            OnMessageCleared?.Invoke(this, new OnMessageClearedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, TargetMessageId = ircMessage.ToString().Split('=')[2].Split(' ')[0] });
+            OnMessageCleared?.Invoke(this, new OnMessageClearedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, TargetMessageId = ircMessage.ToString().Split('=')[3].Split(';')[0], TmiSentTs = ircMessage.ToString().Split('=')[4].Split(' ')[0] });
         }
 
         /// <summary>
