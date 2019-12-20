@@ -208,13 +208,13 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userType">Type of the user.</param>
         /// <param name="userId">Id of the user.</param>
         public static void InvokeGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
-            string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
+            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType, string userId)
         {
             OnGiftedSubscriptionArgs model = new OnGiftedSubscriptionArgs()
             {
-                GiftedSubscription = new GiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, msgParamRecipientDisplayName,
+                GiftedSubscription = new GiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
                 msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
                 userType, userId)
             };
@@ -248,13 +248,13 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userType">Type of the user.</param>
         /// <param name="userId">Id of user.</param>
         public static void InvokeAnonGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
-            string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
+            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType, string userId)
         {
             OnAnonGiftedSubscriptionArgs model = new OnAnonGiftedSubscriptionArgs()
             {
-                AnonGiftedSubscription = new AnonGiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, msgParamRecipientDisplayName,
+                AnonGiftedSubscription = new AnonGiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
                 msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
                 userType, userId)
             };
