@@ -232,10 +232,6 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event EventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
         /// <summary>
-        /// Occurs when [on gifted subscription usernotice received].
-        /// </summary>
-        event EventHandler<OnAnonGiftedSubscriptionArgs> OnAnonGiftedSubscription;
-        /// <summary>
         /// Occurs when [on message deleted].
         /// </summary>
         event EventHandler<OnMessageClearedArgs> OnMessageCleared;
