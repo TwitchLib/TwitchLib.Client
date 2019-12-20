@@ -100,7 +100,7 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public GiftedSubscriptionBuilder WithMsgParamCumulativeMonths(string msgParamCumulativeMonths)
+        public GiftedSubscriptionBuilder WithMsgParamCumulativeMonths(string msgParamMonths)
         {
             _msgParamMonths = msgParamMonths;
             return this;
