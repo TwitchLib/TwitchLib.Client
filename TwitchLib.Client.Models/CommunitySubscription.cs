@@ -8,6 +8,8 @@ namespace TwitchLib.Client.Models
 {
     public class CommunitySubscription
     {
+        private const string AnonymousGifterUserId = "274598607";
+
         public List<KeyValuePair<string, string>> Badges;
         public List<KeyValuePair<string, string>> BadgeInfo;
         public string Color;
@@ -16,6 +18,7 @@ namespace TwitchLib.Client.Models
         public string Id;
         public string Login;
         public bool IsModerator;
+        public bool IsAnonymous;
         public string MsgId;
         public int MsgParamMassGiftCount;
         public int MsgParamSenderCount;
@@ -107,6 +110,10 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
+                        if(UserId == AnonymousGifterUserId)
+                        {
+                            IsAnonymous = true;
+                        }
                         break;
                     case Tags.UserType:
                         switch (tagValue)

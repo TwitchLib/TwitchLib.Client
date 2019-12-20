@@ -31,7 +31,6 @@
         public const string Ritual = "ritual";
         public const string R9KOff = "r9k_off";
         public const string R9KOn = "r9k_on";
-        public const string AnonSubGift = "anonsubgift";
         public const string SubGift = "subgift";
         public const string CommunitySubscription = "submysterygift";
         public const string Subscription = "sub";
