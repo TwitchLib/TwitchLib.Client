@@ -222,46 +222,6 @@ namespace TwitchLib.Client.Extensions
         }
 
         /// <summary>
-        /// Invokes the anon gifted subscription.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="badges">The badges.</param>
-        /// <param name="color">The color.</param>
-        /// <param name="displayName">The display name.</param>
-        /// <param name="emotes">The emotes.</param>
-        /// <param name="id">The identifier.</param>
-        /// <param name="login">The login.</param>
-        /// <param name="isModerator">if set to <c>true</c> [is moderator].</param>
-        /// <param name="msgId">The MSG identifier.</param>
-        /// <param name="msgParamMonths">The MSG parameter months.</param>
-        /// <param name="msgParamRecipientDisplayName">Display name of the MSG parameter recipient.</param>
-        /// <param name="msgParamRecipientId">The MSG parameter recipient identifier.</param>
-        /// <param name="msgParamRecipientUserName">Name of the MSG parameter recipient user.</param>
-        /// <param name="msgParamSubPlanName">Name of the MSG parameter sub plan.</param>
-        /// <param name="msgParamSubPlan">The MSG parameter sub plan.</param>
-        /// <param name="roomId">The room identifier.</param>
-        /// <param name="isSubscriber">if set to <c>true</c> [is subscriber].</param>
-        /// <param name="systemMsg">The system MSG.</param>
-        /// <param name="systemMsgParsed">The system MSG parsed.</param>
-        /// <param name="tmiSentTs">The tmi sent ts.</param>
-        /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
-        /// <param name="userType">Type of the user.</param>
-        /// <param name="userId">Id of user.</param>
-        public static void InvokeAnonGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
-            string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
-            string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
-            string tmiSentTs, bool isTurbo, UserType userType, string userId)
-        {
-            OnAnonGiftedSubscriptionArgs model = new OnAnonGiftedSubscriptionArgs()
-            {
-                AnonGiftedSubscription = new AnonGiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
-                msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
-                userType, userId)
-            };
-            client.RaiseEvent("OnAnonGiftedSubscription", model);
-        }
-
-        /// <summary>
         /// Invokes the on hosting started.
         /// </summary>
         /// <param name="client">The client.</param>
