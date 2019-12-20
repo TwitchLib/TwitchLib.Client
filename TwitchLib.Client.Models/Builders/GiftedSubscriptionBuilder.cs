@@ -17,9 +17,7 @@ namespace TwitchLib.Client.Models.Builders
         private bool _isTurbo;
         private string _login;
         private string _msgId;
-        private string _msgParamCumulativeMonths;
-        private string _msgParamStreakMonths;
-        private bool _msgParamShouldShareStreak;
+        private string _msgParamMonths;
         private string _msgParamRecipientDisplayName;
         private string _msgParamRecipientId;
         private string _msgParamRecipientUserName;
@@ -104,19 +102,7 @@ namespace TwitchLib.Client.Models.Builders
 
         public GiftedSubscriptionBuilder WithMsgParamCumulativeMonths(string msgParamCumulativeMonths)
         {
-            _msgParamCumulativeMonths = msgParamCumulativeMonths;
-            return this;
-        }
-
-        public GiftedSubscriptionBuilder WithMsgParamStreakMonths(string msgParamStreakMonths)
-        {
-            _msgParamStreakMonths = msgParamStreakMonths;
-            return this;
-        }
-
-        public GiftedSubscriptionBuilder WithMsgParamShouldShareStreak(bool msgParamShouldShareStreak)
-        {
-            _msgParamShouldShareStreak = msgParamShouldShareStreak;
+            _msgParamMonths = msgParamMonths;
             return this;
         }
 
@@ -203,9 +189,7 @@ namespace TwitchLib.Client.Models.Builders
                 _login,
                 _isModerator,
                 _msgId,
-                _msgParamCumulativeMonths,
-                _msgParamStreakMonths,
-                _msgParamShouldShareStreak,
+                _msgParamMonths,
                 _msgParamRecipientDisplayName,
                 _msgParamRecipientId,
                 _msgParamRecipientUserName,
