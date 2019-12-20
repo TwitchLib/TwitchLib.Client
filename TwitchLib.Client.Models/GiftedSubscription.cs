@@ -8,6 +8,8 @@ namespace TwitchLib.Client.Models
 {
     public class GiftedSubscription
     {
+        private const string AnonymousGifterUserId = "274598607";
+
         public List<KeyValuePair<string, string>> Badges { get; }
 
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
@@ -25,6 +27,8 @@ namespace TwitchLib.Client.Models
         public bool IsSubscriber { get; }
 
         public bool IsTurbo { get; }
+
+        public bool IsAnonymous { get; }
 
         public string Login { get; }
 
@@ -141,6 +145,10 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
+                        if (UserId == AnonymousGifterUserId)
+                        {
+                            IsAnonymous = true;
+                        }
                         break;
                     case Tags.UserType:
                         switch (tagValue)
