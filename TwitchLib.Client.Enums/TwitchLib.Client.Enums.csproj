@@ -3,7 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>TwitchLib.Client.Enums</PackageId>
-    <Version>3.1.4</Version>
+    <VersionPrefix>3.1.5</VersionPrefix>
+    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <Description>Project containing all of the enums used in TwitchLib.Client.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>swiftyspiffy, Prom3theu5, Syzuna, LuckyNoS7evin</Authors>

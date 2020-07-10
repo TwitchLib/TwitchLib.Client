@@ -3,7 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>TwitchLib.Client</PackageId>
-    <Version>3.1.5</Version>
+    <VersionPrefix>3.1.6</VersionPrefix>
+    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <Description>Client component of TwitchLib. This component allows you to access Twitch chat and whispers, as well as the events that are sent over this connection.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>swiftyspiffy, Prom3theu5, Syzuna, LuckyNoS7evin</Authors>

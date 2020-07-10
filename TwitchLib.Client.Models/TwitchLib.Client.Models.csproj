@@ -3,7 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>TwitchLib.Client.Models</PackageId>
-    <Version>3.1.5</Version>
+    <VersionPrefix>3.1.6</VersionPrefix>
+    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <Description>Project contains all of the models used in TwitchLib.Client.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>swiftyspiffy, Prom3theu5, Syzuna, LuckyNoS7evin</Authors>
