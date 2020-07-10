@@ -31,6 +31,7 @@ namespace TwitchLib.Client.Models
         public bool IsTurbo;
         public string UserId;
         public UserType UserType;
+        public string MsgParamMultiMonthGiftDuration;
 
         public CommunitySubscription(IrcMessage ircMessage)
         {
@@ -134,6 +135,9 @@ namespace TwitchLib.Client.Models
                                 UserType = UserType.Viewer;
                                 break;
                         }
+                        break;
+                    case Tags.MsgParamMultiMonthGiftDuration:
+                        MsgParamMultiMonthGiftDuration = tagValue;
                         break;
                 }
             }

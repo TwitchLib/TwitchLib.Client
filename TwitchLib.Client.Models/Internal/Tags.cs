@@ -55,5 +55,6 @@
         public const string Turbo = "turbo";                // Deprecated, use badges instead
         public const string UserId = "user-id";
         public const string UserType = "user-type";         // Deprecated, use badges instead
+        public const string MsgParamMultiMonthGiftDuration = "msg-params-gift-months";            // Sent only on subgift, anonsubgift
     }
 }

@@ -58,6 +58,8 @@ namespace TwitchLib.Client.Models
 
         public UserType UserType { get; }
 
+        public string MsgParamMultiMonthGiftDuration { get; }
+
         public GiftedSubscription(IrcMessage ircMessage)
         {
             foreach (var tag in ircMessage.Tags.Keys)
@@ -170,6 +172,9 @@ namespace TwitchLib.Client.Models
                                 break;
                         }
                         break;
+                    case Tags.MsgParamMultiMonthGiftDuration:
+                        MsgParamMultiMonthGiftDuration = tagValue;
+                        break;
                 }
             }
         }
@@ -189,6 +194,7 @@ namespace TwitchLib.Client.Models
             string msgParamRecipientId,
             string msgParamRecipientUserName,
             string msgParamSubPlanName,
+            string msgMultiMonthDuration,
             SubscriptionPlan msgParamSubPlan,
             string roomId,
             bool isSubscriber,
@@ -214,6 +220,7 @@ namespace TwitchLib.Client.Models
             MsgParamRecipientUserName = msgParamRecipientUserName;
             MsgParamSubPlanName = msgParamSubPlanName;
             MsgParamSubPlan = msgParamSubPlan;
+            MsgParamMultiMonthGiftDuration = msgMultiMonthDuration;
             RoomId = roomId;
             IsSubscriber = isSubscriber;
             SystemMsg = systemMsg;
