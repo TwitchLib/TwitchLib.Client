@@ -336,6 +336,22 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
         void SendMessage(string channel, string message, bool dryRun = false);
         /// <summary>
+        /// Sends a formatted Twitch chat message reply.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false);
+        /// <summary>
+        /// SendReply wrapper that accepts channel in string form.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        void SendReply(string channel, string replyToId, string message, bool dryRun = false);
+        /// <summary>
         /// Sends the queued item.
         /// </summary>
         /// <param name="message">The message.</param>
