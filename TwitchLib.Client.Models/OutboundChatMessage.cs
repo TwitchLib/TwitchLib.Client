@@ -8,11 +8,20 @@
 
         public string Username { get; set; }
 
+        public string ReplyToId { get; set; }
+
         public override string ToString()
         {
             var user = Username.ToLower();
             var channel = Channel.ToLower();
-            return $":{user}!{user}@{user}.tmi.twitch.tv PRIVMSG #{channel} :{Message}";
+            if(ReplyToId == null)
+            {
+                return $":{user}!{user}@{user}.tmi.twitch.tv PRIVMSG #{channel} :{Message}";
+            } else
+            {
+                return $"@reply-parent-msg-id={ReplyToId} PRIVMSG #{channel} :{Message}";
+            }
+            
         }
     }
 }

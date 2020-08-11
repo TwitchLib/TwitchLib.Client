@@ -506,13 +506,7 @@ namespace TwitchLib.Client
 
         #region SendMessage
 
-        /// <summary>
-        /// Sends a formatted Twitch channel chat message.
-        /// </summary>
-        /// <param name="channel">Channel to send message to.</param>
-        /// <param name="message">The message to be sent.</param>
-        /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
-        public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
+        private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
@@ -528,11 +522,26 @@ namespace TwitchLib.Client
                 Username = ConnectionCredentials.TwitchUsername,
                 Message = message
             };
+            if(replyToId != null)
+            {
+                twitchMessage.ReplyToId = replyToId;
+            }
 
             _lastMessageSent = message;
 
 
             _client.Send(twitchMessage.ToString());
+        }
+
+        /// <summary>
+        /// Sends a formatted Twitch channel chat message.
+        /// </summary>
+        /// <param name="channel">Channel to send message to.</param>
+        /// <param name="message">The message to be sent.</param>
+        /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
+        public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
+        {
+            SendTwitchMessage(channel, message, null, dryRun);
         }
 
         /// <summary>
@@ -544,6 +553,30 @@ namespace TwitchLib.Client
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
             SendMessage(GetJoinedChannel(channel), message, dryRun);
+        }
+
+        /// <summary>
+        /// Sends a formatted Twitch chat message reply.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        public void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
+        {
+            SendTwitchMessage(channel, message, replyToId, dryRun);
+        }
+
+        /// <summary>
+        /// SendReply wrapper that accepts channel in string form.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        public void SendReply(string channel, string replyToId, string message, bool dryRun = false)
+        {
+            SendReply(GetJoinedChannel(channel), replyToId, message, dryRun);
         }
 
         #endregion
