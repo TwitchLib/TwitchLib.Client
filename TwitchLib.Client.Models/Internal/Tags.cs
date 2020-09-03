@@ -55,5 +55,6 @@
         public const string Turbo = "turbo";                // Deprecated, use badges instead
         public const string UserId = "user-id";
         public const string UserType = "user-type";         // Deprecated, use badges instead
+        public const string TargetUserId = "target-user-id";
     }
 }

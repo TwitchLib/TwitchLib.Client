@@ -592,11 +592,13 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">The channel.</param>
         /// <param name="username">The username.</param>
         /// <param name="banReason">The ban reason.</param>
-        public static void InvokeUserBanned(this TwitchClient client, string channel, string username, string banReason)
+        /// <param name="roomId">The channel id.</param>
+        /// <param name="targetUserId">The user id.</param>
+        public static void InvokeUserBanned(this TwitchClient client, string channel, string username, string banReason, string roomId, string targetUserId)
         {
             OnUserBannedArgs model = new OnUserBannedArgs()
             {
-                UserBan = new UserBan(channel, username, banReason)
+                UserBan = new UserBan(channel, username, banReason, roomId, targetUserId)
             };
             client.RaiseEvent("OnUserBanned", model);
         }
