@@ -5,6 +5,8 @@
         private string _channelName;
         private string _userName;
         private string _banReason;
+        private string _roomId;
+        private string _targetUserId;
 
         public static UserBanBuilder Create()
         {
@@ -33,6 +35,18 @@
             return this;
         }
 
+        public UserBanBuilder WithRoomId(string roomId)
+        {
+            _roomId = roomId;
+            return this;
+        }
+
+        public UserBanBuilder WithTargetUserId(string targetUserId)
+        {
+            _targetUserId = targetUserId;
+            return this;
+        }
+
         public UserBan BuildFromIrcMessage(FromIrcMessageBuilderDataObject fromIrcMessageBuilderDataObject)
         {
             return new UserBan(fromIrcMessageBuilderDataObject.Message);
@@ -40,7 +54,7 @@
 
         public UserBan Build()
         {
-            return new UserBan(_channelName, _userName, _banReason);
+            return new UserBan(_channelName, _userName, _banReason, _roomId, _targetUserId);
         }
     }
 }
