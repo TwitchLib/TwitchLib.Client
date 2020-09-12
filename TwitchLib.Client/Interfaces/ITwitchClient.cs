@@ -252,6 +252,16 @@ namespace TwitchLib.Client.Interfaces
         void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
 
         /// <summary>
+        /// Initializes the specified credentials.
+        /// </summary>
+        /// <param name="credentials">The credentials.</param>
+        /// <param name="channels">The channels to join once connected.</param>
+        /// <param name="chatCommandIdentifier">The chat command identifier.</param>
+        /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
+        /// <param name="autoReListenOnExceptions">if set to <c>true</c> [automatic re listen on exceptions].</param>
+        void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
+
+        /// <summary>
         /// Sets the connection credentials.
         /// </summary>
         /// <param name="credentials">The credentials.</param>
