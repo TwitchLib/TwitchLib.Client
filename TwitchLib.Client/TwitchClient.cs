@@ -467,7 +467,7 @@ namespace TwitchLib.Client
 
             AutoReListenOnException = autoReListenOnExceptions;
 
-            if (channels == null && channels.Count > 0)
+            if (channels != null && channels.Count > 0)
             {
                 for(var i = 0; i < channels.Count; i++)
                 {
