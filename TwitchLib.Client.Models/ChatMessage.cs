@@ -58,6 +58,12 @@ namespace TwitchLib.Client.Models
         /// <summary>Message is from channel VIP</summary>
         public bool IsVip { get; }
 
+        /// <summary>Message is from a Twitch Staff member</summary>
+        public bool IsStaff { get; }
+
+        /// <summary>Message is from a Twitch Partner</summary>
+        public bool IsPartner { get; }
+
         /// <summary>Twitch chat message contents.</summary>
         public string Message { get; }
 
@@ -125,6 +131,16 @@ namespace TwitchLib.Client.Models
                                 case "vip":
                                     IsVip = true;
                                     break;
+                                case "admin":
+                                    IsStaff = true;
+                                    break;
+                                case "staff":
+                                    IsStaff = true;
+                                    break;
+                                case "partner":
+                                    IsPartner = true;
+                                    break;
+
                             }
                         }
                         break;
@@ -221,11 +237,14 @@ namespace TwitchLib.Client.Models
                             case "global_mod":
                                 UserType = UserType.GlobalModerator;
                                 break;
+
                             case "admin":
                                 UserType = UserType.Admin;
+                                IsStaff = true;
                                 break;
                             case "staff":
                                 UserType = UserType.Staff;
+                                IsStaff = true;
                                 break;
                             default:
                                 UserType = UserType.Viewer;
