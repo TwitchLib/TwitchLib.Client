@@ -237,7 +237,6 @@ namespace TwitchLib.Client.Models
                             case "global_mod":
                                 UserType = UserType.GlobalModerator;
                                 break;
-
                             case "admin":
                                 UserType = UserType.Admin;
                                 IsStaff = true;
