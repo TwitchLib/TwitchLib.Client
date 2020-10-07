@@ -341,6 +341,9 @@ namespace TwitchLib.Client.Models
             bool isModerator,
             bool isMe,
             bool isBroadcaster,
+            bool isVip,
+            bool isPartner,
+            bool isStaff,
             Noisy noisy,
             string rawIrcMessage,
             string emoteReplacedMessage,
@@ -366,6 +369,9 @@ namespace TwitchLib.Client.Models
             IsModerator = isModerator;
             IsMe = isMe;
             IsBroadcaster = isBroadcaster;
+            IsVip = isVip;
+            IsPartner = isPartner;
+            IsStaff = isStaff; 
             Noisy = noisy;
             RawIrcMessage = rawIrcMessage;
             EmoteReplacedMessage = emoteReplacedMessage;
