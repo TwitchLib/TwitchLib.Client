@@ -92,6 +92,9 @@ namespace TwitchLib.Client.Extensions
         /// <param name="isModerator">if set to <c>true</c> [is moderator].</param>
         /// <param name="isMe">if set to <c>true</c> [is me].</param>
         /// <param name="isBroadcaster">if set to <c>true</c> [is broadcaster].</param>
+        /// <param name="isVip">if set to <c>true</c> [is VIP].</param>
+        /// <param name="isPartner">if set to <c>true</c> [is Partner].</param>
+        /// <param name="isStaff">if set to <c>true</c> [is Staff].</param>
         /// <param name="noisy">The noisy.</param>
         /// <param name="rawIrcMessage">The raw irc message.</param>
         /// <param name="emoteReplacedMessage">The emote replaced message.</param>
@@ -105,12 +108,12 @@ namespace TwitchLib.Client.Extensions
         /// <param name="commandIdentifier">The command identifier.</param>
         public static void InvokeChatCommandsReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName,
             string colorHex, Color color, EmoteSet emoteSet, string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount,
-            string roomId, bool isTurbo, bool isModerator, bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage,
+            string roomId, bool isTurbo, bool isModerator, bool isMe, bool isBroadcaster, bool isVip, bool isPartner, bool isStaff, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage,
             List<KeyValuePair<string, string>> badges, CheerBadge cheerBadge, int bits, double bitsInDollars, string commandText, string argumentsAsString,
             List<string> argumentsAsList, char commandIdentifier)
         {
             ChatMessage msg = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, id,
-                isSubscriber, subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, noisy, rawIrcMessage, emoteReplacedMessage,
+                isSubscriber, subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, isVip, isPartner, isStaff, noisy, rawIrcMessage, emoteReplacedMessage,
                 badges, cheerBadge, bits, bitsInDollars);
             OnChatCommandReceivedArgs model = new OnChatCommandReceivedArgs()
             {
@@ -356,13 +359,13 @@ namespace TwitchLib.Client.Extensions
         /// <param name="bitsInDollars">The bits in dollars.</param>
         public static void InvokeMessageReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName, string colorHex,
             Color color, EmoteSet emoteSet, string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo,
-            bool isModerator, bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
+            bool isModerator, bool isMe, bool isBroadcaster, bool isVip, bool isPartner, bool isStaff, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
             CheerBadge cheerBadge, int bits, double bitsInDollars)
         {
             OnMessageReceivedArgs model = new OnMessageReceivedArgs()
             {
                 ChatMessage = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, id, isSubscriber,
-                subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, noisy, rawIrcMessage, emoteReplacedMessage, badges, cheerBadge, bits,
+                subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, isVip, isPartner, isStaff, noisy, rawIrcMessage, emoteReplacedMessage, badges, cheerBadge, bits,
                 bitsInDollars)
             };
             client.RaiseEvent("OnMessageReceived", model);
