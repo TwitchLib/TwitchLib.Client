@@ -59,6 +59,7 @@ namespace TwitchLib.Client.Models
         {
             Username = ircMessage.User;
             BotUsername = botUsername;
+            RawIrcMessage = ircMessage.ToString();
 
             Message = ircMessage.Message;
             foreach (var tag in ircMessage.Tags.Keys)
