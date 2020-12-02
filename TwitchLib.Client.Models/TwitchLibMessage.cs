@@ -37,5 +37,8 @@ namespace TwitchLib.Client.Models
 
         /// <summary>User type can be viewer, moderator, global mod, admin, or staff</summary>
         public UserType UserType { get; protected set; }
+        
+        /// <summary>Raw IRC-style text received from Twitch.</summary>
+        public string RawIrcMessage { get; protected set; }
     }
 }

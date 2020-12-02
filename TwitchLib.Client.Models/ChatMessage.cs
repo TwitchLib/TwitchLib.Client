@@ -70,9 +70,6 @@ namespace TwitchLib.Client.Models
         /// <summary>Experimental property noisy determination by Twitch.</summary>
         public Noisy Noisy { get; }
 
-        /// <summary>Raw IRC-style text received from Twitch.</summary>
-        public string RawIrcMessage { get; }
-
         /// <summary>Unique identifier of chat room.</summary>
         public string RoomId { get; }
 
