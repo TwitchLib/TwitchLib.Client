@@ -905,9 +905,12 @@ namespace TwitchLib.Client
             _client.Send(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));
             _client.Send(Rfc2812.User(ConnectionCredentials.TwitchUsername, 0, ConnectionCredentials.TwitchUsername));
 
-            _client.Send("CAP REQ twitch.tv/membership");
-            _client.Send("CAP REQ twitch.tv/commands");
-            _client.Send("CAP REQ twitch.tv/tags");
+            if (ConnectionCredentials.Capabilities.Membership)
+                _client.Send("CAP REQ twitch.tv/membership");
+            if (ConnectionCredentials.Capabilities.Commands)
+                _client.Send("CAP REQ twitch.tv/commands");
+            if (ConnectionCredentials.Capabilities.Tags)
+                _client.Send("CAP REQ twitch.tv/tags");
 
             if (_autoJoinChannel != null)
             {
