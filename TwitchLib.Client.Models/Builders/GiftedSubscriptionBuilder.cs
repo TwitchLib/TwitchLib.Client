@@ -22,6 +22,7 @@ namespace TwitchLib.Client.Models.Builders
         private string _msgParamRecipientId;
         private string _msgParamRecipientUserName;
         private string _msgParamSubPlanName;
+        private string _msgParamMultiMonthGiftDuration;
         private SubscriptionPlan _msgParamSubPlan;
         private string _roomId;
         private string _systemMsg;
@@ -130,6 +131,12 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
+        public GiftedSubscriptionBuilder WithMsgParamMultiMonthGiftDuration(string msgParamMultiMonthGiftDuration)
+        {
+            _msgParamMultiMonthGiftDuration = msgParamMultiMonthGiftDuration;
+            return this;
+        }
+
         public GiftedSubscriptionBuilder WithMsgParamSubPlan(SubscriptionPlan msgParamSubPlan)
         {
             _msgParamSubPlan = msgParamSubPlan;
@@ -194,6 +201,7 @@ namespace TwitchLib.Client.Models.Builders
                 _msgParamRecipientId,
                 _msgParamRecipientUserName,
                 _msgParamSubPlanName,
+                _msgParamMultiMonthGiftDuration,
                 _msgParamSubPlan,
                 _roomId,
                 _isSubscriber,

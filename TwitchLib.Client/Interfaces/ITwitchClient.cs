@@ -252,6 +252,16 @@ namespace TwitchLib.Client.Interfaces
         void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
 
         /// <summary>
+        /// Initializes the specified credentials.
+        /// </summary>
+        /// <param name="credentials">The credentials.</param>
+        /// <param name="channels">The channels to join once connected.</param>
+        /// <param name="chatCommandIdentifier">The chat command identifier.</param>
+        /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
+        /// <param name="autoReListenOnExceptions">if set to <c>true</c> [automatic re listen on exceptions].</param>
+        void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
+
+        /// <summary>
         /// Sets the connection credentials.
         /// </summary>
         /// <param name="credentials">The credentials.</param>
@@ -335,6 +345,22 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="message">The message.</param>
         /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
         void SendMessage(string channel, string message, bool dryRun = false);
+        /// <summary>
+        /// Sends a formatted Twitch chat message reply.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false);
+        /// <summary>
+        /// SendReply wrapper that accepts channel in string form.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        void SendReply(string channel, string replyToId, string message, bool dryRun = false);
         /// <summary>
         /// Sends the queued item.
         /// </summary>

@@ -431,16 +431,55 @@ namespace TwitchLib.Client
         /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
         public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
         {
+            initializeHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
+        }
+
+        /// <summary>
+        /// Initializes the TwitchChatClient class (with multiple channels).
+        /// </summary>
+        /// <param name="credentials">The credentials to use to log in.</param>
+        /// <param name="channels">List of channels to join when connected</param>
+        /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
+        /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
+        /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
+        public void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
+        {
+            initializeHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
+        }
+
+        /// <summary>
+        /// Runs initialization logic that is shared by the overriden Initialize methods.
+        /// </summary>
+        /// <param name="credentials">The credentials to use to log in.</param>
+        /// <param name="channels">List of channels to join when connected</param>
+        /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
+        /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
+        /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
+        private void initializeHelper(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
+        {
             Log($"TwitchLib-TwitchClient initialized, assembly version: {Assembly.GetExecutingAssembly().GetName().Version}");
             ConnectionCredentials = credentials;
             TwitchUsername = ConnectionCredentials.TwitchUsername;
-            _autoJoinChannel = channel?.ToLower();
             if (chatCommandIdentifier != '\0')
                 _chatCommandIdentifiers.Add(chatCommandIdentifier);
             if (whisperCommandIdentifier != '\0')
                 _whisperCommandIdentifiers.Add(whisperCommandIdentifier);
 
             AutoReListenOnException = autoReListenOnExceptions;
+
+            if (channels != null && channels.Count > 0)
+            {
+                for(var i = 0; i < channels.Count; i++)
+                {
+                    if (string.IsNullOrEmpty(channels[i]))
+                        continue;
+
+                    // Check to see if client is already in channel
+                    if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channels[i]) != null)
+                        return;
+                    _joinChannelQueue.Enqueue(new JoinedChannel(channels[i]));
+                }
+            }
 
             InitializeClient();
         }
@@ -506,13 +545,7 @@ namespace TwitchLib.Client
 
         #region SendMessage
 
-        /// <summary>
-        /// Sends a formatted Twitch channel chat message.
-        /// </summary>
-        /// <param name="channel">Channel to send message to.</param>
-        /// <param name="message">The message to be sent.</param>
-        /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
-        public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
+        private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
@@ -528,11 +561,26 @@ namespace TwitchLib.Client
                 Username = ConnectionCredentials.TwitchUsername,
                 Message = message
             };
+            if(replyToId != null)
+            {
+                twitchMessage.ReplyToId = replyToId;
+            }
 
             _lastMessageSent = message;
 
 
             _client.Send(twitchMessage.ToString());
+        }
+
+        /// <summary>
+        /// Sends a formatted Twitch channel chat message.
+        /// </summary>
+        /// <param name="channel">Channel to send message to.</param>
+        /// <param name="message">The message to be sent.</param>
+        /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
+        public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
+        {
+            SendTwitchMessage(channel, message, null, dryRun);
         }
 
         /// <summary>
@@ -544,6 +592,30 @@ namespace TwitchLib.Client
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
             SendMessage(GetJoinedChannel(channel), message, dryRun);
+        }
+
+        /// <summary>
+        /// Sends a formatted Twitch chat message reply.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        public void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
+        {
+            SendTwitchMessage(channel, message, replyToId, dryRun);
+        }
+
+        /// <summary>
+        /// SendReply wrapper that accepts channel in string form.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        public void SendReply(string channel, string replyToId, string message, bool dryRun = false)
+        {
+            SendReply(GetJoinedChannel(channel), replyToId, message, dryRun);
         }
 
         #endregion
@@ -833,13 +905,19 @@ namespace TwitchLib.Client
             _client.Send(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));
             _client.Send(Rfc2812.User(ConnectionCredentials.TwitchUsername, 0, ConnectionCredentials.TwitchUsername));
 
-            _client.Send("CAP REQ twitch.tv/membership");
-            _client.Send("CAP REQ twitch.tv/commands");
-            _client.Send("CAP REQ twitch.tv/tags");
+            if (ConnectionCredentials.Capabilities.Membership)
+                _client.Send("CAP REQ twitch.tv/membership");
+            if (ConnectionCredentials.Capabilities.Commands)
+                _client.Send("CAP REQ twitch.tv/commands");
+            if (ConnectionCredentials.Capabilities.Tags)
+                _client.Send("CAP REQ twitch.tv/tags");
 
             if (_autoJoinChannel != null)
             {
                 JoinChannel(_autoJoinChannel);
+            } else if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
+            {
+                QueueingJoinCheck();
             }
         }
 
@@ -1267,7 +1345,6 @@ namespace TwitchLib.Client
             {
                 KeyValuePair<string, DateTime> channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
                 _awaitingJoins.Remove(channel);
-
                 OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
                 if (OnBeingHosted != null)
                     if (ircMessage.Channel.ToLowerInvariant() != TwitchUsername && !OverrideBeingHostedCheck)

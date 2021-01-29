@@ -18,6 +18,9 @@ namespace TwitchLib.Client.Models.Builders
         private bool _isMe;
         private bool _isModerator;
         private bool _isSubscriber;
+        private bool _isVip;
+        private bool _isStaff;
+        private bool _isPartner;
         private string _message;
         private Noisy _noisy;
         private string _rawIrcMessage;
@@ -100,7 +103,22 @@ namespace TwitchLib.Client.Models.Builders
             _isSubscriber = isSubscriber;
             return this;
         }
+        public ChatMessageBuilder WithIsVip(bool isVip)
+        {
+            _isVip = isVip;
+            return this;
+        }
+        public ChatMessageBuilder WithIsStaff(bool isStaff)
+        {
+            _isStaff = isStaff;
+            return this;
+        }
 
+        public ChatMessageBuilder WithIsPartner(bool isPartner)
+        {
+            _isPartner = isPartner;
+            return this;
+        }
         public ChatMessageBuilder WithMessage(string message)
         {
             _message = message;
@@ -157,6 +175,9 @@ namespace TwitchLib.Client.Models.Builders
                 _isModerator,
                 _isMe,
                 _isBroadcaster,
+                _isVip,
+                _isPartner,
+                _isStaff,
                 _noisy,
                 _rawIrcMessage,
                 _emoteReplacedMessage,

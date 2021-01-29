@@ -92,6 +92,9 @@ namespace TwitchLib.Client.Extensions
         /// <param name="isModerator">if set to <c>true</c> [is moderator].</param>
         /// <param name="isMe">if set to <c>true</c> [is me].</param>
         /// <param name="isBroadcaster">if set to <c>true</c> [is broadcaster].</param>
+        /// <param name="isVip">if set to <c>true</c> [is VIP].</param>
+        /// <param name="isPartner">if set to <c>true</c> [is Partner].</param>
+        /// <param name="isStaff">if set to <c>true</c> [is Staff].</param>
         /// <param name="noisy">The noisy.</param>
         /// <param name="rawIrcMessage">The raw irc message.</param>
         /// <param name="emoteReplacedMessage">The emote replaced message.</param>
@@ -105,12 +108,12 @@ namespace TwitchLib.Client.Extensions
         /// <param name="commandIdentifier">The command identifier.</param>
         public static void InvokeChatCommandsReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName,
             string colorHex, Color color, EmoteSet emoteSet, string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount,
-            string roomId, bool isTurbo, bool isModerator, bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage,
+            string roomId, bool isTurbo, bool isModerator, bool isMe, bool isBroadcaster, bool isVip, bool isPartner, bool isStaff, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage,
             List<KeyValuePair<string, string>> badges, CheerBadge cheerBadge, int bits, double bitsInDollars, string commandText, string argumentsAsString,
             List<string> argumentsAsList, char commandIdentifier)
         {
             ChatMessage msg = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, id,
-                isSubscriber, subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, noisy, rawIrcMessage, emoteReplacedMessage,
+                isSubscriber, subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, isVip, isPartner, isStaff, noisy, rawIrcMessage, emoteReplacedMessage,
                 badges, cheerBadge, bits, bitsInDollars);
             OnChatCommandReceivedArgs model = new OnChatCommandReceivedArgs()
             {
@@ -209,13 +212,13 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userId">Id of the user.</param>
         public static void InvokeGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
-            string msgParamSubPlanName, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
+            string msgParamSubPlanName, string msgMultiMonthGiftDuration, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType, string userId)
         {
             OnGiftedSubscriptionArgs model = new OnGiftedSubscriptionArgs()
             {
                 GiftedSubscription = new GiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
-                msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
+                msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgMultiMonthGiftDuration, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
                 userType, userId)
             };
             client.RaiseEvent("OnGiftedSubscription", model);
@@ -356,13 +359,13 @@ namespace TwitchLib.Client.Extensions
         /// <param name="bitsInDollars">The bits in dollars.</param>
         public static void InvokeMessageReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName, string colorHex,
             Color color, EmoteSet emoteSet, string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo,
-            bool isModerator, bool isMe, bool isBroadcaster, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
+            bool isModerator, bool isMe, bool isBroadcaster, bool isVip, bool isPartner, bool isStaff, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
             CheerBadge cheerBadge, int bits, double bitsInDollars)
         {
             OnMessageReceivedArgs model = new OnMessageReceivedArgs()
             {
                 ChatMessage = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, id, isSubscriber,
-                subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, noisy, rawIrcMessage, emoteReplacedMessage, badges, cheerBadge, bits,
+                subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, isVip, isPartner, isStaff, noisy, rawIrcMessage, emoteReplacedMessage, badges, cheerBadge, bits,
                 bitsInDollars)
             };
             client.RaiseEvent("OnMessageReceived", model);
@@ -592,11 +595,13 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">The channel.</param>
         /// <param name="username">The username.</param>
         /// <param name="banReason">The ban reason.</param>
-        public static void InvokeUserBanned(this TwitchClient client, string channel, string username, string banReason)
+        /// <param name="roomId">The channel id.</param>
+        /// <param name="targetUserId">The user id.</param>
+        public static void InvokeUserBanned(this TwitchClient client, string channel, string username, string banReason, string roomId, string targetUserId)
         {
             OnUserBannedArgs model = new OnUserBannedArgs()
             {
-                UserBan = new UserBan(channel, username, banReason)
+                UserBan = new UserBan(channel, username, banReason, roomId, targetUserId)
             };
             client.RaiseEvent("OnUserBanned", model);
         }

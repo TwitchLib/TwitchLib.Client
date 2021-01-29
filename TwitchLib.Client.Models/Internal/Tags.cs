@@ -43,6 +43,11 @@
         public const string MsgParamSenderName = "msg-param-sender-name";                       // Sent only on giftpaidupgrade
         public const string MsgParamThreshold = "msg-param-threshold";                          // Sent only on bitsbadgetier
         public const string Noisy = "noisy";
+        public const string ReplyParentDisplayName = "reply-parent-display-name";               // Sent only on replies
+        public const string ReplyParentMsgBody = "reply-parent-msg-body";                       // Sent only on replies
+        public const string ReplyParentMsgId = "reply-parent-msg-id";                           // Sent only on replies
+        public const string ReplyParentUserId = "reply-parent-user-id";                         // Sent only on replies
+        public const string ReplyParentUserLogin = "reply-parent-user-login";                   // Sent only on replies
         public const string Rituals = "rituals";
         public const string RoomId = "room-id";
         public const string R9K = "r9k";
@@ -55,5 +60,7 @@
         public const string Turbo = "turbo";                // Deprecated, use badges instead
         public const string UserId = "user-id";
         public const string UserType = "user-type";         // Deprecated, use badges instead
+        public const string MsgParamMultiMonthGiftDuration = "msg-params-gift-months";            // Sent only on subgift, anonsubgift
+        public const string TargetUserId = "target-user-id";
     }
 }
