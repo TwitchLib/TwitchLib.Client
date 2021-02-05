@@ -33,6 +33,7 @@
         public const string R9KOn = "r9k_on";
         public const string SubGift = "subgift";
         public const string CommunitySubscription = "submysterygift";
+        public const string ContinuedGiftedSubscription = "giftpaidupgrade";
         public const string Subscription = "sub";
         public const string SubsOff = "subs_off";
         public const string SubsOn = "subs_on";
