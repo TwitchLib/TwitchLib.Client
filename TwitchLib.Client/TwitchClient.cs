@@ -57,10 +57,6 @@ namespace TwitchLib.Client
         /// </summary>
         private readonly ClientProtocol _protocol;
         /// <summary>
-        /// The automatic join channel
-        /// </summary>
-        private string _autoJoinChannel;
-        /// <summary>
         /// The currently joining channels
         /// </summary>
         private bool _currentlyJoiningChannels;
@@ -919,10 +915,7 @@ namespace TwitchLib.Client
             if (ConnectionCredentials.Capabilities.Tags)
                 _client.Send("CAP REQ twitch.tv/tags");
 
-            if (_autoJoinChannel != null)
-            {
-                JoinChannel(_autoJoinChannel);
-            } else if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
+            if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
             {
                 QueueingJoinCheck();
             }
@@ -1295,7 +1288,7 @@ namespace TwitchLib.Client
         /// </summary>
         private void Handle004()
         {
-            OnConnected?.Invoke(this, new OnConnectedArgs { AutoJoinChannel = _autoJoinChannel, BotUsername = TwitchUsername });
+            OnConnected?.Invoke(this, new OnConnectedArgs { BotUsername = TwitchUsername });
         }
 
         /// <summary>
