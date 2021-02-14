@@ -689,6 +689,8 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             Log($"Reconnecting to Twitch");
+            foreach (var channel in _joinedChannelManager.GetJoinedChannels())
+                _joinChannelQueue.Enqueue(channel);
             _joinedChannelManager.Clear();
             _client.Reconnect();
         }
