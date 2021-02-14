@@ -291,7 +291,8 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Connects this instance.
         /// </summary>
-        void Connect();
+        /// <returns>bool representing Connect() result</returns>
+        bool Connect();
         /// <summary>
         /// Disconnects this instance.
         /// </summary>
