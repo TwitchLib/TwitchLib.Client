@@ -651,6 +651,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Start connecting to the Twitch IRC chat.
         /// </summary>
+        /// <returns>bool representing Connect() result</returns>
         public bool Connect()
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -662,6 +663,7 @@ namespace TwitchLib.Client
             if(_client.Open())
             {
                 Log("Should be connected!");
+                return true;
             }
             return false;
         }
