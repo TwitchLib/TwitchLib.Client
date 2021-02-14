@@ -651,16 +651,19 @@ namespace TwitchLib.Client
         /// <summary>
         /// Start connecting to the Twitch IRC chat.
         /// </summary>
-        public void Connect()
+        public bool Connect()
         {
             if (!IsInitialized) HandleNotInitialized();
             Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
 			// Clear instance data
             _joinedChannelManager.Clear();
-            _client.Open();
 
-            Log("Should be connected!");
+            if(_client.Open())
+            {
+                Log("Should be connected!");
+            }
+            return false;
         }
 
         /// <summary>
