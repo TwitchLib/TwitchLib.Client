@@ -24,6 +24,7 @@
         public const string NoVIPs = "no_vips";
         public const string MsgChannelSuspended = "msg_channel_suspended";
         public const string NoPermission = "no_permission";
+        public const string PrimePaidUprade = "primepaidupgrade";
         public const string Raid = "raid";
         public const string RaidErrorSelf = "raid_error_self";
         public const string RaidNoticeMature = "raid_notice_mature";
