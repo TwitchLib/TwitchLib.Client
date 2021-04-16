@@ -57,10 +57,6 @@ namespace TwitchLib.Client
         /// </summary>
         private readonly ClientProtocol _protocol;
         /// <summary>
-        /// The automatic join channel
-        /// </summary>
-        private string _autoJoinChannel;
-        /// <summary>
         /// The currently joining channels
         /// </summary>
         private bool _currentlyJoiningChannels;
@@ -259,6 +255,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnReSubscriberArgs> OnReSubscriber;
 
         /// <summary>
+        /// Fires when a current Prime gaming subscriber converts to a paid subscription.
+        /// </summary>
+        public event EventHandler<OnPrimePaidSubscriberArgs> OnPrimePaidSubscriber;
+
+        /// <summary>
         /// Fires when a hosted streamer goes offline and hosting is killed.
         /// </summary>
         public event EventHandler OnHostLeft;
@@ -352,6 +353,11 @@ namespace TwitchLib.Client
         /// Fires when a community subscription is announced in chat
         /// </summary>
         public event EventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event EventHandler<OnContinuedGiftedSubscriptionArgs> OnContinuedGiftedSubscription;
 
         /// <summary>
         /// Fires when a Message has been throttled.
@@ -650,16 +656,21 @@ namespace TwitchLib.Client
         /// <summary>
         /// Start connecting to the Twitch IRC chat.
         /// </summary>
-        public void Connect()
+        /// <returns>bool representing Connect() result</returns>
+        public bool Connect()
         {
             if (!IsInitialized) HandleNotInitialized();
             Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
 			// Clear instance data
             _joinedChannelManager.Clear();
-            _client.Open();
 
-            Log("Should be connected!");
+            if(_client.Open())
+            {
+                Log("Should be connected!");
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -684,6 +695,8 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) HandleNotInitialized();
             Log($"Reconnecting to Twitch");
+            foreach (var channel in _joinedChannelManager.GetJoinedChannels())
+                _joinChannelQueue.Enqueue(channel);
             _joinedChannelManager.Clear();
             _client.Reconnect();
         }
@@ -912,10 +925,7 @@ namespace TwitchLib.Client
             if (ConnectionCredentials.Capabilities.Tags)
                 _client.Send("CAP REQ twitch.tv/tags");
 
-            if (_autoJoinChannel != null)
-            {
-                JoinChannel(_autoJoinChannel);
-            } else if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
+            if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
             {
                 QueueingJoinCheck();
             }
@@ -1288,7 +1298,7 @@ namespace TwitchLib.Client
         /// </summary>
         private void Handle004()
         {
-            OnConnected?.Invoke(this, new OnConnectedArgs { AutoJoinChannel = _autoJoinChannel, BotUsername = TwitchUsername });
+            OnConnected?.Invoke(this, new OnConnectedArgs { BotUsername = TwitchUsername });
         }
 
         /// <summary>
@@ -1405,9 +1415,17 @@ namespace TwitchLib.Client
                     CommunitySubscription communitySubscription = new CommunitySubscription(ircMessage);
                     OnCommunitySubscription?.Invoke(this, new OnCommunitySubscriptionArgs { GiftedSubscription = communitySubscription, Channel = ircMessage.Channel });
                     break;
+                case MsgIds.ContinuedGiftedSubscription:
+                    ContinuedGiftedSubscription continuedGiftedSubscription = new ContinuedGiftedSubscription(ircMessage);
+                    OnContinuedGiftedSubscription?.Invoke(this, new OnContinuedGiftedSubscriptionArgs { ContinuedGiftedSubscription = continuedGiftedSubscription, Channel = ircMessage.Channel });
+                    break;
                 case MsgIds.Subscription:
                     Subscriber subscriber = new Subscriber(ircMessage);
                     OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs { Subscriber = subscriber, Channel = ircMessage.Channel });
+                    break;
+                case MsgIds.PrimePaidUprade:
+                    PrimePaidSubscriber primePaidSubscriber = new PrimePaidSubscriber(ircMessage);
+                    OnPrimePaidSubscriber?.Invoke(this, new OnPrimePaidSubscriberArgs { PrimePaidSubscriber = primePaidSubscriber, Channel = ircMessage.Channel });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });

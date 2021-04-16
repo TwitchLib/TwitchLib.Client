@@ -24,6 +24,7 @@
         public const string NoVIPs = "no_vips";
         public const string MsgChannelSuspended = "msg_channel_suspended";
         public const string NoPermission = "no_permission";
+        public const string PrimePaidUprade = "primepaidupgrade";
         public const string Raid = "raid";
         public const string RaidErrorSelf = "raid_error_self";
         public const string RaidNoticeMature = "raid_notice_mature";
@@ -33,6 +34,7 @@
         public const string R9KOn = "r9k_on";
         public const string SubGift = "subgift";
         public const string CommunitySubscription = "submysterygift";
+        public const string ContinuedGiftedSubscription = "giftpaidupgrade";
         public const string Subscription = "sub";
         public const string SubsOff = "subs_off";
         public const string SubsOn = "subs_on";
