@@ -255,6 +255,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnReSubscriberArgs> OnReSubscriber;
 
         /// <summary>
+        /// Fires when a current Prime gaming subscriber converts to a paid subscription.
+        /// </summary>
+        public event EventHandler<OnPrimePaidSubscriberArgs> OnPrimePaidSubscriber;
+
+        /// <summary>
         /// Fires when a hosted streamer goes offline and hosting is killed.
         /// </summary>
         public event EventHandler OnHostLeft;
@@ -1417,6 +1422,10 @@ namespace TwitchLib.Client
                 case MsgIds.Subscription:
                     Subscriber subscriber = new Subscriber(ircMessage);
                     OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs { Subscriber = subscriber, Channel = ircMessage.Channel });
+                    break;
+                case MsgIds.PrimePaidUprade:
+                    PrimePaidSubscriber primePaidSubscriber = new PrimePaidSubscriber(ircMessage);
+                    OnPrimePaidSubscriber?.Invoke(this, new OnPrimePaidSubscriberArgs { PrimePaidSubscriber = primePaidSubscriber, Channel = ircMessage.Channel });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
