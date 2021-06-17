@@ -180,11 +180,6 @@ namespace TwitchLib.Client
         public event EventHandler<OnJoinedChannelArgs> OnJoinedChannel;
 
         /// <summary>
-        /// Fires on logging in with incorrect details, returns ErrorLoggingInException.
-        /// </summary>
-        public event EventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
-
-        /// <summary>
         /// Fires when connecting and channel state is changed, returns ChannelState.
         /// </summary>
         public event EventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
@@ -400,14 +395,9 @@ namespace TwitchLib.Client
         public event EventHandler OnRaidedChannelIsMatureAudience;
 
         /// <summary>
-        /// Fires when the client was unable to join a channel.
+        /// Fires when the client has encountered an error.
         /// </summary>
-        public event EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
-
-        /// <summary>
-        /// Fires when data is received from Twitch that is not able to be parsed.
-        /// </summary>
-        public event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+        public event EventHandler<OnClientErrorArgs> OnClientError;
         #endregion
 
         #region Construction Work
@@ -993,7 +983,7 @@ namespace TwitchLib.Client
                     foreach (KeyValuePair<string, DateTime> expiredChannel in expiredChannels)
                     {
                         _joinedChannelManager.RemoveJoinedChannel(expiredChannel.Key.ToLowerInvariant());
-                        OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs { Exception = new FailureToReceiveJoinConfirmationException(expiredChannel.Key) });
+                        OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.FailureToReceiveJoinConfirmation, Error = new FailureToReceiveJoinConfirmationException(expiredChannel.Key) });
                     }
                 }
             }
@@ -1017,7 +1007,7 @@ namespace TwitchLib.Client
         {
             if (ircMessage.Message.Contains("Login authentication failed"))
             {
-                OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
+                OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.InvalidLogin, Error = new IncorrectLoginException(ircMessage.ToString(), TwitchUsername) });
             }
 
             switch (ircMessage.Command)
@@ -1091,11 +1081,11 @@ namespace TwitchLib.Client
                     HandleMode(ircMessage);
                     break;
                 case IrcCommand.Unknown:
-                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = null, Location = "HandleIrcMessage", RawIRC = ircMessage.ToString() });
+                    OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, null, "HandleIrcMessage", ircMessage.ToString()) });
                     UnaccountedFor(ircMessage.ToString());
                     break;
                 default:
-                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = null, Location = "HandleIrcMessage", RawIRC = ircMessage.ToString() });
+                    OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, null, "HandleIrcMessage", ircMessage.ToString()) });
                     UnaccountedFor(ircMessage.ToString());
                     break;
             }
@@ -1140,14 +1130,14 @@ namespace TwitchLib.Client
         {
             if (ircMessage.Message.Contains("Improperly formatted auth"))
             {
-                OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
+                OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.InvalidLogin, Error = new IncorrectLoginException(ircMessage.ToString(), TwitchUsername) });
                 return;
             }
 
             bool success = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
             if (!success)
             {
-                OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
+                OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, ircMessage.Channel, "NoticeHandling", ircMessage.ToString()) });
                 UnaccountedFor(ircMessage.ToString());
             }
 
@@ -1181,10 +1171,7 @@ namespace TwitchLib.Client
                     _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
                     _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
                     QueueingJoinCheck();
-                    OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs
-                    {
-                        Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
-                    });
+                    OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.FailureToReceiveJoinConfirmation, Error = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message) });
                     break;
                 case MsgIds.NoVIPs:
                     OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = new List<string>() });
@@ -1192,8 +1179,14 @@ namespace TwitchLib.Client
                 case MsgIds.VIPsSuccess:
                     OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = ircMessage.Message.Replace(" ", "").Replace(".", "").Split(':')[1].Split(',').ToList() });
                     break;
+                case MsgIds.WhisperRestricted:
+                    OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.WhisperRestricted, Error = new WhisperRestrictedException(TwitchUsername, ircMessage.ToString()) });
+                    break;
+                case MsgIds.WhisperRestrictedRecipient:
+                    OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.WhisperRestrictedRecipient, Error = new WhisperRestrictedRecipientException(TwitchUsername, ircMessage.ToString().Split(' ')[0].Split('=')[2], ircMessage.ToString()) });
+                    break;
                 default:
-                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
+                    OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, ircMessage.Channel, "NoticeHandling", ircMessage.ToString()) });
                     UnaccountedFor(ircMessage.ToString());
                     break;
             }
@@ -1339,7 +1332,7 @@ namespace TwitchLib.Client
                     OnWhisperCommandReceived?.Invoke(this, new OnWhisperCommandReceivedArgs { Command = whisperCommand });
                     return;
                 }
-            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "WhispergHandling", RawIRC = ircMessage.ToString() });
+            OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, ircMessage.Channel, "WhisperHandling", ircMessage.ToString()) });
             UnaccountedFor(ircMessage.ToString());
         }
 
@@ -1373,7 +1366,7 @@ namespace TwitchLib.Client
             bool successMsgId = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
             if (!successMsgId)
             {
-                OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
+                OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, ircMessage.Channel, "UserNoticeHandling", ircMessage.ToString()) });
                 UnaccountedFor(ircMessage.ToString());
                 return;
             }
@@ -1392,7 +1385,7 @@ namespace TwitchLib.Client
                     bool successRitualName = ircMessage.Tags.TryGetValue(Tags.MsgParamRitualName, out string ritualName);
                     if (!successRitualName)
                     {
-                        OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeRitualHandling", RawIRC = ircMessage.ToString() });
+                        OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, ircMessage.Channel, "UserNoticeRitualHandling", ircMessage.ToString()) });
                         UnaccountedFor(ircMessage.ToString());
                         return;
                     }
@@ -1402,7 +1395,7 @@ namespace TwitchLib.Client
                             OnRitualNewChatter?.Invoke(this, new OnRitualNewChatterArgs { RitualNewChatter = new RitualNewChatter(ircMessage) });
                             break;
                         default:
-                            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
+                            OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, ircMessage.Channel, "UserNoticeHandling", ircMessage.ToString()) });
                             UnaccountedFor(ircMessage.ToString());
                             break;
                     }
@@ -1428,7 +1421,7 @@ namespace TwitchLib.Client
                     OnPrimePaidSubscriber?.Invoke(this, new OnPrimePaidSubscriberArgs { PrimePaidSubscriber = primePaidSubscriber, Channel = ircMessage.Channel });
                     break;
                 default:
-                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
+                    OnClientError?.Invoke(this, new OnClientErrorArgs { ErrorType = ClientErrorType.UnaccountedFor, Error = new UnaccountedForException(TwitchUsername, ircMessage.Channel, "UserNoticeHandling", ircMessage.ToString()) });
                     UnaccountedFor(ircMessage.ToString());
                     break;
             }

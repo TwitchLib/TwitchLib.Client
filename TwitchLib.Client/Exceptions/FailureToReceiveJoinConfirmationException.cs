@@ -1,9 +1,11 @@
-﻿namespace TwitchLib.Client.Exceptions
+﻿using System;
+
+namespace TwitchLib.Client.Exceptions
 {
     /// <summary>
     /// Class FailureToReceiveJoinConfirmationException.
     /// </summary>
-    public class FailureToReceiveJoinConfirmationException
+    public class FailureToReceiveJoinConfirmationException : Exception
     {
         /// <summary>
         /// Exception representing failure of client to receive JOIN confirmation.
