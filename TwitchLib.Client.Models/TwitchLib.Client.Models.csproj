@@ -20,6 +20,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <AssemblyVersion>3.2.3</AssemblyVersion>
     <FileVersion>3.2.3</FileVersion>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
