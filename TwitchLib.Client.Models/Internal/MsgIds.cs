@@ -23,6 +23,8 @@
         public const string NoMods = "no_mods";
         public const string NoVIPs = "no_vips";
         public const string MsgChannelSuspended = "msg_channel_suspended";
+        public const string MsgRequiresVerifiedPhoneNumber = "msg_requires_verified_phone_number";
+        public const string MsgVerifiedEmail = "msg_verified_email";
         public const string NoPermission = "no_permission";
         public const string PrimePaidUprade = "primepaidupgrade";
         public const string Raid = "raid";
