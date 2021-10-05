@@ -242,6 +242,21 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
 
         /// <summary>
+        /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
+        /// </summary>
+        event EventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
+
+        /// <summary>
+        /// Occurs when chatting in a channel that requires a verified phone number without a verified phone number attached to the account.
+        /// </summary>
+        event EventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
+
+        /// <summary>
+        /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
+        /// </summary>
+        event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+
+        /// <summary>
         /// Initializes the specified credentials.
         /// </summary>
         /// <param name="credentials">The credentials.</param>

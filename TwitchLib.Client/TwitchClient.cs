@@ -385,6 +385,21 @@ namespace TwitchLib.Client
         public event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
 
         /// <summary>
+        /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
+        /// </summary>
+        public event EventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
+
+        /// <summary>
+        /// Occurs when chatting in a channel that requires a verified phone number without a verified phone number attached to the account.
+        /// </summary>
+        public event EventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
+
+        /// <summary>
+        /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
+        /// </summary>
+        public event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+
+        /// <summary>
         /// Fires when TwitchClient attempts to host a channel it is in.
         /// </summary>
         public event EventHandler OnSelfRaidError;
@@ -1177,6 +1192,9 @@ namespace TwitchLib.Client
                 case MsgIds.RaidNoticeMature:
                     OnRaidedChannelIsMatureAudience?.Invoke(this, null);
                     break;
+                case MsgIds.MsgBannedEmailAlias:
+                    OnBannedEmailAlias?.Invoke(this, new OnBannedEmailAliasArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
                 case MsgIds.MsgChannelSuspended:
                     _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
                     _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
@@ -1185,6 +1203,12 @@ namespace TwitchLib.Client
                     {
                         Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
                     });
+                    break;
+                case MsgIds.MsgRequiresVerifiedPhoneNumber:
+                    OnRequiresVerifiedPhoneNumber?.Invoke(this, new OnRequiresVerifiedPhoneNumberArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.MsgVerifiedEmail:
+                    OnRequiresVerifiedEmail?.Invoke(this, new OnRequiresVerifiedEmailArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
                 case MsgIds.NoVIPs:
                     OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = new List<string>() });
