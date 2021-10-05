@@ -252,6 +252,11 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
 
         /// <summary>
+        /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
+        /// </summary>
+        event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+
+        /// <summary>
         /// Initializes the specified credentials.
         /// </summary>
         /// <param name="credentials">The credentials.</param>

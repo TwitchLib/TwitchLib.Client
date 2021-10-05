@@ -22,6 +22,7 @@
         public const string ModeratorsReceived = "room_mods";
         public const string NoMods = "no_mods";
         public const string NoVIPs = "no_vips";
+        public const string MsgBannedEmailAlias = "msg_banned_email_alias";
         public const string MsgChannelSuspended = "msg_channel_suspended";
         public const string MsgRequiresVerifiedPhoneNumber = "msg_requires_verified_phone_number";
         public const string MsgVerifiedEmail = "msg_verified_email";

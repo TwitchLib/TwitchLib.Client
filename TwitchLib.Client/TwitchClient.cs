@@ -395,6 +395,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
 
         /// <summary>
+        /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
+        /// </summary>
+        public event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+
+        /// <summary>
         /// Fires when TwitchClient attempts to host a channel it is in.
         /// </summary>
         public event EventHandler OnSelfRaidError;
@@ -1186,6 +1191,9 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.RaidNoticeMature:
                     OnRaidedChannelIsMatureAudience?.Invoke(this, null);
+                    break;
+                case MsgIds.MsgBannedEmailAlias:
+                    OnBannedEmailAlias?.Invoke(this, new OnBannedEmailAliasArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
                 case MsgIds.MsgChannelSuspended:
                     _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
