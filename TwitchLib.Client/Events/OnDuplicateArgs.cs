@@ -3,12 +3,12 @@
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing a NOTICE telling the client that a rate limit has been hit.
+    /// Args representing a NOTICE telling the client that duplicate messages are not allowed.
     /// Implements the <see cref="System.EventArgs" />
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    public class OnRateLimitArgs : EventArgs
+    public class OnDuplicateArgs : EventArgs
     {
         /// <summary>
         /// Property representing message send with the NOTICE

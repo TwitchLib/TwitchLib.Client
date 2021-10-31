@@ -27,6 +27,7 @@
         public const string MsgRequiresVerifiedPhoneNumber = "msg_requires_verified_phone_number";
         public const string MsgVerifiedEmail = "msg_verified_email";
         public const string MsgRateLimit = "msg_ratelimit";
+        public const string MsgDuplicate = "msg_duplicate";
         public const string NoPermission = "no_permission";
         public const string PrimePaidUprade = "primepaidupgrade";
         public const string Raid = "raid";
