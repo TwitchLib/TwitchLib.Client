@@ -430,6 +430,56 @@ namespace TwitchLib.Client
         public event EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
 
         /// <summary>
+        /// Fires when the client attempts to send a message to a channel in followers only mode, as a non-follower
+        /// </summary>
+        public event EventHandler<OnFollowersOnlyArgs> OnFollowersOnly;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel in subs only mode, as a non-sub
+        /// </summary>
+        public event EventHandler<OnSubsOnlyArgs> OnSubsOnly;
+
+        /// <summary>
+        /// Fires when the client attempts to send a non-emote message to a channel in emotes only mode
+        /// </summary>
+        public event EventHandler<OnEmoteOnlyArgs> OnEmoteOnly;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel that has been suspended
+        /// </summary>
+        public event EventHandler<OnSuspendedArgs> OnSuspended;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel they're banned in
+        /// </summary>
+        public event EventHandler<OnBannedArgs> OnBanned;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message in a channel with slow mode enabled, without cooldown expiring
+        /// </summary>
+        public event EventHandler<OnSlowModeArgs> OnSlowMode;
+
+        /// <summary>
+        /// Fires when a generic error is encountered while attempting to start a host
+        /// </summary>
+        public event EventHandler<OnBadHostErrorArgs> OnBadHostError;
+
+        /// <summary>
+        /// Fires when a generic error is encountered while attempting to unhost
+        /// </summary>
+        public event EventHandler<OnBadUnhostErrorArgs> OnBadUnhostError;
+
+        /// <summary>
+        /// Fires when attempting to host after hitting the hosts/time limit
+        /// </summary>
+        public event EventHandler<OnBadHostRateExceededArgs> OnBadHostRateExceeded;
+
+        /// <summary>
+        /// Fires when the currently hosted channel goes offline
+        /// </summary>
+        public event EventHandler<OnHostTargetWentOfflineArgs> OnHostTargetWentOffline;
+
+        /// <summary>
         /// Fires when data is received from Twitch that is not able to be parsed.
         /// </summary>
         public event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
@@ -1232,6 +1282,37 @@ namespace TwitchLib.Client
                 case MsgIds.MsgDuplicate:
                     OnDuplicate?.Invoke(this, new OnDuplicateArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
+                case MsgIds.MsgFollowersOnly:
+                    OnFollowersOnly?.Invoke(this, new OnFollowersOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.MsgSubsOnly:
+                    OnSubsOnly?.Invoke(this, new OnSubsOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.MsgEmoteOnly:
+                    OnEmoteOnly?.Invoke(this, new OnEmoteOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.MsgSuspended:
+                    OnSuspended?.Invoke(this, new OnSuspendedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.MsgBanned:
+                    OnBanned?.Invoke(this, new OnBannedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.MsgSlowMode:
+                    OnSlowMode?.Invoke(this, new OnSlowModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.BadHostError:
+                    OnBadHostError?.Invoke(this, new OnBadHostErrorArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.BadUnhostError:
+                    OnBadUnhostError?.Invoke(this, new OnBadUnhostErrorArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.BadHostRateExceeded:
+                    OnBadHostRateExceeded?.Invoke(this, new OnBadHostRateExceededArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.HostTargetWentOffline:
+                    OnHostTargetWentOffline?.Invoke(this, new OnHostTargetWentOfflineArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
                     UnaccountedFor(ircMessage.ToString());
