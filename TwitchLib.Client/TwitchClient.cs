@@ -1034,7 +1034,6 @@ namespace TwitchLib.Client
             {
                 OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
             }
-
             switch (ircMessage.Command)
             {
                 case IrcCommand.PrivMsg:
@@ -1105,10 +1104,11 @@ namespace TwitchLib.Client
                 case IrcCommand.Mode:
                     HandleMode(ircMessage);
                     break;
-                case IrcCommand.Unknown:
-                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = null, Location = "HandleIrcMessage", RawIRC = ircMessage.ToString() });
-                    UnaccountedFor(ircMessage.ToString());
+                case IrcCommand.Cap:
+                    HandleCap(ircMessage);
                     break;
+                case IrcCommand.Unknown:
+                    // fall through
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = null, Location = "HandleIrcMessage", RawIRC = ircMessage.ToString() });
                     UnaccountedFor(ircMessage.ToString());
@@ -1474,6 +1474,16 @@ namespace TwitchLib.Client
             {
                 OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.Message.Split(' ')[1] });
             }
+        }
+
+        /// <summary>
+        /// Handles the Cap
+        /// </summary>
+        /// <param name="ircMessage">The irc message</param>
+        private void HandleCap(IrcMessage ircMessage)
+        {
+            // do nothing
+            return;
         }
 
         #endregion
