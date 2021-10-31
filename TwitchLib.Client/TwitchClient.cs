@@ -395,6 +395,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
 
         /// <summary>
+        /// Occurs when send message rate limit has been applied to the client in a specific channel by Twitch
+        /// </summary>
+        public event EventHandler<OnRateLimitArgs> OnRateLimit;
+
+        /// <summary>
         /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
         /// </summary>
         public event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
@@ -1215,6 +1220,9 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.VIPsSuccess:
                     OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = ircMessage.Message.Replace(" ", "").Replace(".", "").Split(':')[1].Split(',').ToList() });
+                    break;
+                case MsgIds.MsgRateLimit:
+                    OnRateLimit?.Invoke(this, new OnRateLimitArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
