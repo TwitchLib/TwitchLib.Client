@@ -480,6 +480,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnHostTargetWentOfflineArgs> OnHostTargetWentOffline;
 
         /// <summary>
+        /// Fires when the client attempts to send a message in a channel with r9k mode enabled, and message was not permitted
+        /// </summary>
+        public event EventHandler<OnR9kModeArgs> OnR9kMode;
+
+        /// <summary>
         /// Fires when data is received from Twitch that is not able to be parsed.
         /// </summary>
         public event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
@@ -1311,6 +1316,9 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.HostTargetWentOffline:
                     OnHostTargetWentOffline?.Invoke(this, new OnHostTargetWentOfflineArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.MsgR9k:
+                    OnR9kMode?.Invoke(this, new OnR9kModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
 
                 default:
