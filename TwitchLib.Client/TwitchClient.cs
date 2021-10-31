@@ -400,6 +400,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnRateLimitArgs> OnRateLimit;
 
         /// <summary>
+        /// Occurs when sending duplicate messages and user is not permitted to do so
+        /// </summary>
+        public event EventHandler<OnDuplicateArgs> OnDuplicate;
+
+        /// <summary>
         /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
         /// </summary>
         public event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
@@ -1223,6 +1228,9 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.MsgRateLimit:
                     OnRateLimit?.Invoke(this, new OnRateLimitArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.MsgDuplicate:
+                    OnDuplicate?.Invoke(this, new OnDuplicateArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
