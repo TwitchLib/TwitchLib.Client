@@ -8,7 +8,7 @@ namespace TwitchLib.Client.Events
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    public class OnBadHostError : EventArgs
+    public class OnBadHostErrorArgs : EventArgs
     {
         /// <summary>
         /// Property representing message send with the NOTICE

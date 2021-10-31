@@ -8,7 +8,7 @@ namespace TwitchLib.Client.Events
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    public class OnFollowersOnly : EventArgs
+    public class OnFollowersOnlyArgs : EventArgs
     {
         /// <summary>
         /// Property representing message send with the NOTICE
