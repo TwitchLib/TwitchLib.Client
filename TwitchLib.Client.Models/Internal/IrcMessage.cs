@@ -78,6 +78,14 @@ namespace TwitchLib.Client.Models.Internal
             _parameters = parameters;
             Command = command;
             Tags = tags;
+
+            if (command == IrcCommand.RPL_353)
+            {
+                if(Params.Length > 0 && Params.Contains("#"))
+                {
+                    _parameters[0] = $"#{_parameters[0].Split('#')[1]}";
+                }
+            }
         }
 
         public new string ToString()
