@@ -1436,10 +1436,7 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private void Handle353(IrcMessage ircMessage)
         {
-            if (ircMessage.Message.Contains(" "))
-            {
-                OnExistingUsersDetected?.Invoke(this, new OnExistingUsersDetectedArgs { Channel = ircMessage.Channel, Users = ircMessage.Message.Split(' ').ToList() });
-            }
+            OnExistingUsersDetected?.Invoke(this, new OnExistingUsersDetectedArgs { Channel = ircMessage.Channel, Users = ircMessage.Message.Split(' ').ToList() });
         }
 
         /// <summary>
