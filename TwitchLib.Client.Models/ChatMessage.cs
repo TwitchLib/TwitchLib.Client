@@ -40,6 +40,9 @@ namespace TwitchLib.Client.Models
         /// <summary>Chat message from broadcaster identifier flag</summary>
         public bool IsBroadcaster { get; }
 
+        /// <summary>Chat message is the first message, ever, from this user in this chat</summary>
+        public bool IsFirstMessage { get; }
+
         /// <summary>Chat message is highlighted in chat via channel points</summary>
         public bool IsHighlighted { get; internal set; }
 
@@ -176,6 +179,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Emotes:
                         EmoteSet = new EmoteSet(tagValue, Message);
+                        break;
+                    case Tags.FirstMessage:
+                        IsFirstMessage = tagValue == "1";
                         break;
                     case Tags.Id:
                         Id = tagValue;
