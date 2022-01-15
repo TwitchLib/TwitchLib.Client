@@ -56,23 +56,6 @@ namespace TwitchLib.Client.Test
         }
 
         [Fact]
-        public void ClientNewChatterRitualTest()
-        {
-            var client = new TwitchClient( _mockClient);
-            client.OnConnected += (sender, e) => ReceivedUserNoticeMessage();
-
-            Assert.Raises<OnRitualNewChatterArgs>(
-                  h => client.OnRitualNewChatter += h,
-                  h => client.OnRitualNewChatter -= h,
-                  () =>
-                  {
-                      client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
-                      client.Connect();
-                      ReceivedTwitchConnected();
-                  });
-        }
-
-        [Fact]
         public void MessageEmoteCollectionFilled()
         {
             var finish = DateTime.Now.AddSeconds(10);
