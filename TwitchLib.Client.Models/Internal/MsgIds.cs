@@ -57,6 +57,7 @@
         public const string TimeoutSuccess = "timeout_success";
         public const string UnbanSuccess = "unban_success";
         public const string UnrecognizedCmd = "unrecognized_cmd";
+        public const string UserIntro = "user-intro";
         public const string VIPsSuccess = "vips_success";
         public const string SkipSubsModeMessage = "skip-subs-mode-message";
     }

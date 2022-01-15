@@ -257,6 +257,11 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
 
         /// <summary>
+        /// Fires when the client receives a PRIVMSG tagged as an user-intro
+        /// </summary>
+        event EventHandler<OnUserIntroArgs> OnUserIntro;
+
+        /// <summary>
         /// Initializes the specified credentials.
         /// </summary>
         /// <param name="credentials">The credentials.</param>

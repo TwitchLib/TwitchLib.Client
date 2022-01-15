@@ -485,6 +485,11 @@ namespace TwitchLib.Client
         public event EventHandler<OnR9kModeArgs> OnR9kMode;
 
         /// <summary>
+        /// Fires when the client receives a PRIVMSG tagged as an user-intro
+        /// </summary>
+        public event EventHandler<OnUserIntroArgs> OnUserIntro;
+
+        /// <summary>
         /// Fires when data is received from Twitch that is not able to be parsed.
         /// </summary>
         public event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
@@ -1199,7 +1204,12 @@ namespace TwitchLib.Client
             ChatMessage chatMessage = new ChatMessage(TwitchUsername, ircMessage, ref _channelEmotes, WillReplaceEmotes);
             foreach (JoinedChannel joinedChannel in JoinedChannels.Where(x => string.Equals(x.Channel, ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
                 joinedChannel.HandleMessage(chatMessage);
+
             OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage });
+
+            if (ircMessage.Tags.TryGetValue(Tags.MsgId, out var msgId))
+                if (msgId == MsgIds.UserIntro)
+                    OnUserIntro?.Invoke(this, new OnUserIntroArgs { ChatMessage = chatMessage });
 
             if (_chatCommandIdentifiers != null && _chatCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(chatMessage.Message))
             {
