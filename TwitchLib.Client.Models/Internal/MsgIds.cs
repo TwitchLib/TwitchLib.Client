@@ -45,7 +45,6 @@
         public const string RaidErrorSelf = "raid_error_self";
         public const string RaidNoticeMature = "raid_notice_mature";
         public const string ReSubscription = "resub";
-        public const string Ritual = "ritual";
         public const string R9KOff = "r9k_off";
         public const string R9KOn = "r9k_on";
         public const string SubGift = "subgift";

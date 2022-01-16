@@ -237,11 +237,6 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnMessageClearedArgs> OnMessageCleared;
 
         /// <summary>
-        /// Occurs when [on ritual for new chatter received].
-        /// </summary>
-        event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
-
-        /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
         /// </summary>
         event EventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;

@@ -380,11 +380,6 @@ namespace TwitchLib.Client
         public event EventHandler<OnReconnectedEventArgs> OnReconnected;
 
         /// <summary>
-        /// Fires when a ritual for a new chatter is received.
-        /// </summary>
-        public event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
-
-        /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
         /// </summary>
         public event EventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
@@ -1523,25 +1518,6 @@ namespace TwitchLib.Client
                 case MsgIds.ReSubscription:
                     ReSubscriber resubscriber = new ReSubscriber(ircMessage);
                     OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber, Channel = ircMessage.Channel });
-                    break;
-                case MsgIds.Ritual:
-                    bool successRitualName = ircMessage.Tags.TryGetValue(Tags.MsgParamRitualName, out string ritualName);
-                    if (!successRitualName)
-                    {
-                        OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeRitualHandling", RawIRC = ircMessage.ToString() });
-                        UnaccountedFor(ircMessage.ToString());
-                        return;
-                    }
-                    switch (ritualName)
-                    {
-                        case "new_chatter": // In case there will be more Rituals we should do a "string enum" for them too but for now this will do
-                            OnRitualNewChatter?.Invoke(this, new OnRitualNewChatterArgs { RitualNewChatter = new RitualNewChatter(ircMessage) });
-                            break;
-                        default:
-                            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
-                            UnaccountedFor(ircMessage.ToString());
-                            break;
-                    }
                     break;
                 case MsgIds.SubGift:
                     GiftedSubscription giftedSubscription = new GiftedSubscription(ircMessage);
