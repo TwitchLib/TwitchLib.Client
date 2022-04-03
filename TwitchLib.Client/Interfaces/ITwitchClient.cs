@@ -257,6 +257,11 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnUserIntroArgs> OnUserIntro;
 
         /// <summary>
+        /// Fires when the client receives a USERNOTICE tagged as an announcement
+        /// </summary>
+        event EventHandler<OnAnnouncementArgs> OnAnnouncement;
+
+        /// <summary>
         /// Initializes the specified credentials.
         /// </summary>
         /// <param name="credentials">The credentials.</param>

@@ -160,6 +160,11 @@ namespace TwitchLib.Client
 
         #region Events
         /// <summary>
+        /// Fires when an Announcement is received
+        /// </summary>
+        public event EventHandler<OnAnnouncementArgs> OnAnnouncement;
+
+        /// <summary>
         /// Fires when VIPs are received from chat
         /// </summary>
         public event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
@@ -1511,6 +1516,10 @@ namespace TwitchLib.Client
 
             switch (msgId)
             {
+                case MsgIds.Announcement:
+                    Announcement announcement = new Announcement(ircMessage);
+                    OnAnnouncement?.Invoke(this, new OnAnnouncementArgs { Announcement = announcement, Channel = ircMessage.Channel });
+                    break;
                 case MsgIds.Raid:
                     RaidNotification raidNotification = new RaidNotification(ircMessage);
                     OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotification = raidNotification });
