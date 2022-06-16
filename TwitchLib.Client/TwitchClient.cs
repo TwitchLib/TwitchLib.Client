@@ -1103,6 +1103,7 @@ namespace TwitchLib.Client
             if (ircMessage.Message.Contains("Login authentication failed"))
             {
                 OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
+                return;
             }
             switch (ircMessage.Command)
             {
