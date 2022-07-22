@@ -68,7 +68,7 @@ namespace TwitchLib.Client.Models
                         EmoteSet = tagValue;
                         break;
                     case Tags.Id:
-                        Id = id;
+                        Id = tagValue;
                         break;
                     case Tags.Mod:
                         IsModerator = Common.Helpers.ConvertToBool(tagValue);
