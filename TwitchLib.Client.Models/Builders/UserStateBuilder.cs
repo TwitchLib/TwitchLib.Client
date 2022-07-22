@@ -12,6 +12,7 @@ namespace TwitchLib.Client.Models.Builders
         private string _colorHex;
         private string _displayName;
         private string _emoteSet;
+        private string _id;
         private bool _isModerator;
         private bool _isSubscriber;
         private UserType _userType;
@@ -55,6 +56,12 @@ namespace TwitchLib.Client.Models.Builders
             _emoteSet = emoteSet;
             return this;
         }
+        
+        public UserStateBuilder Id(string id)
+        {
+            _id = id;
+            return this;
+        }
 
         public UserStateBuilder WithIsModerator(bool isModerator)
         {
@@ -93,6 +100,7 @@ namespace TwitchLib.Client.Models.Builders
                 _displayName,
                 _emoteSet,
                 _channel,
+                _id,
                 _isSubscriber,
                 _isModerator,
                 _userType);
