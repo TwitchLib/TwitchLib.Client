@@ -26,6 +26,9 @@ namespace TwitchLib.Client.Models
 
         /// <summary>Property representing emote sets available to user.</summary>
         public string EmoteSet { get; }
+        
+        /// <summary>Property representing the user's Id.</summary>
+        public string Id { get; }
 
         /// <summary>Property representing Turbo status.</summary>
         public bool IsModerator { get; }
@@ -63,6 +66,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.EmotesSets:
                         EmoteSet = tagValue;
+                        break;
+                    case Tags.Id:
+                        Id = tagValue;
                         break;
                     case Tags.Mod:
                         IsModerator = Common.Helpers.ConvertToBool(tagValue);
@@ -108,6 +114,7 @@ namespace TwitchLib.Client.Models
             string displayName,
             string emoteSet,
             string channel,
+            string id,
             bool isSubscriber,
             bool isModerator,
             UserType userType)
@@ -118,6 +125,7 @@ namespace TwitchLib.Client.Models
             DisplayName = displayName;
             EmoteSet = emoteSet;
             Channel = channel;
+            Id = id;
             IsSubscriber = isSubscriber;
             IsModerator = isModerator;
             UserType = userType;
