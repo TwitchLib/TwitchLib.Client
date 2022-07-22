@@ -647,15 +647,16 @@ namespace TwitchLib.Client.Extensions
         /// <param name="displayName">The display name.</param>
         /// <param name="emoteSet">The emote set.</param>
         /// <param name="channel">The channel.</param>
+        /// <param name="id">The id.</param>
         /// <param name="isSubscriber">if set to <c>true</c> [is subscriber].</param>
         /// <param name="isModerator">if set to <c>true</c> [is moderator].</param>
         /// <param name="userType">Type of the user.</param>
         public static void InvokeUserStateChanged(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, string displayName,
-            string emoteSet, string channel, bool isSubscriber, bool isModerator, UserType userType)
+            string emoteSet, string channel, string id, bool isSubscriber, bool isModerator, UserType userType)
         {
             OnUserStateChangedArgs model = new OnUserStateChangedArgs()
             {
-                UserState = new UserState(badges, badgeInfo, colorHex, displayName, emoteSet, channel, isSubscriber, isModerator, userType)
+                UserState = new UserState(badges, badgeInfo, colorHex, displayName, emoteSet, channel, id, isSubscriber, isModerator, userType)
             };
             client.RaiseEvent("OnUserStateChanged", model);
         }
