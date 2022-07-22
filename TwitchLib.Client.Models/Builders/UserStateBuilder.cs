@@ -100,8 +100,8 @@ namespace TwitchLib.Client.Models.Builders
                 _displayName,
                 _emoteSet,
                 _channel,
-                _isSubscriber,
                 _id,
+                _isSubscriber,
                 _isModerator,
                 _userType);
         }
