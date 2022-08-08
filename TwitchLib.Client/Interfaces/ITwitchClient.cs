@@ -237,11 +237,6 @@ namespace TwitchLib.Client.Interfaces
         event EventHandler<OnMessageClearedArgs> OnMessageCleared;
 
         /// <summary>
-        /// Occurs when [on ritual for new chatter received].
-        /// </summary>
-        event EventHandler<OnRitualNewChatterArgs> OnRitualNewChatter;
-
-        /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
         /// </summary>
         event EventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
@@ -255,6 +250,16 @@ namespace TwitchLib.Client.Interfaces
         /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
         /// </summary>
         event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+
+        /// <summary>
+        /// Fires when the client receives a PRIVMSG tagged as an user-intro
+        /// </summary>
+        event EventHandler<OnUserIntroArgs> OnUserIntro;
+
+        /// <summary>
+        /// Fires when the client receives a USERNOTICE tagged as an announcement
+        /// </summary>
+        event EventHandler<OnAnnouncementArgs> OnAnnouncement;
 
         /// <summary>
         /// Initializes the specified credentials.

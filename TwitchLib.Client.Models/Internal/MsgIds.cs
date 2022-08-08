@@ -9,7 +9,11 @@
         public const string AlreadyR9KOn = "already_r9k_on";
         public const string AlreadySubsOff = "already_subs_off";
         public const string AlreadySubsOn = "already_subs_on";
+        public const string Announcement = "announcement";
         public const string BadHostHosting = "bad_host_hosting";
+        public const string BadHostError = "bad_host_error";
+        public const string BadUnhostError = "bad_unhost_error";
+        public const string BadHostRateExceeded = "bad_host_rate_exceeded";
         public const string BadUnbanNoBan = "bad_unban_no_ban";
         public const string BanSuccess = "ban_success";
         public const string ColorChanged = "color_changed";
@@ -18,7 +22,8 @@
         public const string HighlightedMessage = "highlighted-message";
         public const string HostOff = "host_off";
         public const string HostOn = "host_on";
-        public const string HostsRemaining = "host_remaining";
+        public const string HostsRemaining = "hosts_remaining";
+        public const string HostTargetWentOffline = "host_target_went_offline";
         public const string ModeratorsReceived = "room_mods";
         public const string NoMods = "no_mods";
         public const string NoVIPs = "no_vips";
@@ -26,13 +31,21 @@
         public const string MsgChannelSuspended = "msg_channel_suspended";
         public const string MsgRequiresVerifiedPhoneNumber = "msg_requires_verified_phone_number";
         public const string MsgVerifiedEmail = "msg_verified_email";
+        public const string MsgRateLimit = "msg_ratelimit";
+        public const string MsgDuplicate = "msg_duplicate";
+        public const string MsgR9k = "msg_r9k";
+        public const string MsgFollowersOnly = "msg_followersonly";
+        public const string MsgSubsOnly = "msg_subsonly";
+        public const string MsgEmoteOnly = "msg_emoteonly";
+        public const string MsgSuspended = "msg_suspended";
+        public const string MsgBanned = "msg_banned";
+        public const string MsgSlowMode = "msg_slowmode";
         public const string NoPermission = "no_permission";
         public const string PrimePaidUprade = "primepaidupgrade";
         public const string Raid = "raid";
         public const string RaidErrorSelf = "raid_error_self";
         public const string RaidNoticeMature = "raid_notice_mature";
         public const string ReSubscription = "resub";
-        public const string Ritual = "ritual";
         public const string R9KOff = "r9k_off";
         public const string R9KOn = "r9k_on";
         public const string SubGift = "subgift";
@@ -44,6 +57,7 @@
         public const string TimeoutSuccess = "timeout_success";
         public const string UnbanSuccess = "unban_success";
         public const string UnrecognizedCmd = "unrecognized_cmd";
+        public const string UserIntro = "user-intro";
         public const string VIPsSuccess = "vips_success";
         public const string SkipSubsModeMessage = "skip-subs-mode-message";
     }

@@ -4,15 +4,16 @@ using TwitchLib.Client.Models;
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Class OnRitualNewChatterArgs.
+    /// Args representing a PRIVMSG that represents a User Intro
     /// Implements the <see cref="System.EventArgs" />
     /// </summary>
     /// <seealso cref="System.EventArgs" />
-    public class OnRitualNewChatterArgs : EventArgs
+    /// <inheritdoc />
+    public class OnUserIntroArgs : EventArgs
     {
         /// <summary>
-        /// The ritual new chatter
+        /// Property representing the PRIVMSG
         /// </summary>
-        public RitualNewChatter RitualNewChatter;
+        public ChatMessage ChatMessage;
     }
 }

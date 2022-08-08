@@ -14,6 +14,7 @@
         public const string Emotes = "emotes";
         public const string EmoteOnly = "emote-only";
         public const string EmotesSets = "emote-sets";
+        public const string FirstMessage = "first-msg";
         public const string Flags = "flags";
         public const string FollowersOnly = "followers-only";
         public const string Id = "id";
@@ -22,7 +23,8 @@
         public const string MessageId = "message-id";
         public const string Mod = "mod";
         public const string MsgId = "msg-id";   // Valid values: sub, resub, subgift, anonsubgift, submysterygift, giftpaidupgrade, rewardgift, 
-                                                // anongiftpaidupgrade, raid, unraid, ritual, bitsbadgetier
+                                                // anongiftpaidupgrade, raid, unraid, ritual, bitsbadgetier, announcement
+        public const string MsgParamColor = "msg-param-color"; // Sent only on announcement
         public const string MsgParamDisplayname = "msg-param-displayName";                      // Sent only on raid
         public const string MsgParamLogin = "msg-param-login";                                  // Sent only on raid
         public const string MsgParamCumulativeMonths = "msg-param-cumulative-months";           // Sent only on sub, resub

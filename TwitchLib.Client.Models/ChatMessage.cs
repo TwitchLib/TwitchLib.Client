@@ -40,6 +40,9 @@ namespace TwitchLib.Client.Models
         /// <summary>Chat message from broadcaster identifier flag</summary>
         public bool IsBroadcaster { get; }
 
+        /// <summary>Chat message is the first message, ever, from this user in this chat</summary>
+        public bool IsFirstMessage { get; }
+
         /// <summary>Chat message is highlighted in chat via channel points</summary>
         public bool IsHighlighted { get; internal set; }
 
@@ -97,6 +100,20 @@ namespace TwitchLib.Client.Models
             BotUsername = botUsername;
             RawIrcMessage = ircMessage.ToString();
             Message = ircMessage.Message;
+
+            if (Message.Length > 0 && (byte)Message[0] == 1 && (byte)Message[Message.Length - 1] == 1)
+            {
+                //Actions (/me {action}) are wrapped by byte=1 and prepended with "ACTION "
+                //This setup clears all of that leaving just the action's text.
+                //If you want to clear just the nonstandard bytes, use:
+                //_message = _message.Substring(1, text.Length-2);
+                if (Message.StartsWith("\u0001ACTION ") && Message.EndsWith("\u0001"))
+                {
+                    Message = Message.Trim('\u0001').Substring(7);
+                    IsMe = true;
+                }
+            }
+
             _emoteCollection = emoteCollection;
 
             Username = ircMessage.User;
@@ -177,6 +194,9 @@ namespace TwitchLib.Client.Models
                     case Tags.Emotes:
                         EmoteSet = new EmoteSet(tagValue, Message);
                         break;
+                    case Tags.FirstMessage:
+                        IsFirstMessage = tagValue == "1";
+                        break;
                     case Tags.Id:
                         Id = tagValue;
                         break;
@@ -247,19 +267,6 @@ namespace TwitchLib.Client.Models
                                 break;
                         }
                         break;
-                }
-            }
-
-            if (Message.Length > 0 && (byte)Message[0] == 1 && (byte)Message[Message.Length - 1] == 1)
-            {
-                //Actions (/me {action}) are wrapped by byte=1 and prepended with "ACTION "
-                //This setup clears all of that leaving just the action's text.
-                //If you want to clear just the nonstandard bytes, use:
-                //_message = _message.Substring(1, text.Length-2);
-                if (Message.StartsWith("\u0001ACTION ") && Message.EndsWith("\u0001"))
-                {
-                    Message = Message.Trim('\u0001').Substring(7);
-                    IsMe = true;
                 }
             }
 
