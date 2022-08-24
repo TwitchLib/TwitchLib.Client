@@ -53,7 +53,8 @@
 
         public UserTimeout Build()
         {
-            return new UserTimeout(_channel, _username, _timeoutDuration, _timeoutReason, _targetUserId);
+            return new UserTimeout(_channel, _username, _targetUserId, _timeoutDuration, _timeoutReason);
         }
     }
 }
+,
