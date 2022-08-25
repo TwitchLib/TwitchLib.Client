@@ -6,6 +6,7 @@
         private int _timeoutDuration;
         private string _timeoutReason;
         private string _username;
+        private string _targetUserId;
 
         private UserTimeoutBuilder()
         {
@@ -34,6 +35,11 @@
             _username = username;
             return this;
         }
+        public UserTimeoutBuilder WithTargetUserId(string targetUserId)
+        {
+            _targetUserId = targetUserId;
+            return this;
+        }
 
         public static UserTimeoutBuilder Create()
         {
@@ -47,7 +53,7 @@
 
         public UserTimeout Build()
         {
-            return new UserTimeout(_channel, _username, _timeoutDuration, _timeoutReason);
+            return new UserTimeout(_channel, _username, _targetUserId, _timeoutDuration, _timeoutReason);
         }
     }
 }
