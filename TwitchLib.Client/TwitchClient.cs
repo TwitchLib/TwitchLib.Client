@@ -141,11 +141,6 @@ namespace TwitchLib.Client
         /// <value><c>true</c> if [will replace emotes]; otherwise, <c>false</c>.</value>
         public bool WillReplaceEmotes { get; set; } = false;
         /// <summary>
-        /// If set to true, the library will not check upon channel join that if BeingHosted event is subscribed, that the bot is connected as broadcaster. Only override if the broadcaster is joining multiple channels, including the broadcaster's.
-        /// </summary>
-        /// <value><c>true</c> if [override being hosted check]; otherwise, <c>false</c>.</value>
-        public bool OverrideBeingHostedCheck { get; set; } = false;
-        /// <summary>
         /// Provides access to connection credentials object.
         /// </summary>
         /// <value>The connection credentials.</value>
@@ -265,11 +260,6 @@ namespace TwitchLib.Client
         public event EventHandler<OnPrimePaidSubscriberArgs> OnPrimePaidSubscriber;
 
         /// <summary>
-        /// Fires when a hosted streamer goes offline and hosting is killed.
-        /// </summary>
-        public event EventHandler OnHostLeft;
-
-        /// <summary>
         /// Fires when Twitch notifies client of existing users in chat.
         /// </summary>
         public event EventHandler<OnExistingUsersDetectedArgs> OnExistingUsersDetected;
@@ -278,16 +268,6 @@ namespace TwitchLib.Client
         /// Fires when a PART message is received from Twitch regarding a particular viewer
         /// </summary>
         public event EventHandler<OnUserLeftArgs> OnUserLeft;
-
-        /// <summary>
-        /// Fires when the joined channel begins hosting another channel.
-        /// </summary>
-        public event EventHandler<OnHostingStartedArgs> OnHostingStarted;
-
-        /// <summary>
-        /// Fires when the joined channel quits hosting another channel.
-        /// </summary>
-        public event EventHandler<OnHostingStoppedArgs> OnHostingStopped;
 
         /// <summary>
         /// Fires when bot has disconnected.
@@ -333,16 +313,6 @@ namespace TwitchLib.Client
         /// Fires when data is either received or sent.
         /// </summary>
         public event EventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
-
-        /// <summary>
-        /// Fires when client receives notice that a joined channel is hosting another channel.
-        /// </summary>
-        public event EventHandler<OnNowHostingArgs> OnNowHosting;
-
-        /// <summary>
-        /// Fires when the library detects another channel has started hosting the broadcaster's stream. MUST BE CONNECTED AS BROADCASTER.
-        /// </summary>
-        public event EventHandler<OnBeingHostedArgs> OnBeingHosted;
 
         /// <summary>
         /// Fires when a raid notification is detected in chat
@@ -458,26 +428,6 @@ namespace TwitchLib.Client
         /// Fires when the client attempts to send a message in a channel with slow mode enabled, without cooldown expiring
         /// </summary>
         public event EventHandler<OnSlowModeArgs> OnSlowMode;
-
-        /// <summary>
-        /// Fires when a generic error is encountered while attempting to start a host
-        /// </summary>
-        public event EventHandler<OnBadHostErrorArgs> OnBadHostError;
-
-        /// <summary>
-        /// Fires when a generic error is encountered while attempting to unhost
-        /// </summary>
-        public event EventHandler<OnBadUnhostErrorArgs> OnBadUnhostError;
-
-        /// <summary>
-        /// Fires when attempting to host after hitting the hosts/time limit
-        /// </summary>
-        public event EventHandler<OnBadHostRateExceededArgs> OnBadHostRateExceeded;
-
-        /// <summary>
-        /// Fires when the currently hosted channel goes offline
-        /// </summary>
-        public event EventHandler<OnHostTargetWentOfflineArgs> OnHostTargetWentOffline;
 
         /// <summary>
         /// Fires when the client attempts to send a message in a channel with r9k mode enabled, and message was not permitted
@@ -1125,9 +1075,6 @@ namespace TwitchLib.Client
                 case IrcCommand.Part:
                     HandlePart(ircMessage);
                     break;
-                case IrcCommand.HostTarget:
-                    HandleHostTarget(ircMessage);
-                    break;
                 case IrcCommand.ClearChat:
                     HandleClearChat(ircMessage);
                     break;
@@ -1195,13 +1142,6 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private void HandlePrivMsg(IrcMessage ircMessage)
         {
-            if (ircMessage.Hostmask.Equals("jtv!jtv@jtv.tmi.twitch.tv"))
-            {
-                BeingHostedNotification hostNotification = new BeingHostedNotification(TwitchUsername, ircMessage);
-                OnBeingHosted?.Invoke(this, new OnBeingHostedArgs { BeingHostedNotification = hostNotification });
-                return;
-            }
-
             ChatMessage chatMessage = new ChatMessage(TwitchUsername, ircMessage, ref _channelEmotes, WillReplaceEmotes);
             foreach (JoinedChannel joinedChannel in JoinedChannels.Where(x => string.Equals(x.Channel, ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
                 joinedChannel.HandleMessage(chatMessage);
@@ -1246,12 +1186,6 @@ namespace TwitchLib.Client
             {
                 case MsgIds.ColorChanged:
                     OnChatColorChanged?.Invoke(this, new OnChatColorChangedArgs { Channel = ircMessage.Channel });
-                    break;
-                case MsgIds.HostOn:
-                    OnNowHosting?.Invoke(this, new OnNowHostingArgs { Channel = ircMessage.Channel, HostedChannel = ircMessage.Message.Split(' ')[2].Replace(".", "") });
-                    break;
-                case MsgIds.HostOff:
-                    OnHostLeft?.Invoke(this, null);
                     break;
                 case MsgIds.ModeratorsReceived:
                     OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList() });
@@ -1316,18 +1250,6 @@ namespace TwitchLib.Client
                 case MsgIds.MsgSlowMode:
                     OnSlowMode?.Invoke(this, new OnSlowModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
-                case MsgIds.BadHostError:
-                    OnBadHostError?.Invoke(this, new OnBadHostErrorArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
-                    break;
-                case MsgIds.BadUnhostError:
-                    OnBadUnhostError?.Invoke(this, new OnBadUnhostErrorArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
-                    break;
-                case MsgIds.BadHostRateExceeded:
-                    OnBadHostRateExceeded?.Invoke(this, new OnBadHostRateExceededArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
-                    break;
-                case MsgIds.HostTargetWentOffline:
-                    OnHostTargetWentOffline?.Invoke(this, new OnHostTargetWentOfflineArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
-                    break;
                 case MsgIds.MsgR9k:
                     OnR9kMode?.Invoke(this, new OnR9kModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
@@ -1363,24 +1285,6 @@ namespace TwitchLib.Client
             else
             {
                 OnUserLeft?.Invoke(this, new OnUserLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
-            }
-        }
-
-        /// <summary>
-        /// Handles the host target.
-        /// </summary>
-        /// <param name="ircMessage">The irc message.</param>
-        private void HandleHostTarget(IrcMessage ircMessage)
-        {
-            if (ircMessage.Message.StartsWith("-"))
-            {
-                HostingStopped hostingStopped = new HostingStopped(ircMessage);
-                OnHostingStopped?.Invoke(this, new OnHostingStoppedArgs { HostingStopped = hostingStopped });
-            }
-            else
-            {
-                HostingStarted hostingStarted = new HostingStarted(ircMessage);
-                OnHostingStarted?.Invoke(this, new OnHostingStartedArgs { HostingStarted = hostingStarted });
             }
         }
 
@@ -1493,9 +1397,6 @@ namespace TwitchLib.Client
                 KeyValuePair<string, DateTime> channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
                 _awaitingJoins.Remove(channel);
                 OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
-                if (OnBeingHosted != null)
-                    if (ircMessage.Channel.ToLowerInvariant() != TwitchUsername && !OverrideBeingHostedCheck)
-                        Log("[OnBeingHosted] OnBeingHosted will only be fired while listening to this event as the broadcaster's channel. You do not appear to be connected as the broadcaster. To hide this warning, set TwitchClient property OverrideBeingHostedCheck to true.");
             }
 
             OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage), Channel = ircMessage.Channel });

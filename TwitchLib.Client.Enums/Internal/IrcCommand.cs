@@ -9,7 +9,6 @@
         Pong,
         Join,
         Part,
-        HostTarget,
         ClearChat,
         ClearMsg,
         UserState,

@@ -108,9 +108,6 @@ namespace TwitchLib.Client.Internal.Parsing
                 case "PONG":
                     command = IrcCommand.Pong;
                     break;
-                case "HOSTTARGET":
-                    command = IrcCommand.HostTarget;
-                    break;
                 case "CLEARCHAT":
                     command = IrcCommand.ClearChat;
                     break;
