@@ -472,6 +472,7 @@ namespace TwitchLib.Client
         /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
         public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
         {
+            if (channel[0] == '#') channel = channel.Substring(1);
             initializeHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
         }
 
@@ -485,6 +486,7 @@ namespace TwitchLib.Client
         /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
         public void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
         {
+            channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
             initializeHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
         }
 
@@ -808,6 +810,7 @@ namespace TwitchLib.Client
             // Check to see if client is already in channel
             if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channel && !overrideCheck) != null)
                 return;
+            if (channel[0] == '#') channel = channel.Substring(1);
             _joinChannelQueue.Enqueue(new JoinedChannel(channel));
             if (!_currentlyJoiningChannels)
                 QueueingJoinCheck();
@@ -824,6 +827,7 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             if (JoinedChannels.Count == 0)
                 throw new BadStateException("Must be connected to at least one channel.");
+            if (channel[0] == '#') channel = channel.Substring(1);
             return _joinedChannelManager.GetJoinedChannel(channel);
         }
 
@@ -837,6 +841,7 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             // Channel MUST be lower case
             channel = channel.ToLower();
+            if (channel[0] == '#') channel = channel.Substring(1);
             Log($"Leaving channel: {channel}");
             JoinedChannel joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
             if (joinedChannel != null)
