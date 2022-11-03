@@ -47,11 +47,6 @@ namespace TwitchLib.Client.Interfaces
         /// <value>The joined channels.</value>
         IReadOnlyList<JoinedChannel> JoinedChannels { get; }
         /// <summary>
-        /// Gets or sets a value indicating whether [override being hosted check].
-        /// </summary>
-        /// <value><c>true</c> if [override being hosted check]; otherwise, <c>false</c>.</value>
-        bool OverrideBeingHostedCheck { get; set; }
-        /// <summary>
         /// Gets the previous whisper.
         /// </summary>
         /// <value>The previous whisper.</value>
@@ -66,11 +61,6 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         /// <value><c>true</c> if [will replace emotes]; otherwise, <c>false</c>.</value>
         bool WillReplaceEmotes { get; set; }
-
-        /// <summary>
-        /// Occurs when [on being hosted].
-        /// </summary>
-        event EventHandler<OnBeingHostedArgs> OnBeingHosted;
         /// <summary>
         /// Occurs when [on channel state changed].
         /// </summary>
@@ -107,18 +97,6 @@ namespace TwitchLib.Client.Interfaces
         /// Occurs when [on gifted subscription].
         /// </summary>
         event EventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
-        /// <summary>
-        /// Occurs when [on hosting started].
-        /// </summary>
-        event EventHandler<OnHostingStartedArgs> OnHostingStarted;
-        /// <summary>
-        /// Occurs when [on hosting stopped].
-        /// </summary>
-        event EventHandler<OnHostingStoppedArgs> OnHostingStopped;
-        /// <summary>
-        /// Occurs when [on host left].
-        /// </summary>
-        event EventHandler OnHostLeft;
         /// <summary>
         /// Occurs when [on incorrect login].
         /// </summary>
@@ -159,10 +137,6 @@ namespace TwitchLib.Client.Interfaces
         /// Occurs when [on new subscriber].
         /// </summary>
         event EventHandler<OnNewSubscriberArgs> OnNewSubscriber;
-        /// <summary>
-        /// Occurs when [on now hosting].
-        /// </summary>
-        event EventHandler<OnNowHostingArgs> OnNowHosting;
         /// <summary>
         /// Occurs when [on raid notification].
         /// </summary>

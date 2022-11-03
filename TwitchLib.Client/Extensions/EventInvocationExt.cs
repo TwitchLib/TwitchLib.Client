@@ -12,23 +12,6 @@ namespace TwitchLib.Client.Extensions
     /// </summary>
     public static class EventInvocationExt
     {
-        /// <summary>
-        /// Invokes the on being hosted.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="channel">The channel.</param>
-        /// <param name="botUsername">The bot username.</param>
-        /// <param name="hostedByChannel">The hosted by channel.</param>
-        /// <param name="viewers">The viewers.</param>
-        /// <param name="isAutoHosted">if set to <c>true</c> [is automatic hosted].</param>
-        public static void InvokeOnBeingHosted(this TwitchClient client, string channel, string botUsername, string hostedByChannel, int viewers, bool isAutoHosted)
-        {
-            OnBeingHostedArgs model = new OnBeingHostedArgs()
-            {
-                BeingHostedNotification = new BeingHostedNotification(channel, botUsername, hostedByChannel, viewers, isAutoHosted)
-            };
-            client.RaiseEvent("OnBeingHosted", model);
-        }
 
         /// <summary>
         /// Invokes the channel state changed.
@@ -222,46 +205,6 @@ namespace TwitchLib.Client.Extensions
                 userType, userId)
             };
             client.RaiseEvent("OnGiftedSubscription", model);
-        }
-
-        /// <summary>
-        /// Invokes the on hosting started.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="hostingChannel">The hosting channel.</param>
-        /// <param name="targetChannel">The target channel.</param>
-        /// <param name="viewers">The viewers.</param>
-        public static void InvokeOnHostingStarted(this TwitchClient client, string hostingChannel, string targetChannel, int viewers)
-        {
-            OnHostingStartedArgs model = new OnHostingStartedArgs()
-            {
-                HostingStarted = new HostingStarted(hostingChannel, targetChannel, viewers)
-            };
-            client.RaiseEvent("OnHostingStarted", model);
-        }
-
-        /// <summary>
-        /// Invokes the on hosting stopped.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="hostingChannel">The hosting channel.</param>
-        /// <param name="viewers">The viewers.</param>
-        public static void InvokeOnHostingStopped(this TwitchClient client, string hostingChannel, int viewers)
-        {
-            OnHostingStoppedArgs model = new OnHostingStoppedArgs()
-            {
-                HostingStopped = new HostingStopped(hostingChannel, viewers)
-            };
-            client.RaiseEvent("OnHostingStopped", model);
-        }
-
-        /// <summary>
-        /// Invokes the host left.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        public static void InvokeHostLeft(this TwitchClient client)
-        {
-            client.RaiseEvent("OnHostLeft");
         }
 
         /// <summary>
@@ -482,22 +425,6 @@ namespace TwitchLib.Client.Extensions
         }
 
         /// <summary>
-        /// Invokes the now hosting.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="channel">The channel.</param>
-        /// <param name="hostedChannel">The hosted channel.</param>
-        public static void InvokeNowHosting(this TwitchClient client, string channel, string hostedChannel)
-        {
-            OnNowHostingArgs model = new OnNowHostingArgs()
-            {
-                Channel = channel,
-                HostedChannel = hostedChannel
-            };
-            client.RaiseEvent("OnNowHosting", model);
-        }
-
-        /// <summary>
         /// Invokes the raid notification.
         /// </summary>
         /// <param name="client">The client.</param>
@@ -667,13 +594,14 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">The client.</param>
         /// <param name="channel">The channel.</param>
         /// <param name="username">The username.</param>
+        /// <param name="targetUserId">The user Id.</param>
         /// <param name="timeoutDuration">Duration of the timeout.</param>
         /// <param name="timeoutReason">The timeout reason.</param>
-        public static void InvokeUserTimedout(this TwitchClient client, string channel, string username, int timeoutDuration, string timeoutReason)
+        public static void InvokeUserTimedout(this TwitchClient client, string channel, string username, string targetUserId, int timeoutDuration, string timeoutReason)
         {
             OnUserTimedoutArgs model = new OnUserTimedoutArgs()
             {
-                UserTimeout = new UserTimeout(channel, username, timeoutDuration, timeoutReason)
+                UserTimeout = new UserTimeout(channel, username, targetUserId, timeoutDuration, timeoutReason)
             };
             client.RaiseEvent("OnUserTimedout", model);
         }
