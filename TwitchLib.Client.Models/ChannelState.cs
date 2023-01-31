@@ -16,7 +16,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing whether EmoteOnly mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public bool? EmoteOnly { get; }
 
-        /// <summary>Property representing how long needed to be following to talk. TimeSpan.MinValue indicates that FollowersOnly mode is switched off, If null, FollowersOnly is not enabled.</summary>
+        /// <summary>Property representing how long needed to be following to talk. TimeSpan.MinValue indicates that FollowersOnly mode is switched off, If null, FollowersOnly status is not changed.</summary>
         public TimeSpan? FollowersOnly { get; } = null;
 
         /// <summary>Property representing mercury value. Not sure what it's for.</summary>
