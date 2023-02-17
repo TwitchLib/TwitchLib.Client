@@ -837,6 +837,7 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             // Channel MUST be lower case
             channel = channel.ToLower();
+            if (channel[0] == '#') channel = channel.Substring(1);
             Log($"Leaving channel: {channel}", level: LogLevel.Information);
             JoinedChannel joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
             if (joinedChannel != null)
