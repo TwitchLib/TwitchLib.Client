@@ -28,7 +28,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing whether Rituals is enabled or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public bool? Rituals { get; }
 
-        /// <summary>Twitch assignedc room id</summary>
+        /// <summary>Twitch assigned room id</summary>
         public string RoomId { get; }
 
         /// <summary>Property representing whether Slow mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
