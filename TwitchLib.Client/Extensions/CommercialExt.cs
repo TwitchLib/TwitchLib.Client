@@ -16,6 +16,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">JoinedChannel representation of the channel to send the ad to.</param>
         /// <param name="length">Enum representing the length of advertisement should be.</param>
         /// <exception cref="ArgumentOutOfRangeException">length - null</exception>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Ads.StartCommercialAsync() instead.")]
         public static void StartCommercial(this ITwitchClient client, JoinedChannel channel, Enums.CommercialLength length)
         {
             switch (length)
@@ -50,6 +51,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">String representation of the channel to send the ad to.</param>
         /// <param name="length">Enum representing the length of advertisement should be.</param>
         /// <exception cref="ArgumentOutOfRangeException">length - null</exception>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Ads.StartCommercialAsync() instead.")]
         public static void StartCommercial(this ITwitchClient client, string channel, Enums.CommercialLength length)
         {
             switch (length)

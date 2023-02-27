@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Interfaces;
+﻿using System;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -14,6 +15,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of which channel to send the command to.</param>
         /// <param name="viewerToMod">Username of the viewer to make a moderator.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.AddChannelModeratorAsync() instead.")]
         public static void Mod(this ITwitchClient client, JoinedChannel channel, string viewerToMod)
         {
             client.SendMessage(channel, $".mod {viewerToMod}");
@@ -25,6 +27,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of which channel to send the command to.</param>
         /// <param name="viewerToMod">Username of the viewer to make a moderator.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.AddChannelModeratorAsync() instead.")]
         public static void Mod(this ITwitchClient client, string channel, string viewerToMod)
         {
             client.SendMessage(channel, $".mod {viewerToMod}");
@@ -36,6 +39,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of which channel to send the command to.</param>
         /// <param name="viewerToUnmod">Username of the viewer to remove moderator status from.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.DeleteChannelModeratorAsync() instead.")]
         public static void Unmod(this ITwitchClient client, JoinedChannel channel, string viewerToUnmod)
         {
             client.SendMessage(channel, $".unmod {viewerToUnmod}");
@@ -47,6 +51,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of which channel to send the command to.</param>
         /// <param name="viewerToUnmod">Username of the viewer to remove moderator status from.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.DeleteChannelModeratorAsync() instead.")]
         public static void Unmod(this ITwitchClient client, string channel, string viewerToUnmod)
         {
             client.SendMessage(channel, $".unmod {viewerToUnmod}");

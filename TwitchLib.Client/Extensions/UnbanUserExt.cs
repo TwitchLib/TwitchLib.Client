@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Interfaces;
+﻿using System;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -15,6 +16,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">JoinedChannel object to send unban to</param>
         /// <param name="viewer">Viewer name to unban</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.UnbanUserAsync() instead.")]
         public static void UnbanUser(this ITwitchClient client, JoinedChannel channel, string viewer, bool dryRun = false)
         {
             client.SendMessage(channel, $".unban {viewer}", dryRun);
@@ -27,6 +29,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">Channel in string form to send unban to</param>
         /// <param name="viewer">Viewer name to unban</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.UnbanUserAsync() instead.")]
         public static void UnbanUser(this ITwitchClient client, string channel, string viewer, bool dryRun = false)
         {
             JoinedChannel joinedChannel = client.GetJoinedChannel(channel);

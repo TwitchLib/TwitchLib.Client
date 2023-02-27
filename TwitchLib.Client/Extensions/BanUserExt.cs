@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Interfaces;
+﻿using System;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -16,6 +17,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="viewer">Viewer name to ban</param>
         /// <param name="message">Message to accompany the ban and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.BanUserAsync() instead.")]
         public static void BanUser(this ITwitchClient client, JoinedChannel channel, string viewer, string message = "", bool dryRun = false)
         {
             client.SendMessage(channel, $".ban {viewer} {message}");
@@ -29,6 +31,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="viewer">Viewer name to ban</param>
         /// <param name="message">Message to accompany the ban and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not send if true)</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.BanUserAsync() instead.")]
         public static void BanUser(this ITwitchClient client, string channel, string viewer, string message = "", bool dryRun = false)
         {
             JoinedChannel joinedChannel = client.GetJoinedChannel(channel);

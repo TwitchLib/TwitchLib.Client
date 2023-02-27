@@ -16,6 +16,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of which channel to send delete message command to.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.DeleteChatMessagesAsync() instead.")]
         public static void DeleteMessage(this ITwitchClient client, JoinedChannel channel, string messageId)
         {
             client.SendMessage(channel, $".delete {messageId}");
@@ -26,6 +27,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of which channel to delete message command to.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.DeleteChatMessagesAsync() instead.")]
         public static void DeleteMessage(this ITwitchClient client, string channel, string messageId)
         {
             client.SendMessage(channel, $".delete {messageId}");
@@ -37,6 +39,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of which channel to send delete message command to.</param>
         /// <param name="msg">ChatMessage object representing chat message that should be deleted.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.DeleteChatMessagesAsync() instead.")]
         public static void DeleteMessage(this ITwitchClient client, JoinedChannel channel, ChatMessage msg)
         {
             client.SendMessage(channel, $".delete {msg.Id}");
@@ -48,6 +51,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of which channel to delete message command to.</param>
         /// <param name="msg">ChatMessage object representing chat message that should be deleted.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.DeleteChatMessagesAsync() instead.")]
         public static void DeleteMessage(this ITwitchClient client, string channel, ChatMessage msg)
         {
             client.SendMessage(channel, $".delete {msg.Id}");

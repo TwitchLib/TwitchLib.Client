@@ -23,6 +23,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">JoinedChannel object representing which channel to send command to.</param>
         /// <param name="requiredFollowTime">Amount of time required to pass before a viewer can chat. Maximum is 3 months (90 days).</param>
         /// <exception cref="TwitchLib.Client.Exceptions.InvalidParameterException">The amount of time required to chat exceeded the maximum allowed by Twitch, which is 3 months.</exception>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.UpdateChatSettingsAsync() instead.")]
         public static void FollowersOnlyOn(this ITwitchClient client, JoinedChannel channel, TimeSpan requiredFollowTime)
         {
             if (requiredFollowTime > TimeSpan.FromDays(MaximumDurationAllowedDays))
@@ -40,6 +41,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">String representing the channel to send the command to.</param>
         /// <param name="requiredFollowTime">Amount of time required to pass before a viewer can chat. Maximum is 3 months (90 days).</param>
         /// <exception cref="TwitchLib.Client.Exceptions.InvalidParameterException">The amount of time required to chat exceeded the maximum allowed by Twitch, which is 3 months.</exception>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.UpdateChatSettingsAsync() instead.")]
         public static void FollowersOnlyOn(this ITwitchClient client, string channel, TimeSpan requiredFollowTime)
         {
             if (requiredFollowTime > TimeSpan.FromDays(MaximumDurationAllowedDays))
@@ -55,6 +57,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of channel to send command to</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.UpdateChatSettingsAsync() instead.")]
         public static void FollowersOnlyOff(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".followersoff");
@@ -65,6 +68,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of which channel to send the command to.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.UpdateChatSettingsAsync() instead.")]
         public static void FollowersOnlyOff(this TwitchClient client, string channel)
         {
             client.SendMessage(channel, ".followersoff");
