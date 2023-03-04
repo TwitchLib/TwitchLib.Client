@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Interfaces;
+﻿using System;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -14,6 +15,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of the channel to send the VIP command to.</param>
         /// <param name="viewerToVIP">The viewer to vip.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Channels.AddChannelVIPAsync() instead.")]
         public static void VIP(this ITwitchClient client, JoinedChannel channel, string viewerToVIP)
         {
             client.SendMessage(channel, $".vip {viewerToVIP}");
@@ -25,6 +27,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of the channel to send the VIP command to.</param>
         /// <param name="viewerToVIP">The viewer to vip.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Channels.AddChannelVIPAsync() instead.")]
         public static void VIP(this ITwitchClient client, string channel, string viewerToVIP)
         {
             client.SendMessage(channel, $".vip {viewerToVIP}");
@@ -36,6 +39,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of the channel to send the unvip command to.</param>
         /// <param name="viewerToUnVIP">The viewer to un vip.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Channels.RemoveChannelVIPAsync() instead.")]
         public static void UnVIP(this ITwitchClient client, JoinedChannel channel, string viewerToUnVIP)
         {
             client.SendMessage(channel, $".unvip {viewerToUnVIP}");
@@ -47,6 +51,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of the channel to send the unvip command to.</param>
         /// <param name="viewerToUnVIP">The viewer to un vip.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Channels.RemoveChannelVIPAsync() instead.")]
         public static void UnVIP(this ITwitchClient client, string channel, string viewerToUnVIP)
         {
             client.SendMessage(channel, $".unvip {viewerToUnVIP}");
@@ -57,6 +62,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of the channel to send the vips command to.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Channels.GetVIPsAsync() instead.")]
         public static void GetVIPs(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".vips");
@@ -67,6 +73,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of the channel to send the vips command to.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Channels.GetVIPsAsync() instead.")]
         public static void GetVIPs(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".vips");

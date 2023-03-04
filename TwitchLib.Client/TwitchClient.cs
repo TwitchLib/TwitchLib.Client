@@ -670,6 +670,7 @@ namespace TwitchLib.Client
         /// <param name="receiver">The receiver of the whisper.</param>
         /// <param name="message">The message to be sent.</param>
         /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Whispers.SendWhisperAsync() instead.")]
         public void SendWhisper(string receiver, string message, bool dryRun = false)
         {
             if (!IsInitialized) HandleNotInitialized();

@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Interfaces;
+﻿using System;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -14,6 +15,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel object to announce to</param>
         /// <param name="message">Message to announce</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.SendChatAnnouncementAsync() instead.")]
         public static void Announce(this ITwitchClient client, JoinedChannel channel, string message)
         {
             client.SendMessage(channel, $".announce {message}");
@@ -25,6 +27,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">Channel in string form to send announce to</param>
         /// <param name="message">Message to announce</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.SendChatAnnouncementAsync() instead.")]
         public static void Announce(this ITwitchClient client, string channel, string message)
         {
             client.SendMessage(channel, $".announce {message}");

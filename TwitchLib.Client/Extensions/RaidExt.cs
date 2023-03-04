@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Interfaces;
+﻿using System;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -14,6 +15,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of which channel to send the command to.</param>
         /// <param name="channelToRaid">Channel to begin raid on.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Raids.StartRaidAsync() instead.")]
         public static void Raid(this ITwitchClient client, JoinedChannel channel, string channelToRaid)
         {
             client.SendMessage(channel, $".raid {channelToRaid}");
@@ -25,6 +27,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of which channel to send the command to.</param>
         /// <param name="channelToRaid">Channel to begin raid on.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Raids.StartRaidAsync() instead.")]
         public static void Raid(this ITwitchClient client, string channel, string channelToRaid)
         {
             client.SendMessage(channel, $".raid {channelToRaid}");
