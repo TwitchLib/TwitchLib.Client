@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 using TwitchLib.Client.Events;
@@ -8,6 +9,7 @@ using Xunit;
 
 namespace TwitchLib.Client.Test
 {
+    [SuppressMessage("Style", "IDE0058")]
     public class TwitchClientEventTests
     {
         private const string TWITCH_BOT_USERNAME = "testuser";
@@ -187,9 +189,10 @@ namespace TwitchLib.Client.Test
         }
 
         #region Messages for Tests
-
+        [SuppressMessage("Style", "IDE0051")]
         private void ReceivedUserNoticeMessage()
         {
+            // SuppressMessage IDE0051 - perhaps it is going to be used again...
             _mockClient.ReceiveMessage("@badges=subscriber/0;color=#0000FF;display-name=KittyJinxu;emotes=30259:0-6;id=1154b7c0-8923-464e-a66b-3ef55b1d4e50;login=kittyjinxu;mod=0;msg-id=ritual;msg-param-ritual-name=new_chatter;room-id=35740817;subscriber=1;system-msg=@KittyJinxu\\sis\\snew\\shere.\\sSay\\shello!;tmi-sent-ts=1514387871555;turbo=0;user-id=187446639;user-type= USERNOTICE #testchannel kittyjinxu > #testchannel: HeyGuys");
         }
 
