@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,6 +10,7 @@ using TwitchLib.Client.Models.Internal;
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing a received whisper from TwitchWhisperClient</summary>
+    [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
     public class WhisperMessage : TwitchLibMessage
     {
         /// <summary>Property representing message identifier.</summary>

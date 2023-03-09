@@ -4,6 +4,7 @@ using System.Drawing;
 
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -957,6 +958,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="argumentsAsString">The arguments as string.</param>
         /// <param name="argumentsAsList">The arguments as list.</param>
         /// <param name="commandIdentifier">The command identifier.</param>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public static void InvokeWhisperCommandReceived(this TwitchClient client,
                                                         List<KeyValuePair<string, string>> badges,
                                                         string colorHex,
@@ -976,12 +978,7 @@ namespace TwitchLib.Client.Extensions
                                                         List<string> argumentsAsList,
                                                         char commandIdentifier)
         {
-            WhisperMessage whisperMsg = new WhisperMessage(badges, colorHex, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType);
-            OnWhisperCommandReceivedArgs model = new OnWhisperCommandReceivedArgs()
-            {
-                Command = new WhisperCommand(whisperMsg, commandText, argumentsAsString, argumentsAsList, commandIdentifier)
-            };
-            client.RaiseEvent(nameof(client.OnWhisperCommandReceived), model);
+
         }
 
         /// <summary>
@@ -1001,6 +998,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="botUsername">The bot username.</param>
         /// <param name="message">The message.</param>
         /// <param name="userType">Type of the user.</param>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public static void InvokeWhisperReceived(this TwitchClient client,
                                                  List<KeyValuePair<string, string>> badges,
                                                  string colorHex,
@@ -1016,23 +1014,6 @@ namespace TwitchLib.Client.Extensions
                                                  string message,
                                                  UserType userType)
         {
-            OnWhisperReceivedArgs model = new OnWhisperReceivedArgs()
-            {
-                WhisperMessage = new WhisperMessage(badges,
-                                                    colorHex,
-                                                    color,
-                                                    username,
-                                                    displayName,
-                                                    emoteSet,
-                                                    threadId,
-                                                    messageId,
-                                                    userId,
-                                                    isTurbo,
-                                                    botUsername,
-                                                    message,
-                                                    userType)
-            };
-            client.RaiseEvent(nameof(client.OnWhisperReceived), model);
         }
 
         /// <summary>
@@ -1042,18 +1023,12 @@ namespace TwitchLib.Client.Extensions
         /// <param name="username">The username.</param>
         /// <param name="receiver">The receiver.</param>
         /// <param name="message">The message.</param>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public static void InvokeWhisperSent(this TwitchClient client,
                                              string username,
                                              string receiver,
                                              string message)
         {
-            OnWhisperSentArgs model = new OnWhisperSentArgs()
-            {
-                Message = message,
-                Receiver = receiver,
-                Username = username
-            };
-            client.RaiseEvent(nameof(client.OnWhisperSent), model);
         }
     }
 }

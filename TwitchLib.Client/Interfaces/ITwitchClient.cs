@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;
 
@@ -51,6 +52,7 @@ namespace TwitchLib.Client.Interfaces
         /// Gets the previous whisper.
         /// </summary>
         /// <value>The previous whisper.</value>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         WhisperMessage PreviousWhisper { get; }
         /// <summary>
         /// Gets the twitch username.
@@ -173,14 +175,17 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Occurs when [on whisper command received].
         /// </summary>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         event EventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
         /// <summary>
         /// Occurs when [on whisper received].
         /// </summary>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         event EventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
         /// <summary>
         /// Occurs when [on whisper sent].
         /// </summary>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         event EventHandler<OnWhisperSentArgs> OnWhisperSent;
         /// <summary>
         /// Occurs when [on message throttled].
@@ -189,6 +194,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Occurs when [on whisper throttled].
         /// </summary>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
         /// <summary>
         /// Occurs when [on error].
@@ -271,6 +277,7 @@ namespace TwitchLib.Client.Interfaces
         /// Adds the whisper command identifier.
         /// </summary>
         /// <param name="identifier">The identifier.</param>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         void AddWhisperCommandIdentifier(char identifier);
         /// <summary>
         /// Removes the chat command identifier.
@@ -281,6 +288,7 @@ namespace TwitchLib.Client.Interfaces
         /// Removes the whisper command identifier.
         /// </summary>
         /// <param name="identifier">The identifier.</param>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         void RemoveWhisperCommandIdentifier(char identifier);
 
         /// <summary>
@@ -373,6 +381,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="receiver">The receiver.</param>
         /// <param name="message">The message.</param>
         /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         void SendWhisper(string receiver, string message, bool dryRun = false);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace TwitchLib.Client.Enums.Internal
+﻿using System;
+
+namespace TwitchLib.Client.Enums.Internal
 {
     public enum IrcCommand
     {
@@ -25,6 +27,7 @@
         RPL_372,
         RPL_375,
         RPL_376,
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         Whisper,
         RoomState,
         Reconnect,

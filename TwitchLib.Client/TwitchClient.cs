@@ -44,10 +44,6 @@ namespace TwitchLib.Client
         /// </summary>
         private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
         /// <summary>
-        /// The whisper command identifiers
-        /// </summary>
-        private readonly ICollection<char> _whisperCommandIdentifiers = new HashSet<char>();
-        /// <summary>
         /// The join channel queue
         /// </summary>
         private readonly Queue<JoinedChannel> _joinChannelQueue = new Queue<JoinedChannel>();
@@ -117,6 +113,7 @@ namespace TwitchLib.Client
         /// The most recent whisper received.
         /// </summary>
         /// <value>The previous whisper.</value>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public WhisperMessage PreviousWhisper { get; private set; }
         /// <summary>
         /// The current connection status of the client.
@@ -205,6 +202,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when a new whisper arrives, returns WhisperMessage.
         /// </summary>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public event EventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
 
         /// <summary>
@@ -215,6 +213,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when a whisper message is sent, returns username and message.
         /// </summary>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public event EventHandler<OnWhisperSentArgs> OnWhisperSent;
 
         /// <summary>
@@ -225,6 +224,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when command (uses custom whisper command identifier) is received, returns command, Whispermessage.
         /// </summary>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public event EventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
 
         /// <summary>
@@ -508,8 +508,6 @@ namespace TwitchLib.Client
             TwitchUsername = ConnectionCredentials.TwitchUsername;
             if (chatCommandIdentifier != '\0')
                 _chatCommandIdentifiers.Add(chatCommandIdentifier);
-            if (whisperCommandIdentifier != '\0')
-                _whisperCommandIdentifiers.Add(whisperCommandIdentifier);
 
             AutoReListenOnException = autoReListenOnExceptions;
 
@@ -555,7 +553,6 @@ namespace TwitchLib.Client
             _client.OnDisconnected += Client_OnDisconnected;
             _client.OnFatality += Client_OnFatality;
             _client.OnMessageThrottled += Client_OnMessageThrottled;
-            _client.OnWhisperThrottled += Client_OnWhisperThrottled;
             _client.OnReconnected += Client_OnReconnected;
         }
 
@@ -698,21 +695,11 @@ namespace TwitchLib.Client
         /// <param name="receiver">The receiver of the whisper.</param>
         /// <param name="message">The message to be sent.</param>
         /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void SendWhisper(string receiver, string message, bool dryRun = false)
         {
             if (!IsInitialized) HandleNotInitialized();
             if (dryRun) return;
-
-            OutboundWhisperMessage twitchMessage = new OutboundWhisperMessage
-            {
-                Receiver = receiver,
-                Username = ConnectionCredentials.TwitchUsername,
-                Message = message
-            };
-
-            _client.SendWhisper(twitchMessage.ToString());
-
-            OnWhisperSent?.Invoke(this, new OnWhisperSentArgs { Receiver = receiver, Message = message });
         }
 
         #endregion
@@ -750,7 +737,6 @@ namespace TwitchLib.Client
 
             // Clear instance data
             _joinedChannelManager.Clear();
-            PreviousWhisper = null;
         }
 
         /// <summary>
@@ -779,7 +765,6 @@ namespace TwitchLib.Client
         /// Removes a character from a list of characters that if found at the start of a message, fires command received event.
         /// </summary>
         /// <param name="identifier">Command identifier to removed from identifier list.</param>
-        [SuppressMessage("Style", "IDE0058")]
         public void RemoveChatCommandIdentifier(char identifier)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -790,20 +775,20 @@ namespace TwitchLib.Client
         /// Adds a character to a list of characters that if found at the start of a whisper, fires command received event.
         /// </summary>
         /// <param name="identifier">Character, that if found at start of message, fires command received event.</param>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void AddWhisperCommandIdentifier(char identifier)
         {
             if (!IsInitialized) HandleNotInitialized();
-            _whisperCommandIdentifiers.Add(identifier);
         }
 
         /// <summary>
         /// Removes a character to a list of characters that if found at the start of a whisper, fires command received event.
         /// </summary>
         /// <param name="identifier">Command identifier to removed from identifier list.</param>
+        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void RemoveWhisperCommandIdentifier(char identifier)
         {
             if (!IsInitialized) HandleNotInitialized();
-            _whisperCommandIdentifiers.Remove(identifier);
         }
         #endregion
 
@@ -903,16 +888,6 @@ namespace TwitchLib.Client
         }
 
         #region Client Events
-
-        /// <summary>
-        /// Handles the OnWhisperThrottled event of the _client control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="OnWhisperThrottledEventArgs" /> instance containing the event data.</param>
-        private void Client_OnWhisperThrottled(object sender, OnWhisperThrottledEventArgs e)
-        {
-            OnWhisperThrottled?.Invoke(sender, e);
-        }
 
         /// <summary>
         /// Handles the OnMessageThrottled event of the _client control.
@@ -1423,22 +1398,7 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private void HandleWhisper(IrcMessage ircMessage)
         {
-            WhisperMessage whisperMessage = new WhisperMessage(ircMessage, TwitchUsername);
-            PreviousWhisper = whisperMessage;
-            OnWhisperReceived?.Invoke(this, new OnWhisperReceivedArgs { WhisperMessage = whisperMessage });
-
-            if (_whisperCommandIdentifiers != null && _whisperCommandIdentifiers.Count != 0 && !String.IsNullOrEmpty(whisperMessage.Message))
-            {
-                if (_whisperCommandIdentifiers.Contains(whisperMessage.Message[0]))
-                {
-                    WhisperCommand whisperCommand = new WhisperCommand(whisperMessage);
-                    OnWhisperCommandReceived?.Invoke(this, new OnWhisperCommandReceivedArgs { Command = whisperCommand });
-                    return;
-                }
-            }
-
-            OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "WhispergHandling", RawIRC = ircMessage.ToString() });
-            UnaccountedFor(ircMessage.ToString());
+            // TODO: logging or something like that?
         }
 
         /// <summary>

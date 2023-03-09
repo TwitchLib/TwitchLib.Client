@@ -1,5 +1,7 @@
 ﻿using System;
 
+using TwitchLib.Client.Internal;
+
 namespace TwitchLib.Client.Events
 {
     /// <summary>
@@ -8,6 +10,7 @@ namespace TwitchLib.Client.Events
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
+    [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
     public class OnWhisperSentArgs : EventArgs
     {
         /// <summary>
