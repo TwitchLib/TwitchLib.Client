@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
@@ -32,7 +33,7 @@ namespace TwitchLib.Client.Models
         public string UserId { get; }
         public UserType UserType { get; }
         public string MsgParamMultiMonthGiftDuration { get; }
-
+        [SuppressMessage("Style", "IDE0058")]
         public CommunitySubscription(IrcMessage ircMessage)
         {
             foreach (string tag in ircMessage.Tags.Keys)
@@ -91,10 +92,12 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.MsgParamMassGiftCount:
+                        // Suppressed IDE0058
                         Int32.TryParse(tagValue, out int massGiftCount);
                         MsgParamMassGiftCount = massGiftCount;
                         break;
                     case Tags.MsgParamSenderCount:
+                        // Suppressed IDE0058
                         Int32.TryParse(tagValue, out int senderCount);
                         MsgParamSenderCount = senderCount;
                         break;
