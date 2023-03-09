@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 // TODO: Missing builder
@@ -327,6 +328,7 @@ namespace TwitchLib.Client.Models
         ///     Removes the specified <see cref="MessageEmote"/> from the collection.
         /// </summary>
         /// <param name="emote">The <see cref="MessageEmote"/> to remove.</param>
+        [SuppressMessage("Style", "IDE0058")]
         public void Remove(MessageEmote emote)
         {
             if (!_emoteList.ContainsKey(emote.Text)) return;
