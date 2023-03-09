@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using TwitchLib.Client.Models.Builders;
 
@@ -53,18 +54,18 @@ namespace TwitchLib.Client.Models.Extractors
 
         private Emote GetEmote(string emoteData, string emoteId, string message, bool single = false)
         {
-            int startIndex = -1;
-            int endIndex = -1;
+            int startIndex;
+            int endIndex;
 
             if (single)
             {
-                startIndex = System.Int32.Parse(emoteData.Split(':')[1].Split('-')[0]);
-                endIndex = System.Int32.Parse(emoteData.Split(':')[1].Split('-')[1]);
+                startIndex = Int32.Parse(emoteData.Split(':')[1].Split('-')[0]);
+                endIndex = Int32.Parse(emoteData.Split(':')[1].Split('-')[1]);
             }
             else
             {
-                startIndex = System.Int32.Parse(emoteData.Split('-')[0]);
-                endIndex = System.Int32.Parse(emoteData.Split('-')[1]);
+                startIndex = Int32.Parse(emoteData.Split('-')[0]);
+                endIndex = Int32.Parse(emoteData.Split('-')[1]);
             }
 
             string name = message.Substring(startIndex, endIndex - startIndex + 1);
