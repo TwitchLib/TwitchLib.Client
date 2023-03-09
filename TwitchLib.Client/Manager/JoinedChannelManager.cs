@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using TwitchLib.Client.Models;
@@ -29,6 +30,7 @@ namespace TwitchLib.Client.Manager
         /// Adds the joined channel.
         /// </summary>
         /// <param name="joinedChannel">The joined channel.</param>
+        [SuppressMessage("Style", "IDE0058")]
         public void AddJoinedChannel(JoinedChannel joinedChannel)
         {
             _joinedChannels.TryAdd(joinedChannel.Channel, joinedChannel);
@@ -38,7 +40,8 @@ namespace TwitchLib.Client.Manager
         /// Gets the joined channel.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        /// <returns>JoinedChannel.</returns>
+        /// <returns><see cref="JoinedChannel"/></returns>
+        [SuppressMessage("Style", "IDE0058")]
         public JoinedChannel GetJoinedChannel(string channel)
         {
             _joinedChannels.TryGetValue(channel, out JoinedChannel joinedChannel);
@@ -58,6 +61,7 @@ namespace TwitchLib.Client.Manager
         /// Removes the joined channel.
         /// </summary>
         /// <param name="channel">The channel.</param>
+        [SuppressMessage("Style", "IDE0058")]
         public void RemoveJoinedChannel(string channel)
         {
             _joinedChannels.TryRemove(channel, out _);
