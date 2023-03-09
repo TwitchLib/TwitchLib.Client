@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -579,17 +580,19 @@ namespace TwitchLib.Client
         /// Sends a RAW IRC message.
         /// </summary>
         /// <param name="message">The RAW message to be sent.</param>
+        [SuppressMessage("Style", "IDE0058")]
         public void SendRaw(string message)
         {
             if (!IsInitialized) HandleNotInitialized();
 
             Log($"Writing: {message}");
+            // IDE0058 - client raises OnSendFailed if this method returns false
             _client.Send(message);
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
 
         #region SendMessage
-
+        [SuppressMessage("Style", "IDE0058")]
         private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -613,7 +616,7 @@ namespace TwitchLib.Client
 
             _lastMessageSent = message;
 
-
+            // IDE0058 - client raises OnSendFailed if this method returns false
             _client.Send(twitchMessage.ToString());
         }
 
@@ -753,6 +756,7 @@ namespace TwitchLib.Client
         /// Removes a character from a list of characters that if found at the start of a message, fires command received event.
         /// </summary>
         /// <param name="identifier">Command identifier to removed from identifier list.</param>
+        [SuppressMessage("Style", "IDE0058")]
         public void RemoveChatCommandIdentifier(char identifier)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -838,6 +842,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="channel">The channel to leave.</param>
         /// <returns>True is returned if the passed channel was found, false if channel not found.</returns>
+        [SuppressMessage("Style", "IDE0058")]
         public void LeaveChannel(string channel)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -847,6 +852,7 @@ namespace TwitchLib.Client
             Log($"Leaving channel: {channel}");
             JoinedChannel joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
             if (joinedChannel != null)
+                // IDE0058 - client raises OnSendFailed if this method returns false
                 _client.Send(Rfc2812.Part($"#{channel}"));
         }
 
@@ -957,8 +963,10 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
+        [SuppressMessage("Style", "IDE0058")]
         private void Client_OnConnected(object sender, object e)
         {
+            // IDE0058 - client raises OnSendFailed if this method returns false
             _client.Send(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
             _client.Send(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));
             _client.Send(Rfc2812.User(ConnectionCredentials.TwitchUsername, 0, ConnectionCredentials.TwitchUsername));
@@ -983,6 +991,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Queueings the join check.
         /// </summary>
+        [SuppressMessage("Style", "IDE0058")]
         private void QueueingJoinCheck()
         {
             if (_joinChannelQueue.Count > 0)
@@ -990,6 +999,8 @@ namespace TwitchLib.Client
                 _currentlyJoiningChannels = true;
                 JoinedChannel channelToJoin = _joinChannelQueue.Dequeue();
                 Log($"Joining channel: {channelToJoin.Channel}");
+
+                // IDE0058 - client raises OnSendFailed if this method returns false
                 // important we set channel to lower case when sending join message
                 _client.Send(Rfc2812.Join($"#{channelToJoin.Channel.ToLower()}"));
                 _joinedChannelManager.AddJoinedChannel(new JoinedChannel(channelToJoin.Channel));
@@ -1027,6 +1038,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="System.Timers.ElapsedEventArgs" /> instance containing the event data.</param>
+        [SuppressMessage("Style", "IDE0058")]
         private void JoinChannelTimeout(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (_awaitingJoins.Any())
@@ -1034,6 +1046,7 @@ namespace TwitchLib.Client
                 List<KeyValuePair<string, DateTime>> expiredChannels = _awaitingJoins.Where(x => (DateTime.Now - x.Value).TotalSeconds > 5).ToList();
                 if (expiredChannels.Any())
                 {
+                    // IDE0058
                     _awaitingJoins.RemoveAll(x => (DateTime.Now - x.Value).TotalSeconds > 5);
                     foreach (KeyValuePair<string, DateTime> expiredChannel in expiredChannels)
                     {
@@ -1179,6 +1192,7 @@ namespace TwitchLib.Client
         /// Handles the notice.
         /// </summary>
         /// <param name="ircMessage">The irc message.</param>
+        [SuppressMessage("Style", "IDE0058")]
         private void HandleNotice(IrcMessage ircMessage)
         {
             if (ircMessage.Message.Contains("Improperly formatted auth"))
@@ -1218,6 +1232,7 @@ namespace TwitchLib.Client
                     OnBannedEmailAlias?.Invoke(this, new OnBannedEmailAliasArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
                 case MsgIds.MsgChannelSuspended:
+                    // IDE0058
                     _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
                     _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
                     QueueingJoinCheck();
@@ -1286,11 +1301,13 @@ namespace TwitchLib.Client
         /// Handles the part.
         /// </summary>
         /// <param name="ircMessage">The irc message.</param>
+        [SuppressMessage("Style", "IDE0058")]
         private void HandlePart(IrcMessage ircMessage)
         {
             if (String.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
             {
                 _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
+                // IDE0058
                 _hasSeenJoinedChannels.Remove(ircMessage.Channel);
                 OnLeftChannel?.Invoke(this, new OnLeftChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
             }
@@ -1405,6 +1422,7 @@ namespace TwitchLib.Client
         /// Handles the state of the room.
         /// </summary>
         /// <param name="ircMessage">The irc message.</param>
+        [SuppressMessage("Style", "IDE0058")]
         private void HandleRoomState(IrcMessage ircMessage)
         {
             // If ROOMSTATE is sent because a mode (subonly/slow/emote/etc) is being toggled, it has two tags: room-id, and the specific mode being toggled
@@ -1412,6 +1430,7 @@ namespace TwitchLib.Client
             if (ircMessage.Tags.Count > 2)
             {
                 KeyValuePair<string, DateTime> channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
+                // IDE0058
                 _awaitingJoins.Remove(channel);
                 OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
             }
@@ -1553,9 +1572,11 @@ namespace TwitchLib.Client
         /// Sends the queued item.
         /// </summary>
         /// <param name="message">The message.</param>
+        [SuppressMessage("Style", "IDE0058")]
         public void SendQueuedItem(string message)
         {
             if (!IsInitialized) HandleNotInitialized();
+            // IDE0058 - client raises OnSendFailed if this method returns false
             _client.Send(message);
         }
 
