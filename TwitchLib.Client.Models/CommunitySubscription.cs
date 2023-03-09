@@ -87,7 +87,8 @@ namespace TwitchLib.Client.Models
                             case "":
                                 break;
                             default:
-                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
+                                // TODO: rather logging than throwing an exception
+                                throw new ArgumentOutOfRangeException(nameof(tagValue));
                         }
                         break;
                     case Tags.MsgParamMassGiftCount:
