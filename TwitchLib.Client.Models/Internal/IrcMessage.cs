@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 using TwitchLib.Client.Enums.Internal;
@@ -88,8 +89,10 @@ namespace TwitchLib.Client.Models.Internal
             }
         }
 
+        [SuppressMessage("Style", "IDE0058")]
         public new string ToString()
         {
+            // SuppressMessage IDE0058 - no daisy chaining with StringBuilder
             StringBuilder raw = new StringBuilder(32);
             if (Tags != null)
             {
