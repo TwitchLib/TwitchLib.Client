@@ -202,7 +202,7 @@ namespace TwitchLib.Client.Models
                         Id = tagValue;
                         break;
                     case Tags.MsgId:
-                        handleMsgId(tagValue);
+                        HandleMsgId(tagValue);
                         break;
                     case Tags.Mod:
                         IsModerator = Common.Helpers.ConvertToBool(tagValue);
@@ -387,7 +387,7 @@ namespace TwitchLib.Client.Models
             Username = userName;
         }
 
-        private void handleMsgId(string val)
+        private void HandleMsgId(string val)
         {
             switch (val)
             {
