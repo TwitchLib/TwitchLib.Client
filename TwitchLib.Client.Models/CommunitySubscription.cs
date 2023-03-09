@@ -91,10 +91,12 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.MsgParamMassGiftCount:
-                        MsgParamMassGiftCount = Int32.Parse(tagValue);
+                        Int32.TryParse(tagValue, out int massGiftCount);
+                        MsgParamMassGiftCount = massGiftCount;
                         break;
                     case Tags.MsgParamSenderCount:
-                        MsgParamSenderCount = Int32.Parse(tagValue);
+                        Int32.TryParse(tagValue, out int senderCount);
+                        MsgParamSenderCount = senderCount;
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
