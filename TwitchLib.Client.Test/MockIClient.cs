@@ -42,9 +42,6 @@ namespace TwitchLib.Client.Test
         public void Dispose()
         { }
 
-        public void Dispose(bool waitForSendsToComplete)
-        { }
-
         public bool Open()
         {
             IsConnected = true;
