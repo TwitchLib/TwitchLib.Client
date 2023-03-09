@@ -566,13 +566,36 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="eventName">Name of the event.</param>
         /// <param name="args">The arguments.</param>
+        [SuppressMessage("Style", "IDE0058")]
         internal void RaiseEvent(string eventName, object args = null)
         {
+            object[] arguments = args == null ? new object[] { this, new EventArgs() } : new[] { this, args };
+#pragma warning disable CS0162
+            if (false)
+            {
+                // for those who come here one time
+                // and think about something like that
+                EventInfo eventInfo = GetType().GetEvent(eventName);
+                MethodInfo methodInfo = eventInfo.GetRaiseMethod(true);
+                methodInfo.Invoke(this, arguments);
+                // try it and take a look at
+                // https://stackoverflow.com/questions/14885325
+                // in March 2023 it didnt work
+                // perhaps one day,
+                // in a far future,
+                // when im gone,
+                // there might be a possibility,
+                // it could work
+                // :D
+            }
+#pragma warning restore CS0162
+
             FieldInfo fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic);
             MulticastDelegate multi = fInfo.GetValue(this) as MulticastDelegate;
             foreach (Delegate del in multi.GetInvocationList())
             {
-                del.Method.Invoke(del.Target, args == null ? new object[] { this, new EventArgs() } : new[] { this, args });
+                // IDE0058
+                del.Method.Invoke(del.Target, arguments);
             }
         }
 
