@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -703,6 +704,8 @@ namespace TwitchLib.Client.Internal
         /// newModeParameters</exception>
         /// <exception cref="ArgumentException">newModes and newModeParameters must have the same size.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Length - Mode change list is too large (&gt; {maxModeChanges}</exception>
+        [SuppressMessage("Style", "IDE0058")]
+        [Obsolete("This method doesnt seem to be used")]
         public static string Mode(string target, string[] newModes, string[] newModeParameters)
         {
             if (newModes == null)
@@ -739,6 +742,7 @@ namespace TwitchLib.Client.Internal
                     {
                         break;
                     }
+                    // SuppressMessage IDE0058 - no daisy chaining
                     newMode.Append(newModes[i + j]);
                 }
 
@@ -748,7 +752,9 @@ namespace TwitchLib.Client.Internal
                     {
                         break;
                     }
+                    // SuppressMessage IDE0058 - no daisy chaining
                     newModeParameter.Append(newModeParameters[i + j]);
+                    // SuppressMessage IDE0058 - no daisy chaining
                     newModeParameter.Append(" ");
                 }
             }
@@ -757,7 +763,9 @@ namespace TwitchLib.Client.Internal
 
             // remove trailing space
             newModeParameter.Length--;
+            // SuppressMessage IDE0058 - no daisy chaining
             newMode.Append(" ");
+            // SuppressMessage IDE0058 - no daisy chaining
             newMode.Append(newModeParameter);
 
             return Mode(target, newMode.ToString());
