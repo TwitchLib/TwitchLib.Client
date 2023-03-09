@@ -98,7 +98,7 @@ namespace TwitchLib.Client.Models
                         break;
                     default:
                         // This should never happen, unless Twitch changes their shit
-                        Console.WriteLine($"Unaccounted for [UserState]: {tag}");
+                        // TODO: rather logging than writing to console!
                         break;
                 }
             }

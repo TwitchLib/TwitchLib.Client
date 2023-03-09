@@ -79,7 +79,7 @@ namespace TwitchLib.Client.Models
                         Mercury = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     default:
-                        Console.WriteLine("[TwitchLib][ChannelState] Unaccounted for: " + tag);
+                        // TODO: rather logging than writing to console!
                         break;
                 }
             }
