@@ -549,13 +549,13 @@ namespace TwitchLib.Client
 
             Debug.Assert(_client != null, nameof(_client) + " != null");
 
-            _client.OnConnected += _client_OnConnected;
-            _client.OnMessage += _client_OnMessage;
-            _client.OnDisconnected += _client_OnDisconnected;
-            _client.OnFatality += _client_OnFatality;
-            _client.OnMessageThrottled += _client_OnMessageThrottled;
-            _client.OnWhisperThrottled += _client_OnWhisperThrottled;
-            _client.OnReconnected += _client_OnReconnected;
+            _client.OnConnected += Client_OnConnected;
+            _client.OnMessage += Client_OnMessage;
+            _client.OnDisconnected += Client_OnDisconnected;
+            _client.OnFatality += Client_OnFatality;
+            _client.OnMessageThrottled += Client_OnMessageThrottled;
+            _client.OnWhisperThrottled += Client_OnWhisperThrottled;
+            _client.OnReconnected += Client_OnReconnected;
         }
 
         #endregion
@@ -880,7 +880,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="OnWhisperThrottledEventArgs" /> instance containing the event data.</param>
-        private void _client_OnWhisperThrottled(object sender, OnWhisperThrottledEventArgs e)
+        private void Client_OnWhisperThrottled(object sender, OnWhisperThrottledEventArgs e)
         {
             OnWhisperThrottled?.Invoke(sender, e);
         }
@@ -890,7 +890,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="OnMessageThrottledEventArgs" /> instance containing the event data.</param>
-        private void _client_OnMessageThrottled(object sender, OnMessageThrottledEventArgs e)
+        private void Client_OnMessageThrottled(object sender, OnMessageThrottledEventArgs e)
         {
             OnMessageThrottled?.Invoke(sender, e);
         }
@@ -900,7 +900,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="OnFatalErrorEventArgs" /> instance containing the event data.</param>
-        private void _client_OnFatality(object sender, OnFatalErrorEventArgs e)
+        private void Client_OnFatality(object sender, OnFatalErrorEventArgs e)
         {
             OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Message = e.Reason } });
         }
@@ -910,7 +910,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="OnDisconnectedEventArgs" /> instance containing the event data.</param>
-        private void _client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
+        private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             OnDisconnected?.Invoke(sender, e);
         }
@@ -920,7 +920,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="OnReconnectedEventArgs" /> instance containing the event data.</param>
-        private void _client_OnReconnected(object sender, OnReconnectedEventArgs e)
+        private void Client_OnReconnected(object sender, OnReconnectedEventArgs e)
         {
             foreach (JoinedChannel channel in _joinedChannelManager.GetJoinedChannels())
             {
@@ -937,7 +937,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="OnMessageEventArgs" /> instance containing the event data.</param>
-        private void _client_OnMessage(object sender, OnMessageEventArgs e)
+        private void Client_OnMessage(object sender, OnMessageEventArgs e)
         {
             string[] stringSeparators = new[] { "\r\n" };
             string[] lines = e.Message.Split(stringSeparators, StringSplitOptions.None);
@@ -957,7 +957,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private void _client_OnConnected(object sender, object e)
+        private void Client_OnConnected(object sender, object e)
         {
             _client.Send(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
             _client.Send(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));
