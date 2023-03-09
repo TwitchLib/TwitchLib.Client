@@ -6,6 +6,7 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
+#pragma warning disable 1591
     public class CommunitySubscription
     {
         private const string AnonymousGifterUserId = "274598607";
@@ -143,4 +144,5 @@ namespace TwitchLib.Client.Models
             }
         }
     }
+#pragma warning restore 1591
 }
