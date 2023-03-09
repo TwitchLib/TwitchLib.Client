@@ -84,6 +84,8 @@ namespace TwitchLib.Client.Models
                             case "3000":
                                 MsgParamSubPlan = SubscriptionPlan.Tier3;
                                 break;
+                            case "":
+                                break;
                             default:
                                 throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
                         }
