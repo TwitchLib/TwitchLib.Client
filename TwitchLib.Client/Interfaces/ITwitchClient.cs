@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;

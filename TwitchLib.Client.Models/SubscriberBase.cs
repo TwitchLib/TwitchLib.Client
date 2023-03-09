@@ -98,15 +98,15 @@ namespace TwitchLib.Client.Models
             RawIrc = ircMessage.ToString();
             ResubMessage = ircMessage.Message;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
                 switch (tag)
                 {
                     case Tags.Badges:
                         Badges = Common.Helpers.ParseBadges(tagValue);
                         // iterate through badges for special circumstances
-                        foreach (var badge in Badges)
+                        foreach (KeyValuePair<string, string> badge in Badges)
                         {
                             if (badge.Key == "partner")
                                 IsPartner = true;
@@ -117,7 +117,7 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Color:
                         ColorHex = tagValue;
-                        if (!string.IsNullOrEmpty(ColorHex))
+                        if (!String.IsNullOrEmpty(ColorHex))
                             Color = ColorTranslator.FromHtml(ColorHex);
                         break;
                     case Tags.DisplayName:

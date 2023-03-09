@@ -52,9 +52,9 @@ namespace TwitchLib.Client.Models
         public RitualNewChatter(IrcMessage ircMessage)
         {
             Message = ircMessage.Message;
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {

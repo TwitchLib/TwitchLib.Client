@@ -1,9 +1,10 @@
 using System;
-using Xunit;
+using System.Threading;
+
 using TwitchLib.Client.Events;
 using TwitchLib.Communication.Events;
-using System.Threading;
-using System.Threading.Tasks;
+
+using Xunit;
 
 namespace TwitchLib.Client.Test
 {
@@ -21,7 +22,7 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void ClientCanReceiveData()
         {
-            var client = new TwitchClient(_mockClient);
+            TwitchClient client = new TwitchClient(_mockClient);
             Assert.Raises<OnSendReceiveDataArgs>(
                     h => client.OnSendReceiveData += h,
                     h => client.OnSendReceiveData -= h,
@@ -36,7 +37,7 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void ClientCanJoinChannels()
         {
-            var client = new TwitchClient( _mockClient);
+            TwitchClient client = new TwitchClient(_mockClient);
             client.OnConnected += (sender, e) =>
             {
                 client.JoinChannel(TWITCH_CHANNEL);
@@ -58,9 +59,9 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void MessageEmoteCollectionFilled()
         {
-            var finish = DateTime.Now.AddSeconds(10);
-            var client = new TwitchClient( _mockClient);
-            var emoteCount = 0;
+            DateTime finish = DateTime.Now.AddSeconds(10);
+            TwitchClient client = new TwitchClient(_mockClient);
+            int emoteCount = 0;
             client.OnConnected += (sender, e) => ReceivedTestMessage();
             client.OnMessageReceived += (sender, e) => emoteCount = e.ChatMessage.EmoteSet.Emotes.Count;
 
@@ -77,7 +78,7 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void ClientRaisesOnConnected()
         {
-            var client = new TwitchClient( _mockClient);
+            TwitchClient client = new TwitchClient(_mockClient);
 
             Assert.Raises<OnConnectedArgs>(
                     h => client.OnConnected += h,
@@ -93,7 +94,7 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void ClientRaisesOnMessageReceived()
         {
-            var client = new TwitchClient( _mockClient);
+            TwitchClient client = new TwitchClient(_mockClient);
 
             Assert.Raises<OnMessageReceivedArgs>(
                   h => client.OnMessageReceived += h,
@@ -109,7 +110,7 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void ClientRaisesOnJoinedChannel()
         {
-            var client = new TwitchClient( _mockClient);
+            TwitchClient client = new TwitchClient(_mockClient);
 
             Assert.Raises<OnJoinedChannelArgs>(
                   h => client.OnJoinedChannel += h,
@@ -127,7 +128,7 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void ClientChannelAddedToJoinedChannels()
         {
-            var client = new TwitchClient( _mockClient);
+            TwitchClient client = new TwitchClient(_mockClient);
             client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
             client.Connect();
             ReceivedTwitchConnected();
@@ -139,7 +140,7 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void ClientRaisesOnDisconnected()
         {
-            var client = new TwitchClient(_mockClient);
+            TwitchClient client = new TwitchClient(_mockClient);
 
             Assert.Raises<OnDisconnectedEventArgs>(
                   h => client.OnDisconnected += h,
@@ -158,9 +159,9 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void ClientReconnectsOk()
         {
-            var client = new TwitchClient(_mockClient);
-            var pauseConnected = new ManualResetEvent(false);
-            var pauseReconnected = new ManualResetEvent(false);
+            TwitchClient client = new TwitchClient(_mockClient);
+            ManualResetEvent pauseConnected = new ManualResetEvent(false);
+            ManualResetEvent pauseReconnected = new ManualResetEvent(false);
 
             Assert.Raises<OnReconnectedEventArgs>(
                 h => client.OnReconnected += h,
@@ -173,9 +174,9 @@ namespace TwitchLib.Client.Test
                         client.Disconnect();
                     };
 
-                    client.OnDisconnected += (s, e) => { client.Reconnect(); };
-                    client.OnReconnected += (s, e) => { pauseReconnected.Set(); };
-                    
+                    client.OnDisconnected += (s, e) => client.Reconnect();
+                    client.OnReconnected += (s, e) => pauseReconnected.Set();
+
                     client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
                     client.Connect();
                     ReceivedTwitchConnected();

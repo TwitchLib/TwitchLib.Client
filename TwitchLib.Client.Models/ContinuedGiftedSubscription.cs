@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
@@ -48,9 +47,9 @@ namespace TwitchLib.Client.Models
 
         public ContinuedGiftedSubscription(IrcMessage ircMessage)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {

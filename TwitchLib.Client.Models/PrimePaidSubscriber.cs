@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 

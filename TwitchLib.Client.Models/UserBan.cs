@@ -24,18 +24,18 @@ namespace TwitchLib.Client.Models
             Channel = ircMessage.Channel;
             Username = ircMessage.Message;
 
-            var successBanReason = ircMessage.Tags.TryGetValue(Tags.BanReason, out var banReason);
+            bool successBanReason = ircMessage.Tags.TryGetValue(Tags.BanReason, out string banReason);
             if (successBanReason)
             {
                 BanReason = banReason;
             }
 
-            if (ircMessage.Tags.TryGetValue(Tags.RoomId, out var roomId))
+            if (ircMessage.Tags.TryGetValue(Tags.RoomId, out string roomId))
             {
                 RoomId = roomId;
             }
 
-            if (ircMessage.Tags.TryGetValue(Tags.TargetUserId, out var targetUserId))
+            if (ircMessage.Tags.TryGetValue(Tags.TargetUserId, out string targetUserId))
             {
                 TargetUserId = targetUserId;
             }

@@ -101,7 +101,7 @@ namespace TwitchLib.Client.Models
             RawIrcMessage = ircMessage.ToString();
             Message = ircMessage.Message;
 
-            if (Message.Length > 0 && (byte)Message[0] == 1 && (byte)Message[Message.Length - 1] == 1)
+            if (Message.Length > 0 && (byte) Message[0] == 1 && (byte) Message[Message.Length - 1] == 1)
             {
                 //Actions (/me {action}) are wrapped by byte=1 and prepended with "ACTION "
                 //This setup clears all of that leaving just the action's text.
@@ -119,27 +119,27 @@ namespace TwitchLib.Client.Models
             Username = ircMessage.User;
             Channel = ircMessage.Channel;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {
                     case Tags.Badges:
                         Badges = Common.Helpers.ParseBadges(tagValue);
                         // Iterate through saved badges for special circumstances
-                        foreach (var badge in Badges)
+                        foreach (KeyValuePair<string, string> badge in Badges)
                         {
                             switch (badge.Key)
                             {
                                 case "bits":
-                                    CheerBadge = new CheerBadge(int.Parse(badge.Value));
+                                    CheerBadge = new CheerBadge(Int32.Parse(badge.Value));
                                     break;
                                 case "subscriber":
                                     // Prioritize BadgeInfo subscribe count, as its more accurate
-                                    if(SubscribedMonthCount == 0)
+                                    if (SubscribedMonthCount == 0)
                                     {
-                                        SubscribedMonthCount = int.Parse(badge.Value);
+                                        SubscribedMonthCount = Int32.Parse(badge.Value);
                                     }
                                     break;
                                 case "vip":
@@ -161,28 +161,29 @@ namespace TwitchLib.Client.Models
                     case Tags.BadgeInfo:
                         BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         // check if founder is one of them, and get months from that
-                        var founderBadge = BadgeInfo.Find(b => b.Key == "founder");
-                        if(!founderBadge.Equals(default(KeyValuePair<string, string>)))
+                        KeyValuePair<string, string> founderBadge = BadgeInfo.Find(b => b.Key == "founder");
+                        if (!founderBadge.Equals(default(KeyValuePair<string, string>)))
                         {
                             IsSubscriber = true;
-                            SubscribedMonthCount = int.Parse(founderBadge.Value);
-                        } else
+                            SubscribedMonthCount = Int32.Parse(founderBadge.Value);
+                        }
+                        else
                         {
-                            var subBadge = BadgeInfo.Find(b => b.Key == "subscriber");
+                            KeyValuePair<string, string> subBadge = BadgeInfo.Find(b => b.Key == "subscriber");
                             // BadgeInfo has better accuracy than Badges subscriber value
                             if (!subBadge.Equals(default(KeyValuePair<string, string>)))
                             {
-                                SubscribedMonthCount = int.Parse(subBadge.Value);
+                                SubscribedMonthCount = Int32.Parse(subBadge.Value);
                             }
                         }
                         break;
                     case Tags.Bits:
-                        Bits = int.Parse(tagValue);
+                        Bits = Int32.Parse(tagValue);
                         BitsInDollars = ConvertBitsToUsd(Bits);
                         break;
                     case Tags.Color:
                         ColorHex = tagValue;
-                        if (!string.IsNullOrWhiteSpace(ColorHex))
+                        if (!String.IsNullOrWhiteSpace(ColorHex))
                             Color = ColorTranslator.FromHtml(ColorHex);
                         break;
                     case Tags.CustomRewardId:
@@ -234,7 +235,7 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Subscriber:
                         // this check because when founder is set, the subscriber value is actually 0, which is problematic
-                        IsSubscriber = IsSubscriber == false ? Common.Helpers.ConvertToBool(tagValue) : true;
+                        IsSubscriber = IsSubscriber != false || Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.TmiSentTs:
                         TmiSentTs = tagValue;
@@ -273,24 +274,24 @@ namespace TwitchLib.Client.Models
             //Parse the emoteSet
             if (EmoteSet != null && Message != null && EmoteSet.Emotes.Count > 0)
             {
-                var uniqueEmotes = EmoteSet.RawEmoteSetString.Split('/');
-                foreach (var emote in uniqueEmotes)
+                string[] uniqueEmotes = EmoteSet.RawEmoteSetString.Split('/');
+                foreach (string emote in uniqueEmotes)
                 {
-                    var firstColon = emote.IndexOf(':');
-                    var firstComma = emote.IndexOf(',');
+                    int firstColon = emote.IndexOf(':');
+                    int firstComma = emote.IndexOf(',');
                     if (firstComma == -1) firstComma = emote.Length;
-                    var firstDash = emote.IndexOf('-');
+                    int firstDash = emote.IndexOf('-');
                     if (firstColon > 0 && firstDash > firstColon && firstComma > firstDash)
                     {
-                        if (int.TryParse(emote.Substring(firstColon + 1, firstDash - firstColon - 1), out var low) &&
-                            int.TryParse(emote.Substring(firstDash + 1, firstComma - firstDash - 1), out var high))
+                        if (Int32.TryParse(emote.Substring(firstColon + 1, firstDash - firstColon - 1), out int low) &&
+                            Int32.TryParse(emote.Substring(firstDash + 1, firstComma - firstDash - 1), out int high))
                         {
                             if (low >= 0 && low < high && high < Message.Length)
                             {
                                 //Valid emote, let's parse
-                                var id = emote.Substring(0, firstColon);
+                                string id = emote.Substring(0, firstColon);
                                 //Pull the emote text from the message
-                                var text = Message.Substring(low, high - low + 1);
+                                string text = Message.Substring(low, high - low + 1);
                                 _emoteCollection.Add(new MessageEmote(id, text));
                             }
                         }
@@ -306,11 +307,11 @@ namespace TwitchLib.Client.Models
                 EmoteSet = new EmoteSet(default(string), Message);
 
             // Check if display name was set, and if it wasn't, set it to username
-            if (string.IsNullOrEmpty(DisplayName))
+            if (String.IsNullOrEmpty(DisplayName))
                 DisplayName = Username;
 
             // Check if message is from broadcaster
-            if (string.Equals(Channel, Username, StringComparison.InvariantCultureIgnoreCase))
+            if (String.Equals(Channel, Username, StringComparison.InvariantCultureIgnoreCase))
             {
                 UserType = UserType.Broadcaster;
                 IsBroadcaster = true;
@@ -318,7 +319,7 @@ namespace TwitchLib.Client.Models
 
             if (Channel.Split(':').Length == 3)
             {
-                if (string.Equals(Channel.Split(':')[1], UserId, StringComparison.InvariantCultureIgnoreCase))
+                if (String.Equals(Channel.Split(':')[1], UserId, StringComparison.InvariantCultureIgnoreCase))
                 {
                     UserType = UserType.Broadcaster;
                     IsBroadcaster = true;
@@ -375,7 +376,7 @@ namespace TwitchLib.Client.Models
             IsBroadcaster = isBroadcaster;
             IsVip = isVip;
             IsPartner = isPartner;
-            IsStaff = isStaff; 
+            IsStaff = isStaff;
             Noisy = noisy;
             RawIrcMessage = rawIrcMessage;
             EmoteReplacedMessage = emoteReplacedMessage;
@@ -388,7 +389,8 @@ namespace TwitchLib.Client.Models
 
         private void handleMsgId(string val)
         {
-            switch(val) {
+            switch (val)
+            {
                 case MsgIds.HighlightedMessage:
                     IsHighlighted = true;
                     break;
@@ -411,21 +413,21 @@ namespace TwitchLib.Client.Models
             */
             if (bits < 1500)
             {
-                return (double)bits / 100 * 1.4;
+                return (double) bits / 100 * 1.4;
             }
             if (bits < 5000)
             {
-                return (double)bits / 1500 * 19.95;
+                return (double) bits / 1500 * 19.95;
             }
             if (bits < 10000)
             {
-                return (double)bits / 5000 * 64.40;
+                return (double) bits / 5000 * 64.40;
             }
             if (bits < 25000)
             {
-                return (double)bits / 10000 * 126;
+                return (double) bits / 10000 * 126;
             }
-            return (double)bits / 25000 * 308;
+            return (double) bits / 25000 * 308;
         }
     }
 }

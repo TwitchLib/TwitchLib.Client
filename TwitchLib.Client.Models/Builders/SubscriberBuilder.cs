@@ -18,7 +18,7 @@
 
         Subscriber IBuilder<Subscriber>.Build()
         {
-            return (Subscriber)Build();
+            return (Subscriber) Build();
         }
 
         public override SubscriberBase Build()

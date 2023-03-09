@@ -72,7 +72,7 @@ namespace TwitchLib.Client.Models.Internal
             string hostmask,
             Dictionary<string, string> tags = null)
         {
-            var idx = hostmask.IndexOf('!');
+            int idx = hostmask.IndexOf('!');
             User = idx != -1 ? hostmask.Substring(0, idx) : hostmask;
             Hostmask = hostmask;
             _parameters = parameters;
@@ -81,7 +81,7 @@ namespace TwitchLib.Client.Models.Internal
 
             if (command == IrcCommand.RPL_353)
             {
-                if(Params.Length > 0 && Params.Contains("#"))
+                if (Params.Length > 0 && Params.Contains("#"))
                 {
                     _parameters[0] = $"#{_parameters[0].Split('#')[1]}";
                 }
@@ -90,12 +90,12 @@ namespace TwitchLib.Client.Models.Internal
 
         public new string ToString()
         {
-            var raw = new StringBuilder(32);
+            StringBuilder raw = new StringBuilder(32);
             if (Tags != null)
             {
-                var tags = new string[Tags.Count];
-                var i = 0;
-                foreach (var tag in Tags)
+                string[] tags = new string[Tags.Count];
+                int i = 0;
+                foreach (KeyValuePair<string, string> tag in Tags)
                 {
                     tags[i] = tag.Key + "=" + tag.Value;
                     ++i;
@@ -103,11 +103,11 @@ namespace TwitchLib.Client.Models.Internal
 
                 if (tags.Length > 0)
                 {
-                    raw.Append("@").Append(string.Join(";", tags)).Append(" ");
+                    raw.Append("@").Append(System.String.Join(";", tags)).Append(" ");
                 }
             }
 
-            if (!string.IsNullOrEmpty(Hostmask))
+            if (!System.String.IsNullOrEmpty(Hostmask))
             {
                 raw.Append(":").Append(Hostmask).Append(" ");
             }

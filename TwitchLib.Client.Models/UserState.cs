@@ -26,7 +26,7 @@ namespace TwitchLib.Client.Models
 
         /// <summary>Property representing emote sets available to user.</summary>
         public string EmoteSet { get; }
-        
+
         /// <summary>Property representing the user's Id.</summary>
         public string Id { get; }
 
@@ -47,9 +47,9 @@ namespace TwitchLib.Client.Models
         {
             Channel = ircMessage.Channel;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
                 switch (tag)
                 {
                     case Tags.Badges:
@@ -103,7 +103,7 @@ namespace TwitchLib.Client.Models
                 }
             }
 
-            if (string.Equals(ircMessage.User, Channel, StringComparison.InvariantCultureIgnoreCase))
+            if (String.Equals(ircMessage.User, Channel, StringComparison.InvariantCultureIgnoreCase))
                 UserType = UserType.Broadcaster;
         }
 

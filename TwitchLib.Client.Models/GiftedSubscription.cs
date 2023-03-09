@@ -62,9 +62,9 @@ namespace TwitchLib.Client.Models
 
         public GiftedSubscription(IrcMessage ircMessage)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {

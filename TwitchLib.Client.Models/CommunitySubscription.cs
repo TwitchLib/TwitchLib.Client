@@ -35,9 +35,9 @@ namespace TwitchLib.Client.Models
 
         public CommunitySubscription(IrcMessage ircMessage)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {
@@ -88,10 +88,10 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.MsgParamMassGiftCount:
-                        MsgParamMassGiftCount = int.Parse(tagValue);
+                        MsgParamMassGiftCount = Int32.Parse(tagValue);
                         break;
                     case Tags.MsgParamSenderCount:
-                        MsgParamSenderCount = int.Parse(tagValue);
+                        MsgParamSenderCount = Int32.Parse(tagValue);
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
@@ -111,7 +111,7 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
-                        if(UserId == AnonymousGifterUserId)
+                        if (UserId == AnonymousGifterUserId)
                         {
                             IsAnonymous = true;
                         }

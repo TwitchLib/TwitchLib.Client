@@ -62,7 +62,7 @@ namespace TwitchLib.Client.Models.Builders
             _id = id;
             return this;
         }
-        
+
         public UserStateBuilder WithIsModerator(bool isModerator)
         {
             _isModerator = isModerator;

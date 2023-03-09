@@ -1,4 +1,5 @@
 ﻿using System;
+
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
 

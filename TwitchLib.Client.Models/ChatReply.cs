@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TwitchLib.Client.Models
+﻿namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing a chat reply/thread</summary>
     public class ChatReply
