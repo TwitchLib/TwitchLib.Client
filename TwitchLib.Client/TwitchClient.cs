@@ -1133,7 +1133,7 @@ namespace TwitchLib.Client
                     HandleMode(ircMessage);
                     break;
                 case IrcCommand.Cap:
-                    HandleCap(ircMessage);
+                    // do nothing
                     break;
                 case IrcCommand.Unknown:
                 // fall through
@@ -1490,16 +1490,6 @@ namespace TwitchLib.Client
             {
                 OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.Message.Split(' ')[1] });
             }
-        }
-
-        /// <summary>
-        /// Handles the Cap
-        /// </summary>
-        /// <param name="ircMessage">The irc message</param>
-        private void HandleCap(IrcMessage ircMessage)
-        {
-            // do nothing
-            return;
         }
 
         #endregion
