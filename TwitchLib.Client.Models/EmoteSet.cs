@@ -29,9 +29,9 @@ namespace TwitchLib.Client.Models
         /// <summary>Constructor for ChatEmoteSet object.</summary>
         /// <param name="emotes">Collection of Emote instances</param>
         /// <param name="rawEmoteSetString">Original string from which emotes were created</param>
-        public EmoteSet(IEnumerable<Emote> emotes, string emoteSetData)
+        public EmoteSet(IEnumerable<Emote> emotes, string rawEmoteSetString)
         {
-            RawEmoteSetString = emoteSetData;
+            RawEmoteSetString = rawEmoteSetString;
             Emotes = emotes.ToList();
         }
     }
