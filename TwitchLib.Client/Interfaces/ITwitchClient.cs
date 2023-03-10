@@ -64,6 +64,7 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         /// <value><c>true</c> if [will replace emotes]; otherwise, <c>false</c>.</value>
         bool WillReplaceEmotes { get; set; }
+
         /// <summary>
         /// Occurs when [on channel state changed].
         /// </summary>
@@ -236,32 +237,70 @@ namespace TwitchLib.Client.Interfaces
         /// Occurs when [on message deleted].
         /// </summary>
         event EventHandler<OnMessageClearedArgs> OnMessageCleared;
-
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
         /// </summary>
         event EventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
-
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified phone number without a verified phone number attached to the account.
         /// </summary>
         event EventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
-
         /// <summary>
         /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
         /// </summary>
         event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
-
         /// <summary>
         /// Fires when the client receives a PRIVMSG tagged as an user-intro
         /// </summary>
         event EventHandler<OnUserIntroArgs> OnUserIntro;
-
         /// <summary>
         /// Fires when the client receives a USERNOTICE tagged as an announcement
         /// </summary>
         event EventHandler<OnAnnouncementArgs> OnAnnouncement;
-
+        /// <summary>
+        /// Occurs when send message rate limit has been applied to the client in a specific channel by Twitch
+        /// </summary>
+        event EventHandler<OnRateLimitArgs> OnRateLimit;
+        /// <summary>
+        /// Occurs when sending duplicate messages and user is not permitted to do so
+        /// </summary>
+        event EventHandler<OnDuplicateArgs> OnDuplicate;
+        /// <summary>
+        /// Fires when TwitchClient attempts to host a channel it is in.
+        /// </summary>
+        event EventHandler OnSelfRaidError;
+        /// <summary>
+        /// Fires when newly raided channel is mature audience only.
+        /// </summary>
+        event EventHandler OnRaidedChannelIsMatureAudience;
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel in followers only mode, as a non-follower
+        /// </summary>
+        event EventHandler<OnFollowersOnlyArgs> OnFollowersOnly;
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel in subs only mode, as a non-sub
+        /// </summary>
+        event EventHandler<OnSubsOnlyArgs> OnSubsOnly;
+        /// <summary>
+        /// Fires when the client attempts to send a non-emote message to a channel in emotes only mode
+        /// </summary>
+        event EventHandler<OnEmoteOnlyArgs> OnEmoteOnly;
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel that has been suspended
+        /// </summary>
+        event EventHandler<OnSuspendedArgs> OnSuspended;
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel they're banned in
+        /// </summary>
+        event EventHandler<OnBannedArgs> OnBanned;
+        /// <summary>
+        /// Fires when the client attempts to send a message in a channel with slow mode enabled, without cooldown expiring
+        /// </summary>
+        event EventHandler<OnSlowModeArgs> OnSlowMode;
+        /// <summary>
+        /// Fires when the client attempts to send a message in a channel with r9k mode enabled, and message was not permitted
+        /// </summary>
+        event EventHandler<OnR9kModeArgs> OnR9kMode;
         /// <summary>
         /// Initializes the specified credentials.
         /// </summary>
