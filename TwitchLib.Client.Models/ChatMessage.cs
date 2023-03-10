@@ -178,7 +178,8 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.Bits:
-                        Bits = Int32.Parse(tagValue);
+                        Int32.TryParse(tagValue, out int bitsValue);
+                        Bits = bitsValue;
                         BitsInDollars = ConvertBitsToUsd(Bits);
                         break;
                     case Tags.Color:
