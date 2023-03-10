@@ -22,7 +22,6 @@ namespace TwitchLib.Client.Test
         public int WhisperQueueLength => throw new NotImplementedException();
 
         public event EventHandler<OnConnectedEventArgs> OnConnected;
-        public event EventHandler<OnDataEventArgs> OnData;
         public event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
         public event EventHandler<OnErrorEventArgs> OnError;
         public event EventHandler<OnFatalErrorEventArgs> OnFatality;
@@ -33,14 +32,16 @@ namespace TwitchLib.Client.Test
         public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
         public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
 
-        public void Close(bool callDisconnect = true)
+        public void Close()
         {
             IsConnected = false;
             OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs());
         }
 
         public void Dispose()
-        { }
+        {
+            GC.SuppressFinalize(this);
+        }
 
         public bool Open()
         {
@@ -49,10 +50,11 @@ namespace TwitchLib.Client.Test
             return true;
         }
 
-        public void Reconnect()
+        public bool Reconnect()
         {
             IsConnected = true;
             OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
+            return true;
         }
 
         public void MessageThrottled(OnMessageThrottledEventArgs eventArgs)
@@ -81,6 +83,11 @@ namespace TwitchLib.Client.Test
         }
 
         public bool SendWhisper(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SendPONG()
         {
             throw new NotImplementedException();
         }

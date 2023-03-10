@@ -650,6 +650,17 @@ namespace TwitchLib.Client
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
 
+        [SuppressMessage("Style", "IDE0058")]
+        private void SendPONG()
+        {
+            if (!IsInitialized) HandleNotInitialized();
+            string message = "PONG";
+            Log($"Writing: {message}");
+            // IDE0058 - client raises OnSendFailed if this method returns false
+            _client.SendPONG();
+            OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
+        }
+
         #region SendMessage
         [SuppressMessage("Style", "IDE0058")]
         private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
@@ -1126,7 +1137,7 @@ namespace TwitchLib.Client
                     break;
                 case IrcCommand.Ping:
                     if (!DisableAutoPong)
-                        SendRaw("PONG");
+                        SendPONG();
                     return;
                 case IrcCommand.Pong:
                     return;
