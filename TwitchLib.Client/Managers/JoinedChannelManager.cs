@@ -6,7 +6,7 @@ using System.Linq;
 
 using TwitchLib.Client.Models;
 
-namespace TwitchLib.Client.Manager
+namespace TwitchLib.Client.Managers
 {
     /// <summary>
     /// Class JoinedChannelManager.

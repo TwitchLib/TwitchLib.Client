@@ -14,7 +14,7 @@ using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Internal.Parsing;
-using TwitchLib.Client.Manager;
+using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
 using TwitchLib.Communication.Clients;
