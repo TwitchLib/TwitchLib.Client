@@ -101,13 +101,25 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event EventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
         /// <summary>
+        /// Occurs when [on continued gifted subscription].
+        /// </summary>
+        event EventHandler<OnContinuedGiftedSubscriptionArgs> OnContinuedGiftedSubscription;
+        /// <summary>
         /// Occurs when [on incorrect login].
         /// </summary>
         event EventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
         /// <summary>
+        /// Occurs when [on unaccounted for].
+        /// </summary>
+        event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+        /// <summary>
         /// Occurs when [on joined channel].
         /// </summary>
         event EventHandler<OnJoinedChannelArgs> OnJoinedChannel;
+        /// <summary>
+        /// Occurs when [on fail to join channel].
+        /// </summary>
+        event EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
         /// <summary>
         /// Occurs when [on left channel].
         /// </summary>
@@ -116,6 +128,10 @@ namespace TwitchLib.Client.Interfaces
         /// Occurs when [on log].
         /// </summary>
         event EventHandler<OnLogArgs> OnLog;
+        /// <summary>
+        /// Occurs when [on no permission].
+        /// </summary>
+        event EventHandler OnNoPermissionError;
         /// <summary>
         /// Occurs when [on message received].
         /// </summary>
@@ -140,6 +156,10 @@ namespace TwitchLib.Client.Interfaces
         /// Occurs when [on new subscriber].
         /// </summary>
         event EventHandler<OnNewSubscriberArgs> OnNewSubscriber;
+        /// <summary>
+        /// Occurs when [on prime paid subscriber].
+        /// </summary>
+        event EventHandler<OnPrimePaidSubscriberArgs> OnPrimePaidSubscriber;
         /// <summary>
         /// Occurs when [on raid notification].
         /// </summary>
