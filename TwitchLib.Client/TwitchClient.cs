@@ -650,7 +650,6 @@ namespace TwitchLib.Client
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
 
-        [SuppressMessage("Style", "IDE0058")]
         private void SendPONG()
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -1003,7 +1002,14 @@ namespace TwitchLib.Client
 
                 Log($"Received: {line}");
                 OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Received, Data = line });
-                HandleIrcMessage(_ircParser.ParseIrcMessage(line));
+                try
+                {
+                    HandleIrcMessage(_ircParser.ParseIrcMessage(line));
+                }
+                catch (Exception ex)
+                {
+                    // TODO: another log, raise error, something like that - i think it has to be done...
+                }
             }
         }
 
