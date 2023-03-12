@@ -20,11 +20,6 @@ namespace TwitchLib.Client.Interfaces
         ITwitchClient_BackendLogging
     {
         /// <summary>
-        /// Gets or sets a value indicating whether [automatic re listen on exception].
-        /// </summary>
-        /// <value><c>true</c> if [automatic re listen on exception]; otherwise, <c>false</c>.</value>
-        bool AutoReListenOnException { get; set; }
-        /// <summary>
         /// Gets or sets a value indicating whether [disable automatic pong].
         /// </summary>
         /// <value><c>true</c> if [disable automatic pong]; otherwise, <c>false</c>.</value>
@@ -109,8 +104,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">The channel.</param>
         /// <param name="chatCommandIdentifier">The chat command identifier.</param>
         /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
-        /// <param name="autoReListenOnExceptions">if set to <c>true</c> [automatic re listen on exceptions].</param>
-        void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
+        void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
 
         /// <summary>
         /// Initializes the specified credentials.
@@ -119,8 +113,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channels">The channels to join once connected.</param>
         /// <param name="chatCommandIdentifier">The chat command identifier.</param>
         /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
-        /// <param name="autoReListenOnExceptions">if set to <c>true</c> [automatic re listen on exceptions].</param>
-        void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
+        void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
 
         /// <summary>
         /// Adds the chat command identifier.

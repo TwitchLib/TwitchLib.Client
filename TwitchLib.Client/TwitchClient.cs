@@ -40,7 +40,6 @@ namespace TwitchLib.Client
         public string TwitchUsername { get; private set; }
         public bool DisableAutoPong { get; set; } = false;
         public bool WillReplaceEmotes { get; set; } = false;
-        public bool AutoReListenOnException { get; set; }
         #endregion
 
         #region Events
@@ -106,36 +105,31 @@ namespace TwitchLib.Client
         public void Initialize(ConnectionCredentials credentials,
                                string channel = null,
                                char chatCommandIdentifier = '!',
-                               char whisperCommandIdentifier = '!',
-                               bool autoReListenOnExceptions = true)
+                               char whisperCommandIdentifier = '!')
         {
             if (channel != null && channel[0] == '#') channel = channel.Substring(1);
-            InitializeHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, autoReListenOnExceptions);
+            InitializeHelper(credentials, new List<string>() { channel }, chatCommandIdentifier);
         }
 
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
         public void Initialize(ConnectionCredentials credentials,
                                List<string> channels,
                                char chatCommandIdentifier = '!',
-                               char whisperCommandIdentifier = '!',
-                               bool autoReListenOnExceptions = true)
+                               char whisperCommandIdentifier = '!')
         {
             channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
-            InitializeHelper(credentials, channels, chatCommandIdentifier, autoReListenOnExceptions);
+            InitializeHelper(credentials, channels, chatCommandIdentifier);
         }
 
         private void InitializeHelper(ConnectionCredentials credentials,
                                       List<string> channels,
-                                      char chatCommandIdentifier = '!',
-                                      bool autoReListenOnExceptions = true)
+                                      char chatCommandIdentifier = '!')
         {
             Log($"TwitchLib-TwitchClient initialized, assembly version: {Assembly.GetExecutingAssembly().GetName().Version}");
             ConnectionCredentials = credentials;
             TwitchUsername = ConnectionCredentials.TwitchUsername;
             if (chatCommandIdentifier != '\0')
                 _chatCommandIdentifiers.Add(chatCommandIdentifier);
-
-            AutoReListenOnException = autoReListenOnExceptions;
 
             if (channels != null && channels.Count > 0)
             {
