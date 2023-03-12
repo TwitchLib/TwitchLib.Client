@@ -246,6 +246,12 @@ namespace TwitchLib.Client
                 case IrcCommand.Pong:
                     return;
                 case IrcCommand.Join:
+                    if (ircMessage.User == TwitchUsername)
+                    {
+                        // TODO: lets see if thats correct
+                        ChannelManager.JoinCompleted(ircMessage.Channel);
+                        OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
+                    }
                     OnUserJoined?.Invoke(this, new OnUserJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
                     break;
                 case IrcCommand.Part:
@@ -269,8 +275,6 @@ namespace TwitchLib.Client
                 case IrcCommand.RPL_003:
                     break;
                 case IrcCommand.RPL_004:
-                    // INFO: NOW we are connected and logged in!
-                    // TODO: check if thats correct
                     ChannelManager.Start();
                     OnConnected?.Invoke(this, new OnConnectedArgs { BotUsername = TwitchUsername });
                     break;
@@ -278,8 +282,6 @@ namespace TwitchLib.Client
                     OnExistingUsersDetected?.Invoke(this, new OnExistingUsersDetectedArgs { Channel = ircMessage.Channel, Users = ircMessage.Message.Split(' ').ToList() });
                     break;
                 case IrcCommand.RPL_366:
-                    // TODO: what is 366 ?
-                    ChannelManager.ReJoinChannels();
                     break;
                 case IrcCommand.RPL_372:
                     break;
@@ -288,10 +290,9 @@ namespace TwitchLib.Client
                 case IrcCommand.RPL_376:
                     break;
                 case IrcCommand.Whisper:
-                    // TODO: logging or something like that?
                     break;
                 case IrcCommand.RoomState:
-                    HandleRoomState(ircMessage);
+                    OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage), Channel = ircMessage.Channel });
                     break;
                 case IrcCommand.Reconnect:
                     Reconnect();
@@ -389,19 +390,6 @@ namespace TwitchLib.Client
             {
                 OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, _lastMessageSent) });
             }
-        }
-
-        private void HandleRoomState(IrcMessage ircMessage)
-        {
-            // If ROOMSTATE is sent because a mode (subonly/slow/emote/etc) is being toggled, it has two tags: room-id, and the specific mode being toggled
-            // If ROOMSTATE is sent because of a join confirmation, all tags (ie greater than 2) are sent
-            if (ircMessage.Tags.Count > 2)
-            {
-                // TODO: NOW joining a channel is completed
-                OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
-            }
-
-            OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage), Channel = ircMessage.Channel });
         }
 
         private void HandleMode(IrcMessage ircMessage)

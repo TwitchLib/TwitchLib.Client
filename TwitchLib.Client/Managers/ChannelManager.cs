@@ -38,7 +38,7 @@ namespace TwitchLib.Client.Managers
         /// </summary>
         private ISet<string> WantToJoin { get; } = new HashSet<string>();
         /// <summary>
-        ///     <see cref="ConcurrentQueue{T}"/> with the channelnames that are taken step by step by the <see cref="JoiningTask"/>
+        ///     <see cref="ConcurrentQueue{T}"/> with the channelnames that are going to be joined step by step by the <see cref="JoiningTask"/>
         /// </summary>
         private ConcurrentQueue<string> Joining { get; } = new ConcurrentQueue<string>();
         /// <summary>
@@ -57,11 +57,13 @@ namespace TwitchLib.Client.Managers
         /// </summary>
         private ISet<string> JoiningExceptions { get; } = new HashSet<string>();
         /// <summary>
+        ///     channels we want to join and we already sent a message to twitch
+        /// </summary>
+        private ISet<string> JoinRequested { get; } = new HashSet<string>();
+        /// <summary>
         ///     <see cref="ConcurrentDictionary{TKey, TValue}"/> with the channels that are already joined
         /// </summary>
         private ConcurrentDictionary<string, JoinedChannel> Joined { get; } = new ConcurrentDictionary<string, JoinedChannel>();
-
-
 
         /// <summary>
         ///     <see cref="IReadOnlyList{T}"/> of <see cref="Joined"/>.Values
@@ -83,6 +85,7 @@ namespace TwitchLib.Client.Managers
         {
             if (IsChannelNameNullOrEmptyOrWhitespace(channel)) return null;
             channel = CorrectChannelName(channel);
+            // no sync is needed, its a cuncurrent dictionary
             bool found = Joined.TryGetValue(channel, out JoinedChannel joinedChannel);
             if (found)
             {
@@ -90,63 +93,68 @@ namespace TwitchLib.Client.Managers
             }
             return null;
         }
-
         public void JoinChannel(string channel, bool overrideCheck = false)
         {
             if (IsChannelNameNullOrEmptyOrWhitespace(channel)) return;
             channel = CorrectChannelName(channel);
-            // TODO: what is overrideCheck?
 
-            // Check to see if client is already in channel
-            if (Joined.Keys.Contains(channel))
-                return;
             lock (SYNC)
             {
-                bool added = WantToJoin.Add(channel);
-                // if the channel we want to join is not added to ChannelsJoinDesired,
-                // its already added, so we dont need to enque it join again
-                if (added) Joining.Enqueue(channel);
+                // Check to see if client is already in channel
+                if (!overrideCheck && Joined.Keys.Contains(channel)) return;
+                if (!overrideCheck && JoiningExceptions.Contains(channel)) return;
+                if (!overrideCheck && JoinRequested.Contains(channel)) return;
+
+                WantToJoin.Add(channel);
+                Joining.Enqueue(channel);
+                // now the task does its work
+                // it takes the channel from Joining
+                // requests to join
+                // puts the channel into JoinRequested
+                // afterwards JoinComplete has to be called to complete the join and to put the channel into Joined
             }
         }
-
         public void JoinChannels(IEnumerable<string> channels, bool overrideCheck = false)
         {
             if (channels == null) return;
             foreach (string channel in channels)
             {
-                if (IsChannelNameNullOrEmptyOrWhitespace(channel))
-                {
-                    continue;
-                }
-
                 JoinChannel(channel, overrideCheck);
             }
         }
-
         public void LeaveChannel(string channel)
         {
+            if (IsChannelNameNullOrEmptyOrWhitespace(channel)) return;
             channel = CorrectChannelName(channel);
             Log($"Leaving channel: {channel}");
             lock (SYNC)
             {
-                bool removedFromDesired = WantToJoin.Remove(channel);
+                // never ever touch the joining-queue here
+
                 bool removedFromJoined = Joined.TryRemove(channel, out JoinedChannel joinedChannel);
                 if (removedFromJoined && joinedChannel != null)
                 {
+                    // if its already joined: send PART
                     // IDE0058 - client raises OnSendFailed if this method returns false
                     Client.Send(Rfc2812.Part($"#{channel}"));
+                    // we dont want to join it anymore
+                    WantToJoin.Remove(channel);
+                    // we are fine
+                    return;
                 }
-                if (removedFromDesired && !removedFromJoined)
+                if (JoinRequested.Contains(channel))
                 {
+                    // join already requested
+                    // but we want to leave again
                     // we wanted to join,
                     // but we didnt join yet
                     // and now we want to leave again (so we dont need to join)
-                    // thats why we need to SYNC
                     JoiningExceptions.Add(channel);
+                    // dont remove from requested!
+                    // gets handled on JoinCompleted in combination with JoiningExceptions!
                 }
             }
         }
-
         public void LeaveChannel(JoinedChannel channel)
         {
             LeaveChannel(channel.Channel);
@@ -169,17 +177,43 @@ namespace TwitchLib.Client.Managers
         public void Stop()
         {
             CTS?.Cancel();
-            // TODO: wait for JoinChannelTask to stop
+            JoiningTask.GetAwaiter().GetResult();
             CTS?.Dispose();
             lock (SYNC)
             {
-                Joined.Clear();
                 JoiningExceptions.Clear();
+                JoinRequested.Clear();
                 while (Joining.TryDequeue(out string channel)) { }
+                Joined.Clear();
             }
             // has to be done last,
             // that it wont get restarted
             CTS = null;
+        }
+        public void JoinCompleted(string channel)
+        {
+            if (Token == null || Token.IsCancellationRequested) return;
+            lock (SYNC)
+            {
+                JoinRequested.Remove(channel);
+                Joined.TryAdd(channel, new JoinedChannel(channel));
+                // ChannelManager requested JOIN
+                // meanwhile we want to leave
+                //
+                // leave may not break the process and has to wait until joining is completed
+                //
+                // channel joining is now completed
+                // we have to issue LeaveChannel to send PART
+                if (JoiningExceptions.Contains(channel)) LeaveChannel(channel);
+            }
+        }
+        public void JoinCanceld(string channel)
+        {
+            if (Token == null || Token.IsCancellationRequested) return;
+            lock (SYNC)
+            {
+                JoinRequested.Remove(channel);
+            }
         }
         private void JoinChannelTaskAction()
         {
@@ -202,16 +236,14 @@ namespace TwitchLib.Client.Managers
                         // and we dont join that ones
                         continue;
                     }
+                    Log($"Joining channel: {channelToJoin}");
+                    // IDE0058 - client raises OnSendFailed if this method returns false
+                    // important we set channel to lower case when sending join message
+                    Client.Send(Rfc2812.Join($"#{channelToJoin.ToLower()}"));
+                    JoinRequested.Add(channelToJoin);
                 }
-
-                Log($"Joining channel: {channelToJoin}");
-                // IDE0058 - client raises OnSendFailed if this method returns false
-                // important we set channel to lower case when sending join message
-                Client.Send(Rfc2812.Join($"#{channelToJoin.ToLower()}"));
-                Joined.TryAdd(channelToJoin, new JoinedChannel(channelToJoin));
             }
         }
-
         private static string CorrectChannelName(string channel)
         {
             string channelName = channel.ToLower();
