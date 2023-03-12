@@ -8,7 +8,7 @@ namespace TwitchLib.Client.Internal.Parsing
     /// <summary>
     /// Class IrcParser.
     /// </summary>
-    internal class IrcParser
+    internal static class IrcParser
     {
 
         /// <summary>
@@ -16,7 +16,7 @@ namespace TwitchLib.Client.Internal.Parsing
         /// </summary>
         /// <param name="raw">Raw IRC message</param>
         /// <returns>IrcMessage object</returns>
-        public IrcMessage ParseIrcMessage(string raw)
+        public static IrcMessage ParseIrcMessage(string raw)
         {
             Dictionary<string, string> tagDict = new Dictionary<string, string>();
 

@@ -11,7 +11,7 @@ namespace TwitchLib.Client.Models
     /// <summary>Class represents ChatMessage in a Twitch channel.</summary>
     public class ChatMessage : TwitchLibMessage
     {
-        protected readonly MessageEmoteCollection _emoteCollection;
+        protected MessageEmoteCollection EmoteCollection { get; } = new MessageEmoteCollection();
 
         /// <summary>Information associated with badges. Not all badges will be in this list. Use carefully.</summary>
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
@@ -89,12 +89,10 @@ namespace TwitchLib.Client.Models
         /// <summary>Constructor for ChatMessage object.</summary>
         /// <param name="botUsername">The username of the bot that received the message.</param>
         /// <param name="ircMessage">The IRC message from Twitch to be processed.</param>
-        /// <param name="emoteCollection">The <see cref="MessageEmoteCollection"/> to register new emotes on and, if desired, use for emote replacement.</param>
         /// <param name="replaceEmotes">Whether to replace emotes for this chat message. Defaults to false.</param>
         public ChatMessage(
             string botUsername,
             IrcMessage ircMessage,
-            ref MessageEmoteCollection emoteCollection,
             bool replaceEmotes = false)
         {
             BotUsername = botUsername;
@@ -113,8 +111,6 @@ namespace TwitchLib.Client.Models
                     IsMe = true;
                 }
             }
-
-            _emoteCollection = emoteCollection;
 
             Username = ircMessage.User;
             Channel = ircMessage.Channel;
@@ -293,14 +289,14 @@ namespace TwitchLib.Client.Models
                                 string id = emote.Substring(0, firstColon);
                                 //Pull the emote text from the message
                                 string text = Message.Substring(low, high - low + 1);
-                                _emoteCollection.Add(new MessageEmote(id, text));
+                                EmoteCollection.Add(new MessageEmote(id, text));
                             }
                         }
                     }
                 }
                 if (replaceEmotes)
                 {
-                    EmoteReplacedMessage = _emoteCollection.ReplaceEmotes(Message);
+                    EmoteReplacedMessage = EmoteCollection.ReplaceEmotes(Message);
                 }
             }
 
