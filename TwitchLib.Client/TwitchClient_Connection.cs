@@ -22,14 +22,12 @@ namespace TwitchLib.Client
             if (!IsInitialized) HandleNotInitialized();
             Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
-            // Clear instance data
-            JoinedChannelManager.Clear();
-
             if (Client.Open())
             {
                 Log("Should be connected!");
                 return true;
             }
+            // ChannelManager gets started via TwitchClient_Client.Client_OnConnected!
             return false;
         }
         public void Disconnect()
@@ -38,9 +36,7 @@ namespace TwitchLib.Client
 
             if (!IsInitialized) HandleNotInitialized();
             Client.Close();
-
-            // Clear instance data
-            JoinedChannelManager.Clear();
+            ChannelManager.Stop();
         }
         public void Reconnect()
         {

@@ -19,13 +19,13 @@ namespace TwitchLib.Client
         public bool IsInitialized => Client != null;
         private void InitializeClient()
         {
-
-
             Client.OnConnected += Client_OnConnected;
             Client.OnMessage += Client_OnMessage;
             Client.OnDisconnected += Client_OnDisconnected;
             Client.OnFatality += Client_OnFatality;
             Client.OnMessageThrottled += Client_OnMessageThrottled;
+            // INFO: TwitchLib.Communication.IClient doesnt raise OnConnected when it reconnects!
+            Client.OnReconnected += Client_OnConnected;
             Client.OnReconnected += Client_OnReconnected;
         }
         protected static void HandleNotInitialized()
@@ -50,13 +50,6 @@ namespace TwitchLib.Client
 
         private void Client_OnReconnected(object sender, OnReconnectedEventArgs e)
         {
-            foreach (JoinedChannel channel in JoinedChannelManager.GetJoinedChannels())
-            {
-                if (!String.Equals(channel.Channel, TwitchUsername, StringComparison.CurrentCultureIgnoreCase))
-                    JoinChannelQueue.Enqueue(channel);
-            }
-
-            JoinedChannelManager.Clear();
             OnReconnected?.Invoke(sender, e);
         }
 
@@ -95,11 +88,6 @@ namespace TwitchLib.Client
                 Client.Send("CAP REQ twitch.tv/commands");
             if (ConnectionCredentials.Capabilities.Tags)
                 Client.Send("CAP REQ twitch.tv/tags");
-
-            if (JoinChannelQueue != null && JoinChannelQueue.Count > 0)
-            {
-                QueueingJoinCheck();
-            }
         }
     }
 }

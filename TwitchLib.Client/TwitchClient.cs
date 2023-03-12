@@ -98,7 +98,7 @@ namespace TwitchLib.Client
             }
             Debug.Assert(Client != null, nameof(Client) + " != null");
             InitializeClient();
-            JoinedChannelManager = new JoinedChannelManager();
+            ChannelManager = new ChannelManager(Client, Log, LogError);
         }
 
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
@@ -131,19 +131,7 @@ namespace TwitchLib.Client
             if (chatCommandIdentifier != '\0')
                 _chatCommandIdentifiers.Add(chatCommandIdentifier);
 
-            if (channels != null && channels.Count > 0)
-            {
-                for (int i = 0; i < channels.Count; i++)
-                {
-                    if (String.IsNullOrEmpty(channels[i]))
-                        continue;
-
-                    // Check to see if client is already in channel
-                    if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channels[i]) != null)
-                        return;
-                    JoinChannelQueue.Enqueue(new JoinedChannel(channels[i]));
-                }
-            }
+            ChannelManager.JoinChannels(channels);
         }
 
         #endregion
@@ -281,14 +269,17 @@ namespace TwitchLib.Client
                 case IrcCommand.RPL_003:
                     break;
                 case IrcCommand.RPL_004:
+                    // INFO: NOW we are connected and logged in!
+                    // TODO: check if thats correct
+                    ChannelManager.Start();
                     OnConnected?.Invoke(this, new OnConnectedArgs { BotUsername = TwitchUsername });
                     break;
                 case IrcCommand.RPL_353:
                     OnExistingUsersDetected?.Invoke(this, new OnExistingUsersDetectedArgs { Channel = ircMessage.Channel, Users = ircMessage.Message.Split(' ').ToList() });
                     break;
                 case IrcCommand.RPL_366:
-                    CurrentlyJoiningChannels = false;
-                    QueueingJoinCheck();
+                    // TODO: what is 366 ?
+                    ChannelManager.ReJoinChannels();
                     break;
                 case IrcCommand.RPL_372:
                     break;
@@ -355,7 +346,7 @@ namespace TwitchLib.Client
         {
             if (String.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
             {
-                JoinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
+                ChannelManager.LeaveChannel(ircMessage.Channel);
                 // IDE0058
                 HasSeenJoinedChannels.Remove(ircMessage.Channel);
                 OnLeftChannel?.Invoke(this, new OnLeftChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
@@ -406,9 +397,7 @@ namespace TwitchLib.Client
             // If ROOMSTATE is sent because of a join confirmation, all tags (ie greater than 2) are sent
             if (ircMessage.Tags.Count > 2)
             {
-                KeyValuePair<string, DateTime> channel = AwaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
-                // IDE0058
-                AwaitingJoins.Remove(channel);
+                // TODO: NOW joining a channel is completed
                 OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
             }
 

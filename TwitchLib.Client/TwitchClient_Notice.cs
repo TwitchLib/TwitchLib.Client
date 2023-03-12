@@ -70,9 +70,7 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.MsgChannelSuspended:
                     // IDE0058
-                    AwaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
-                    JoinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
-                    QueueingJoinCheck();
+                    // TODO: ChannelManager
                     OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs
                     {
                         Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
