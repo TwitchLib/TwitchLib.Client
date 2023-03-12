@@ -4,6 +4,7 @@ using System.Drawing;
 
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Helpers;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
 
@@ -38,7 +39,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 ChannelState = state
             };
-            client.RaiseEvent(nameof(client.OnChannelStateChanged), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnChannelStateChanged), model);
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace TwitchLib.Client.Extensions
             {
                 Channel = channel
             };
-            client.RaiseEvent(nameof(client.OnChatCleared), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnChatCleared), model);
         }
 
         /// <summary>
@@ -157,7 +158,7 @@ namespace TwitchLib.Client.Extensions
             {
                 Command = new ChatCommand(msg, commandText, argumentsAsString, argumentsAsList, commandIdentifier)
             };
-            client.RaiseEvent(nameof(client.OnChatCommandReceived), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnChatCommandReceived), model);
         }
 
         /// <summary>
@@ -173,7 +174,7 @@ namespace TwitchLib.Client.Extensions
                 AutoJoinChannel = autoJoinChannel,
                 BotUsername = botUsername
             };
-            client.RaiseEvent(nameof(client.OnConnected), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnConnected), model);
         }
 
         /// <summary>
@@ -189,7 +190,7 @@ namespace TwitchLib.Client.Extensions
                 BotUsername = botUsername,
                 Error = errorEvent
             };
-            client.RaiseEvent(nameof(client.OnConnectionError), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnConnectionError), model);
         }
 
         /// <summary>
@@ -203,7 +204,7 @@ namespace TwitchLib.Client.Extensions
             {
                 BotUsername = botUsername
             };
-            client.RaiseEvent(nameof(client.OnDisconnected), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnDisconnected), model);
         }
 
         /// <summary>
@@ -219,7 +220,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Users = users
             };
-            client.RaiseEvent(nameof(client.OnExistingUsersDetected), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnExistingUsersDetected), model);
         }
 
         /// <summary>
@@ -303,7 +304,7 @@ namespace TwitchLib.Client.Extensions
                                                             userType,
                                                             userId)
             };
-            client.RaiseEvent(nameof(client.OnGiftedSubscription), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnGiftedSubscription), model);
         }
 
         /// <summary>
@@ -317,7 +318,7 @@ namespace TwitchLib.Client.Extensions
             {
                 Exception = ex
             };
-            client.RaiseEvent(nameof(client.OnIncorrectLogin), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnIncorrectLogin), model);
         }
 
         /// <summary>
@@ -333,7 +334,7 @@ namespace TwitchLib.Client.Extensions
                 BotUsername = botUsername,
                 Channel = channel
             };
-            client.RaiseEvent(nameof(client.OnJoinedChannel), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnJoinedChannel), model);
         }
 
         /// <summary>
@@ -349,7 +350,7 @@ namespace TwitchLib.Client.Extensions
                 BotUsername = botUsername,
                 Channel = channel
             };
-            client.RaiseEvent(nameof(client.OnLeftChannel), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnLeftChannel), model);
         }
 
         /// <summary>
@@ -367,7 +368,7 @@ namespace TwitchLib.Client.Extensions
                 Data = data,
                 DateTime = dateTime
             };
-            client.RaiseEvent(nameof(client.OnLog), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnLog), model);
         }
 
         /// <summary>
@@ -463,7 +464,7 @@ namespace TwitchLib.Client.Extensions
                                               bits,
                                               bitsInDollars)
             };
-            client.RaiseEvent(nameof(client.OnMessageReceived), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnMessageReceived), model);
         }
 
         /// <summary>
@@ -494,7 +495,7 @@ namespace TwitchLib.Client.Extensions
             {
                 SentMessage = new SentMessage(badges, channel, colorHex, displayName, emoteSet, isModerator, isSubscriber, userType, message)
             };
-            client.RaiseEvent(nameof(client.OnMessageSent), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnMessageSent), model);
         }
 
         /// <summary>
@@ -510,7 +511,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Username = username
             };
-            client.RaiseEvent(nameof(client.OnModeratorJoined), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnModeratorJoined), model);
         }
 
         /// <summary>
@@ -526,7 +527,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Username = username
             };
-            client.RaiseEvent(nameof(client.OnModeratorLeft), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnModeratorLeft), model);
         }
 
         /// <summary>
@@ -542,7 +543,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Moderators = moderators
             };
-            client.RaiseEvent(nameof(client.OnModeratorsReceived), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnModeratorsReceived), model);
         }
 
         /// <summary>
@@ -635,7 +636,7 @@ namespace TwitchLib.Client.Extensions
                                             rawIrc,
                                             channel)
             };
-            client.RaiseEvent(nameof(client.OnNewSubscriber), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnNewSubscriber), model);
         }
 
         /// <summary>
@@ -710,7 +711,7 @@ namespace TwitchLib.Client.Extensions
                                                         userType,
                                                         userId)
             };
-            client.RaiseEvent(nameof(client.OnRaidNotification), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnRaidNotification), model);
         }
 
         /// <summary>
@@ -803,7 +804,7 @@ namespace TwitchLib.Client.Extensions
                                                 rawIrc,
                                                 channel)
             };
-            client.RaiseEvent(nameof(client.OnReSubscriber), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnReSubscriber), model);
         }
 
         /// <summary>
@@ -819,7 +820,7 @@ namespace TwitchLib.Client.Extensions
                 Data = data,
                 Direction = direction
             };
-            client.RaiseEvent(nameof(client.OnSendReceiveData), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnSendReceiveData), model);
         }
 
         /// <summary>
@@ -837,7 +838,7 @@ namespace TwitchLib.Client.Extensions
             {
                 UserBan = new UserBan(channel, username, banReason, roomId, targetUserId)
             };
-            client.RaiseEvent(nameof(client.OnUserBanned), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserBanned), model);
         }
 
         /// <summary>
@@ -853,7 +854,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Username = username
             };
-            client.RaiseEvent(nameof(client.OnUserJoined), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserJoined), model);
         }
 
         /// <summary>
@@ -869,7 +870,7 @@ namespace TwitchLib.Client.Extensions
                 Channel = channel,
                 Username = username
             };
-            client.RaiseEvent(nameof(client.OnUserLeft), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserLeft), model);
         }
 
         /// <summary>
@@ -911,7 +912,7 @@ namespace TwitchLib.Client.Extensions
                                           isModerator,
                                           userType)
             };
-            client.RaiseEvent(nameof(client.OnUserStateChanged), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserStateChanged), model);
         }
 
         /// <summary>
@@ -934,7 +935,7 @@ namespace TwitchLib.Client.Extensions
             {
                 UserTimeout = new UserTimeout(channel, username, targetUserId, timeoutDuration, timeoutReason)
             };
-            client.RaiseEvent(nameof(client.OnUserTimedout), model);
+            RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserTimedout), model);
         }
 
         /// <summary>
