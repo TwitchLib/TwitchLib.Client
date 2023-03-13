@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using TwitchLib.Client.Delegates;
+using TwitchLib.Client.Helpers;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
@@ -83,7 +84,7 @@ namespace TwitchLib.Client.Managers
 
         public JoinedChannel GetJoinedChannel(string channel)
         {
-            if (IsChannelNameNullOrEmptyOrWhitespace(channel)) return null;
+            if (channel.IsNullOrEmptyOrWhitespace()) return null;
             channel = CorrectChannelName(channel);
             // no sync is needed, its a cuncurrent dictionary
             bool found = Joined.TryGetValue(channel, out JoinedChannel joinedChannel);
@@ -95,7 +96,7 @@ namespace TwitchLib.Client.Managers
         }
         public void JoinChannel(string channel, bool overrideCheck = false)
         {
-            if (IsChannelNameNullOrEmptyOrWhitespace(channel)) return;
+            if (channel.IsNullOrEmptyOrWhitespace()) return;
             channel = CorrectChannelName(channel);
 
             lock (SYNC)
@@ -124,7 +125,7 @@ namespace TwitchLib.Client.Managers
         }
         public void LeaveChannel(string channel)
         {
-            if (IsChannelNameNullOrEmptyOrWhitespace(channel)) return;
+            if (channel.IsNullOrEmptyOrWhitespace()) return;
             channel = CorrectChannelName(channel);
             Log($"Leaving channel: {channel}");
             lock (SYNC)
@@ -250,10 +251,6 @@ namespace TwitchLib.Client.Managers
             if (channelName.StartsWith("#"))
                 channelName = channelName.Substring(1);
             return channelName;
-        }
-        private static bool IsChannelNameNullOrEmptyOrWhitespace(string channel)
-        {
-            return String.IsNullOrEmpty(channel) || String.IsNullOrWhiteSpace(channel);
         }
     }
 }
