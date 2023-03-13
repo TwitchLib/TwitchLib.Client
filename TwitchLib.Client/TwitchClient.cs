@@ -30,9 +30,9 @@ namespace TwitchLib.Client
     public partial class TwitchClient : ITwitchClient
     {
         #region Private Variables
-        private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
-        private readonly ILogger<TwitchClient> _logger;
-        private string _lastMessageSent;
+        private ISet<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
+        private ILogger<TwitchClient> LOGGER { get; }
+        private string LastMessageSent { get; set; }
         #endregion
 
         #region Public Variables
@@ -81,7 +81,7 @@ namespace TwitchLib.Client
 
         public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger<TwitchClient> logger = null)
         {
-            _logger = logger;
+            LOGGER = logger;
             Protocol = protocol;
             Client = client;
             if (Client == null)
@@ -129,7 +129,7 @@ namespace TwitchLib.Client
             ConnectionCredentials = credentials;
             TwitchUsername = ConnectionCredentials.TwitchUsername;
             if (chatCommandIdentifier != '\0')
-                _chatCommandIdentifiers.Add(chatCommandIdentifier);
+                ChatCommandIdentifiers.Add(chatCommandIdentifier);
 
             ChannelManager.JoinChannels(channels);
         }
@@ -179,7 +179,7 @@ namespace TwitchLib.Client
                 twitchMessage.ReplyToId = replyToId;
             }
 
-            _lastMessageSent = message;
+            LastMessageSent = message;
 
             // IDE0058 - client raises OnSendFailed if this method returns false
             Client.Send(twitchMessage.ToString());
@@ -212,13 +212,13 @@ namespace TwitchLib.Client
         public void AddChatCommandIdentifier(char identifier)
         {
             if (!IsInitialized) HandleNotInitialized();
-            _chatCommandIdentifiers.Add(identifier);
+            ChatCommandIdentifiers.Add(identifier);
         }
 
         public void RemoveChatCommandIdentifier(char identifier)
         {
             if (!IsInitialized) HandleNotInitialized();
-            _chatCommandIdentifiers.Remove(identifier);
+            ChatCommandIdentifiers.Remove(identifier);
         }
         #endregion
 
@@ -332,9 +332,9 @@ namespace TwitchLib.Client
                     OnUserIntro?.Invoke(this, new OnUserIntroArgs { ChatMessage = chatMessage });
             }
 
-            if (_chatCommandIdentifiers != null && _chatCommandIdentifiers.Count != 0 && !String.IsNullOrEmpty(chatMessage.Message))
+            if (ChatCommandIdentifiers != null && ChatCommandIdentifiers.Count != 0 && !String.IsNullOrEmpty(chatMessage.Message))
             {
-                if (_chatCommandIdentifiers.Contains(chatMessage.Message[0]))
+                if (ChatCommandIdentifiers.Contains(chatMessage.Message[0]))
                 {
                     ChatCommand chatCommand = new ChatCommand(chatMessage);
                     OnChatCommandReceived?.Invoke(this, new OnChatCommandReceivedArgs { Command = chatCommand });
@@ -366,7 +366,7 @@ namespace TwitchLib.Client
                 return;
             }
 
-            bool successBanDuration = ircMessage.Tags.TryGetValue(Tags.BanDuration, out _);
+            bool successBanDuration = ircMessage.Tags.ContainsKey(Tags.BanDuration);
             if (successBanDuration)
             {
                 UserTimeout userTimeout = new UserTimeout(ircMessage);
@@ -388,7 +388,7 @@ namespace TwitchLib.Client
             }
             else
             {
-                OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, _lastMessageSent) });
+                OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, LastMessageSent) });
             }
         }
 
