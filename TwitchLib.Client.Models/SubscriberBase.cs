@@ -3,9 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Extensions.NetCore;
 using TwitchLib.Client.Models.Internal;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client.Models
 {
@@ -93,7 +96,7 @@ namespace TwitchLib.Client.Models
         protected readonly int monthsInternal;
 
         /// <summary>Subscriber object constructor.</summary>
-        protected SubscriberBase(IrcMessage ircMessage)
+        protected SubscriberBase(IrcMessage ircMessage, ILogger logger = null)
         {
             RawIrc = ircMessage.ToString();
             ResubMessage = ircMessage.Message;
@@ -165,8 +168,10 @@ namespace TwitchLib.Client.Models
                             case "":
                                 break;
                             default:
-                                // TODO: rather logging than throwing an exception
-                                Exception ex = new ArgumentOutOfRangeException(nameof(tagValue));
+                                Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                               tagValue,
+                                                                               $"switch-case and/or {nameof(Enums.SubscriptionPlan)} have/has to be extended.");
+                                logger?.LogExceptionAsError(GetType(), ex);
                                 break;
                         }
                         break;

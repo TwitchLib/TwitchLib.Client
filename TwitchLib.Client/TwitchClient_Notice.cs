@@ -6,6 +6,7 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models.Internal;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client
 {
@@ -32,6 +33,7 @@ namespace TwitchLib.Client
 
         private void HandleNotice(IrcMessage ircMessage)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (ircMessage.Message.Contains("Improperly formatted auth"))
             {
                 OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });

@@ -5,6 +5,7 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client
 {
@@ -20,23 +21,27 @@ namespace TwitchLib.Client
         public event EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
         public void JoinChannel(string channel, bool overrideCheck = false)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             if (!IsConnected) HandleNotConnected();
             ChannelManager.JoinChannel(channel, overrideCheck);
         }
         public JoinedChannel GetJoinedChannel(string channel)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             return ChannelManager.GetJoinedChannel(channel);
         }
 
         public void LeaveChannel(string channel)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             ChannelManager.LeaveChannel(channel);
         }
         public void LeaveChannel(JoinedChannel channel)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             LeaveChannel(channel.Channel);
         }

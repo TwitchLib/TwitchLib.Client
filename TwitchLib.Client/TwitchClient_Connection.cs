@@ -5,6 +5,7 @@ using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client
 {
@@ -19,6 +20,7 @@ namespace TwitchLib.Client
         public event EventHandler<OnReconnectedEventArgs> OnReconnected;
         public bool Connect()
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
@@ -32,6 +34,7 @@ namespace TwitchLib.Client
         }
         public void Disconnect()
         {
+            LOGGER?.TraceMethodCall(GetType());
             Log("Disconnect Twitch Chat Client...");
 
             if (!IsInitialized) HandleNotInitialized();
@@ -40,12 +43,14 @@ namespace TwitchLib.Client
         }
         public void Reconnect()
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             Log($"Reconnecting to Twitch");
             Client.Reconnect();
         }
         public void SetConnectionCredentials(ConnectionCredentials credentials)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized)
                 HandleNotInitialized();
             if (IsConnected)

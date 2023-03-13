@@ -5,11 +5,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Delegates;
 using TwitchLib.Client.Helpers;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
+using TwitchLib.Communication.Extensions;
 using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client.Managers
@@ -21,6 +24,8 @@ namespace TwitchLib.Client.Managers
         /// </summary>
         private static readonly object SYNC = new object();
 
+
+        private readonly ILogger LOGGER;
 
 
         private Log Log { get; }
@@ -73,17 +78,19 @@ namespace TwitchLib.Client.Managers
 
 
 
-        public ChannelManager(IClient client, Log log, Log logError)
+        public ChannelManager(IClient client, Log log, Log logError, ILogger logger = null)
         {
             Client = client;
             Log = log;
             LogError = logError;
+            LOGGER = logger;
         }
 
 
 
         public JoinedChannel GetJoinedChannel(string channel)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (channel.IsNullOrEmptyOrWhitespace()) return null;
             channel = CorrectChannelName(channel);
             // no sync is needed, its a cuncurrent dictionary
@@ -96,6 +103,7 @@ namespace TwitchLib.Client.Managers
         }
         public void JoinChannel(string channel, bool overrideCheck = false)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (channel.IsNullOrEmptyOrWhitespace()) return;
             channel = CorrectChannelName(channel);
 
@@ -117,6 +125,7 @@ namespace TwitchLib.Client.Managers
         }
         public void JoinChannels(IEnumerable<string> channels, bool overrideCheck = false)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (channels == null) return;
             foreach (string channel in channels)
             {
@@ -125,6 +134,7 @@ namespace TwitchLib.Client.Managers
         }
         public void LeaveChannel(string channel)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (channel.IsNullOrEmptyOrWhitespace()) return;
             channel = CorrectChannelName(channel);
             Log($"Leaving channel: {channel}");
@@ -158,14 +168,17 @@ namespace TwitchLib.Client.Managers
         }
         public void LeaveChannel(JoinedChannel channel)
         {
+            LOGGER?.TraceMethodCall(GetType());
             LeaveChannel(channel.Channel);
         }
         public void ReJoinChannels()
         {
+            LOGGER?.TraceMethodCall(GetType());
             JoinChannels(WantToJoin);
         }
         public void Start()
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (CTS != null)
             {
                 throw new InvalidOperationException($"{nameof(ChannelManager)} should only be started once.");
@@ -177,6 +190,7 @@ namespace TwitchLib.Client.Managers
         }
         public void Stop()
         {
+            LOGGER?.TraceMethodCall(GetType());
             CTS?.Cancel();
             JoiningTask.GetAwaiter().GetResult();
             CTS?.Dispose();
@@ -193,6 +207,7 @@ namespace TwitchLib.Client.Managers
         }
         public void JoinCompleted(string channel)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (Token == null || Token.IsCancellationRequested) return;
             lock (SYNC)
             {
@@ -210,6 +225,7 @@ namespace TwitchLib.Client.Managers
         }
         public void JoinCanceld(string channel)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (Token == null || Token.IsCancellationRequested) return;
             lock (SYNC)
             {
@@ -218,6 +234,7 @@ namespace TwitchLib.Client.Managers
         }
         private void JoinChannelTaskAction()
         {
+            LOGGER?.TraceMethodCall(GetType());
             while (Token != null && !Token.IsCancellationRequested)
             {
                 Task.Delay(TimeSpan.FromSeconds(1)).GetAwaiter().GetResult();

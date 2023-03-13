@@ -4,6 +4,7 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client
 {
@@ -16,6 +17,7 @@ namespace TwitchLib.Client
 
         public void SendRaw(string message)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
 
             Log($"Writing: {message}");
@@ -25,12 +27,14 @@ namespace TwitchLib.Client
         }
         public void SendQueuedItem(string message)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             // IDE0058 - client raises OnSendFailed if this method returns false
             Client.Send(message);
         }
         private void SendPONG()
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             string message = "PONG";
             Log($"Writing: {message}");
@@ -41,26 +45,31 @@ namespace TwitchLib.Client
 
         public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
         {
+            LOGGER?.TraceMethodCall(GetType());
             SendTwitchMessage(channel, message, null, dryRun);
         }
 
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
+            LOGGER?.TraceMethodCall(GetType());
             SendMessage(GetJoinedChannel(channel), message, dryRun);
         }
 
         public void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
         {
+            LOGGER?.TraceMethodCall(GetType());
             SendTwitchMessage(channel, message, replyToId, dryRun);
         }
 
         public void SendReply(string channel, string replyToId, string message, bool dryRun = false)
         {
+            LOGGER?.TraceMethodCall(GetType());
             SendReply(GetJoinedChannel(channel), replyToId, message, dryRun);
         }
 
         private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
             if (message.Length > 500)

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -8,9 +10,7 @@ namespace TwitchLib.Client.Models
 {
     public class PrimePaidSubscriber : SubscriberBase
     {
-        public PrimePaidSubscriber(IrcMessage ircMessage) : base(ircMessage)
-        {
-        }
+        public PrimePaidSubscriber(IrcMessage ircMessage, ILogger logger = null) : base(ircMessage, logger) { }
 
         public PrimePaidSubscriber(
             List<KeyValuePair<string, string>> badges,

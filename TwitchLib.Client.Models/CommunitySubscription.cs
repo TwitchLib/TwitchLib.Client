@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client.Models
 {
@@ -34,7 +37,7 @@ namespace TwitchLib.Client.Models
         public UserType UserType { get; }
         public string MsgParamMultiMonthGiftDuration { get; }
         [SuppressMessage("Style", "IDE0058")]
-        public CommunitySubscription(IrcMessage ircMessage)
+        public CommunitySubscription(IrcMessage ircMessage, ILogger logger = null)
         {
             foreach (string tag in ircMessage.Tags.Keys)
             {
@@ -87,8 +90,10 @@ namespace TwitchLib.Client.Models
                             case "":
                                 break;
                             default:
-                                Exception ex = new ArgumentOutOfRangeException(nameof(tagValue));
-                                // TODO: rather logging than throwing an exception
+                                Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                               tagValue,
+                                                                               $"switch-case and/or {nameof(Enums.SubscriptionPlan)} have/has to be extended.");
+                                logger?.LogExceptionAsError(GetType(), ex);
                                 break;
                         }
                         break;

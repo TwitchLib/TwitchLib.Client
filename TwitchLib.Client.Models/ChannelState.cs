@@ -1,6 +1,9 @@
 ﻿using System;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Models.Internal;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client.Models
 {
@@ -38,7 +41,7 @@ namespace TwitchLib.Client.Models
         public bool? SubOnly { get; }
 
         /// <summary>ChannelState object constructor.</summary>
-        public ChannelState(IrcMessage ircMessage)
+        public ChannelState(IrcMessage ircMessage, ILogger logger = null)
         {
             //@broadcaster-lang=;emote-only=0;r9k=0;slow=0;subs-only=1 :tmi.twitch.tv ROOMSTATE #burkeblack
             foreach (string tag in ircMessage.Tags.Keys)
@@ -79,7 +82,10 @@ namespace TwitchLib.Client.Models
                         Mercury = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     default:
-                        // TODO: rather logging than writing to console!
+                        Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                       tagValue,
+                                                                       $"switch-case and/or {nameof(Tags)} have/has to be extended.");
+                        logger?.LogExceptionAsError(GetType(), ex);
                         break;
                 }
             }

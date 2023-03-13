@@ -4,6 +4,7 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client
 {
@@ -22,6 +23,7 @@ namespace TwitchLib.Client
 
         private void HandleUserNotice(IrcMessage ircMessage)
         {
+            LOGGER?.TraceMethodCall(GetType());
             bool successMsgId = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
             if (!successMsgId)
             {
@@ -41,15 +43,15 @@ namespace TwitchLib.Client
                     OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotification = raidNotification });
                     break;
                 case MsgIds.ReSubscription:
-                    ReSubscriber resubscriber = new ReSubscriber(ircMessage);
+                    ReSubscriber resubscriber = new ReSubscriber(ircMessage, LOGGER);
                     OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.SubGift:
-                    GiftedSubscription giftedSubscription = new GiftedSubscription(ircMessage);
+                    GiftedSubscription giftedSubscription = new GiftedSubscription(ircMessage, LOGGER);
                     OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.CommunitySubscription:
-                    CommunitySubscription communitySubscription = new CommunitySubscription(ircMessage);
+                    CommunitySubscription communitySubscription = new CommunitySubscription(ircMessage, LOGGER);
                     OnCommunitySubscription?.Invoke(this, new OnCommunitySubscriptionArgs { GiftedSubscription = communitySubscription, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.ContinuedGiftedSubscription:
@@ -57,11 +59,11 @@ namespace TwitchLib.Client
                     OnContinuedGiftedSubscription?.Invoke(this, new OnContinuedGiftedSubscriptionArgs { ContinuedGiftedSubscription = continuedGiftedSubscription, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.Subscription:
-                    Subscriber subscriber = new Subscriber(ircMessage);
+                    Subscriber subscriber = new Subscriber(ircMessage, LOGGER);
                     OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs { Subscriber = subscriber, Channel = ircMessage.Channel });
                     break;
                 case MsgIds.PrimePaidUprade:
-                    PrimePaidSubscriber primePaidSubscriber = new PrimePaidSubscriber(ircMessage);
+                    PrimePaidSubscriber primePaidSubscriber = new PrimePaidSubscriber(ircMessage, LOGGER);
                     OnPrimePaidSubscriber?.Invoke(this, new OnPrimePaidSubscriberArgs { PrimePaidSubscriber = primePaidSubscriber, Channel = ircMessage.Channel });
                     break;
                 default:

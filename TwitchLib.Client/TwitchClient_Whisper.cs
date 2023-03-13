@@ -5,6 +5,7 @@ using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client
 {
@@ -23,17 +24,20 @@ namespace TwitchLib.Client
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void SendWhisper(string receiver, string message, bool dryRun = false)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             if (dryRun) return;
         }
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void AddWhisperCommandIdentifier(char identifier)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
         }
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void RemoveWhisperCommandIdentifier(char identifier)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
         }
     }

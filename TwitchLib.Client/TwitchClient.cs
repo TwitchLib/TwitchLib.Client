@@ -17,6 +17,7 @@ using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
 using TwitchLib.Communication.Clients;
+using TwitchLib.Communication.Extensions;
 using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client
@@ -95,7 +96,7 @@ namespace TwitchLib.Client
             }
             Debug.Assert(Client != null, nameof(Client) + " != null");
             InitializeClient();
-            ChannelManager = new ChannelManager(Client, Log, LogError);
+            ChannelManager = new ChannelManager(Client, Log, LogError, LOGGER);
         }
 
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
@@ -104,6 +105,7 @@ namespace TwitchLib.Client
                                char chatCommandIdentifier = '!',
                                char whisperCommandIdentifier = '!')
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (channel != null && channel[0] == '#') channel = channel.Substring(1);
             InitializeHelper(credentials, new List<string>() { channel }, chatCommandIdentifier);
         }
@@ -114,6 +116,7 @@ namespace TwitchLib.Client
                                char chatCommandIdentifier = '!',
                                char whisperCommandIdentifier = '!')
         {
+            LOGGER?.TraceMethodCall(GetType());
             channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
             InitializeHelper(credentials, channels, chatCommandIdentifier);
         }
@@ -122,6 +125,7 @@ namespace TwitchLib.Client
                                       List<string> channels,
                                       char chatCommandIdentifier = '!')
         {
+            LOGGER?.TraceMethodCall(GetType());
             Log($"TwitchLib-TwitchClient initialized, assembly version: {Assembly.GetExecutingAssembly().GetName().Version}");
             ConnectionCredentials = credentials;
             TwitchUsername = ConnectionCredentials.TwitchUsername;
@@ -137,12 +141,14 @@ namespace TwitchLib.Client
 
         public void AddChatCommandIdentifier(char identifier)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             ChatCommandIdentifiers.Add(identifier);
         }
 
         public void RemoveChatCommandIdentifier(char identifier)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (!IsInitialized) HandleNotInitialized();
             ChatCommandIdentifiers.Remove(identifier);
         }
@@ -152,6 +158,7 @@ namespace TwitchLib.Client
 
         private void HandleIrcMessage(IrcMessage ircMessage)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (ircMessage.Message.Contains("Login authentication failed"))
             {
                 OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
@@ -218,7 +225,7 @@ namespace TwitchLib.Client
                 case IrcCommand.Whisper:
                     break;
                 case IrcCommand.RoomState:
-                    OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage), Channel = ircMessage.Channel });
+                    OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage, LOGGER), Channel = ircMessage.Channel });
                     break;
                 case IrcCommand.Reconnect:
                     Reconnect();
@@ -246,6 +253,7 @@ namespace TwitchLib.Client
 
         private void HandlePrivMsg(IrcMessage ircMessage)
         {
+            LOGGER?.TraceMethodCall(GetType());
             ChatMessage chatMessage = new ChatMessage(TwitchUsername, ircMessage, WillReplaceEmotes);
             foreach (JoinedChannel joinedChannel in JoinedChannels.Where(x => String.Equals(x.Channel, ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
                 joinedChannel.HandleMessage(chatMessage);
@@ -271,6 +279,7 @@ namespace TwitchLib.Client
 
         private void HandlePart(IrcMessage ircMessage)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (String.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
             {
                 ChannelManager.LeaveChannel(ircMessage.Channel);
@@ -286,6 +295,7 @@ namespace TwitchLib.Client
 
         private void HandleClearChat(IrcMessage ircMessage)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (String.IsNullOrWhiteSpace(ircMessage.Message))
             {
                 OnChatCleared?.Invoke(this, new OnChatClearedArgs { Channel = ircMessage.Channel });
@@ -306,7 +316,8 @@ namespace TwitchLib.Client
 
         private void HandleUserState(IrcMessage ircMessage)
         {
-            UserState userState = new UserState(ircMessage);
+            LOGGER?.TraceMethodCall(GetType());
+            UserState userState = new UserState(ircMessage, LOGGER);
             if (!HasSeenJoinedChannels.Contains(userState.Channel.ToLowerInvariant()))
             {
                 HasSeenJoinedChannels.Add(userState.Channel.ToLowerInvariant());
@@ -320,6 +331,7 @@ namespace TwitchLib.Client
 
         private void HandleMode(IrcMessage ircMessage)
         {
+            LOGGER?.TraceMethodCall(GetType());
             if (ircMessage.Message.StartsWith("+o"))
             {
                 OnModeratorJoined?.Invoke(this, new OnModeratorJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.Message.Split(' ')[1] });

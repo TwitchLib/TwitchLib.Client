@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
+using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client.Models
 {
@@ -42,8 +45,7 @@ namespace TwitchLib.Client.Models
         /// <summary>
         /// Constructor for UserState.
         /// </summary>
-        /// <param name="ircMessage"></param>
-        public UserState(IrcMessage ircMessage)
+        public UserState(IrcMessage ircMessage, ILogger logger = null)
         {
             Channel = ircMessage.Channel;
 
@@ -98,7 +100,10 @@ namespace TwitchLib.Client.Models
                         break;
                     default:
                         // This should never happen, unless Twitch changes their shit
-                        // TODO: rather logging than writing to console!
+                        Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                       tagValue,
+                                                                       $"switch-case and/or {nameof(Tags)} have/has to be extended.");
+                        logger?.LogExceptionAsError(GetType(), ex);
                         break;
                 }
             }
