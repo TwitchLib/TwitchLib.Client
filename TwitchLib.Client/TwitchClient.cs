@@ -255,8 +255,8 @@ namespace TwitchLib.Client
         {
             LOGGER?.TraceMethodCall(GetType());
             ChatMessage chatMessage = new ChatMessage(TwitchUsername, ircMessage, WillReplaceEmotes);
-            foreach (JoinedChannel joinedChannel in JoinedChannels.Where(x => String.Equals(x.Channel, ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
-                joinedChannel.HandleMessage(chatMessage);
+            JoinedChannel joinedChannel = GetJoinedChannel(ircMessage.Channel);
+            joinedChannel?.HandleMessage(chatMessage);
 
             OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage });
 
