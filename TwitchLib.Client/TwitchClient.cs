@@ -17,7 +17,6 @@ using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
 using TwitchLib.Communication.Clients;
-using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client
@@ -32,7 +31,7 @@ namespace TwitchLib.Client
         #region Private Variables
         private ISet<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
         private ILogger<TwitchClient> LOGGER { get; }
-        private string LastMessageSent { get; set; }
+
         #endregion
 
         #region Public Variables
@@ -49,7 +48,7 @@ namespace TwitchLib.Client
 
         public event EventHandler<OnMessageReceivedArgs> OnMessageReceived;
 
-        public event EventHandler<OnMessageSentArgs> OnMessageSent;
+
 
         public event EventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
 
@@ -70,8 +69,6 @@ namespace TwitchLib.Client
         public event EventHandler<OnUserTimedoutArgs> OnUserTimedout;
 
         public event EventHandler<OnUserBannedArgs> OnUserBanned;
-
-        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
 
         public event EventHandler<OnUserIntroArgs> OnUserIntro;
 
@@ -132,77 +129,6 @@ namespace TwitchLib.Client
                 ChatCommandIdentifiers.Add(chatCommandIdentifier);
 
             ChannelManager.JoinChannels(channels);
-        }
-
-        #endregion
-
-        #region SendMessage
-
-        public void SendRaw(string message)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-
-            Log($"Writing: {message}");
-            // IDE0058 - client raises OnSendFailed if this method returns false
-            Client.Send(message);
-            OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
-        }
-
-        private void SendPONG()
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            string message = "PONG";
-            Log($"Writing: {message}");
-            // IDE0058 - client raises OnSendFailed if this method returns false
-            Client.SendPONG();
-            OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
-        }
-
-        private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            if (channel == null || message == null || dryRun) return;
-            if (message.Length > 500)
-            {
-                LogError("Message length has exceeded the maximum character count. (500)");
-                return;
-            }
-
-            OutboundChatMessage twitchMessage = new OutboundChatMessage
-            {
-                Channel = channel.Channel,
-                Username = ConnectionCredentials.TwitchUsername,
-                Message = message
-            };
-            if (replyToId != null)
-            {
-                twitchMessage.ReplyToId = replyToId;
-            }
-
-            LastMessageSent = message;
-
-            // IDE0058 - client raises OnSendFailed if this method returns false
-            Client.Send(twitchMessage.ToString());
-        }
-
-        public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
-        {
-            SendTwitchMessage(channel, message, null, dryRun);
-        }
-
-        public void SendMessage(string channel, string message, bool dryRun = false)
-        {
-            SendMessage(GetJoinedChannel(channel), message, dryRun);
-        }
-
-        public void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
-        {
-            SendTwitchMessage(channel, message, replyToId, dryRun);
-        }
-
-        public void SendReply(string channel, string replyToId, string message, bool dryRun = false)
-        {
-            SendReply(GetJoinedChannel(channel), replyToId, message, dryRun);
         }
 
         #endregion
@@ -407,13 +333,6 @@ namespace TwitchLib.Client
         }
 
         #endregion
-
-        public void SendQueuedItem(string message)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            // IDE0058 - client raises OnSendFailed if this method returns false
-            Client.Send(message);
-        }
 
     }
 }

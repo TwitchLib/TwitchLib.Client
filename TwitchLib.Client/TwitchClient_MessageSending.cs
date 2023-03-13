@@ -1,0 +1,89 @@
+﻿using System;
+
+using TwitchLib.Client.Events;
+using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
+using TwitchLib.Communication.Events;
+
+namespace TwitchLib.Client
+{
+    public partial class TwitchClient : ITwitchClient_MessageSending
+    {
+        private string LastMessageSent { get; set; }
+
+        public event EventHandler<OnMessageSentArgs> OnMessageSent;
+        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
+
+        public void SendRaw(string message)
+        {
+            if (!IsInitialized) HandleNotInitialized();
+
+            Log($"Writing: {message}");
+            // IDE0058 - client raises OnSendFailed if this method returns false
+            Client.Send(message);
+            OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
+        }
+        public void SendQueuedItem(string message)
+        {
+            if (!IsInitialized) HandleNotInitialized();
+            // IDE0058 - client raises OnSendFailed if this method returns false
+            Client.Send(message);
+        }
+        private void SendPONG()
+        {
+            if (!IsInitialized) HandleNotInitialized();
+            string message = "PONG";
+            Log($"Writing: {message}");
+            // IDE0058 - client raises OnSendFailed if this method returns false
+            Client.SendPONG();
+            OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
+        }
+
+        public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
+        {
+            SendTwitchMessage(channel, message, null, dryRun);
+        }
+
+        public void SendMessage(string channel, string message, bool dryRun = false)
+        {
+            SendMessage(GetJoinedChannel(channel), message, dryRun);
+        }
+
+        public void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
+        {
+            SendTwitchMessage(channel, message, replyToId, dryRun);
+        }
+
+        public void SendReply(string channel, string replyToId, string message, bool dryRun = false)
+        {
+            SendReply(GetJoinedChannel(channel), replyToId, message, dryRun);
+        }
+
+        private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
+        {
+            if (!IsInitialized) HandleNotInitialized();
+            if (channel == null || message == null || dryRun) return;
+            if (message.Length > 500)
+            {
+                LogError("Message length has exceeded the maximum character count. (500)");
+                return;
+            }
+
+            OutboundChatMessage twitchMessage = new OutboundChatMessage
+            {
+                Channel = channel.Channel,
+                Username = ConnectionCredentials.TwitchUsername,
+                Message = message
+            };
+            if (replyToId != null)
+            {
+                twitchMessage.ReplyToId = replyToId;
+            }
+
+            LastMessageSent = message;
+
+            // IDE0058 - client raises OnSendFailed if this method returns false
+            Client.Send(twitchMessage.ToString());
+        }
+    }
+}
