@@ -192,7 +192,7 @@ namespace TwitchLib.Client.Managers
         {
             LOGGER?.TraceMethodCall(GetType());
             CTS?.Cancel();
-            JoiningTask.GetAwaiter().GetResult();
+            JoiningTask?.GetAwaiter().GetResult();
             CTS?.Dispose();
             lock (SYNC)
             {
