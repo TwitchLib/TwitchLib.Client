@@ -30,7 +30,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         ///     Occurs when [on disconnected].
         /// </summary>
-        event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
+        event EventHandler<OnDisconnectedArgs> OnDisconnected;
         /// <summary>
         ///     Occurs when [on incorrect login].
         /// </summary>

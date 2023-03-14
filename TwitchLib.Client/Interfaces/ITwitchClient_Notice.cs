@@ -16,7 +16,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         ///     Occurs when [on no permission].
         /// </summary>
-        event EventHandler OnNoPermissionError;
+        event EventHandler<EventArgs> OnNoPermissionError;
         /// <summary>
         ///     Occurs when [on moderators received].
         /// </summary>
@@ -40,11 +40,11 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         ///     Fires when TwitchClient attempts to host a channel it is in.
         /// </summary>
-        event EventHandler OnSelfRaidError;
+        event EventHandler<EventArgs> OnSelfRaidError;
         /// <summary>
         ///     Fires when newly raided channel is mature audience only.
         /// </summary>
-        event EventHandler OnRaidedChannelIsMatureAudience;
+        event EventHandler<EventArgs> OnRaidedChannelIsMatureAudience;
         /// <summary>
         ///     Fires when the client attempts to send a message to a channel in followers only mode, as a non-follower
         /// </summary>

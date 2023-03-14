@@ -29,9 +29,9 @@ namespace TwitchLib.Client
         public event EventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
         public event EventHandler<OnRateLimitArgs> OnRateLimit;
         public event EventHandler<OnDuplicateArgs> OnDuplicate;
-        public event EventHandler OnSelfRaidError;
-        public event EventHandler OnNoPermissionError;
-        public event EventHandler OnRaidedChannelIsMatureAudience;
+        public event EventHandler<EventArgs> OnSelfRaidError;
+        public event EventHandler<EventArgs> OnNoPermissionError;
+        public event EventHandler<EventArgs> OnRaidedChannelIsMatureAudience;
         public event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
         public event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
 

@@ -19,7 +19,7 @@ namespace TwitchLib.Client
         public ConnectionCredentials ConnectionCredentials { get; private set; }
         public event EventHandler<OnConnectedArgs> OnConnected;
         public event EventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
-        public event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
+        public event EventHandler<OnDisconnectedArgs> OnDisconnected;
         public event EventHandler<OnConnectionErrorArgs> OnConnectionError;
         public event EventHandler<OnReconnectedEventArgs> OnReconnected;
         public bool Connect()

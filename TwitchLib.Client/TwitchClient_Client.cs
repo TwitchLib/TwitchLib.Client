@@ -54,7 +54,7 @@ namespace TwitchLib.Client
         private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
-            OnDisconnected?.Invoke(sender, e);
+            OnDisconnected?.Invoke(sender, new OnDisconnectedArgs());
         }
 
         private void Client_OnReconnected(object sender, OnReconnectedEventArgs e)
