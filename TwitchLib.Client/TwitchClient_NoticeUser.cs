@@ -10,6 +10,10 @@ namespace TwitchLib.Client
 {
     public partial class TwitchClient : ITwitchClient_NoticeUser
     {
+        // TraceMethodCall should use the Type of the interface,
+        // that this class extends;
+        // it makes it easier to find the respective occurance from the log file
+
         public event EventHandler<OnAnnouncementArgs> OnAnnouncement;
         public event EventHandler<OnRaidNotificationArgs> OnRaidNotification;
 
@@ -23,7 +27,7 @@ namespace TwitchLib.Client
 
         private void HandleUserNotice(IrcMessage ircMessage)
         {
-            LOGGER?.TraceMethodCall(GetType());
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_NoticeUser));
             bool successMsgId = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
             if (!successMsgId)
             {

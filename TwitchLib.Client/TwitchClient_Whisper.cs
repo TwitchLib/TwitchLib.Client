@@ -11,6 +11,10 @@ namespace TwitchLib.Client
 {
     public partial class TwitchClient : ITwitchClient_Whisper
     {
+        // TraceMethodCall should use the Type of the interface,
+        // that this class extends;
+        // it makes it easier to find the respective occurance from the log file
+
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public WhisperMessage PreviousWhisper { get; private set; }
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
@@ -24,20 +28,20 @@ namespace TwitchLib.Client
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void SendWhisper(string receiver, string message, bool dryRun = false)
         {
-            LOGGER?.TraceMethodCall(GetType());
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Whisper));
             if (!IsInitialized) HandleNotInitialized();
             if (dryRun) return;
         }
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void AddWhisperCommandIdentifier(char identifier)
         {
-            LOGGER?.TraceMethodCall(GetType());
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Whisper));
             if (!IsInitialized) HandleNotInitialized();
         }
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void RemoveWhisperCommandIdentifier(char identifier)
         {
-            LOGGER?.TraceMethodCall(GetType());
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Whisper));
             if (!IsInitialized) HandleNotInitialized();
         }
     }

@@ -11,6 +11,10 @@ namespace TwitchLib.Client
 {
     public partial class TwitchClient : ITwitchClient_Connection
     {
+        // TraceMethodCall should use the Type of the interface,
+        // that this class extends;
+        // it makes it easier to find the respective occurance from the log file
+
         public bool IsConnected => IsInitialized && Client != null && Client.IsConnected;
         public ConnectionCredentials ConnectionCredentials { get; private set; }
         public event EventHandler<OnConnectedArgs> OnConnected;
@@ -20,7 +24,7 @@ namespace TwitchLib.Client
         public event EventHandler<OnReconnectedEventArgs> OnReconnected;
         public bool Connect()
         {
-            LOGGER?.TraceMethodCall(GetType());
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
             if (!IsInitialized) HandleNotInitialized();
             Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
@@ -34,7 +38,7 @@ namespace TwitchLib.Client
         }
         public void Disconnect()
         {
-            LOGGER?.TraceMethodCall(GetType());
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
             Log("Disconnect Twitch Chat Client...");
 
             if (!IsInitialized) HandleNotInitialized();
@@ -43,14 +47,14 @@ namespace TwitchLib.Client
         }
         public void Reconnect()
         {
-            LOGGER?.TraceMethodCall(GetType());
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
             if (!IsInitialized) HandleNotInitialized();
             Log($"Reconnecting to Twitch");
             Client.Reconnect();
         }
         public void SetConnectionCredentials(ConnectionCredentials credentials)
         {
-            LOGGER?.TraceMethodCall(GetType());
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
             if (!IsInitialized)
                 HandleNotInitialized();
             if (IsConnected)

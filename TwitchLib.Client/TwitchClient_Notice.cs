@@ -12,6 +12,10 @@ namespace TwitchLib.Client
 {
     public partial class TwitchClient : ITwitchClient_Notice
     {
+        // TraceMethodCall should use the Type of the interface,
+        // that this class extends;
+        // it makes it easier to find the respective occurance from the log file
+
         public event EventHandler<OnModeratorsReceivedArgs> OnModeratorsReceived;
         public event EventHandler<OnChatColorChangedArgs> OnChatColorChanged;
         public event EventHandler<OnBannedArgs> OnBanned;
@@ -33,7 +37,7 @@ namespace TwitchLib.Client
 
         private void HandleNotice(IrcMessage ircMessage)
         {
-            LOGGER?.TraceMethodCall(GetType());
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Notice));
             if (ircMessage.Message.Contains("Improperly formatted auth"))
             {
                 OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });

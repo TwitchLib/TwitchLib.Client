@@ -11,6 +11,10 @@ namespace TwitchLib.Client
 {
     public partial class TwitchClient : ITwitchClient_BackendLogging
     {
+        // TraceMethodCall should use the Type of the interface,
+        // that this class extends;
+        // it makes it easier to find the respective occurance from the log file
+
         public event EventHandler<OnErrorEventArgs> OnError;
         public event EventHandler<OnLogArgs> OnLog;
         public event EventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
