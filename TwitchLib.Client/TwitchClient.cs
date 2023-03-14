@@ -27,7 +27,7 @@ namespace TwitchLib.Client
     ///     Implements the <see cref="TwitchLib.Client.Interfaces.ITwitchClient" />
     /// </summary>
     [SuppressMessage("Style", "IDE0058")]
-    public partial class TwitchClient : ITwitchClient
+    public partial class TwitchClient : ITwitchClient, ITwitchClient_MessageReceiving
     {
         #region Private Variables
         private ISet<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
@@ -44,40 +44,25 @@ namespace TwitchLib.Client
 
         #region Events
 
-
         public event EventHandler<OnUserStateChangedArgs> OnUserStateChanged;
-
         public event EventHandler<OnMessageReceivedArgs> OnMessageReceived;
-
-
-
         public event EventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
-
         public event EventHandler<OnUserJoinedArgs> OnUserJoined;
         public event EventHandler<OnUserLeftArgs> OnUserLeft;
         public event EventHandler<OnModeratorJoinedArgs> OnModeratorJoined;
         public event EventHandler<OnModeratorLeftArgs> OnModeratorLeft;
-
-
-
         public event EventHandler<OnMessageClearedArgs> OnMessageCleared;
-
         public event EventHandler<OnExistingUsersDetectedArgs> OnExistingUsersDetected;
-
-
         public event EventHandler<OnChatClearedArgs> OnChatCleared;
-
         public event EventHandler<OnUserTimedoutArgs> OnUserTimedout;
-
         public event EventHandler<OnUserBannedArgs> OnUserBanned;
-
         public event EventHandler<OnUserIntroArgs> OnUserIntro;
 
         #endregion
 
         #region Construction Work
 
-        public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger<TwitchClient> logger = null)
+        public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger<ITwitchClient> logger = null)
         {
             LOGGER = logger;
             Protocol = protocol;
