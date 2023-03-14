@@ -309,7 +309,14 @@ namespace TwitchLib.Client
             }
             else
             {
-                OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, LastMessageSent) });
+                // TODO: here is an error, but first i have to check out the UserState.:
+                // i think the intention is,
+                // to invoke OnMessageSent when the sent message comes back from twitch
+                // but:
+                // 1. actually, the sent message goes through ThrottlerService
+                // 2. what if the client sends messages in multiple channels?
+                // 3. what if the client sends messages more or less simultanously? it probably gets overriden, before it could get raised as sent
+                //OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, LastMessageSent) });
             }
         }
 
