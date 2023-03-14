@@ -31,7 +31,7 @@ namespace TwitchLib.Client
     {
         #region Private Variables
         private ISet<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
-        private ILogger<TwitchClient> LOGGER { get; }
+        private ILogger<ITwitchClient> LOGGER { get; }
 
         #endregion
 
