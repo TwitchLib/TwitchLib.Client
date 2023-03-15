@@ -15,6 +15,8 @@
         public const string ColorChanged = "color_changed";
         public const string EmoteOnlyOff = "emote_only_off";
         public const string EmoteOnlyOn = "emote_only_on";
+        public const string FollowersOn = "followers_on";
+        public const string FollowersOff = "followers_off";
         public const string HighlightedMessage = "highlighted-message";
         public const string ModeratorsReceived = "room_mods";
         public const string NoMods = "no_mods";
@@ -40,6 +42,8 @@
         public const string ReSubscription = "resub";
         public const string R9KOff = "r9k_off";
         public const string R9KOn = "r9k_on";
+        public const string SlowOn = "slow_on";
+        public const string SlowOff = "slow_of";
         public const string SubGift = "subgift";
         public const string CommunitySubscription = "submysterygift";
         public const string ContinuedGiftedSubscription = "giftpaidupgrade";
