@@ -143,7 +143,8 @@ namespace TwitchLib.Client.Tests
                             client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                             // send is our trigger, to make the IClient-Mock raise OnMessage!
                             Assert.True(communicationClient.Send(String.Empty));
-                            Assert.False(pauseCheck.WaitOne(WaitOneDuration));
+                            // we dont need to wait to long, we expect it to fail
+                            Assert.False(pauseCheck.WaitOne(500));
                         });
                 Assert.Fail("RaisesAny should throw an Exception!");
             }
@@ -167,26 +168,95 @@ namespace TwitchLib.Client.Tests
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnDisconnectedArgs>(
+            Assert.RaisedEvent<OnDisconnectedArgs> assertion = Assert.Raises<OnDisconnectedArgs>(
                     h => client.OnDisconnected += h,
                     h => client.OnDisconnected -= h,
                     () =>
                     {
-                        client.OnDisconnected += (sender, args) =>
-                        {
-                            Assert.NotNull(args);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnDisconnected += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         client.Disconnect();
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+            Assert.NotNull(assertion.Arguments);
         }
         [Fact]
-        public void TwitchClient_Raises_OnIncorrectLogin() { throw new NotImplementedException(); }
+        public void TwitchClient_Raises_OnIncorrectLogin()
+        {
+            string message = ":tmi.twitch.tv NOTICE * :Login authentication failed";
+            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
+            // create one logger per test-method! - cause one file per test-method is generated
+            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
+            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ManualResetEvent pauseCheck = new ManualResetEvent(false);
+            Assert.RaisedEvent<OnIncorrectLoginArgs> assertion = Assert.Raises<OnIncorrectLoginArgs>(
+                    h => client.OnIncorrectLogin += h,
+                    h => client.OnIncorrectLogin -= h,
+                    () =>
+                    {
+                        client.OnIncorrectLogin += (sender, args) => Assert.True(pauseCheck.Set());
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        // send is our trigger, to make the IClient-Mock raise OnMessage!
+                        Assert.True(communicationClient.Send(String.Empty));
+                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
+                    });
+            Assert.NotNull(assertion.Arguments);
+        }
         [Fact]
-        public void TwitchClient_Raises_OnConnectionError() { throw new NotImplementedException(); }
+        public void TwitchClient_Raises_OnConnectionError()
+        {
+            Mock<IClient> mock = new Mock<IClient>();
+            mock.SetupAdd(c => c.OnFatality += It.IsAny<EventHandler<OnFatalErrorEventArgs>>());
+            mock.Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(false)
+                .Raises(c => c.OnFatality += null, new OnFatalErrorEventArgs("Fatal network error."));
+
+            mock.Setup(c => c.IsConnected).Returns(true);
+
+            IClient communicationClient = mock.Object;
+            // create one logger per test-method! - cause one file per test-method is generated
+            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
+            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ManualResetEvent pauseCheck = new ManualResetEvent(false);
+            Assert.RaisedEvent<OnConnectionErrorArgs> assertion = Assert.Raises<OnConnectionErrorArgs>(
+                    h => client.OnConnectionError += h,
+                    h => client.OnConnectionError -= h,
+                    () =>
+                    {
+                        client.OnConnectionError += (sender, args) => Assert.True(pauseCheck.Set());
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        communicationClient.Send(String.Empty);
+                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
+                    });
+            Assert.NotNull(assertion.Arguments);
+        }
         [Fact]
-        public void TwitchClient_Raises_OnReconnected() { throw new NotImplementedException(); }
+        public void TwitchClient_Raises_OnReconnected()
+        {
+            Mock<IClient> mock = new Mock<IClient>();
+            mock.SetupAdd(c => c.OnReconnected += It.IsAny<EventHandler<OnReconnectedEventArgs>>());
+            mock.Setup(c => c.Reconnect())
+                .Returns(true)
+                .Raises(c => c.OnReconnected += null, new OnReconnectedEventArgs());
+
+            mock.Setup(c => c.IsConnected).Returns(true);
+
+            IClient communicationClient = mock.Object;
+            // create one logger per test-method! - cause one file per test-method is generated
+            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
+            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ManualResetEvent pauseCheck = new ManualResetEvent(false);
+            Assert.RaisedEvent<OnReconnectedEventArgs> assertion = Assert.Raises<OnReconnectedEventArgs>(
+                    h => client.OnReconnected += h,
+                    h => client.OnReconnected -= h,
+                    () =>
+                    {
+                        client.OnReconnected += (sender, args) => Assert.True(pauseCheck.Set());
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Reconnect();
+                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
+                    });
+            Assert.NotNull(assertion.Arguments);
+        }
     }
 }
