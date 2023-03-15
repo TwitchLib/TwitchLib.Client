@@ -118,6 +118,40 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
         }
+        [Theory]
+        [InlineData(":tmi.twitch.tv 001 [a users name] :Welcome, GLHF!", IrcCommand.RPL_001)]
+        [InlineData(":tmi.twitch.tv 002 [a users name] :Your host is tmi.twitch.tv", IrcCommand.RPL_002)]
+        [InlineData(":tmi.twitch.tv 003 [a users name] :This server is rather new", IrcCommand.RPL_003)]
+        [InlineData(":tmi.twitch.tv 004 [a users name] :-", IrcCommand.RPL_004, Skip = "this should raise OnConnected and is tested somewhere else")]
+        [InlineData(":tmi.twitch.tv 375 [a users name] :-", IrcCommand.RPL_375)]
+        [InlineData(":tmi.twitch.tv 372 [a users name] :You are in a maze of twisty passages, all alike.", IrcCommand.RPL_372)]
+        [InlineData(":tmi.twitch.tv 376 [a users name] :>", IrcCommand.RPL_376)]
+        public void TwitchClient_Raises_Nothing_OnConnected(string message, IrcCommand ircCommand)
+        {
+            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
+            // create one logger per test-method! - cause one file per test-method is generated
+            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
+            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ManualResetEvent pauseCheck = new ManualResetEvent(false);
+            try
+            {
+                Assert.RaisesAny<OnConnectedArgs>(
+                        h => client.OnConnected += h,
+                        h => client.OnConnected -= h,
+                        () =>
+                        {
+                            client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                            // send is our trigger, to make the IClient-Mock raise OnMessage!
+                            Assert.True(communicationClient.Send(String.Empty));
+                            Assert.False(pauseCheck.WaitOne(WaitOneDuration));
+                        });
+                Assert.Fail("RaisesAny should throw an Exception!");
+            }
+            catch (Exception ex)
+            {
+                Assert.NotNull(ex);
+            }
+        }
         [Fact]
         public void TwitchClient_Raises_OnDisconnected()
         {

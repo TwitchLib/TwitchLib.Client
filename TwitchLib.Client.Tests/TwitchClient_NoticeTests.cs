@@ -102,7 +102,14 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnFollowersOnly()
         {
+            // TODO: first message is handled as ROOMSTATE in OnChannelStateChanged
             string message = $"@emote-only=0;followers-only=1;r9k=0;room-id=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}";
+            // TODO: is followers_on correct?
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id=followers_on :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is now in followers-only mode.";
+            // TODO: is followers_off correct?
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id=followers_off :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is no longer in followers-only mode.";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
@@ -129,7 +136,13 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnSubsOnly()
         {
+            // TODO: first message is handled as ROOMSTATE in OnChannelStateChanged
             string message = $"@emote-only=0;followers-only=0;r9k=0;room-id=0;slow=0;subs-only=1 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}";
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id={MsgIds.SubsOn} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is now in subscribers-only mode.";
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id={MsgIds.SubsOff} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is no longer in subscribers-only mode.";
+
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
@@ -158,7 +171,13 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnEmoteOnly()
         {
+            // TODO: first message is handled as ROOMSTATE in OnChannelStateChanged
             string message = $"@emote-only=1;followers-only=0;r9k=0;room-id=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}";
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id={MsgIds.EmoteOnlyOn} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is now in emote-only mode.";
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id={MsgIds.EmoteOnlyOff} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is no longer in emote-only mode.";
+
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
@@ -212,7 +231,12 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnSlowMode()
         {
+            // TODO: first message is handled as ROOMSTATE in OnChannelStateChanged
             string message = $"@emote-only=0;followers-only=0;r9k=0;room-id=0;slow=10;subs-only=0 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}";
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id={MsgIds.SlowOn} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is now in emote-only mode.";
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id={MsgIds.SlowOff} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is no longer in emote-only mode.";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
@@ -239,7 +263,12 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnR9kMode()
         {
+            // TODO: first message is handled as ROOMSTATE in OnChannelStateChanged
             string message = $"@emote-only=0;followers-only=0;r9k=1;room-id=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}";
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id={MsgIds.R9KOn} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is now in r9k mode.";
+            // TODO: i think it never gets handled
+            //string message = $"@msg-id={MsgIds.R9KOff} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This room is no longer in r9k mode.";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated

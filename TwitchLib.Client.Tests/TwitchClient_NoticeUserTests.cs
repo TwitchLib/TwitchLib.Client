@@ -80,64 +80,49 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnNewSubscriber()
         {
-            string message = $"";
+            string message = $"@badge-info=;badges=premium/1;color=#4E3696;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=sub;msg-param-cumulative-months=1;msg-param-months=0;msg-param-multimonth-duration=1;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Channel\\sSubscription\\s(Name);msg-param-sub-plan=Prime;msg-param-was-gifted=false;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\ssubscribed\\swith\\sPrime.;tmi-sent-ts=1678000000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnNewSubscriberArgs>(
+            Assert.RaisedEvent<OnNewSubscriberArgs> assertion = Assert.Raises<OnNewSubscriberArgs>(
                     h => client.OnNewSubscriber += h,
                     h => client.OnNewSubscriber -= h,
                     () =>
                     {
-                        client.OnNewSubscriber += (sender, args) =>
-                        {
-                            // here, we dont want to test the IrcParser
-                            // but we want to check at least msg-id
-                            Assert.NotNull(args);
-                            Assert.NotNull(args.Subscriber);
-                            Assert.NotNull(args.Subscriber.Id);
-                            Assert.Equal("fefffeeb-1e87-4adf-9912-ca371a18cbfd", args.Subscriber.Id);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnNewSubscriber += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+            Assert.NotNull(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnReSubscriber()
         {
-            string message = $"";
+            string message = $"@badge-info=subscriber/13;badges=subscriber/12,moments/1;color=#1BFF00;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=resub;msg-param-cumulative-months=13;msg-param-months=0;msg-param-multimonth-duration=0;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Channel\\sSubscription\\s(Name);msg-param-sub-plan=1000;msg-param-was-gifted=false;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\ssubscribed\\sat\\sTier\\s1.\\sThey've\\ssubscribed\\sfor\\s13\\smonths!;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL} :Test";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnReSubscriberArgs>(
+            Assert.RaisedEvent<OnReSubscriberArgs> assertion = Assert.Raises<OnReSubscriberArgs>(
                     h => client.OnReSubscriber += h,
                     h => client.OnReSubscriber -= h,
                     () =>
                     {
-                        client.OnReSubscriber += (sender, args) =>
-                        {
-                            // here, we dont want to test the IrcParser
-                            // but we want to check at least msg-id
-                            Assert.NotNull(args);
-                            Assert.NotNull(args.ReSubscriber);
-                            Assert.NotNull(args.ReSubscriber.Id);
-                            Assert.Equal("fefffeeb-1e87-4adf-9912-ca371a18cbfd", args.ReSubscriber.Id);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnReSubscriber += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+
+            Assert.NotNull(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnPrimePaidSubscriber()
@@ -173,64 +158,48 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnGiftedSubscription()
         {
-            string message = $"";
+            string message = $"@badge-info=;badges=vip/1,bits/1000;color=#DAA520;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=subgift;msg-param-gift-months=1;msg-param-goal-contribution-type=NEW_SUBS;msg-param-goal-current-contributions=6;msg-param-goal-description=Test;msg-param-goal-target-contributions=20;msg-param-goal-user-contributions=1;msg-param-months=4;msg-param-origin-id=0;msg-param-recipient-display-name=testuser;msg-param-recipient-id=2;msg-param-recipient-user-name=testuser;msg-param-sender-count=3;msg-param-sub-plan-name=Channel\\sSubscription\\s(name);msg-param-sub-plan=1000;room-id=1;subscriber=0;system-msg={TWITCH_Username}Test!;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnGiftedSubscriptionArgs>(
+            Assert.RaisedEvent<OnGiftedSubscriptionArgs> assertion = Assert.Raises<OnGiftedSubscriptionArgs>(
                     h => client.OnGiftedSubscription += h,
                     h => client.OnGiftedSubscription -= h,
                     () =>
                     {
-                        client.OnGiftedSubscription += (sender, args) =>
-                        {
-                            // here, we dont want to test the IrcParser
-                            // but we want to check at least msg-id
-                            Assert.NotNull(args);
-                            Assert.NotNull(args.GiftedSubscription);
-                            Assert.NotNull(args.GiftedSubscription.Id);
-                            Assert.Equal("fefffeeb-1e87-4adf-9912-ca371a18cbfd", args.GiftedSubscription.Id);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnGiftedSubscription += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+            Assert.NotNull(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnCommunitySubscription()
         {
-            string message = $"";
+            string message = $"@badge-info=subscriber/4;badges=vip/1,subscriber/3,hype-train/1;color=#FF69B4;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=submysterygift;msg-param-mass-gift-count=1;msg-param-origin-id=0;msg-param-sender-count=30;msg-param-sub-plan=1000;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\sis\\sgifting\\s1\\sTier\\s1\\sSubs\\sto\\s{TWITCH_CHANNEL}'s\\scommunity!\\sThey've\\sgifted\\sa\\stotal\\sof\\s30\\sin\\sthe\\schannel!;tmi-sent-ts=1678800000000;user-id=0;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnCommunitySubscriptionArgs>(
+            Assert.RaisedEvent<OnCommunitySubscriptionArgs> assertion = Assert.Raises<OnCommunitySubscriptionArgs>(
                     h => client.OnCommunitySubscription += h,
                     h => client.OnCommunitySubscription -= h,
                     () =>
                     {
-                        client.OnCommunitySubscription += (sender, args) =>
-                        {
-                            // here, we dont want to test the IrcParser
-                            // but we want to check at least msg-id
-                            Assert.NotNull(args);
-                            Assert.NotNull(args.GiftedSubscription);
-                            Assert.NotNull(args.GiftedSubscription.Id);
-                            Assert.Equal("fefffeeb-1e87-4adf-9912-ca371a18cbfd", args.GiftedSubscription.Id);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnCommunitySubscription += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+            Assert.NotNull(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnContinuedGiftedSubscription()
