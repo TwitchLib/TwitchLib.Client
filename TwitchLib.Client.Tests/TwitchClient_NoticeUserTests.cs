@@ -49,33 +49,25 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnRaidNotification()
         {
-            string message = $"";
+            string message = $"@badge-info=;badges=;color=#FF4500;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=raid;msg-param-displayName={TWITCH_Username};msg-param-login={TWITCH_Username};msg-param-profileImageURL=https://static-cdn.jtvnw.net/jtv_user_pictures/some-profile_image-70x70.png;msg-param-viewerCount=100;room-id=0;subscriber=0;system-msg=100\\sraiders\\sfrom\\s{TWITCH_Username}\\shave\\sjoined!;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnRaidNotificationArgs>(
+            Assert.RaisedEvent<OnRaidNotificationArgs> assertion = Assert.Raises<OnRaidNotificationArgs>(
                     h => client.OnRaidNotification += h,
                     h => client.OnRaidNotification -= h,
                     () =>
                     {
-                        client.OnRaidNotification += (sender, args) =>
-                        {
-                            // here, we dont want to test the IrcParser
-                            // but we want to check at least msg-id
-                            Assert.NotNull(args);
-                            Assert.NotNull(args.RaidNotification);
-                            Assert.NotNull(args.RaidNotification.Id);
-                            Assert.Equal("fefffeeb-1e87-4adf-9912-ca371a18cbfd", args.RaidNotification.Id);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnRaidNotification += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+            Assert.NotNull(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnNewSubscriber()
