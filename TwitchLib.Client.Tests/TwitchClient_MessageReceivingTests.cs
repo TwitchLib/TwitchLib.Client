@@ -161,7 +161,27 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnModeratorLeft() { throw new NotImplementedException(); }
         [Fact]
-        public void TwitchClient_Raises_OnMessageCleared() { throw new NotImplementedException(); }
+        public void TwitchClient_Raises_OnMessageCleared()
+        {
+            string message = $"@login={TWITCH_Username};room-id=;target-msg-id=msg_id_hash;tmi-sent-ts=1678800000000 :tmi.twitch.tv CLEARMSG #{TWITCH_CHANNEL} :This message is going to be cleared.";
+            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
+            // create one logger per test-method! - cause one file per test-method is generated
+            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
+            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ManualResetEvent pauseCheck = new ManualResetEvent(false);
+            Assert.RaisedEvent<OnMessageClearedArgs> assertion = Assert.Raises<OnMessageClearedArgs>(
+                    h => client.OnMessageCleared += h,
+                    h => client.OnMessageCleared -= h,
+                    () =>
+                    {
+                        client.OnMessageCleared += (sender, args) => Assert.True(pauseCheck.Set());
+                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        // send is our trigger, to make the IClient-Mock raise OnMessage!
+                        Assert.True(communicationClient.Send(String.Empty));
+                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
+                    });
+            Assert.NotNull(assertion.Arguments);
+        }
         [Fact]
         public void TwitchClient_Raises_OnExistingUsersDetected()
         {
@@ -261,6 +281,26 @@ namespace TwitchLib.Client.Tests
             Assert.NotNull(assertion.Arguments);
         }
         [Fact]
-        public void TwitchClient_Raises_OnUserIntro() { throw new NotImplementedException(); }
+        public void TwitchClient_Raises_OnUserIntro()
+        {
+            string message = $"@badge-info=;badges=premium/1;color=#0000FF;display-name={TWITCH_Username};emotes=1:24-25;first-msg=1;flags=;id=msg_id_hash;mod=0;msg-id=user-intro;returning-chatter=0;room-id=1;subscriber=0;tmi-sent-ts=1678800000000;turbo=0;user-id=0;user-type= :{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv PRIVMSG #{TWITCH_CHANNEL} :let me introduce myself :)";
+            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
+            // create one logger per test-method! - cause one file per test-method is generated
+            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
+            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ManualResetEvent pauseCheck = new ManualResetEvent(false);
+            Assert.RaisedEvent<OnUserIntroArgs> assertion = Assert.Raises<OnUserIntroArgs>(
+                    h => client.OnUserIntro += h,
+                    h => client.OnUserIntro -= h,
+                    () =>
+                    {
+                        client.OnUserIntro += (sender, args) => Assert.True(pauseCheck.Set());
+                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        // send is our trigger, to make the IClient-Mock raise OnMessage!
+                        Assert.True(communicationClient.Send(String.Empty));
+                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
+                    });
+            Assert.NotNull(assertion.Arguments);
+        }
     }
 }
