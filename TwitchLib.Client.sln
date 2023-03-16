@@ -9,16 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Models", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Enums", "TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj", "{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Test", "TwitchLib.Client.Test\TwitchLib.Client.Test.csproj", "{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8C69E628-6CFC-4F25-8CAC-EC63927C0120}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution-Items", "Solution-Items", "{4876E078-29C2-4007-BDA4-0C95869FF86F}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Tests", "TwitchLib.Client.Tests\TwitchLib.Client.Tests.csproj", "{B4CF2243-7B03-45F6-BBC4-102278B59754}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,10 +33,10 @@ Global
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4CF2243-7B03-45F6-BBC4-102278B59754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4CF2243-7B03-45F6-BBC4-102278B59754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4CF2243-7B03-45F6-BBC4-102278B59754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4CF2243-7B03-45F6-BBC4-102278B59754}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,7 +45,7 @@ Global
 		{44B88EFA-1500-4005-AF27-A9BCB9DD79C1} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
 		{C77438A0-7745-4F4F-BB8A-CFFA52DC5E18} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C} = {8C69E628-6CFC-4F25-8CAC-EC63927C0120}
+		{B4CF2243-7B03-45F6-BBC4-102278B59754} = {8C69E628-6CFC-4F25-8CAC-EC63927C0120}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {019DD8EE-F4C0-4687-AD7C-FFBB0C8B5DA6}
