@@ -5,7 +5,7 @@ using TwitchLib.Client.Events;
 namespace TwitchLib.Client.Interfaces
 {
     /// <summary>
-    ///     everything related to notice the User
+    ///     everything related to notice the User <see cref="Enums.Internal.IrcCommand.UserNotice"/>
     /// </summary>
     public interface ITwitchClient_NoticeUser
     {
