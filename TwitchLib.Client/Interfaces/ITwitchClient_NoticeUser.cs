@@ -30,6 +30,10 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event EventHandler<OnRaidNotificationArgs> OnRaidNotification;
         /// <summary>
+        ///     Occurs on <see cref="Models.Internal.MsgIds.UnRaid"/>
+        /// </summary>
+        event EventHandler<OnUnRaidNotificationArgs> OnUnRaidNotification;
+        /// <summary>
         ///     Occurs when [on re subscriber].
         /// </summary>
         event EventHandler<OnReSubscriberArgs> OnReSubscriber;

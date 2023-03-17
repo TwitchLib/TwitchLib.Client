@@ -37,6 +37,7 @@
         public const string NoPermission = "no_permission";
         public const string PrimePaidUprade = "primepaidupgrade";
         public const string Raid = "raid";
+        public const string UnRaid = "unraid";
         public const string RaidErrorSelf = "raid_error_self";
         public const string RaidNoticeMature = "raid_notice_mature";
         public const string ReSubscription = "resub";

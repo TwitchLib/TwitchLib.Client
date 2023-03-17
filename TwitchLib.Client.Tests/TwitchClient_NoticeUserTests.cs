@@ -70,6 +70,29 @@ namespace TwitchLib.Client.Tests
             Assert.NotNull(assertion.Arguments);
         }
         [Fact]
+        public void TwitchClient_Raises_OnUnRaidNotification()
+        {
+            string message = $"@badge-info=;badges=;color=#FF4500;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id={MsgIds.UnRaid};msg-param-displayName={TWITCH_Username};msg-param-login={TWITCH_Username};msg-param-profileImageURL=https://static-cdn.jtvnw.net/jtv_user_pictures/some-profile_image-70x70.png;msg-param-viewerCount=100;room-id=0;subscriber=0;system-msg=The\\sraid\\shas\\sbeen\\scanceled.;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
+
+            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
+            // create one logger per test-method! - cause one file per test-method is generated
+            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
+            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ManualResetEvent pauseCheck = new ManualResetEvent(false);
+            Assert.RaisedEvent<OnUnRaidNotificationArgs> assertion = Assert.Raises<OnUnRaidNotificationArgs>(
+                    h => client.OnUnRaidNotification += h,
+                    h => client.OnUnRaidNotification -= h,
+                    () =>
+                    {
+                        client.OnUnRaidNotification += (sender, args) => Assert.True(pauseCheck.Set());
+                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        // send is our trigger, to make the IClient-Mock raise OnMessage!
+                        Assert.True(communicationClient.Send(String.Empty));
+                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
+                    });
+            Assert.NotNull(assertion.Arguments);
+        }
+        [Fact]
         public void TwitchClient_Raises_OnNewSubscriber()
         {
             string message = $"@badge-info=;badges=premium/1;color=#4E3696;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=sub;msg-param-cumulative-months=1;msg-param-months=0;msg-param-multimonth-duration=1;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Channel\\sSubscription\\s(Name);msg-param-sub-plan=Prime;msg-param-was-gifted=false;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\ssubscribed\\swith\\sPrime.;tmi-sent-ts=1678000000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
