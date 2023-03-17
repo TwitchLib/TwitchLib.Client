@@ -137,7 +137,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnUserLeft()
         {
-            string message = $":a_username!a_username@a_username.tmi.twitch.tv PART #{TWITCH_CHANNEL}";
+            string message = $":{TWITCH_UsernameAnother}!{TWITCH_UsernameAnother}@{TWITCH_UsernameAnother}.tmi.twitch.tv PART #{TWITCH_CHANNEL}";
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();

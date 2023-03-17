@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models.Internal;
 using TwitchLib.Client.Tests.Helpers;
 using TwitchLib.Communication.Interfaces;
 using TwitchLib.Communication.Tests.Helper;
@@ -18,7 +19,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnAnnouncement()
         {
-            string message = $"@badge-info=;badges=moderator/1,partner/1;color=#5B99FF;display-name=StreamElements;emotes=;flags=;id=an_id;login=streamelements;mod=1;msg-id=announcement;msg-param-color=PRIMARY;room-id=0;subscriber=0;system-msg=;tmi-sent-ts=1678800000000;user-id=0;user-type=mod :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}: this is an announcement";
+            string message = $"@badge-info=;badges=moderator/1,partner/1;color=#5B99FF;display-name=StreamElements;emotes=;flags=;id=an_id;login=streamelements;mod=1;msg-id={MsgIds.Announcement};msg-param-color=PRIMARY;room-id=0;subscriber=0;system-msg=;tmi-sent-ts=1678800000000;user-id=0;user-type=mod :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}: this is an announcement";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
@@ -49,7 +50,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnRaidNotification()
         {
-            string message = $"@badge-info=;badges=;color=#FF4500;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=raid;msg-param-displayName={TWITCH_Username};msg-param-login={TWITCH_Username};msg-param-profileImageURL=https://static-cdn.jtvnw.net/jtv_user_pictures/some-profile_image-70x70.png;msg-param-viewerCount=100;room-id=0;subscriber=0;system-msg=100\\sraiders\\sfrom\\s{TWITCH_Username}\\shave\\sjoined!;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
+            string message = $"@badge-info=;badges=;color=#FF4500;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id={MsgIds.Raid};msg-param-displayName={TWITCH_Username};msg-param-login={TWITCH_Username};msg-param-profileImageURL=https://static-cdn.jtvnw.net/jtv_user_pictures/some-profile_image-70x70.png;msg-param-viewerCount=100;room-id=0;subscriber=0;system-msg=100\\sraiders\\sfrom\\s{TWITCH_Username}\\shave\\sjoined!;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
@@ -95,7 +96,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnNewSubscriber()
         {
-            string message = $"@badge-info=;badges=premium/1;color=#4E3696;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=sub;msg-param-cumulative-months=1;msg-param-months=0;msg-param-multimonth-duration=1;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Channel\\sSubscription\\s(Name);msg-param-sub-plan=Prime;msg-param-was-gifted=false;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\ssubscribed\\swith\\sPrime.;tmi-sent-ts=1678000000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
+            string message = $"@badge-info=;badges=premium/1;color=#4E3696;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id={MsgIds.Subscription};msg-param-cumulative-months=1;msg-param-months=0;msg-param-multimonth-duration=1;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Channel\\sSubscription\\s(Name);msg-param-sub-plan=Prime;msg-param-was-gifted=false;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\ssubscribed\\swith\\sPrime.;tmi-sent-ts=1678000000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
@@ -118,7 +119,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnReSubscriber()
         {
-            string message = $"@badge-info=subscriber/13;badges=subscriber/12,moments/1;color=#1BFF00;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=resub;msg-param-cumulative-months=13;msg-param-months=0;msg-param-multimonth-duration=0;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Channel\\sSubscription\\s(Name);msg-param-sub-plan=1000;msg-param-was-gifted=false;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\ssubscribed\\sat\\sTier\\s1.\\sThey've\\ssubscribed\\sfor\\s13\\smonths!;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL} :Test";
+            string message = $"@badge-info=subscriber/13;badges=subscriber/12,moments/1;color=#1BFF00;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id={MsgIds.ReSubscription};msg-param-cumulative-months=13;msg-param-months=0;msg-param-multimonth-duration=0;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Channel\\sSubscription\\s(Name);msg-param-sub-plan=1000;msg-param-was-gifted=false;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\ssubscribed\\sat\\sTier\\s1.\\sThey've\\ssubscribed\\sfor\\s13\\smonths!;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL} :Test";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
@@ -173,7 +174,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnGiftedSubscription()
         {
-            string message = $"@badge-info=;badges=vip/1,bits/1000;color=#DAA520;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=subgift;msg-param-gift-months=1;msg-param-goal-contribution-type=NEW_SUBS;msg-param-goal-current-contributions=6;msg-param-goal-description=Test;msg-param-goal-target-contributions=20;msg-param-goal-user-contributions=1;msg-param-months=4;msg-param-origin-id=0;msg-param-recipient-display-name=testuser;msg-param-recipient-id=2;msg-param-recipient-user-name=testuser;msg-param-sender-count=3;msg-param-sub-plan-name=Channel\\sSubscription\\s(name);msg-param-sub-plan=1000;room-id=1;subscriber=0;system-msg={TWITCH_Username}Test!;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
+            string message = $"@badge-info=;badges=vip/1,bits/1000;color=#DAA520;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id={MsgIds.SubGift};msg-param-gift-months=1;msg-param-goal-contribution-type=NEW_SUBS;msg-param-goal-current-contributions=6;msg-param-goal-description=Test;msg-param-goal-target-contributions=20;msg-param-goal-user-contributions=1;msg-param-months=4;msg-param-origin-id=0;msg-param-recipient-display-name=testuser;msg-param-recipient-id=2;msg-param-recipient-user-name=testuser;msg-param-sender-count=3;msg-param-sub-plan-name=Channel\\sSubscription\\s(name);msg-param-sub-plan=1000;room-id=1;subscriber=0;system-msg={TWITCH_Username}Test!;tmi-sent-ts=1678800000000;user-id=1;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
@@ -196,7 +197,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnCommunitySubscription()
         {
-            string message = $"@badge-info=subscriber/4;badges=vip/1,subscriber/3,hype-train/1;color=#FF69B4;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id=submysterygift;msg-param-mass-gift-count=1;msg-param-origin-id=0;msg-param-sender-count=30;msg-param-sub-plan=1000;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\sis\\sgifting\\s1\\sTier\\s1\\sSubs\\sto\\s{TWITCH_CHANNEL}'s\\scommunity!\\sThey've\\sgifted\\sa\\stotal\\sof\\s30\\sin\\sthe\\schannel!;tmi-sent-ts=1678800000000;user-id=0;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
+            string message = $"@badge-info=subscriber/4;badges=vip/1,subscriber/3,hype-train/1;color=#FF69B4;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id={MsgIds.CommunitySubscription};msg-param-mass-gift-count=1;msg-param-origin-id=0;msg-param-sender-count=30;msg-param-sub-plan=1000;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\sis\\sgifting\\s1\\sTier\\s1\\sSubs\\sto\\s{TWITCH_CHANNEL}'s\\scommunity!\\sThey've\\sgifted\\sa\\stotal\\sof\\s30\\sin\\sthe\\schannel!;tmi-sent-ts=1678800000000;user-id=0;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated

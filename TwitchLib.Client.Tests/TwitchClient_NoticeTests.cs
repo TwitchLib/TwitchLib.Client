@@ -102,6 +102,7 @@ namespace TwitchLib.Client.Tests
         }
         [Theory]
         [InlineData(MsgIds.FollowersOn)]
+        [InlineData(MsgIds.FollowersOnZero)]
         [InlineData(MsgIds.FollowersOff)]
         public void TwitchClient_Raises_OnFollowersOnly(string msgId)
         {

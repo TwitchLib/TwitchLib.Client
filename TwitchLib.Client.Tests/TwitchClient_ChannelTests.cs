@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models.Internal;
 using TwitchLib.Client.Tests.Helpers;
 using TwitchLib.Communication.Interfaces;
 using TwitchLib.Communication.Tests.Helper;
@@ -53,7 +54,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnFailureToReceiveJoinConfirmation()
         {
-            string message = $"@msg-id=msg_channel_suspended :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This channel does not exist or has been suspended.";
+            string message = $"@msg-id={MsgIds.MsgChannelSuspended} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This channel does not exist or has been suspended.";
             throw new NotImplementedException();
         }
     }
