@@ -146,6 +146,10 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event EventHandler<OnReSubscriberArgs> OnReSubscriber;
         /// <summary>
+        /// Fires when a current Prime gaming subscriber converts to a paid subscription.
+        /// </summary>
+        event EventHandler<OnPrimePaidSubscriberArgs> OnPrimePaidSubscriber;
+        /// <summary>
         /// Occurs when [on send receive data].
         /// </summary>
         event EventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
