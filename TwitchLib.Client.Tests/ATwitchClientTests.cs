@@ -7,5 +7,6 @@
         protected static string TWITCH_OAuth => "OAuth";
         protected static string TWITCH_CHANNEL => "testchannel";
         protected static int WaitOneDuration => 5_000;
+        protected static int WaitOneDurationShort => 500;
     }
 }

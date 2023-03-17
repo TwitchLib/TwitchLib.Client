@@ -79,7 +79,7 @@ namespace TwitchLib.Client.Tests
                             // send is our trigger, to make the IClient-Mock raise OnMessage!
                             Assert.True(communicationClient.Send(String.Empty));
                             // we dont need to wait so long as `WaitOneDuration` specifies
-                            Assert.False(pauseCheck.WaitOne(500));
+                            Assert.False(pauseCheck.WaitOne(WaitOneDurationShort));
                         });
                 Assert.Fail("RaisesAny should throw an Exception!");
             }
