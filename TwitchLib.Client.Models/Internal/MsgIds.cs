@@ -16,6 +16,7 @@
         public const string EmoteOnlyOff = "emote_only_off";
         public const string EmoteOnlyOn = "emote_only_on";
         public const string FollowersOn = "followers_on";
+        public const string FollowersOnZero = "followers_on_zero";
         public const string FollowersOff = "followers_off";
         public const string HighlightedMessage = "highlighted-message";
         public const string ModeratorsReceived = "room_mods";
