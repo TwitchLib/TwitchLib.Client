@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using TwitchLib.Client.Models.Builders;
 
@@ -8,8 +9,8 @@ namespace TwitchLib.Client.Models.Extractors
     {
         public IEnumerable<Emote> Extract(string rawEmoteSetString, string message)
         {
-            if (string.IsNullOrEmpty(rawEmoteSetString)
-               || string.IsNullOrEmpty(message))
+            if (System.String.IsNullOrEmpty(rawEmoteSetString)
+               || System.String.IsNullOrEmpty(message))
             {
                 yield break;
             }
@@ -17,13 +18,13 @@ namespace TwitchLib.Client.Models.Extractors
             if (rawEmoteSetString.Contains("/"))
             {
                 // Message contains multiple different emotes, first parse by unique emotes: 28087:15-21/25:5-9,28-32
-                foreach (var emoteData in rawEmoteSetString.Split('/'))
+                foreach (string emoteData in rawEmoteSetString.Split('/'))
                 {
-                    var emoteId = emoteData.Split(':')[0];
+                    string emoteId = emoteData.Split(':')[0];
                     if (emoteData.Contains(","))
                     {
                         // Multiple copies of a single emote: 25:5-9,28-32
-                        foreach (var emote in emoteData.Replace($"{emoteId}:", "").Split(','))
+                        foreach (string emote in emoteData.Replace($"{emoteId}:", "").Split(','))
                             yield return GetEmote(emote, emoteId, message);
                     }
                     else
@@ -35,12 +36,12 @@ namespace TwitchLib.Client.Models.Extractors
             }
             else
             {
-                var emoteId = rawEmoteSetString.Split(':')[0];
+                string emoteId = rawEmoteSetString.Split(':')[0];
                 // Message contains a single, or multiple of the same emote
                 if (rawEmoteSetString.Contains(","))
                 {
                     // Multiple copies of a single emote: 25:5-9,28-32
-                    foreach (var emote in rawEmoteSetString.Replace($"{emoteId}:", "").Split(','))
+                    foreach (string emote in rawEmoteSetString.Replace($"{emoteId}:", "").Split(','))
                         yield return GetEmote(emote, emoteId, message);
                 }
                 else
@@ -53,21 +54,21 @@ namespace TwitchLib.Client.Models.Extractors
 
         private Emote GetEmote(string emoteData, string emoteId, string message, bool single = false)
         {
-            int startIndex = -1;
-            int endIndex = -1;
+            int startIndex;
+            int endIndex;
 
             if (single)
             {
-                startIndex = int.Parse(emoteData.Split(':')[1].Split('-')[0]);
-                endIndex = int.Parse(emoteData.Split(':')[1].Split('-')[1]);
+                startIndex = Int32.Parse(emoteData.Split(':')[1].Split('-')[0]);
+                endIndex = Int32.Parse(emoteData.Split(':')[1].Split('-')[1]);
             }
             else
             {
-                startIndex = int.Parse(emoteData.Split('-')[0]);
-                endIndex = int.Parse(emoteData.Split('-')[1]);
+                startIndex = Int32.Parse(emoteData.Split('-')[0]);
+                endIndex = Int32.Parse(emoteData.Split('-')[1]);
             }
 
-            string name = message.Substring(startIndex, (endIndex - startIndex) + 1);
+            string name = message.Substring(startIndex, endIndex - startIndex + 1);
 
             EmoteBuilder emoteBuilder = EmoteBuilder.Create()
                                                     .WithId(emoteId)

@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -38,12 +40,12 @@ namespace TwitchLib.Client.Models
         public bool? SubOnly { get; }
 
         /// <summary>ChannelState object constructor.</summary>
-        public ChannelState(IrcMessage ircMessage)
+        public ChannelState(IrcMessage ircMessage, ILogger logger = null)
         {
             //@broadcaster-lang=;emote-only=0;r9k=0;slow=0;subs-only=1 :tmi.twitch.tv ROOMSTATE #burkeblack
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {
@@ -60,14 +62,14 @@ namespace TwitchLib.Client.Models
                         Rituals = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.Slow:
-                        var success = int.TryParse(tagValue, out var slowDuration);
-                        SlowMode = success ? slowDuration : (int?)null;
+                        bool success = Int32.TryParse(tagValue, out int slowDuration);
+                        SlowMode = success ? slowDuration : (int?) null;
                         break;
                     case Tags.SubsOnly:
                         SubOnly = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.FollowersOnly:
-                        if(int.TryParse(tagValue, out int minutes) && minutes > -1)
+                        if (Int32.TryParse(tagValue, out int minutes) && minutes > -1)
                         {
                             FollowersOnly = TimeSpan.FromMinutes(minutes);
                         }
@@ -79,7 +81,10 @@ namespace TwitchLib.Client.Models
                         Mercury = Common.Helpers.ConvertToBool(tagValue);
                         break;
                     default:
-                        Console.WriteLine("[TwitchLib][ChannelState] Unaccounted for: " + tag);
+                        Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                       tagValue,
+                                                                       $"switch-case and/or {nameof(Tags)} have/has to be extended.");
+                        logger?.LogExceptionAsError(GetType(), ex);
                         break;
                 }
             }

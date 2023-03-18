@@ -1,4 +1,4 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 
 namespace TwitchLib.Client.Events
 {
@@ -8,15 +8,8 @@ namespace TwitchLib.Client.Events
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    public class OnSubsOnlyArgs : EventArgs
+    public class OnSubsOnlyArgs : AChannelStateSwitchAbleEventArgs
     {
-        /// <summary>
-        /// Property representing message send with the NOTICE
-        /// </summary>
-        public string Message;
-        /// <summary>
-        /// Property representing channel bot is connected to.
-        /// </summary>
-        public string Channel;
+        // marker-class
     }
 }

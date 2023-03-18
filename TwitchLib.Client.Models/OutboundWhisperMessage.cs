@@ -1,5 +1,10 @@
-﻿namespace TwitchLib.Client.Models
+﻿using System;
+
+using TwitchLib.Client.Models.Internal;
+
+namespace TwitchLib.Client.Models
 {
+    [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
     public class OutboundWhisperMessage
     {
         public string Username { get; set; }

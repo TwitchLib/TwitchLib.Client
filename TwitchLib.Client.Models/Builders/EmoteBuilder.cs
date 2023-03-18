@@ -1,6 +1,4 @@
-﻿using static TwitchLib.Client.Models.EmoteSet;
-
-namespace TwitchLib.Client.Models.Builders
+﻿namespace TwitchLib.Client.Models.Builders
 {
     public sealed class EmoteBuilder : IBuilder<Emote>
     {

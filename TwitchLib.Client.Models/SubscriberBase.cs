@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Extensions.NetCore;
 using TwitchLib.Client.Models.Internal;
@@ -93,20 +95,20 @@ namespace TwitchLib.Client.Models
         protected readonly int monthsInternal;
 
         /// <summary>Subscriber object constructor.</summary>
-        protected SubscriberBase(IrcMessage ircMessage)
+        protected SubscriberBase(IrcMessage ircMessage, ILogger logger = null)
         {
             RawIrc = ircMessage.ToString();
             ResubMessage = ircMessage.Message;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
                 switch (tag)
                 {
                     case Tags.Badges:
                         Badges = Common.Helpers.ParseBadges(tagValue);
                         // iterate through badges for special circumstances
-                        foreach (var badge in Badges)
+                        foreach (KeyValuePair<string, string> badge in Badges)
                         {
                             if (badge.Key == "partner")
                                 IsPartner = true;
@@ -117,7 +119,7 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Color:
                         ColorHex = tagValue;
-                        if (!string.IsNullOrEmpty(ColorHex))
+                        if (!String.IsNullOrEmpty(ColorHex))
                             Color = ColorTranslator.FromHtml(ColorHex);
                         break;
                     case Tags.DisplayName:
@@ -162,8 +164,14 @@ namespace TwitchLib.Client.Models
                             case "3000":
                                 SubscriptionPlan = SubscriptionPlan.Tier3;
                                 break;
+                            case "":
+                                break;
                             default:
-                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
+                                Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                               tagValue,
+                                                                               $"switch-case and/or {nameof(Enums.SubscriptionPlan)} have/has to be extended.");
+                                logger?.LogExceptionAsError(GetType(), ex);
+                                break;
                         }
                         break;
                     case Tags.MsgParamSubPlanName:

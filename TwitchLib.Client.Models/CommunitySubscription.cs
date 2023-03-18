@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.Extensions.Logging;
 
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
@@ -10,34 +13,34 @@ namespace TwitchLib.Client.Models
     {
         private const string AnonymousGifterUserId = "274598607";
 
-        public List<KeyValuePair<string, string>> Badges;
-        public List<KeyValuePair<string, string>> BadgeInfo;
-        public string Color;
-        public string DisplayName;
-        public string Emotes;
-        public string Id;
-        public string Login;
-        public bool IsModerator;
-        public bool IsAnonymous;
-        public string MsgId;
-        public int MsgParamMassGiftCount;
-        public int MsgParamSenderCount;
-        public SubscriptionPlan MsgParamSubPlan;
-        public string RoomId;
-        public bool IsSubscriber;
-        public string SystemMsg;
-        public string SystemMsgParsed;
-        public string TmiSentTs;
-        public bool IsTurbo;
-        public string UserId;
-        public UserType UserType;
-        public string MsgParamMultiMonthGiftDuration;
-
-        public CommunitySubscription(IrcMessage ircMessage)
+        public List<KeyValuePair<string, string>> Badges { get; }
+        public List<KeyValuePair<string, string>> BadgeInfo { get; }
+        public string Color { get; }
+        public string DisplayName { get; }
+        public string Emotes { get; }
+        public string Id { get; }
+        public string Login { get; }
+        public bool IsModerator { get; }
+        public bool IsAnonymous { get; }
+        public string MsgId { get; }
+        public int MsgParamMassGiftCount { get; }
+        public int MsgParamSenderCount { get; }
+        public SubscriptionPlan MsgParamSubPlan { get; }
+        public string RoomId { get; }
+        public bool IsSubscriber { get; }
+        public string SystemMsg { get; }
+        public string SystemMsgParsed { get; }
+        public string TmiSentTs { get; }
+        public bool IsTurbo { get; }
+        public string UserId { get; }
+        public UserType UserType { get; }
+        public string MsgParamMultiMonthGiftDuration { get; }
+        [SuppressMessage("Style", "IDE0058")]
+        public CommunitySubscription(IrcMessage ircMessage, ILogger logger = null)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {
@@ -83,15 +86,25 @@ namespace TwitchLib.Client.Models
                             case "3000":
                                 MsgParamSubPlan = SubscriptionPlan.Tier3;
                                 break;
+                            case "":
+                                break;
                             default:
-                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
+                                Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                               tagValue,
+                                                                               $"switch-case and/or {nameof(Enums.SubscriptionPlan)} have/has to be extended.");
+                                logger?.LogExceptionAsError(GetType(), ex);
+                                break;
                         }
                         break;
                     case Tags.MsgParamMassGiftCount:
-                        MsgParamMassGiftCount = int.Parse(tagValue);
+                        // Suppressed IDE0058
+                        Int32.TryParse(tagValue, out int massGiftCount);
+                        MsgParamMassGiftCount = massGiftCount;
                         break;
                     case Tags.MsgParamSenderCount:
-                        MsgParamSenderCount = int.Parse(tagValue);
+                        // Suppressed IDE0058
+                        Int32.TryParse(tagValue, out int senderCount);
+                        MsgParamSenderCount = senderCount;
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
@@ -111,7 +124,7 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
-                        if(UserId == AnonymousGifterUserId)
+                        if (UserId == AnonymousGifterUserId)
                         {
                             IsAnonymous = true;
                         }

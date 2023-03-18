@@ -1,18 +1,17 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 using TwitchLib.Client.Exceptions;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Class OnFailureToReceiveJoinConfirmationArgs.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Class OnFailureToReceiveJoinConfirmationArgs.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    public class OnFailureToReceiveJoinConfirmationArgs : EventArgs
+    public class OnFailureToReceiveJoinConfirmationArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// The exception
+        ///     The exception
         /// </summary>
-        public FailureToReceiveJoinConfirmationException Exception;
+        public FailureToReceiveJoinConfirmationException Exception { get; set; }
     }
 }

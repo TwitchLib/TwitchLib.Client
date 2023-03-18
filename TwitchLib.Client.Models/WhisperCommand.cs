@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Object representing a command received via Twitch chat.</summary>
+    [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
     public class WhisperCommand
     {
         /// <summary>Property representing all arguments received in a List form.</summary>

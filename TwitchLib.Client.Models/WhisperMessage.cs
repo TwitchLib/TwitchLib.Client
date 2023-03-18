@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,6 +10,7 @@ using TwitchLib.Client.Models.Internal;
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing a received whisper from TwitchWhisperClient</summary>
+    [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
     public class WhisperMessage : TwitchLibMessage
     {
         /// <summary>Property representing message identifier.</summary>
@@ -62,9 +64,9 @@ namespace TwitchLib.Client.Models
             RawIrcMessage = ircMessage.ToString();
 
             Message = ircMessage.Message;
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
                 switch (tag)
                 {
                     case Tags.Badges:
@@ -72,15 +74,19 @@ namespace TwitchLib.Client.Models
                         if (tagValue.Contains('/'))
                         {
                             if (!tagValue.Contains(","))
+                            {
                                 Badges.Add(new KeyValuePair<string, string>(tagValue.Split('/')[0], tagValue.Split('/')[1]));
+                            }
                             else
-                                foreach (var badge in tagValue.Split(','))
+                            {
+                                foreach (string badge in tagValue.Split(','))
                                     Badges.Add(new KeyValuePair<string, string>(badge.Split('/')[0], badge.Split('/')[1]));
+                            }
                         }
                         break;
                     case Tags.Color:
                         ColorHex = tagValue;
-                        if (!string.IsNullOrEmpty(ColorHex))
+                        if (!System.String.IsNullOrEmpty(ColorHex))
                             Color = ColorTranslator.FromHtml(ColorHex);
                         break;
                     case Tags.DisplayName:

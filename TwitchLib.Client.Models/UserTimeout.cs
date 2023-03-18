@@ -24,14 +24,14 @@ namespace TwitchLib.Client.Models
             Channel = ircMessage.Channel;
             Username = ircMessage.Message;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {
                     case Tags.BanDuration:
-                        TimeoutDuration = int.Parse(tagValue);
+                        TimeoutDuration = System.Int32.Parse(tagValue);
                         break;
                     case Tags.BanReason:
                         TimeoutReason = tagValue;

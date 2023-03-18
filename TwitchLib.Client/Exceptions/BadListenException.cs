@@ -17,7 +17,7 @@ namespace TwitchLib.Client.Exceptions
         /// <param name="additionalDetails">The additional details.</param>
         /// <inheritdoc />
         public BadListenException(string eventName, string additionalDetails = "")
-            : base(string.IsNullOrEmpty(additionalDetails)
+            : base(String.IsNullOrEmpty(additionalDetails)
                 ? $"You are listening to event '{eventName}', which is not currently allowed. See details: {additionalDetails}"
                 : $"You are listening to event '{eventName}', which is not currently allowed.")
         {

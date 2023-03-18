@@ -1,22 +1,16 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing the detected hosted channel.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing the detected hosted channel.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnNowHostingArgs : EventArgs
+    public class OnNowHostingArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Property the channel that received the event.
+        ///     Property representing channel that is being hosted.
         /// </summary>
-        public string Channel;
-        /// <summary>
-        /// Property representing channel that is being hosted.
-        /// </summary>
-        public string HostedChannel;
+        public string HostedChannel { get; set; }
     }
 }

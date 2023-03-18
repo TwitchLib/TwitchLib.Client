@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -26,7 +28,7 @@ namespace TwitchLib.Client.Models
 
         /// <summary>Property representing emote sets available to user.</summary>
         public string EmoteSet { get; }
-        
+
         /// <summary>Property representing the user's Id.</summary>
         public string Id { get; }
 
@@ -42,14 +44,13 @@ namespace TwitchLib.Client.Models
         /// <summary>
         /// Constructor for UserState.
         /// </summary>
-        /// <param name="ircMessage"></param>
-        public UserState(IrcMessage ircMessage)
+        public UserState(IrcMessage ircMessage, ILogger logger = null)
         {
             Channel = ircMessage.Channel;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
                 switch (tag)
                 {
                     case Tags.Badges:
@@ -98,12 +99,15 @@ namespace TwitchLib.Client.Models
                         break;
                     default:
                         // This should never happen, unless Twitch changes their shit
-                        Console.WriteLine($"Unaccounted for [UserState]: {tag}");
+                        Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                       tagValue,
+                                                                       $"switch-case and/or {nameof(Tags)} have/has to be extended.");
+                        logger?.LogExceptionAsError(GetType(), ex);
                         break;
                 }
             }
 
-            if (string.Equals(ircMessage.User, Channel, StringComparison.InvariantCultureIgnoreCase))
+            if (String.Equals(ircMessage.User, Channel, StringComparison.InvariantCultureIgnoreCase))
                 UserType = UserType.Broadcaster;
         }
 

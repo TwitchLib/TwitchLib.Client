@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -60,11 +62,11 @@ namespace TwitchLib.Client.Models
 
         public string MsgParamMultiMonthGiftDuration { get; }
 
-        public GiftedSubscription(IrcMessage ircMessage)
+        public GiftedSubscription(IrcMessage ircMessage, ILogger logger = null)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {
@@ -125,8 +127,14 @@ namespace TwitchLib.Client.Models
                             case "3000":
                                 MsgParamSubPlan = SubscriptionPlan.Tier3;
                                 break;
+                            case "":
+                                break;
                             default:
-                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
+                                Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                               tagValue,
+                                                                               $"switch-case and/or {nameof(Enums.SubscriptionPlan)} have/has to be extended.");
+                                logger?.LogExceptionAsError(GetType(), ex);
+                                break;
                         }
                         break;
                     case Tags.RoomId:

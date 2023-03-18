@@ -1,4 +1,5 @@
 ﻿using System;
+
 using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;

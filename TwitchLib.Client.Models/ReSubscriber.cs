@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -10,9 +12,7 @@ namespace TwitchLib.Client.Models
     {
         public int Months => monthsInternal;
 
-        public ReSubscriber(IrcMessage ircMessage) : base(ircMessage)
-        {
-        }
+        public ReSubscriber(IrcMessage ircMessage, ILogger logger = null) : base(ircMessage, logger) { }
 
         public ReSubscriber(
             List<KeyValuePair<string, string>> badges,
