@@ -5,7 +5,7 @@ using Moq;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
 
-namespace TwitchLib.Client.Tests.Helpers
+namespace TwitchLib.Client.Tests.TestHelper
 {
     /// <summary>
     ///     <see href="https://github.com/Moq/moq4/wiki/Quickstart"/>

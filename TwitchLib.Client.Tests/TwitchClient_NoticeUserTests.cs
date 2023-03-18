@@ -6,9 +6,8 @@ using Microsoft.Extensions.Logging;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models.Internal;
-using TwitchLib.Client.Tests.Helpers;
+using TwitchLib.Client.Tests.TestHelper;
 using TwitchLib.Communication.Interfaces;
-using TwitchLib.Communication.Tests.Helper;
 
 using Xunit;
 

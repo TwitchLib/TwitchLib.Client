@@ -9,10 +9,9 @@ using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
-using TwitchLib.Client.Tests.Helpers;
+using TwitchLib.Client.Tests.TestHelper;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
-using TwitchLib.Communication.Tests.Helper;
 
 using Xunit;
 
