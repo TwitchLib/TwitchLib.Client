@@ -71,20 +71,21 @@ namespace TwitchLib.Client.Tests
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnConnectedArgs>(
+            Assert.RaisedEvent<OnConnectedArgs> assertion = Assert.Raises<OnConnectedArgs>(
                     h => client.OnConnected += h,
                     h => client.OnConnected -= h,
                     () =>
                     {
-                        client.OnConnected += (sender, args) =>
-                        {
-                            Assert.NotNull(args);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnConnected += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         Assert.True(client.Connect());
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+            Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.BotUsername);
+            Assert.Equal(TWITCH_Username, assertion.Arguments.BotUsername);
+            Assert.NotNull(assertion.Arguments.AutoJoinChannels);
+            Assert.Empty(assertion.Arguments.AutoJoinChannels);
         }
         /// <summary>
         ///     <see cref="ITwitchClient"/> raises <see cref="ITwitchClient_Connection.OnConnected"/>
@@ -101,21 +102,22 @@ namespace TwitchLib.Client.Tests
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnConnectedArgs>(
+            Assert.RaisedEvent<OnConnectedArgs> assertion = Assert.Raises<OnConnectedArgs>(
                     h => client.OnConnected += h,
                     h => client.OnConnected -= h,
                     () =>
                     {
-                        client.OnConnected += (sender, args) =>
-                        {
-                            Assert.NotNull(args);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnConnected += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+            Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.BotUsername);
+            Assert.Equal(TWITCH_Username, assertion.Arguments.BotUsername);
+            Assert.NotNull(assertion.Arguments.AutoJoinChannels);
+            Assert.Empty(assertion.Arguments.AutoJoinChannels);
         }
         [Theory]
         [InlineData(":tmi.twitch.tv 001 [a users name] :Welcome, GLHF!", IrcCommand.RPL_001)]
@@ -178,6 +180,8 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.BotUsername);
+            Assert.Equal(TWITCH_Username, assertion.Arguments.BotUsername);
         }
         [Fact]
         public void TwitchClient_Raises_OnIncorrectLogin()
@@ -200,6 +204,8 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Exception);
+            Assert.Equal(TWITCH_Username, assertion.Arguments.Exception.Username);
         }
         [Fact]
         public void TwitchClient_Raises_OnConnectionError()
@@ -227,7 +233,10 @@ namespace TwitchLib.Client.Tests
                         communicationClient.Send(String.Empty);
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.BotUsername);
+            Assert.Equal(TWITCH_Username, assertion.Arguments.BotUsername);
         }
         [Fact]
         public void TwitchClient_Raises_OnReconnected()

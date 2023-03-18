@@ -18,33 +18,28 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnAnnouncement()
         {
-            string message = $"@badge-info=;badges=moderator/1,partner/1;color=#5B99FF;display-name=StreamElements;emotes=;flags=;id=an_id;login=streamelements;mod=1;msg-id={MsgIds.Announcement};msg-param-color=PRIMARY;room-id=0;subscriber=0;system-msg=;tmi-sent-ts=1678800000000;user-id=0;user-type=mod :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}: this is an announcement";
+            string message = $"@badge-info=;badges=moderator/1,partner/1;color=#5B99FF;display-name=StreamElements;emotes=;flags=;id=an_id;login=streamelements;mod=1;msg-id={MsgIds.Announcement};msg-param-color=PRIMARY;room-id=0;subscriber=0;system-msg=;tmi-sent-ts=1678800000000;user-id=0;user-type=mod :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL} :this is an announcement";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnAnnouncementArgs>(
+            Assert.RaisedEvent<OnAnnouncementArgs> assertion = Assert.Raises<OnAnnouncementArgs>(
                     h => client.OnAnnouncement += h,
                     h => client.OnAnnouncement -= h,
                     () =>
                     {
-                        client.OnAnnouncement += (sender, args) =>
-                        {
-                            // here, we dont want to test the IrcParser
-                            // but we want to check at least msg-id
-                            Assert.NotNull(args);
-                            Assert.NotNull(args.Announcement);
-                            Assert.NotNull(args.Announcement.Id);
-                            Assert.Equal("an_id", args.Announcement.Id);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnAnnouncement += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+            Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Channel);
+            Assert.NotNull(assertion.Arguments.Announcement);
+            AssertChannel(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnRaidNotification()
@@ -68,6 +63,9 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Channel);
+            Assert.NotNull(assertion.Arguments.RaidNotification);
+            AssertChannel(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnUnRaidNotification()
@@ -91,6 +89,9 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Channel);
+            Assert.NotNull(assertion.Arguments.RaidNotification);
+            AssertChannel(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnNewSubscriber()
@@ -114,6 +115,9 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Channel);
+            Assert.NotNull(assertion.Arguments.Subscriber);
+            AssertChannel(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnReSubscriber()
@@ -136,8 +140,10 @@ namespace TwitchLib.Client.Tests
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
-
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Channel);
+            Assert.NotNull(assertion.Arguments.ReSubscriber);
+            AssertChannel(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnPrimePaidSubscriber()
@@ -161,7 +167,9 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Channel);
             Assert.NotNull(assertion.Arguments.PrimePaidSubscriber);
+            AssertChannel(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnGiftedSubscription()
@@ -185,6 +193,9 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Channel);
+            Assert.NotNull(assertion.Arguments.GiftedSubscription);
+            AssertChannel(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnCommunitySubscription()
@@ -208,37 +219,35 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Channel);
+            Assert.NotNull(assertion.Arguments.GiftedSubscription);
+            AssertChannel(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnContinuedGiftedSubscription()
         {
-            string message = $"";
+            string message = $"@badge-info=subscriber/4;badges=vip/1,subscriber/3,hype-train/1;color=#FF69B4;display-name={TWITCH_Username};emotes=;flags=;id=msg_id_hash;login={TWITCH_Username};mod=0;msg-id={MsgIds.ContinuedGiftedSubscription};msg-param-mass-gift-count=1;msg-param-origin-id=0;msg-param-sender-count=30;msg-param-sub-plan=1000;room-id=0;subscriber=1;system-msg={TWITCH_Username}\\sis\\sgifting\\s1\\sTier\\s1\\sSubs\\sto\\s{TWITCH_CHANNEL}'s\\scommunity!\\sThey've\\sgifted\\sa\\stotal\\sof\\s30\\sin\\sthe\\schannel!;tmi-sent-ts=1678800000000;user-id=0;user-type= :tmi.twitch.tv USERNOTICE #{TWITCH_CHANNEL}";
 
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.Raises<OnContinuedGiftedSubscriptionArgs>(
+            Assert.RaisedEvent<OnContinuedGiftedSubscriptionArgs> assertion = Assert.Raises<OnContinuedGiftedSubscriptionArgs>(
                     h => client.OnContinuedGiftedSubscription += h,
                     h => client.OnContinuedGiftedSubscription -= h,
                     () =>
                     {
-                        client.OnContinuedGiftedSubscription += (sender, args) =>
-                        {
-                            // here, we dont want to test the IrcParser
-                            // but we want to check at least msg-id
-                            Assert.NotNull(args);
-                            Assert.NotNull(args.ContinuedGiftedSubscription);
-                            Assert.NotNull(args.ContinuedGiftedSubscription.Id);
-                            Assert.Equal("fefffeeb-1e87-4adf-9912-ca371a18cbfd", args.ContinuedGiftedSubscription.Id);
-                            Assert.True(pauseCheck.Set());
-                        };
+                        client.OnContinuedGiftedSubscription += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
+            Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Channel);
+            Assert.NotNull(assertion.Arguments.ContinuedGiftedSubscription);
+            AssertChannel(assertion.Arguments);
         }
     }
 }

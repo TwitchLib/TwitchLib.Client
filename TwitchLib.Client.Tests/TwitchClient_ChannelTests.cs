@@ -47,6 +47,7 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+            AssertChannel(assertion.Arguments);
         }
         [Fact]
         public void TwitchClient_Raises_OnLeftChannel() { throw new NotImplementedException(); }
