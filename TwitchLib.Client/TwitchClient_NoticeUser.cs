@@ -1,6 +1,7 @@
 ﻿using System;
 
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;

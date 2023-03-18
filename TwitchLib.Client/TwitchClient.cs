@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;

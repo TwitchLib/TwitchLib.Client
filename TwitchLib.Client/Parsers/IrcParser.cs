@@ -3,7 +3,7 @@
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Models.Internal;
 
-namespace TwitchLib.Client.Internal.Parsing
+namespace TwitchLib.Client.Parsers
 {
     /// <summary>
     /// Class IrcParser.
@@ -74,7 +74,7 @@ namespace TwitchLib.Client.Internal.Parsing
                     starts[(int) state] = ++i;
                     break;
                 }
-                else if ((state < ParserState.STATE_TRAILING && raw[i] == '+') || (state < ParserState.STATE_TRAILING && raw[i] == '-'))
+                else if (state < ParserState.STATE_TRAILING && raw[i] == '+' || state < ParserState.STATE_TRAILING && raw[i] == '-')
                 {
                     state = ParserState.STATE_TRAILING;
                     starts[(int) state] = i;

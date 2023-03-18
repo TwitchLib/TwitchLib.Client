@@ -2,6 +2,7 @@
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
+using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;

@@ -3,10 +3,11 @@
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
+using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
-using TwitchLib.Client.Internal.Parsing;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Parsers;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Extensions;
 using TwitchLib.Communication.Interfaces;

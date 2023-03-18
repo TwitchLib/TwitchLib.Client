@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TwitchLib.Client.Helpers
+namespace TwitchLib.Client.Extensions.Internal
 {
     internal static class StringExtensions
     {

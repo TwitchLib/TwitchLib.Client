@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;

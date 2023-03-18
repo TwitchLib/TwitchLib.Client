@@ -2,8 +2,8 @@
 
 using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
-using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Extensions;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 using TwitchLib.Client.Delegates;
-using TwitchLib.Client.Helpers;
+using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
