@@ -3,7 +3,6 @@
 using Microsoft.Extensions.Logging;
 
 using TwitchLib.Client.Models.Internal;
-using TwitchLib.Communication.Extensions;
 
 namespace TwitchLib.Client.Models
 {

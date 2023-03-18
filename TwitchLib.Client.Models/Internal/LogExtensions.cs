@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 using Microsoft.Extensions.Logging;
 
-namespace TwitchLib.Communication.Extensions
+namespace TwitchLib.Client.Models.Internal
 {
     /// <summary>
     ///     expensive Extensions of the <see cref="ILogger"/>
