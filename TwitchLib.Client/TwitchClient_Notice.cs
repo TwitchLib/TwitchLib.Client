@@ -81,7 +81,8 @@ namespace TwitchLib.Client
                     ChannelManager.JoinCanceld(ircMessage.Channel);
                     OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs
                     {
-                        Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
+                        Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message),
+                        Channel = ircMessage.Channel
                     });
                     break;
                 case MsgIds.MsgRequiresVerifiedPhoneNumber:
