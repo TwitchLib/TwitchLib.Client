@@ -54,9 +54,9 @@ namespace TwitchLib.Client
                 case IrcCommand.Pong:
                     return;
                 case IrcCommand.Join:
+                    ChannelManager.JoinCompleted(ircMessage.Channel);
                     if (ircMessage.User == TwitchUsername)
                     {
-                        ChannelManager.JoinCompleted(ircMessage.Channel);
                         OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
                     }
                     OnUserJoined?.Invoke(this, new OnUserJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
