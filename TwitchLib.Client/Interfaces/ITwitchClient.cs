@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using TwitchLib.Client.Internal;
+using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Interfaces

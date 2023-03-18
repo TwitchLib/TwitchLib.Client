@@ -1,5 +1,6 @@
 ﻿using System;
 
+using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;

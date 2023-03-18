@@ -7,9 +7,9 @@ using System.Reflection;
 
 using Microsoft.Extensions.Logging;
 
+using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Interfaces;
-using TwitchLib.Client.Internal;
 using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;

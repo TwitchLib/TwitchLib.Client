@@ -1,6 +1,6 @@
 ﻿using System;
 
-using TwitchLib.Client.Internal;
+using TwitchLib.Client.Consts.Internal;
 
 namespace TwitchLib.Client.Events
 {

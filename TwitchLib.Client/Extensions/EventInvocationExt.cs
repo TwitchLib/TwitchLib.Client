@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 
+using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Helpers;
-using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions

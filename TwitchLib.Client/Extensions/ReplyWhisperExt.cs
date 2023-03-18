@@ -1,7 +1,7 @@
 ﻿using System;
 
+using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Interfaces;
-using TwitchLib.Client.Internal;
 
 namespace TwitchLib.Client.Extensions
 {
