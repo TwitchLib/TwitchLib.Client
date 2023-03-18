@@ -70,7 +70,13 @@ namespace TwitchLib.Client.Managers
         ///     <see cref="ConcurrentDictionary{TKey, TValue}"/> with the channels that are already joined
         /// </summary>
         private ConcurrentDictionary<string, JoinedChannel> Joined { get; } = new ConcurrentDictionary<string, JoinedChannel>();
-
+        /// <summary>
+        ///     <see cref="IReadOnlyCollection{T}"/> with channel-names to join when connected
+        ///     <br></br>
+        ///     <br></br>
+        ///     the presence of this <see cref="IReadOnlyCollection{T}"/> <b>does not</b> indicate they are already joined!
+        /// </summary>
+        public IReadOnlyCollection<string> AutoJoinChannels => WantToJoin.ToList().AsReadOnly();
         /// <summary>
         ///     <see cref="IReadOnlyList{T}"/> of <see cref="Joined"/>.Values
         /// </summary>

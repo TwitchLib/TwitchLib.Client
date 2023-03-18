@@ -1,22 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing on connected event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing on connected event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
     public class OnConnectedArgs : EventArgs
     {
         /// <summary>
-        /// Property representing bot username.
+        ///     Property representing bot username.
         /// </summary>
-        public string BotUsername;
+        public string BotUsername { get; set; }
         /// <summary>
-        /// Property representing connected channel.
+        ///     <see cref="IEnumerable{T}"/> with channel-names to join when connected
+        ///     <br></br>
+        ///     <br></br>
+        ///     the presence of this <see cref="IEnumerable{T}"/> <b>does not</b> indicate they are already joined!
         /// </summary>
-        public string AutoJoinChannel;
+        public IEnumerable<string> AutoJoinChannels { get; set; }
     }
 }

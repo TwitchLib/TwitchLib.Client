@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using TwitchLib.Client.Events.Abstracts;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing a list of moderators received from chat.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing a list of moderators received from chat.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnModeratorsReceivedArgs : EventArgs
+    public class OnModeratorsReceivedArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Property representing the channel the moderator list came from.
+        ///     Property representing the list of moderators.
         /// </summary>
-        public string Channel;
-        /// <summary>
-        /// Property representing the list of moderators.
-        /// </summary>
-        public List<string> Moderators;
+        public ICollection<string> Moderators { get; set; }
     }
 }

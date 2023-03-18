@@ -55,7 +55,7 @@ namespace TwitchLib.Client
         private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
-            OnDisconnected?.Invoke(sender, new OnDisconnectedArgs());
+            OnDisconnected?.Invoke(sender, new OnDisconnectedArgs() { BotUsername = TwitchUsername });
         }
 
         private void Client_OnReconnected(object sender, OnReconnectedEventArgs e)

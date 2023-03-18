@@ -1,24 +1,17 @@
-﻿using System;
-
+﻿using TwitchLib.Client.Events.Abstracts;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing new subscriber event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing new subscriber event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnNewSubscriberArgs : EventArgs
+    public class OnNewSubscriberArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Property representing subscriber object.
+        ///     Property representing subscriber object.
         /// </summary>
-        public Subscriber Subscriber;
-        /// <summary>
-        /// Property representing the Twitch channel this event fired from.
-        /// </summary>
-        public string Channel;
+        public Subscriber Subscriber { get; set; }
     }
 }

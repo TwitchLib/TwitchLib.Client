@@ -1,24 +1,17 @@
-﻿using System;
-
+﻿using TwitchLib.Client.Events.Abstracts;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing on channel state changed event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing on channel state changed event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnChannelStateChangedArgs : EventArgs
+    public class OnChannelStateChangedArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Property representing the current channel state.
+        ///     Property representing the current channel state.
         /// </summary>
-        public ChannelState ChannelState;
-        /// <summary>
-        /// Property representing the channel received state from.
-        /// </summary>
-        public string Channel;
+        public ChannelState ChannelState { get; set; }
     }
 }

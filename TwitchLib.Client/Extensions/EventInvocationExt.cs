@@ -171,7 +171,7 @@ namespace TwitchLib.Client.Extensions
         {
             OnConnectedArgs model = new OnConnectedArgs()
             {
-                AutoJoinChannel = autoJoinChannel,
+                AutoJoinChannels = new string[] { autoJoinChannel },
                 BotUsername = botUsername
             };
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnConnected), model);

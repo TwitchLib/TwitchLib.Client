@@ -64,13 +64,13 @@ namespace TwitchLib.Client
                     OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = new List<string>() });
                     break;
                 case MsgIds.NoPermission:
-                    OnNoPermissionError?.Invoke(this, null);
+                    OnNoPermissionError?.Invoke(this, EventArgs.Empty);
                     break;
                 case MsgIds.RaidErrorSelf:
-                    OnSelfRaidError?.Invoke(this, null);
+                    OnSelfRaidError?.Invoke(this, EventArgs.Empty);
                     break;
                 case MsgIds.RaidNoticeMature:
-                    OnRaidedChannelIsMatureAudience?.Invoke(this, null);
+                    OnRaidedChannelIsMatureAudience?.Invoke(this, EventArgs.Empty);
                     break;
                 case MsgIds.MsgBannedEmailAlias:
                     OnBannedEmailAlias?.Invoke(this, new OnBannedEmailAliasArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });

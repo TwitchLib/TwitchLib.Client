@@ -83,7 +83,7 @@ namespace TwitchLib.Client
                     break;
                 case IrcCommand.RPL_004:
                     ChannelManager.Start();
-                    OnConnected?.Invoke(this, new OnConnectedArgs { BotUsername = TwitchUsername });
+                    OnConnected?.Invoke(this, new OnConnectedArgs { BotUsername = TwitchUsername, AutoJoinChannels = ChannelManager.AutoJoinChannels });
                     break;
                 case IrcCommand.RPL_353:
                     OnExistingUsersDetected?.Invoke(this, new OnExistingUsersDetectedArgs { Channel = ircMessage.Channel, Users = ircMessage.Message.Split(' ').ToList() });
@@ -132,12 +132,12 @@ namespace TwitchLib.Client
             JoinedChannel joinedChannel = GetJoinedChannel(ircMessage.Channel);
             joinedChannel?.HandleMessage(chatMessage);
 
-            OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage });
+            OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage, Channel = ircMessage.Channel });
 
             if (ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId))
             {
                 if (msgId == MsgIds.UserIntro)
-                    OnUserIntro?.Invoke(this, new OnUserIntroArgs { ChatMessage = chatMessage });
+                    OnUserIntro?.Invoke(this, new OnUserIntroArgs { ChatMessage = chatMessage, Channel = ircMessage.Channel });
             }
 
             if (ChatCommandIdentifiers != null && ChatCommandIdentifiers.Count != 0 && !String.IsNullOrEmpty(chatMessage.Message))
@@ -180,12 +180,12 @@ namespace TwitchLib.Client
             if (successBanDuration)
             {
                 UserTimeout userTimeout = new UserTimeout(ircMessage);
-                OnUserTimedout?.Invoke(this, new OnUserTimedoutArgs { UserTimeout = userTimeout });
+                OnUserTimedout?.Invoke(this, new OnUserTimedoutArgs { UserTimeout = userTimeout, Channel = ircMessage.Channel });
                 return;
             }
 
             UserBan userBan = new UserBan(ircMessage);
-            OnUserBanned?.Invoke(this, new OnUserBannedArgs { UserBan = userBan });
+            OnUserBanned?.Invoke(this, new OnUserBannedArgs { UserBan = userBan, Channel = ircMessage.Channel });
         }
 
         private void HandleUserState(IrcMessage ircMessage)
@@ -195,7 +195,7 @@ namespace TwitchLib.Client
             if (!HasSeenJoinedChannels.Contains(userState.Channel.ToLowerInvariant()))
             {
                 HasSeenJoinedChannels.Add(userState.Channel.ToLowerInvariant());
-                OnUserStateChanged?.Invoke(this, new OnUserStateChangedArgs { UserState = userState });
+                OnUserStateChanged?.Invoke(this, new OnUserStateChangedArgs { UserState = userState, Channel = ircMessage.Channel });
             }
             else
             {
