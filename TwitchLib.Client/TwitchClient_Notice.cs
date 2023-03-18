@@ -103,11 +103,32 @@ namespace TwitchLib.Client
                 case MsgIds.MsgFollowersOnly:
                     OnFollowersOnly?.Invoke(this, new OnFollowersOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
+                case MsgIds.FollowersOn:
+                    OnFollowersOnly?.Invoke(this, new OnFollowersOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = true });
+                    break;
+                case MsgIds.FollowersOnZero:
+                    OnFollowersOnly?.Invoke(this, new OnFollowersOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = true });
+                    break;
+                case MsgIds.FollowersOff:
+                    OnFollowersOnly?.Invoke(this, new OnFollowersOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = false });
+                    break;
                 case MsgIds.MsgSubsOnly:
                     OnSubsOnly?.Invoke(this, new OnSubsOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
+                case MsgIds.SubsOn:
+                    OnSubsOnly?.Invoke(this, new OnSubsOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = true });
+                    break;
+                case MsgIds.SubsOff:
+                    OnSubsOnly?.Invoke(this, new OnSubsOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = false });
+                    break;
                 case MsgIds.MsgEmoteOnly:
                     OnEmoteOnly?.Invoke(this, new OnEmoteOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.EmoteOnlyOn:
+                    OnEmoteOnly?.Invoke(this, new OnEmoteOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = true });
+                    break;
+                case MsgIds.EmoteOnlyOff:
+                    OnEmoteOnly?.Invoke(this, new OnEmoteOnlyArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = false });
                     break;
                 case MsgIds.MsgSuspended:
                     OnSuspended?.Invoke(this, new OnSuspendedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
@@ -118,8 +139,20 @@ namespace TwitchLib.Client
                 case MsgIds.MsgSlowMode:
                     OnSlowMode?.Invoke(this, new OnSlowModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
+                case MsgIds.SlowOn:
+                    OnSlowMode?.Invoke(this, new OnSlowModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = true });
+                    break;
+                case MsgIds.SlowOff:
+                    OnSlowMode?.Invoke(this, new OnSlowModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = false });
+                    break;
                 case MsgIds.MsgR9k:
                     OnR9kMode?.Invoke(this, new OnR9kModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
+                    break;
+                case MsgIds.R9KOn:
+                    OnR9kMode?.Invoke(this, new OnR9kModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = true });
+                    break;
+                case MsgIds.R9KOff:
+                    OnR9kMode?.Invoke(this, new OnR9kModeArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, IsOn = false });
                     break;
 
                 default:
