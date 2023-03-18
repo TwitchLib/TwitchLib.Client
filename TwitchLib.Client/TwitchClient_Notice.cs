@@ -58,7 +58,9 @@ namespace TwitchLib.Client
                     OnChatColorChanged?.Invoke(this, new OnChatColorChangedArgs { Channel = ircMessage.Channel });
                     break;
                 case MsgIds.ModeratorsReceived:
-                    OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList() });
+                    // TODO: is it comma seperated??? - OnExistingUsersDetected is space seperated!!!
+                    IList<string> mods = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList();
+                    OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = mods });
                     break;
                 case MsgIds.NoMods:
                     OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = new List<string>() });
@@ -92,7 +94,9 @@ namespace TwitchLib.Client
                     OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = new List<string>() });
                     break;
                 case MsgIds.VIPsSuccess:
-                    OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = ircMessage.Message.Replace(" ", "").Replace(".", "").Split(':')[1].Split(',').ToList() });
+                    // TODO: is it comma seperated??? - OnExistingUsersDetected is space seperated!!!
+                    IList<string> vips = ircMessage.Message.Replace(" ", "").Replace(".", "").Split(':')[1].Split(',').ToList();
+                    OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = vips });
                     break;
                 case MsgIds.MsgRateLimit:
                     OnRateLimit?.Invoke(this, new OnRateLimitArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
