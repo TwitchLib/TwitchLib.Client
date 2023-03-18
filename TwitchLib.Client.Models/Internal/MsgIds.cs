@@ -1,4 +1,6 @@
-﻿namespace TwitchLib.Client.Models.Internal
+﻿using System;
+
+namespace TwitchLib.Client.Models.Internal
 {
     public static class MsgIds
     {
@@ -22,6 +24,7 @@
         public const string ModeratorsReceived = "room_mods";
         public const string NoMods = "no_mods";
         public const string NoVIPs = "no_vips";
+        [Obsolete("Not listet (anymore?): https://dev.twitch.tv/docs/irc/msg-id/")]
         public const string MsgBannedEmailAlias = "msg_banned_email_alias";
         public const string MsgChannelSuspended = "msg_channel_suspended";
         public const string MsgRequiresVerifiedPhoneNumber = "msg_requires_verified_phone_number";
