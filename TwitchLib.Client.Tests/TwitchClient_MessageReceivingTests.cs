@@ -4,11 +4,14 @@ using System.Threading;
 
 using Microsoft.Extensions.Logging;
 
+using Moq;
+
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Tests.TestHelper;
+using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
 
 using Xunit;
@@ -134,8 +137,26 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnUserJoined()
         {
-            string message = $":{TWITCH_UsernameAnother}!{TWITCH_UsernameAnother}@{TWITCH_UsernameAnother}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}";
-            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
+            Mock<IClient> mock = new Mock<IClient>();
+            mock.Setup(c => c.IsConnected).Returns(true);
+            mock.SetupAdd(c => c.OnMessage += It.IsAny<EventHandler<OnMessageEventArgs>>());
+            MockSequence sequence = new MockSequence();
+            // to make the ITwitchClient call ChannelManager.Start()
+            mock.InSequence(sequence)
+                .Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(true)
+                .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = $":tmi.twitch.tv 004 {TWITCH_Username} :-" });
+
+            // after calling IClient.JoinChannel([...]), the ChannelManager should send "JOIN #[...]"
+            // and we want to raise the Join-Confirmation-Message, that we recveive from twitch
+            mock.InSequence(sequence)
+                .Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(true)
+                .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = $":{TWITCH_UsernameAnother}!{TWITCH_UsernameAnother}@{TWITCH_UsernameAnother}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}" });
+
+            IClient communicationClient = mock.Object;
+
+
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
@@ -147,8 +168,10 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnUserJoined += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
-                        // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        Assert.True(communicationClient.Send(String.Empty));
+                        // make the client raise OnConnected and ITwitchClient start ChannelManager
+                        communicationClient.Send(String.Empty);
+                        // trigger the client to raise OnMessage ...
+                        communicationClient.Send(String.Empty);
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
