@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Models.Internal;
@@ -74,7 +75,7 @@ namespace TwitchLib.Client.Parsers
                     starts[(int) state] = ++i;
                     break;
                 }
-                else if (state < ParserState.STATE_TRAILING && raw[i] == '+' || state < ParserState.STATE_TRAILING && raw[i] == '-')
+                else if ((state < ParserState.STATE_TRAILING && raw[i] == '+') || (state < ParserState.STATE_TRAILING && raw[i] == '-'))
                 {
                     state = ParserState.STATE_TRAILING;
                     starts[(int) state] = i;
@@ -94,94 +95,7 @@ namespace TwitchLib.Client.Parsers
             string cmd = raw.Substring(starts[(int) ParserState.STATE_COMMAND],
                 lens[(int) ParserState.STATE_COMMAND]);
 
-            IrcCommand command = IrcCommand.Unknown;
-            switch (cmd)
-            {
-                case "PRIVMSG":
-                    command = IrcCommand.PrivMsg;
-                    break;
-                case "NOTICE":
-                    command = IrcCommand.Notice;
-                    break;
-                case "PING":
-                    command = IrcCommand.Ping;
-                    break;
-                case "PONG":
-                    command = IrcCommand.Pong;
-                    break;
-                case "CLEARCHAT":
-                    command = IrcCommand.ClearChat;
-                    break;
-                case "CLEARMSG":
-                    command = IrcCommand.ClearMsg;
-                    break;
-                case "USERSTATE":
-                    command = IrcCommand.UserState;
-                    break;
-                case "GLOBALUSERSTATE":
-                    command = IrcCommand.GlobalUserState;
-                    break;
-                case "NICK":
-                    command = IrcCommand.Nick;
-                    break;
-                case "JOIN":
-                    command = IrcCommand.Join;
-                    break;
-                case "PART":
-                    command = IrcCommand.Part;
-                    break;
-                case "PASS":
-                    command = IrcCommand.Pass;
-                    break;
-                case "CAP":
-                    command = IrcCommand.Cap;
-                    break;
-                case "001":
-                    command = IrcCommand.RPL_001;
-                    break;
-                case "002":
-                    command = IrcCommand.RPL_002;
-                    break;
-                case "003":
-                    command = IrcCommand.RPL_003;
-                    break;
-                case "004":
-                    command = IrcCommand.RPL_004;
-                    break;
-                case "353":
-                    command = IrcCommand.RPL_353;
-                    break;
-                case "366":
-                    command = IrcCommand.RPL_366;
-                    break;
-                case "372":
-                    command = IrcCommand.RPL_372;
-                    break;
-                case "375":
-                    command = IrcCommand.RPL_375;
-                    break;
-                case "376":
-                    command = IrcCommand.RPL_376;
-                    break;
-                case "WHISPER":
-                    command = IrcCommand.Whisper;
-                    break;
-                case "SERVERCHANGE":
-                    command = IrcCommand.ServerChange;
-                    break;
-                case "RECONNECT":
-                    command = IrcCommand.Reconnect;
-                    break;
-                case "ROOMSTATE":
-                    command = IrcCommand.RoomState;
-                    break;
-                case "USERNOTICE":
-                    command = IrcCommand.UserNotice;
-                    break;
-                case "MODE":
-                    command = IrcCommand.Mode;
-                    break;
-            }
+            IrcCommand command = GetIrcCommandFromString(cmd);
 
             string parameters = raw.Substring(starts[(int) ParserState.STATE_PARAM],
                 lens[(int) ParserState.STATE_PARAM]);
@@ -191,7 +105,16 @@ namespace TwitchLib.Client.Parsers
                 lens[(int) ParserState.STATE_PREFIX]);
             return new IrcMessage(command, new[] { parameters, message }, hostmask, tagDict);
         }
-
+        public static IrcCommand GetIrcCommandFromString(string cmd)
+        {
+            IrcCommand result;
+            // first try to parse with prefix "rpl_"
+            // otherwise the parser interprets the numeric string as ordinal
+            bool parsed = Enum.TryParse<IrcCommand>($"rpl_{cmd}", true, out result);
+            if (!parsed) parsed = Enum.TryParse<IrcCommand>(cmd, true, out result);
+            if (!parsed) result = IrcCommand.Unknown;
+            return result;
+        }
         /// <summary>
         /// Enum ParserState
         /// </summary>
