@@ -3,10 +3,12 @@ using TwitchLib.Client.Models.Internal;
 using Xunit;
 
 namespace TwitchLib.Client.Test {
-    public class IrcParserTests {
+    public class IrcParserTests
+    {
         private readonly MockIClient _mockClient;
 
-        public IrcParserTests() {
+        public IrcParserTests()
+        {
             _mockClient = new MockIClient();
         }
 
