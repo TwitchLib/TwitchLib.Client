@@ -16,16 +16,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">
         ///     name of the channel to join
         /// </param>
-        /// <param name="overrideCheck">
-        ///     <see langword="false"/> is the <see langword="feault"/>
-        ///     <br></br>
-        ///     <br></br>
-        ///     in case of the <see langword="default"/> <see langword="false"/>, the channel wont be joined if its already joined
-        ///     <br></br>
-        ///     <br></br>
-        ///     if set to <see langword="true"/>, the channel is going to be joined, though its probably joined already
-        /// </param>
-        void JoinChannel(string channel, bool overrideCheck = false);
+        void JoinChannel(string channel);
         /// <summary>
         ///     returns the <see cref="JoinedChannel"/> of the channel with the given <paramref name="channel"/>-name
         ///     <br></br>

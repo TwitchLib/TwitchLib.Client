@@ -106,7 +106,7 @@ namespace TwitchLib.Client.Managers
             }
             return null;
         }
-        public void JoinChannel(string channel, bool overrideCheck = false)
+        public void JoinChannel(string channel)
         {
             LOGGER?.TraceMethodCall(GetType());
             if (channel.IsNullOrEmptyOrWhitespace()) return;
@@ -128,13 +128,13 @@ namespace TwitchLib.Client.Managers
                 // afterwards JoinComplete has to be called to complete the join and to put the channel into Joined
             }
         }
-        public void JoinChannels(IEnumerable<string> channels, bool overrideCheck = false)
+        public void JoinChannels(IEnumerable<string> channels)
         {
             LOGGER?.TraceMethodCall(GetType());
             if (channels == null) return;
             foreach (string channel in channels)
             {
-                JoinChannel(channel, overrideCheck);
+                JoinChannel(channel);
             }
         }
         public void LeaveChannel(string channel)

@@ -23,12 +23,12 @@ namespace TwitchLib.Client
         public event EventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
         public event EventHandler<OnLeftChannelArgs> OnLeftChannel;
         public event EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
-        public void JoinChannel(string channel, bool overrideCheck = false)
+        public void JoinChannel(string channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
             if (!IsInitialized) HandleNotInitialized();
             if (!IsConnected) HandleNotConnected();
-            ChannelManager.JoinChannel(channel, overrideCheck);
+            ChannelManager.JoinChannel(channel);
         }
         public JoinedChannel GetJoinedChannel(string channel)
         {
