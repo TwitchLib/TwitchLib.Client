@@ -57,8 +57,7 @@ namespace TwitchLib.Client
                     OnChatColorChanged?.Invoke(this, new OnChatColorChangedArgs { Channel = ircMessage.Channel });
                     break;
                 case MsgIds.ModeratorsReceived:
-                    // TODO: is it comma seperated??? - OnExistingUsersDetected is space seperated!!!
-                    IList<string> mods = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList();
+                    IList<string> mods = GetUsersFromMessage(ircMessage.Message);
                     OnModeratorsReceived?.Invoke(this, new OnModeratorsReceivedArgs { Channel = ircMessage.Channel, Moderators = mods });
                     break;
                 case MsgIds.NoMods:
@@ -94,8 +93,7 @@ namespace TwitchLib.Client
                     OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = new List<string>() });
                     break;
                 case MsgIds.VIPsSuccess:
-                    // TODO: is it comma seperated??? - OnExistingUsersDetected is space seperated!!!
-                    IList<string> vips = ircMessage.Message.Replace(" ", "").Replace(".", "").Split(':')[1].Split(',').ToList();
+                    IList<string> vips = GetUsersFromMessage(ircMessage.Message);
                     OnVIPsReceived?.Invoke(this, new OnVIPsReceivedArgs { Channel = ircMessage.Channel, VIPs = vips });
                     break;
                 case MsgIds.MsgRateLimit:
@@ -164,6 +162,49 @@ namespace TwitchLib.Client
                     UnaccountedFor(ircMessage.ToString());
                     break;
             }
+        }
+
+        /// <summary>
+        ///     extracts the comma-seperated users from the message
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <see cref="MsgIds.ModeratorsReceived"/>
+        ///             <code>"@msg-id=room_mods :tmi.twitch.tv NOTICE #testchannel :The moderators of this channel are: testuser0, testuser1, testuser2."</code>
+        ///             <code>"@msg-id=room_mods :tmi.twitch.tv NOTICE #testchannel :The moderators of this channel are: testuser0,testuser1,testuser2."</code>
+        ///         </item>
+        ///         <item>
+        ///             <see cref="MsgIds.VIPsSuccess"/>
+        ///             <code>"@msg-id=vips_success :tmi.twitch.tv NOTICE #testchannel :The VIPs of this channel are: testuser0, testuser1, testuser2."</code>
+        ///             <code>"@msg-id=vips_success :tmi.twitch.tv NOTICE #testchannel :The VIPs of this channel are: testuser0,testuser1,testuser2."</code>
+        ///         </item>
+        ///     </list>
+        /// </summary>
+        /// <param name="message">
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <see cref="MsgIds.ModeratorsReceived"/>
+        ///             <code>"@msg-id=room_mods :tmi.twitch.tv NOTICE #testchannel :The moderators of this channel are: testuser0, testuser1, testuser2."</code>
+        ///             <code>"@msg-id=room_mods :tmi.twitch.tv NOTICE #testchannel :The moderators of this channel are: testuser0,testuser1,testuser2."</code>
+        ///         </item>
+        ///         <item>
+        ///             <see cref="MsgIds.VIPsSuccess"/>
+        ///             <code>"@msg-id=vips_success :tmi.twitch.tv NOTICE #testchannel :The VIPs of this channel are: testuser0, testuser1, testuser2."</code>
+        ///             <code>"@msg-id=vips_success :tmi.twitch.tv NOTICE #testchannel :The VIPs of this channel are: testuser0,testuser1,testuser2."</code>
+        ///         </item>
+        ///     </list>
+        /// </param>
+        /// <returns>
+        ///     <see cref="IList{T}"/> containing (for example): testuser0,testuser1,testuser2
+        /// </returns>
+        private IList<string> GetUsersFromMessage(string message)
+        {
+            string originalMessage = message.Replace(" ", String.Empty);
+            originalMessage = originalMessage.Replace(".", String.Empty);
+            string[] originalMessageAndUserList = originalMessage.Split(':');
+            string userList = originalMessageAndUserList[1];
+            string[] usersAsArray = userList.Split(',');
+            IList<string> users = usersAsArray.ToList();
+            return users;
         }
     }
 }

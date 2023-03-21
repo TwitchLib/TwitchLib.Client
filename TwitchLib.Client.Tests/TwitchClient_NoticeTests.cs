@@ -35,8 +35,8 @@ namespace TwitchLib.Client.Tests
             else
             {
                 builder.Append("The moderators of this channel are: ");
-                // TODO: is it comma seperated??? - OnExistingUsersDetected is space seperated!!!
                 builder.Append(String.Join(',', users));
+                builder.Append('.');
             }
 
             string message = builder.ToString();
@@ -513,8 +513,8 @@ namespace TwitchLib.Client.Tests
             else
             {
                 builder.Append("The VIPs of this channel are: ");
-                // TODO: is it comma seperated??? - OnExistingUsersDetected is space seperated!!!
                 builder.Append(String.Join(',', users));
+                builder.Append('.');
             }
             string message = builder.ToString();
 
