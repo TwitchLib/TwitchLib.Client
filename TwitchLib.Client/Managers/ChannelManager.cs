@@ -124,7 +124,7 @@ namespace TwitchLib.Client.Managers
                 WantToJoin.Add(channel);
                 if (!Joining.Contains(channel))
                 {
-                Joining.Enqueue(channel);
+                    Joining.Enqueue(channel);
                 }
                 // now the task does its work
                 // it takes the channel from Joining
@@ -219,6 +219,8 @@ namespace TwitchLib.Client.Managers
         {
             LOGGER?.TraceMethodCall(GetType());
             if (Token == null || Token.IsCancellationRequested) return;
+            if (channel.IsNullOrEmptyOrWhitespace()) return;
+            channel = CorrectChannelName(channel);
             lock (SYNC)
             {
                 JoinRequested.Remove(channel);
@@ -237,10 +239,9 @@ namespace TwitchLib.Client.Managers
         {
             LOGGER?.TraceMethodCall(GetType());
             if (Token == null || Token.IsCancellationRequested) return;
-            lock (SYNC)
-            {
-                JoinRequested.Remove(channel);
-            }
+            if (channel.IsNullOrEmptyOrWhitespace()) return;
+            channel = CorrectChannelName(channel);
+            lock (SYNC) { JoinRequested.Remove(channel); }
         }
         private void JoinChannelTaskAction()
         {
@@ -274,7 +275,7 @@ namespace TwitchLib.Client.Managers
         }
         private static string CorrectChannelName(string channel)
         {
-            string channelName = channel.ToLower();
+            string channelName = channel.ToLower().Trim();
             if (channelName.StartsWith("#"))
                 channelName = channelName.Substring(1);
             return channelName;
