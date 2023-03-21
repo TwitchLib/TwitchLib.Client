@@ -122,7 +122,10 @@ namespace TwitchLib.Client.Managers
                 if (JoinRequested.Contains(channel)) return;
                 // no contains check needed, its a HashSet<>
                 WantToJoin.Add(channel);
+                if (!Joining.Contains(channel))
+                {
                 Joining.Enqueue(channel);
+                }
                 // now the task does its work
                 // it takes the channel from Joining
                 // requests to join
