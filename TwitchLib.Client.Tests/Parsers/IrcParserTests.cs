@@ -53,6 +53,7 @@ public class IrcParserTests
         Assert.Equal(expectedCommand, command);
     }
     [Theory]
+    // --------------CMD-----USER-------CH---TMS--TAGS--META-------------------MSG
     [InlineData("001", "testuser", "", true, "", "tmi.twitch.tv {0} {1}", "Welcome, GLHF!", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     [InlineData("002", "testuser", "", true, "", "tmi.twitch.tv {0} {1}", "Your host is tmi.twitch.tv", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     [InlineData("003", "testuser", "", true, "", "tmi.twitch.tv {0} {1}", "This server is rather new", Skip = "lets better skip this test, perhaps my expectations are wrong")]
@@ -61,26 +62,32 @@ public class IrcParserTests
     [InlineData("375", "testuser", "", true, "", "tmi.twitch.tv {0} {1}", "-", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     [InlineData("376", "testuser", "", true, "", "tmi.twitch.tv {0} {1}", ">", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     //
+    // --------------CMD---USER--CH--TMS--TAGS--META------------------------MSG
     [InlineData("CAP", "", "*", true, "", "tmi.twitch.tv {0} * ACK", "twitch.tv/membership", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     [InlineData("NOTICE", "", "*", true, "", "tmi.twitch.tv {0} {2}", "Login authentication failed", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     //
+    // --------------CMD-------USER---------CH---------TMS--TAGS----META-------------------------------MSG
     [InlineData("353", "testuser", "testchannel", true, "", "{1}.tmi.twitch.tv {0} {1} = #{2}", "usera userb", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     [InlineData("366", "testuser", "testchannel", true, "", "{1}.tmi.twitch.tv {0} {1} #{2}", "End of /NAMES list", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     //
+    // --------------CMD-------USER---------CH----------TMS--TAGS----META-------------------------------MSG
     [InlineData("JOIN", "testuser", "testchannel", true, "", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", "")]
     [InlineData("JOIN", "testuser", "testchannel", true, "", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", "another_user")]
     [InlineData("PART", "testuser", "testchannel", true, "", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", "")]
     [InlineData("PART", "testuser", "testchannel", true, "", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", "another_user")]
 
     // ping-pong
+    // --------------CMD----USER-CH---TMS--TAGS--META---MSG
     [InlineData("PING", "", "", false, "", "{0}", "tmi.twitch.tv")]
     [InlineData("PONG", "", "", false, "", "{0}", "tmi.twitch.tv")]
 
     // timeout
+    // --------------CMD---------USER------CH--------TMS----TAGS------------------------------------------------------------META------------------MSG
     [InlineData("CLEARCHAT", "", "testchannel", true, "@ban-duration=60;room-id=0;target-user-id=1;tmi-sent-ts=2", "tmi.twitch.tv {0} #{2}", "", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     // ban
     [InlineData("CLEARCHAT", "testuser", "testchannel", true, "@room-id=0;target-user-id=1;tmi-sent-ts=2", "tmi.twitch.tv {0} #{2}", "{1}", Skip = "lets better skip this test, perhaps my expectations are wrong")]
 
+    //
     [InlineData("CLEARMSG", "testuser", "testchannel", true, "@login={1};room-id=;target-msg-id=some_msg_id_hash;tmi-sent-ts=1", "tmi.twitch.tv {0} #{2}", "some message", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     [InlineData("NOTICE", "", "testchannel", true, "@msg-id=msg_channel_suspended", "tmi.twitch.tv {0} #{2}", "This channel does not exist or has been suspended.", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     [InlineData("PRIVMSG", "testuser", "testchannel", true, "@badge-info=subscriber/36;badges=broadcaster/1,subscriber/3036,sub-gifter/5;client-nonce=hash;color=#B22222;display-name={1};emote-only=1;emotes=1:0-1;first-msg=0;flags=;id=some_msg_id_hash;mod=0;returning-chatter=0;room-id=0;subscriber=1;tmi-sent-ts=1;turbo=0;user-id=1;user-type=", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", ":)")]
