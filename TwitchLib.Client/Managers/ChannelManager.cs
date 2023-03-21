@@ -244,7 +244,7 @@ namespace TwitchLib.Client.Managers
             LOGGER?.TraceMethodCall(GetType());
             while (Token != null && !Token.IsCancellationRequested)
             {
-                Task.Delay(TimeSpan.FromSeconds(1)).GetAwaiter().GetResult();
+                Task.Delay(JoinRequestDelay).GetAwaiter().GetResult();
                 string channelToJoin = null;
                 lock (SYNC)
                 {
