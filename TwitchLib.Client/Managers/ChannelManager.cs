@@ -80,8 +80,10 @@ namespace TwitchLib.Client.Managers
         ///     <see cref="IReadOnlyList{T}"/> of <see cref="Joined"/>.Values
         /// </summary>
         public IReadOnlyList<JoinedChannel> JoinedChannels => Joined.Values.ToList().AsReadOnly();
-
-
+        public IReadOnlyCollection<string> JoiningChannels { get { lock (SYNC) { return Joining.ToList().AsReadOnly(); } } }
+        public IReadOnlyCollection<string> JoiningChannelsExceptions { get { lock (SYNC) { return JoiningExceptions.ToList().AsReadOnly(); } } }
+        public IReadOnlyCollection<string> JoinChannelRequested { get { lock (SYNC) { return JoinRequested.ToList().AsReadOnly(); } } }
+        public TimeSpan JoinRequestDelay => TimeSpan.FromSeconds(1);
 
         public ChannelManager(IClient client, Log log, Log logError, ILogger logger = null)
         {
@@ -115,9 +117,9 @@ namespace TwitchLib.Client.Managers
             lock (SYNC)
             {
                 // Check to see if client is already in channel
-                if (!overrideCheck && Joined.Keys.Contains(channel)) return;
-                if (!overrideCheck && JoiningExceptions.Contains(channel)) return;
-                if (!overrideCheck && JoinRequested.Contains(channel)) return;
+                if (Joined.Keys.Contains(channel)) return;
+                if (JoiningExceptions.Contains(channel)) return;
+                if (JoinRequested.Contains(channel)) return;
 
                 WantToJoin.Add(channel);
                 Joining.Enqueue(channel);
