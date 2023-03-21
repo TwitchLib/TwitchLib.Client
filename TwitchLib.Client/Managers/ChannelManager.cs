@@ -142,7 +142,7 @@ namespace TwitchLib.Client.Managers
             LOGGER?.TraceMethodCall(GetType());
             if (channel.IsNullOrEmptyOrWhitespace()) return;
             channel = CorrectChannelName(channel);
-            Log($"Leaving channel: {channel}");
+            Log?.Invoke($"Leaving channel: {channel}");
             lock (SYNC)
             {
                 // never ever touch the joining-queue here
@@ -259,7 +259,7 @@ namespace TwitchLib.Client.Managers
                         // and we dont join that ones
                         continue;
                     }
-                    Log($"Joining channel: {channelToJoin}");
+                    Log?.Invoke($"Joining channel: {channelToJoin}");
                     // IDE0058 - client raises OnSendFailed if this method returns false
                     // important we set channel to lower case when sending join message
                     Client.Send(Rfc2812.Join($"#{channelToJoin.ToLower()}"));
