@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Models.Internal;
 using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client.Interfaces
@@ -366,6 +367,12 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         /// <param name="message">The message.</param>
         void SendRaw(string message);
+        /// <summary>
+        /// Parse RAW IRC message
+        /// </summary>
+        /// <param name="ircMessage">The RAW message to be parse</param>
+        /// <returns>Parsed IrcMessage</returns>
+        IrcMessage ParseRawIrcMessage(string ircMessage);
         /// <summary>
         /// Sends the whisper.
         /// </summary>

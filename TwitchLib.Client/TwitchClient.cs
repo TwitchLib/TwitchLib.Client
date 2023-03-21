@@ -586,6 +586,14 @@ namespace TwitchLib.Client
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
 
+        /// <summary>
+        /// Parse RAW IRC message
+        /// </summary>
+        /// <param name="ircMessage">The RAW message to be parse</param>
+        /// <returns>Parsed IrcMessage</returns>
+        public IrcMessage ParseRawIrcMessage(string ircMessage)
+            => _ircParser.ParseIrcMessage(ircMessage);
+
         #region SendMessage
 
         private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
