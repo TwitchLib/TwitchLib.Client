@@ -38,12 +38,6 @@ namespace TwitchLib.Client
         private void HandleNotice(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Notice));
-            if (ircMessage.Message.Contains("Improperly formatted auth"))
-            {
-                OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
-                return;
-            }
-
             bool success = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
             if (!success)
             {
