@@ -293,5 +293,7 @@ namespace TwitchLib.Client.Tests.Managers
             Assert.Empty(channelManager.JoiningChannelsExceptions);
             Assert.Empty(channelManager.JoinedChannels);
         }
+
+        // TODO: add corner case tests (null, whitespace, ...)
     }
 }
