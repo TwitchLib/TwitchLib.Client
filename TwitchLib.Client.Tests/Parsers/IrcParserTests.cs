@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Text;
 
-using TwitchLib.Client.Enums.Internal;
+using TwitchLib.Client.Enums;
+using TwitchLib.Client.Enums.Parsers;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Models.Internal;
 using TwitchLib.Client.Parsers;
@@ -41,13 +42,20 @@ public class IrcParserTests
     // --------------CMD----USER-CH---TMS--TAGS--META---MSG
     [InlineData("PING", "", "", false, "", "{0}", "tmi.twitch.tv")]
     [InlineData("PONG", "", "", false, "", "{0}", "tmi.twitch.tv")]
-
+    //
+    [InlineData("SERVERCHANGE", "", "", true, "", "tmi.twitch.tv {0}", "", Skip = "lets better skip this test, perhaps my expectations are wrong")]
+    [InlineData("RECONNECT", "", "", true, "", "tmi.twitch.tv {0}", "", Skip = "lets better skip this test, perhaps my expectations are wrong")]
+    //
     // timeout
-    // --------------CMD---------USER------CH--------TMS----TAGS------------------------------------------------------------META------------------MSG
-    [InlineData("CLEARCHAT", "", "testchannel", true, "@ban-duration=60;room-id=0;target-user-id=1;tmi-sent-ts=2", "tmi.twitch.tv {0} #{2}", "", Skip = "lets better skip this test, perhaps my expectations are wrong")]
+    // --------------CMD-------------USER----------CH--------TMS----TAGS-------------------------------------------------------------META------------------MSG
+    [InlineData("CLEARCHAT", "testuser", "testchannel", true, "@ban-duration=60;room-id=0;target-user-id=1;tmi-sent-ts=2", "tmi.twitch.tv {0} #{2}", "{1}", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     // ban
     [InlineData("CLEARCHAT", "testuser", "testchannel", true, "@room-id=0;target-user-id=1;tmi-sent-ts=2", "tmi.twitch.tv {0} #{2}", "{1}", Skip = "lets better skip this test, perhaps my expectations are wrong")]
-
+    //
+    [InlineData("MODE", "testuser", "testchannel", true, "", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", "+o {1}")]
+    [InlineData("MODE", "testuser", "testchannel", true, "", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", "-o {1}")]
+    //
+    [InlineData("USERSTATE", "testuser", "testchannel", true, "", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", "")]
     //
     [InlineData("CLEARMSG", "testuser", "testchannel", true, "@login={1};room-id=;target-msg-id=some_msg_id_hash;tmi-sent-ts=1", "tmi.twitch.tv {0} #{2}", "some message", Skip = "lets better skip this test, perhaps my expectations are wrong")]
     [InlineData("NOTICE", "", "testchannel", true, "@msg-id=msg_channel_suspended", "tmi.twitch.tv {0} #{2}", "This channel does not exist or has been suspended.", Skip = "lets better skip this test, perhaps my expectations are wrong")]
