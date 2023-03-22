@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-using TwitchLib.Client.Enums.Internal;
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Extensions.Internal;

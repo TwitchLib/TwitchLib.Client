@@ -1,6 +1,8 @@
 ﻿using System;
 
-namespace TwitchLib.Client.Enums.Internal
+using TwitchLib.Client.Enums.Internal;
+
+namespace TwitchLib.Client.Enums
 {
     public enum IrcCommand
     {

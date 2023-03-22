@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 using Moq;
 
-using TwitchLib.Client.Enums.Internal;
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;

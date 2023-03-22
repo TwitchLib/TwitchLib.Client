@@ -1,11 +1,12 @@
 ﻿using System;
 
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 
 namespace TwitchLib.Client.Interfaces
 {
     /// <summary>
-    ///     everything related to notice the User <see cref="Enums.Internal.IrcCommand.UserNotice"/>
+    ///     everything related to notice the User <see cref="IrcCommand.UserNotice"/>
     /// </summary>
     public interface ITwitchClient_NoticeUser
     {

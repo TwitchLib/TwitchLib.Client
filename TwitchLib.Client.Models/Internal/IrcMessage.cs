@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-using TwitchLib.Client.Enums.Internal;
+using TwitchLib.Client.Enums;
 
 namespace TwitchLib.Client.Models.Internal
 {

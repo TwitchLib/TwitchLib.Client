@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-using TwitchLib.Client.Enums.Internal;
+using TwitchLib.Client.Enums;
+using TwitchLib.Client.Enums.Parsers;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Parsers
@@ -95,7 +95,7 @@ namespace TwitchLib.Client.Parsers
             string cmd = raw.Substring(starts[(int) ParserState.STATE_COMMAND],
                 lens[(int) ParserState.STATE_COMMAND]);
 
-            IrcCommand command = GetIrcCommandFromString(cmd);
+            IrcCommand command = IrcCommandParser.GetIrcCommandFromString(cmd);
 
             string parameters = raw.Substring(starts[(int) ParserState.STATE_PARAM],
                 lens[(int) ParserState.STATE_PARAM]);
@@ -104,16 +104,6 @@ namespace TwitchLib.Client.Parsers
             string hostmask = raw.Substring(starts[(int) ParserState.STATE_PREFIX],
                 lens[(int) ParserState.STATE_PREFIX]);
             return new IrcMessage(command, new[] { parameters, message }, hostmask, tagDict);
-        }
-        public static IrcCommand GetIrcCommandFromString(string cmd)
-        {
-            IrcCommand result;
-            // first try to parse with prefix "rpl_"
-            // otherwise the parser interprets the numeric string as ordinal
-            bool parsed = Enum.TryParse<IrcCommand>($"rpl_{cmd}", true, out result);
-            if (!parsed) parsed = Enum.TryParse<IrcCommand>(cmd, true, out result);
-            if (!parsed) result = IrcCommand.Unknown;
-            return result;
         }
         /// <summary>
         /// Enum ParserState
