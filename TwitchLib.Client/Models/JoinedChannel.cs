@@ -70,7 +70,7 @@ namespace TwitchLib.Client.Models
                 RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnUserStateChanged), new OnUserStateChangedArgs { UserState = userState, Channel = Channel });
                 return;
             }
-            bool gotValue = BotMessages.TryGetValue(userState.Id, out ChatMessage chatMessage);
+            bool gotValue = BotMessages.TryRemove(userState.Id, out ChatMessage chatMessage);
             if (gotValue)
             {
                 RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnMessageSent), new OnMessageSentArgs() { SentMessage = chatMessage });
