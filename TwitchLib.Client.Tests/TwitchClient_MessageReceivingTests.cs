@@ -137,9 +137,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnUserJoined()
         {
-            Mock<IClient> mock = new Mock<IClient>();
-            mock.Setup(c => c.IsConnected).Returns(true);
-            mock.SetupAdd(c => c.OnMessage += It.IsAny<EventHandler<OnMessageEventArgs>>());
+            Mock<IClient> mock = IClientMocker.GetIClientMock();
             MockSequence sequence = new MockSequence();
             // to make the ITwitchClient call ChannelManager.Start()
             mock.InSequence(sequence)
