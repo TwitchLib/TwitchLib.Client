@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
@@ -89,7 +90,15 @@ namespace TwitchLib.Client.Tests
         {
             string message = $":{TWITCH_UsernameAnother}!{TWITCH_UsernameAnother}@{TWITCH_UsernameAnother}.tmi.twitch.tv USERSTATE #{TWITCH_CHANNEL}";
 
-            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
+            Mock<IClient> mock = IClientMocker.GetIClientMock();
+            MockSequence sendMessageSequence = new MockSequence();
+            IClientMocker.AddLogInToSendMessageSequence($":tmi.twitch.tv 004 {TWITCH_Username} :-", mock, sendMessageSequence);
+            IClientMocker.AddJoinToSendMessageSequence($"JOIN #{TWITCH_CHANNEL}",
+                                                       $":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}",
+                                                       mock,
+                                                       sendMessageSequence);
+            IClientMocker.AddToSendMessageSequence(message, mock, sendMessageSequence);
+            IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
@@ -100,7 +109,10 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnUserStateChanged += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth), TWITCH_CHANNEL);
+                        client.Connect();
+                        // lets wait a moment, otherwise it goes too fast...
+                        Task.Delay(2000).GetAwaiter().GetResult();
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
