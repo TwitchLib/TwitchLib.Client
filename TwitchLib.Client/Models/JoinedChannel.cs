@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions.Internal;
@@ -28,6 +29,10 @@ namespace TwitchLib.Client.Models
         ///     Name of the Bot
         /// </summary>
         public string BotUsername { get; }
+        /// <summary>
+        ///     <see cref="ChatMessage"/>s that the Bot sent, but <see cref="ITwitchClient"/> did not received a corresponding <see cref="Enums.IrcCommand.UserState"/> yet
+        /// </summary>
+        public ICollection<ChatMessage> UnRaisedSentMessages => BotMessages.Values;
         #endregion properties public
 
 
