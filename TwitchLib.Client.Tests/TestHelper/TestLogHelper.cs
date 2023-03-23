@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -26,10 +27,33 @@ namespace TwitchLib.Client.Tests.TestHelper
             builder.AppendLine(new string('-', 80));
             NEW_TEST_RUN_INDICATOR = builder.ToString();
         }
-        internal static ILogger<T> GetLogger<T>(LogEventLevel logEventLevel = LogEventLevel.Verbose,
-                                               [CallerMemberName] string callerMemberName = "TestMethod")
+        /// <summary>
+        ///     
+        /// </summary>
+        /// <typeparam name="T">
+        ///     <see cref="Type"/>.Name specifies "Logs" subdirectory
+        ///     <br></br>
+        ///     can be overriden with <paramref name="overrideType"/>
+        /// </typeparam>
+        /// <param name="overrideType">
+        ///     overrides the specified "Logs" subdirectory
+        /// </param>
+        /// <param name="logEventLevel">
+        ///     <see cref="LogEventLevel"/>
+        /// </param>
+        /// <param name="callerMemberName">
+        ///     becomes the name of the log-file
+        /// </param>
+        /// <returns>
+        ///     <see cref="ILogger{TCategoryName}"/>
+        /// </returns>
+        internal static ILogger<T> GetLogger<T>(Type overrideType = null,
+                                                LogEventLevel logEventLevel = LogEventLevel.Verbose,
+                                                [CallerMemberName] string callerMemberName = "TestMethod")
         {
-            Serilog.ILogger logger = GetSerilogLogger<T>(typeof(T).Name,
+            string typeName = typeof(T).Name;
+            if (overrideType != null) typeName = overrideType.Name;
+            Serilog.ILogger logger = GetSerilogLogger<T>(typeName,
                                                          callerMemberName,
                                                          logEventLevel);
             ILoggerFactory loggerFactory = new Serilog.Extensions.Logging.SerilogLoggerFactory(logger);
@@ -47,8 +71,8 @@ namespace TwitchLib.Client.Tests.TestHelper
             return logger;
         }
         private static LoggerConfiguration GetConfiguration(string typeName,
-                                                                    string callerMemberName,
-                                                                    LogEventLevel logEventLevel)
+                                                            string callerMemberName,
+                                                            LogEventLevel logEventLevel)
         {
             LoggerConfiguration loggerConfiguration = new LoggerConfiguration();
             loggerConfiguration.MinimumLevel.Verbose();
