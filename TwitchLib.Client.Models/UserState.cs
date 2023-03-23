@@ -29,7 +29,13 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing emote sets available to user.</summary>
         public string EmoteSet { get; }
 
-        /// <summary>Property representing the user's Id.</summary>
+        /// <summary>
+        ///     <see href="https://dev.twitch.tv/docs/irc/tags/#userstate-tags"/>
+        ///     <br></br>
+        ///     The Twitch IRC server sends this message after the bot joins a channel or sends a <see cref="IrcCommand.PrivMsg"/> message.
+        ///     <br></br>
+        ///     If a <see cref="IrcCommand.PrivMsg"/> was sent, an ID that uniquely identifies the message.
+        /// </summary>
         public string Id { get; }
 
         /// <summary>Property representing Turbo status.</summary>
