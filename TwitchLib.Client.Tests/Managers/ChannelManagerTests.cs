@@ -61,7 +61,10 @@ namespace TwitchLib.Client.Tests.Managers
             Mock<IClient> mock = new Mock<IClient>();
             IClient client = mock.Object;
             ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
-            ChannelManager channelManager = new ChannelManager(client, null, null, logger);
+            ChannelManager channelManager = new ChannelManager(client, null, null, logger)
+            {
+                Credentials = new ConnectionCredentials("testusername", "testoauth")
+            };
             //
             channelManager.JoinChannels(new string[] { channel });
             Assert.Single(channelManager.AutoJoinChannels);
@@ -120,7 +123,10 @@ namespace TwitchLib.Client.Tests.Managers
             Mock<IClient> mock = new Mock<IClient>();
             IClient client = mock.Object;
             ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
-            ChannelManager channelManager = new ChannelManager(client, null, null, logger);
+            ChannelManager channelManager = new ChannelManager(client, null, null, logger)
+            {
+                Credentials = new ConnectionCredentials("testusername", "testoauth")
+            };
             //
             channelManager.JoinChannels(new string[] { channel });
             Assert.Single(channelManager.AutoJoinChannels);
@@ -185,7 +191,10 @@ namespace TwitchLib.Client.Tests.Managers
             Mock<IClient> mock = new Mock<IClient>();
             IClient client = mock.Object;
             ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
-            ChannelManager channelManager = new ChannelManager(client, null, null, logger);
+            ChannelManager channelManager = new ChannelManager(client, null, null, logger)
+            {
+                Credentials = new ConnectionCredentials("testusername", "testoauth")
+            };
             //
             channelManager.JoinChannels(new string[] { channel });
             Assert.Single(channelManager.AutoJoinChannels);
@@ -255,7 +264,10 @@ namespace TwitchLib.Client.Tests.Managers
             Mock<IClient> mock = new Mock<IClient>();
             IClient client = mock.Object;
             ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
-            ChannelManager channelManager = new ChannelManager(client, null, null, logger);
+            ChannelManager channelManager = new ChannelManager(client, null, null, logger)
+            {
+                Credentials = new ConnectionCredentials("testusername", "testoauth")
+            };
             //
             channelManager.JoinChannels(new string[] { channel });
             Assert.Single(channelManager.AutoJoinChannels);
