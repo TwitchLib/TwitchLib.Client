@@ -73,9 +73,6 @@ namespace TwitchLib.Client.Tests.TestHelper
                 .Raises(c => c.OnReconnected += null, new OnConnectedEventArgs());
             //
             mock.SetupAdd(c => c.OnFatality += It.IsAny<EventHandler<OnFatalErrorEventArgs>>());
-            mock.Setup(c => c.Send(It.IsAny<string>()))
-                .Returns(false)
-                .Raises(c => c.OnFatality += null, new OnFatalErrorEventArgs("Fatal network error."));
 
             mock.SetupAdd(c => c.OnMessage += It.IsAny<EventHandler<OnMessageEventArgs>>());
             return mock;

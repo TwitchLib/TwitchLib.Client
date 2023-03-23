@@ -10,6 +10,7 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Tests.TestHelper;
+using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
 
 using Xunit;
@@ -181,7 +182,9 @@ namespace TwitchLib.Client.Tests
         public void TwitchClient_Raises_OnConnectionError()
         {
             Mock<IClient> mock = IClientMocker.GetIClientMock();
-
+            mock.Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(false)
+                .Raises(c => c.OnFatality += null, new OnFatalErrorEventArgs("Fatal network error."));
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
