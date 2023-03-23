@@ -9,9 +9,10 @@ namespace TwitchLib.Client.Helpers
         [SuppressMessage("Style", "IDE0058")]
         public static void RaiseEvent(object eventProvider, string eventName, object args)
         {
+            if (eventProvider == null) return;
             object[] arguments = args == null ? new object[] { eventProvider, new EventArgs() } : new[] { eventProvider, args };
             FieldInfo fieldInfo = eventProvider.GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic);
-            MulticastDelegate multicastDelegate = fieldInfo.GetValue(eventProvider) as MulticastDelegate;
+            if (!(fieldInfo.GetValue(eventProvider) is MulticastDelegate multicastDelegate)) return;
             foreach (Delegate @delegate in multicastDelegate.GetInvocationList())
             {
                 // IDE0058
