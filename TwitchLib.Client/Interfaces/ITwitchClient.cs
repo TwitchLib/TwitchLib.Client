@@ -20,6 +20,7 @@ namespace TwitchLib.Client.Interfaces
         ITwitchClient_NoticeUser,
         ITwitchClient_Whisper
     {
+        #region properties public
         /// <summary>
         /// Gets or sets a value indicating whether [disable automatic pong].
         /// </summary>
@@ -35,7 +36,10 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         /// <value><c>true</c> if [will replace emotes]; otherwise, <c>false</c>.</value>
         bool WillReplaceEmotes { get; set; }
+        #endregion properties public
 
+
+        #region methods public
         /// <summary>
         ///     Initializes the specified credentials.
         /// </summary>
@@ -53,7 +57,6 @@ namespace TwitchLib.Client.Interfaces
         /// </param>
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
         void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
-
         /// <summary>
         ///     Initializes the specified credentials.
         /// </summary>
@@ -71,7 +74,6 @@ namespace TwitchLib.Client.Interfaces
         /// </param>
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
         void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
-
         /// <summary>
         ///     Adds the chat command identifier.
         /// </summary>
@@ -86,5 +88,6 @@ namespace TwitchLib.Client.Interfaces
         ///     The identifier.
         /// </param>
         void RemoveChatCommandIdentifier(char identifier);
+        #endregion methods public
     }
 }

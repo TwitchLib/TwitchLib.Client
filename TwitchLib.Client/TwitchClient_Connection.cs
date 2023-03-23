@@ -15,13 +15,22 @@ namespace TwitchLib.Client
         // that this class extends;
         // it makes it easier to find the respective occurance from the log file
 
+        #region properties public
         public bool IsConnected => IsInitialized && Client != null && Client.IsConnected;
         public ConnectionCredentials ConnectionCredentials { get; private set; }
+        #endregion properties public
+
+
+        #region events public
         public event EventHandler<OnConnectedArgs> OnConnected;
         public event EventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
         public event EventHandler<OnDisconnectedArgs> OnDisconnected;
         public event EventHandler<OnConnectionErrorArgs> OnConnectionError;
         public event EventHandler<OnReconnectedEventArgs> OnReconnected;
+        #endregion events public
+
+
+        #region methods public
         public bool Connect()
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
@@ -62,10 +71,14 @@ namespace TwitchLib.Client
 
             ConnectionCredentials = credentials;
         }
+        #endregion methods public
 
+
+        #region methods protected
         protected static void HandleNotConnected()
         {
             throw new ClientNotConnectedException("In order to perform this action, the client must be connected to Twitch. To confirm connection, try performing this action in or after the OnConnected event has been fired.");
         }
+        #endregion methods protected
     }
 }

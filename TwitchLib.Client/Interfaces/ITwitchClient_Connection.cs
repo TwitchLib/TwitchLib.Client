@@ -11,6 +11,7 @@ namespace TwitchLib.Client.Interfaces
     /// </summary>
     public interface ITwitchClient_Connection
     {
+        #region properties public
         /// <summary>
         ///     <see cref="Models.ConnectionCredentials"/>
         /// </summary>
@@ -19,6 +20,10 @@ namespace TwitchLib.Client.Interfaces
         ///     Gets a value indicating whether this instance is connected.
         /// </summary>
         bool IsConnected { get; }
+        #endregion properties public
+
+
+        #region events public
         /// <summary>
         ///     Occurs when [on connected].
         /// </summary>
@@ -39,7 +44,10 @@ namespace TwitchLib.Client.Interfaces
         ///     Occurs when [on reconnected].
         /// </summary>
         event EventHandler<OnReconnectedEventArgs> OnReconnected;
+        #endregion events public
 
+
+        #region methods public
         /// <summary>
         ///     Sets the connection credentials.
         /// </summary>
@@ -47,7 +55,6 @@ namespace TwitchLib.Client.Interfaces
         ///     <see cref="Models.ConnectionCredentials"/>
         /// </param>
         void SetConnectionCredentials(ConnectionCredentials credentials);
-
         /// <summary>
         /// </summary>
         /// <returns>
@@ -62,6 +69,6 @@ namespace TwitchLib.Client.Interfaces
         ///     Reconnects this instance.
         /// </summary>
         void Reconnect();
-
+        #endregion methods public
     }
 }

@@ -25,21 +25,21 @@ namespace TwitchLib.Client
     [SuppressMessage("Style", "IDE0058")]
     public partial class TwitchClient : ITwitchClient
     {
-        #region Private Variables
+        #region Properties private
         private ISet<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
         private ILogger<ITwitchClient> LOGGER { get; }
+        #endregion Properties private
 
-        #endregion
 
-        #region Public Variables
+        #region Properties public
         public Version Version => Assembly.GetEntryAssembly().GetName().Version;
         public string TwitchUsername { get; private set; }
         public bool DisableAutoPong { get; set; } = false;
         public bool WillReplaceEmotes { get; set; } = false;
-        #endregion
+        #endregion Properties public
 
-        #region Construction Work
 
+        #region cotr
         public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger<ITwitchClient> logger = null)
         {
             LOGGER = logger;
@@ -61,7 +61,10 @@ namespace TwitchLib.Client
             InitializeClient();
             ChannelManager = new ChannelManager(Client, Log, LogError, LOGGER);
         }
+        #endregion ctor
 
+
+        #region initialization
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
         public void Initialize(ConnectionCredentials credentials,
                                string channel = null,
@@ -73,7 +76,6 @@ namespace TwitchLib.Client
                 channel = channel.Substring(1);
             InitializeHelper(credentials, new List<string>() { channel }, chatCommandIdentifier);
         }
-
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
         public void Initialize(ConnectionCredentials credentials,
                                List<string> channels,
@@ -84,7 +86,6 @@ namespace TwitchLib.Client
             channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
             InitializeHelper(credentials, channels, chatCommandIdentifier);
         }
-
         private void InitializeHelper(ConnectionCredentials credentials,
                                       List<string> channels,
                                       char chatCommandIdentifier = '!')
@@ -98,8 +99,8 @@ namespace TwitchLib.Client
 
             ChannelManager.JoinChannels(channels);
         }
+        #endregion initialization
 
-        #endregion
 
         #region Command Identifiers
 

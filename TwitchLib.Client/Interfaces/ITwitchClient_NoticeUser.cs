@@ -10,6 +10,7 @@ namespace TwitchLib.Client.Interfaces
     /// </summary>
     public interface ITwitchClient_NoticeUser
     {
+        #region events public
         /// <summary>
         ///     Occurs when [on gifted subscription].
         /// </summary>
@@ -46,5 +47,6 @@ namespace TwitchLib.Client.Interfaces
         ///     Fires when the client receives a USERNOTICE tagged as an announcement
         /// </summary>
         event EventHandler<OnAnnouncementArgs> OnAnnouncement;
+        #endregion events public
     }
 }

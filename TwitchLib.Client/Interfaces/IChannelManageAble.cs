@@ -6,10 +6,15 @@ namespace TwitchLib.Client.Interfaces
 {
     public interface IChannelManageAble
     {
+        #region properties public
         /// <summary>
         ///     <see cref="IReadOnlyList{T}"/>
         /// </summary>
         IReadOnlyList<JoinedChannel> JoinedChannels { get; }
+        #endregion properties public
+
+
+        #region methods public
         /// <summary>
         ///     enqueues the given <paramref name="channel"/> to get joined
         /// </summary>
@@ -47,6 +52,6 @@ namespace TwitchLib.Client.Interfaces
         ///     <see cref="JoinedChannel"/> to leave
         /// </param>
         void LeaveChannel(JoinedChannel channel);
-
+        #endregion methods public
     }
 }

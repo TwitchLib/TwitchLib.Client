@@ -13,6 +13,7 @@ namespace TwitchLib.Client
 {
     public partial class TwitchClient : ITwitchClient_MessageReceiving
     {
+        #region events public
         public event EventHandler<OnUserStateChangedArgs> OnUserStateChanged;
         public event EventHandler<OnMessageReceivedArgs> OnMessageReceived;
         public event EventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
@@ -26,10 +27,10 @@ namespace TwitchLib.Client
         public event EventHandler<OnUserTimedoutArgs> OnUserTimedout;
         public event EventHandler<OnUserBannedArgs> OnUserBanned;
         public event EventHandler<OnUserIntroArgs> OnUserIntro;
+        #endregion events public
 
 
-        #region IrcMessage Handling
-
+        #region methods private
         private void HandleIrcMessage(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -122,10 +123,6 @@ namespace TwitchLib.Client
                     break;
             }
         }
-        #endregion
-
-        #region IrcCommand Handling
-
         private void HandlePrivMsg(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -151,7 +148,6 @@ namespace TwitchLib.Client
                 }
             }
         }
-
         private void HandlePart(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -167,7 +163,6 @@ namespace TwitchLib.Client
                 OnUserLeft?.Invoke(this, new OnUserLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
             }
         }
-
         private void HandleClearChat(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -188,7 +183,14 @@ namespace TwitchLib.Client
             UserBan userBan = new UserBan(ircMessage);
             OnUserBanned?.Invoke(this, new OnUserBannedArgs { UserBan = userBan, Channel = ircMessage.Channel });
         }
-
+        /// <summary>
+        ///     <see href="https://dev.twitch.tv/docs/irc/commands/#userstate"/>
+        ///     <br></br>
+        ///     <see href="https://dev.twitch.tv/docs/irc/tags/#userstate-tags"/>
+        /// </summary>
+        /// <param name="ircMessage">
+        ///     <see cref="IrcMessage"/>
+        /// </param>
         private void HandleUserState(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -210,7 +212,6 @@ namespace TwitchLib.Client
                 //OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, LastMessageSent) });
             }
         }
-
         private void HandleMode(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -225,8 +226,7 @@ namespace TwitchLib.Client
                 OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.Message.Split(' ')[1] });
             }
         }
-
-        #endregion
+        #endregion methods private
 
     }
 }

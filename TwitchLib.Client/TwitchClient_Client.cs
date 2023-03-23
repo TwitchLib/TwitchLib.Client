@@ -19,9 +19,18 @@ namespace TwitchLib.Client
         // that this class extends;
         // it makes it easier to find the respective occurance from the log file
 
+        #region properties private
         private IClient Client { get; }
         private ClientProtocol Protocol { get; }
+        #endregion properties private
+
+
+        #region properties public
         public bool IsInitialized => Client != null;
+        #endregion properties public
+
+
+        #region methods private
         private void InitializeClient()
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
@@ -34,35 +43,22 @@ namespace TwitchLib.Client
             Client.OnReconnected += Client_OnConnected;
             Client.OnReconnected += Client_OnReconnected;
         }
-        protected static void HandleNotInitialized()
-        {
-            throw new ClientNotInitializedException("The twitch client has not been initialized and cannot be used. Please call Initialize();");
-        }
-
         private void Client_OnMessageThrottled(object sender, OnMessageThrottledEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
             OnMessageThrottled?.Invoke(sender, e);
         }
-
         private void Client_OnFatality(object sender, OnFatalErrorEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
             OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Message = e.Reason } });
         }
-
         private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
+            ChannelManager.Stop();
             OnDisconnected?.Invoke(sender, new OnDisconnectedArgs() { BotUsername = TwitchUsername });
         }
-
-        private void Client_OnReconnected(object sender, OnReconnectedEventArgs e)
-        {
-            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
-            OnReconnected?.Invoke(sender, e);
-        }
-
         private void Client_OnMessage(object sender, OnMessageEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
@@ -102,5 +98,14 @@ namespace TwitchLib.Client
             if (ConnectionCredentials.Capabilities.Tags)
                 Client.Send("CAP REQ twitch.tv/tags");
         }
+        #endregion methods private
+
+
+        #region methods protected
+        protected static void HandleNotInitialized()
+        {
+            throw new ClientNotInitializedException("The twitch client has not been initialized and cannot be used. Please call Initialize();");
+        }
+        #endregion methods protected
     }
 }

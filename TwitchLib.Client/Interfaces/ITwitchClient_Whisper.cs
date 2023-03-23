@@ -12,11 +12,16 @@ namespace TwitchLib.Client.Interfaces
     /// </summary>
     public interface ITwitchClient_Whisper
     {
+        #region properties public
         /// <summary>
         ///     Gets the previous whisper.
         /// </summary>
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         WhisperMessage PreviousWhisper { get; }
+        #endregion properties public
+
+
+        #region events public
         /// <summary>
         ///     Occurs when [on whisper command received].
         /// </summary>
@@ -37,6 +42,10 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
+        #endregion events public
+
+
+        #region methods public
         /// <summary>
         ///     Adds the whisper command identifier.
         /// </summary>
@@ -51,7 +60,6 @@ namespace TwitchLib.Client.Interfaces
         /// </param>
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         void RemoveWhisperCommandIdentifier(char identifier);
-
         /// <summary>
         /// Sends the whisper.
         /// </summary>
@@ -60,5 +68,6 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         void SendWhisper(string receiver, string message, bool dryRun = false);
+        #endregion methods public
     }
 }

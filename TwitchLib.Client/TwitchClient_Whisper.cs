@@ -15,8 +15,13 @@ namespace TwitchLib.Client
         // that this class extends;
         // it makes it easier to find the respective occurance from the log file
 
+        #region properties public
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public WhisperMessage PreviousWhisper { get; private set; }
+        #endregion properties public
+
+
+        #region events public
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public event EventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
@@ -25,6 +30,10 @@ namespace TwitchLib.Client
         public event EventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
+        #endregion events public
+
+
+        #region methods public
         [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
         public void SendWhisper(string receiver, string message, bool dryRun = false)
         {
@@ -44,5 +53,6 @@ namespace TwitchLib.Client
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Whisper));
             if (!IsInitialized) HandleNotInitialized();
         }
+        #endregion methods public
     }
 }

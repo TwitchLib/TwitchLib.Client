@@ -14,6 +14,7 @@ namespace TwitchLib.Client
         // that this class extends;
         // it makes it easier to find the respective occurance from the log file
 
+        #region events public
         public event EventHandler<OnAnnouncementArgs> OnAnnouncement;
         public event EventHandler<OnRaidNotificationArgs> OnRaidNotification;
         public event EventHandler<OnUnRaidNotificationArgs> OnUnRaidNotification;
@@ -25,7 +26,10 @@ namespace TwitchLib.Client
         public event EventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
         public event EventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
         public event EventHandler<OnContinuedGiftedSubscriptionArgs> OnContinuedGiftedSubscription;
+        #endregion events public
 
+
+        #region methods private
         private void HandleUserNotice(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_NoticeUser));
@@ -81,5 +85,6 @@ namespace TwitchLib.Client
                     break;
             }
         }
+        #endregion methods private
     }
 }

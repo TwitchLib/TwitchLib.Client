@@ -12,6 +12,7 @@ namespace TwitchLib.Client.Interfaces
     /// </summary>
     public interface ITwitchClient_MessageReceiving
     {
+        #region events public
         /// <summary>
         ///     Occurs when [on chat cleared].
         /// </summary>
@@ -64,5 +65,6 @@ namespace TwitchLib.Client.Interfaces
         ///     Fires when the client receives a PRIVMSG tagged as an user-intro
         /// </summary>
         event EventHandler<OnUserIntroArgs> OnUserIntro;
+        #endregion events public
     }
 }

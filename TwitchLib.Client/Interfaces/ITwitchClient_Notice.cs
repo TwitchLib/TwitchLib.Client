@@ -9,6 +9,7 @@ namespace TwitchLib.Client.Interfaces
     /// </summary>
     public interface ITwitchClient_Notice
     {
+        #region events public
         /// <summary>
         ///     Occurs when [on chat color changed].
         /// </summary>
@@ -81,5 +82,6 @@ namespace TwitchLib.Client.Interfaces
         ///     Occurs when sending duplicate messages and user is not permitted to do so
         /// </summary>
         event EventHandler<OnDuplicateArgs> OnDuplicate;
+        #endregion events public
     }
 }

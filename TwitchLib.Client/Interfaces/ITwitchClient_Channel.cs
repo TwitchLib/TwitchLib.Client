@@ -9,7 +9,7 @@ namespace TwitchLib.Client.Interfaces
     /// </summary>
     public interface ITwitchClient_Channel : IChannelManageAble
     {
-
+        #region events public
         /// <summary>
         ///     Occurs when [on channel state changed].
         /// </summary>
@@ -26,5 +26,6 @@ namespace TwitchLib.Client.Interfaces
         ///     Occurs when [on left channel].
         /// </summary>
         event EventHandler<OnLeftChannelArgs> OnLeftChannel;
+        #endregion events public
     }
 }

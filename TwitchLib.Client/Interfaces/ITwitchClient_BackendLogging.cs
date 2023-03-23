@@ -10,6 +10,7 @@ namespace TwitchLib.Client.Interfaces
     /// </summary>
     public interface ITwitchClient_BackendLogging
     {
+        #region events public
         /// <summary>
         ///     Occurs when [on unaccounted for].
         /// </summary>
@@ -26,5 +27,6 @@ namespace TwitchLib.Client.Interfaces
         /// Occurs when [on error].
         /// </summary>
         event EventHandler<OnErrorEventArgs> OnError;
+        #endregion events public
     }
 }

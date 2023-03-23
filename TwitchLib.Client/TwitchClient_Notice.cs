@@ -16,6 +16,7 @@ namespace TwitchLib.Client
         // that this class extends;
         // it makes it easier to find the respective occurance from the log file
 
+        #region events public
         public event EventHandler<OnModeratorsReceivedArgs> OnModeratorsReceived;
         public event EventHandler<OnChatColorChangedArgs> OnChatColorChanged;
         public event EventHandler<OnBannedArgs> OnBanned;
@@ -34,7 +35,10 @@ namespace TwitchLib.Client
         public event EventHandler<EventArgs> OnRaidedChannelIsMatureAudience;
         public event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
         public event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
+        #endregion events public
 
+
+        #region methods private
         private void HandleNotice(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Notice));
@@ -200,5 +204,6 @@ namespace TwitchLib.Client
             IList<string> users = usersAsArray.ToList();
             return users;
         }
+        #endregion methods private
     }
 }
