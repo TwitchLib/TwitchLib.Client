@@ -71,7 +71,7 @@ namespace TwitchLib.Client.Models
                 return;
             }
             bool gotValue = BotMessages.TryRemove(userState.Id, out ChatMessage chatMessage);
-            if (gotValue)
+            if (gotValue && chatMessage != null)
             {
                 RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnMessageSent), new OnMessageSentArgs() { SentMessage = chatMessage });
             }
