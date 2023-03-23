@@ -468,32 +468,70 @@ namespace TwitchLib.Client.Extensions
         }
 
         /// <summary>
-        /// Invokes the message sent.
+        ///     Invokes <see cref="TwitchClient.OnMessageSent"/>
+        ///     <br></br>
+        ///     <see cref="ChatMessage"/>
         /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="badges">The badges.</param>
-        /// <param name="channel">The channel.</param>
-        /// <param name="colorHex">The color hexadecimal.</param>
-        /// <param name="displayName">The display name.</param>
-        /// <param name="emoteSet">The emote set.</param>
-        /// <param name="isModerator">if set to <c>true</c> [is moderator].</param>
-        /// <param name="isSubscriber">if set to <c>true</c> [is subscriber].</param>
-        /// <param name="userType">Type of the user.</param>
-        /// <param name="message">The message.</param>
         public static void InvokeMessageSent(this TwitchClient client,
-                                             List<KeyValuePair<string, string>> badges,
-                                             string channel,
-                                             string colorHex,
+                                             string botUsername,
+                                             string userId,
+                                             string userName,
                                              string displayName,
-                                             string emoteSet,
-                                             bool isModerator,
-                                             bool isSubscriber,
+                                             string colorHex,
+                                             Color color,
+                                             EmoteSet emoteSet,
+                                             string message,
                                              UserType userType,
-                                             string message)
+                                             string channel,
+                                             string id,
+                                             bool isSubscriber,
+                                             int subscribedMonthCount,
+                                             string roomId,
+                                             bool isTurbo,
+                                             bool isModerator,
+                                             bool isMe,
+                                             bool isBroadcaster,
+                                             bool isVip,
+                                             bool isPartner,
+                                             bool isStaff,
+                                             Noisy noisy,
+                                             string rawIrcMessage,
+                                             string emoteReplacedMessage,
+                                             List<KeyValuePair<string, string>> badges,
+                                             CheerBadge cheerBadge,
+                                             int bits,
+                                             double bitsInDollars)
         {
             OnMessageSentArgs model = new OnMessageSentArgs()
             {
-                SentMessage = new SentMessage(badges, channel, colorHex, displayName, emoteSet, isModerator, isSubscriber, userType, message)
+                SentMessage = new ChatMessage(botUsername,
+                                              userId,
+                                              userName,
+                                              displayName,
+                                              colorHex,
+                                              color,
+                                              emoteSet,
+                                              message,
+                                              userType,
+                                              channel,
+                                              id,
+                                              isSubscriber,
+                                              subscribedMonthCount,
+                                              roomId,
+                                              isTurbo,
+                                              isModerator,
+                                              isMe,
+                                              isBroadcaster,
+                                              isVip,
+                                              isPartner,
+                                              isStaff,
+                                              noisy,
+                                              rawIrcMessage,
+                                              emoteReplacedMessage,
+                                              badges,
+                                              cheerBadge,
+                                              bits,
+                                              bitsInDollars)
             };
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnMessageSent), model);
         }

@@ -137,7 +137,7 @@ namespace TwitchLib.Client
             LOGGER?.TraceMethodCall(GetType());
             ChatMessage chatMessage = new ChatMessage(TwitchUsername, ircMessage, WillReplaceEmotes);
             JoinedChannel joinedChannel = GetJoinedChannel(ircMessage.Channel);
-            joinedChannel?.HandleMessage(chatMessage);
+            joinedChannel?.HandlePRIVMSG(chatMessage);
 
             OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage, Channel = ircMessage.Channel });
 
@@ -163,8 +163,6 @@ namespace TwitchLib.Client
             if (String.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
             {
                 ChannelManager.LeaveChannel(ircMessage.Channel);
-                // IDE0058
-                HasSeenJoinedChannels.Remove(ircMessage.Channel);
                 OnLeftChannel?.Invoke(this, new OnLeftChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
             }
             else
@@ -204,22 +202,8 @@ namespace TwitchLib.Client
         {
             LOGGER?.TraceMethodCall(GetType());
             UserState userState = new UserState(ircMessage, LOGGER);
-            if (!HasSeenJoinedChannels.Contains(userState.Channel.ToLowerInvariant()))
-            {
-                HasSeenJoinedChannels.Add(userState.Channel.ToLowerInvariant());
-                OnUserStateChanged?.Invoke(this, new OnUserStateChangedArgs { UserState = userState, Channel = ircMessage.Channel });
-            }
-            else
-            {
-                // TODO: here is an error, but first i have to check out the UserState.:
-                // i think the intention is,
-                // to invoke OnMessageSent when the sent message comes back from twitch
-                // but:
-                // 1. actually, the sent message goes through ThrottlerService
-                // 2. what if the client sends messages in multiple channels?
-                // 3. what if the client sends messages more or less simultanously? it probably gets overriden, before it could get raised as sent
-                //OnMessageSent?.Invoke(this, new OnMessageSentArgs { SentMessage = new SentMessage(userState, LastMessageSent) });
-            }
+            JoinedChannel joinedChannel = GetJoinedChannel(userState.Channel);
+            joinedChannel?.HandleUSERSTATE(userState, this);
         }
         private void HandleMode(IrcMessage ircMessage)
         {

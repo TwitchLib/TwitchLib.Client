@@ -69,6 +69,7 @@ namespace TwitchLib.Client
                 throw new IllegalAssignmentException("While the client is connected, you are unable to change the connection credentials. Please disconnect first and then change them.");
 
             ConnectionCredentials = credentials;
+            ChannelManager.Credentials = ConnectionCredentials;
         }
         #endregion methods public
 

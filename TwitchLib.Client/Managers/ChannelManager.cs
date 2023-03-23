@@ -34,6 +34,7 @@ namespace TwitchLib.Client.Managers
 
         private CancellationTokenSource CTS { get; set; }
         private CancellationToken Token => CTS.Token;
+        public ConnectionCredentials Credentials { get; set; }
         private IClient Client { get; }
 
         private Task JoiningTask { get; set; }
@@ -224,7 +225,7 @@ namespace TwitchLib.Client.Managers
             lock (SYNC)
             {
                 JoinRequested.Remove(channel);
-                Joined.TryAdd(channel, new JoinedChannel(channel));
+                Joined.TryAdd(channel, new JoinedChannel(channel, Credentials.TwitchUsername));
                 // ChannelManager requested JOIN
                 // meanwhile we want to leave
                 //

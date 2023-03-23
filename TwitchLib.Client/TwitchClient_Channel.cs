@@ -17,7 +17,6 @@ namespace TwitchLib.Client
 
         #region properties private
         private ChannelManager ChannelManager { get; }
-        private List<string> HasSeenJoinedChannels { get; } = new List<string>();
         #endregion properties private
 
 

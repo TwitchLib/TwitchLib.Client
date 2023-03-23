@@ -94,10 +94,6 @@ namespace TwitchLib.Client
             {
                 twitchMessage.ReplyToId = replyToId;
             }
-            // TODO: here is an error, but first i have to check out the UserState.:
-            // take a look at the other location of this TODOs text
-            //LastMessageSent = message;
-
             // IDE0058 - client raises OnSendFailed if this method returns false
             Client.Send(twitchMessage.ToString());
         }

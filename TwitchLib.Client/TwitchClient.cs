@@ -97,7 +97,7 @@ namespace TwitchLib.Client
             TwitchUsername = ConnectionCredentials.TwitchUsername;
             if (chatCommandIdentifier != '\0')
                 ChatCommandIdentifiers.Add(chatCommandIdentifier);
-
+            ChannelManager.Credentials = ConnectionCredentials;
             ChannelManager.JoinChannels(channels);
         }
         #endregion initialization
