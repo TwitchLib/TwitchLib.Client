@@ -51,7 +51,7 @@ namespace TwitchLib.Client.Models
 
         #region methods public
         /// <summary>Handles a message</summary>
-        public void HandlePRIVMSG(ChatMessage message)
+        internal void HandlePRIVMSG(ChatMessage message)
         {
             if (String.Equals(message?.Username?.ToLower(), BotUsername))
             {
@@ -63,7 +63,7 @@ namespace TwitchLib.Client.Models
         ///     <br></br>
         ///     <see href="https://dev.twitch.tv/docs/irc/tags/#userstate-tags"/>
         /// </summary>
-        public void HandleUSERSTATE(UserState userState, ITwitchClient twitchClient)
+        internal void HandleUSERSTATE(UserState userState, ITwitchClient twitchClient)
         {
             if (userState.Id.IsNullOrEmptyOrWhitespace())
             {
