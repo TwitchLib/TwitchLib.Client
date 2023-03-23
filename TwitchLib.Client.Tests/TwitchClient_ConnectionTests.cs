@@ -10,7 +10,6 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Tests.TestHelper;
-using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
 
 using Xunit;
@@ -34,36 +33,12 @@ namespace TwitchLib.Client.Tests
         public void TwitchClient_Raises_OnConnected_Advanced()
         {
             string message = $":tmi.twitch.tv 004 {TWITCH_Username} :-";
-            Mock<IClient> mock = new Mock<IClient>();
-
-            // make IClient-Mock raise OnConnectedEventArgs when Open() is called
-            // that should trigger ITwitchClient to send Credentials (we want to test it)
-            // ITwitchClient's call to IClient.Send() makes IClient-Mock raise the message above
-            // and ITwitchClient.OnConnected should be raise (we want to test it)
-            mock.SetupAdd(c => c.OnConnected += It.IsAny<EventHandler<OnConnectedEventArgs>>());
-            mock.Setup<bool>(c => c.Open())
-                .Returns(true)
-                .Raises(c => c.OnConnected += null, new OnConnectedEventArgs());
-
-
-            mock.SetupAdd(c => c.OnMessage += It.IsAny<EventHandler<OnMessageEventArgs>>());
+            Mock<IClient> mock = IClientMocker.GetIClientMock();
             // IClient.Send() is/should be our trigger to raise OnMessage
             // ITwitchClient.Client_OnConnected calls IClient.Send() six times
             // so we have to setup a sequence, cause we want to raise IClient.OnMessage only one time
-            MockSequence sequence = new MockSequence();
-            // ITwichClient.Client_OnConnected sends PASS
-            mock.InSequence(sequence).Setup(c => c.Send(It.IsAny<string>())).Returns(true);
-            // ITwichClient.Client_OnConnected sends NICK
-            mock.InSequence(sequence).Setup(c => c.Send(It.IsAny<string>())).Returns(true);
-            // ITwichClient.Client_OnConnected sends USER
-            mock.InSequence(sequence).Setup(c => c.Send(It.IsAny<string>())).Returns(true);
-            // ITwichClient.Client_OnConnected sends CAP membership
-            mock.InSequence(sequence).Setup(c => c.Send(It.IsAny<string>())).Returns(true);
-            // ITwichClient.Client_OnConnected sends CAP commands
-            mock.InSequence(sequence).Setup(c => c.Send(It.IsAny<string>())).Returns(true);
-            // ITwichClient.Client_OnConnected sends CAP tags
-            // only this last call to IClient.Send() has to trigger raise OnMessage
-            mock.InSequence(sequence).Setup(c => c.Send(It.IsAny<string>())).Returns(true).Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = message });
+            MockSequence sendMessageSequence = new MockSequence();
+            IClientMocker.AddLogInToSendMessageSequence(message, mock, sendMessageSequence);
 
 
             IClient communicationClient = mock.Object;
@@ -157,12 +132,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnDisconnected()
         {
-            Mock<IClient> mock = new Mock<IClient>();
-            mock.SetupAdd(c => c.OnDisconnected += It.IsAny<EventHandler<OnDisconnectedEventArgs>>());
-            mock.Setup(c => c.Close())
-                .Raises(c => c.OnDisconnected += null, new OnDisconnectedEventArgs());
-
-            mock.Setup(c => c.IsConnected).Returns(true);
+            Mock<IClient> mock = IClientMocker.GetIClientMock();
 
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
@@ -210,13 +180,7 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnConnectionError()
         {
-            Mock<IClient> mock = new Mock<IClient>();
-            mock.SetupAdd(c => c.OnFatality += It.IsAny<EventHandler<OnFatalErrorEventArgs>>());
-            mock.Setup(c => c.Send(It.IsAny<string>()))
-                .Returns(false)
-                .Raises(c => c.OnFatality += null, new OnFatalErrorEventArgs("Fatal network error."));
-
-            mock.Setup(c => c.IsConnected).Returns(true);
+            Mock<IClient> mock = IClientMocker.GetIClientMock();
 
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
@@ -241,26 +205,28 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnReconnected()
         {
-            Mock<IClient> mock = new Mock<IClient>();
-            mock.SetupAdd(c => c.OnReconnected += It.IsAny<EventHandler<OnReconnectedEventArgs>>());
-            mock.Setup(c => c.Reconnect())
-                .Returns(true)
-                .Raises(c => c.OnReconnected += null, new OnReconnectedEventArgs());
-
-            mock.Setup(c => c.IsConnected).Returns(true);
+            string messageLogin = $":tmi.twitch.tv 004 {TWITCH_Username} :-";
+            Mock<IClient> mock = IClientMocker.GetIClientMock();
+            MockSequence sendMessageSequence = new MockSequence();
+            // for call to ITwitchClient.Connect()
+            IClientMocker.AddLogInToSendMessageSequence(messageLogin, mock, sendMessageSequence);
+            // for call to ITwitchClient.Reconnect()
+            IClientMocker.AddLogInToSendMessageSequence(messageLogin, mock, sendMessageSequence);
 
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.RaisedEvent<OnReconnectedEventArgs> assertion = Assert.Raises<OnReconnectedEventArgs>(
+            Assert.RaisedEvent<OnConnectedArgs> assertion = Assert.Raises<OnConnectedArgs>(
                     h => client.OnReconnected += h,
                     h => client.OnReconnected -= h,
                     () =>
                     {
                         client.OnReconnected += (sender, args) => Assert.True(pauseCheck.Set());
                         client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        // first connect, to get ConnectionStateManager in correct state
+                        client.Connect();
                         client.Reconnect();
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
