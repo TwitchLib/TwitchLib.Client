@@ -2,7 +2,6 @@
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
-using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -43,7 +42,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         ///     Occurs when [on reconnected].
         /// </summary>
-        event EventHandler<OnReconnectedEventArgs> OnReconnected;
+        event EventHandler<OnConnectedArgs> OnReconnected;
         #endregion events public
 
 

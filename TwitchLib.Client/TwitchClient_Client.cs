@@ -41,7 +41,6 @@ namespace TwitchLib.Client
             Client.OnMessageThrottled += Client_OnMessageThrottled;
             // INFO: TwitchLib.Communication.IClient doesnt raise OnConnected when it reconnects!
             Client.OnReconnected += Client_OnConnected;
-            Client.OnReconnected += Client_OnReconnected;
         }
         private void Client_OnMessageThrottled(object sender, OnMessageThrottledEventArgs e)
         {
@@ -82,8 +81,7 @@ namespace TwitchLib.Client
                 }
             }
         }
-
-        private void Client_OnConnected(object sender, object e)
+        private void Client_OnConnected(object sender, OnConnectedEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
             // IDE0058 - client raises OnSendFailed if this method returns false

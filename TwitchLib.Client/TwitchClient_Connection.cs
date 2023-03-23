@@ -5,7 +5,6 @@ using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
-using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client
 {
@@ -26,7 +25,7 @@ namespace TwitchLib.Client
         public event EventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
         public event EventHandler<OnDisconnectedArgs> OnDisconnected;
         public event EventHandler<OnConnectionErrorArgs> OnConnectionError;
-        public event EventHandler<OnReconnectedEventArgs> OnReconnected;
+        public event EventHandler<OnConnectedArgs> OnReconnected;
         #endregion events public
 
 
