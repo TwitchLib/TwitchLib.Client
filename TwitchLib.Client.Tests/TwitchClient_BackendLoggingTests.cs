@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 using TwitchLib.Client.Tests.TestHelper;
 using TwitchLib.Communication.Interfaces;
 
@@ -36,7 +37,7 @@ namespace TwitchLib.Client.Tests
                             Assert.Equal(message, args.Data);
                             Assert.True(pauseCheck.Set());
                         };
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));

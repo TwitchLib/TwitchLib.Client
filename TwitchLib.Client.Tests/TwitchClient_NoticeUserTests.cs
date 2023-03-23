@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
 using TwitchLib.Client.Tests.TestHelper;
 using TwitchLib.Communication.Interfaces;
@@ -31,7 +32,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnAnnouncement += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -57,7 +58,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnRaidNotification += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -83,7 +84,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnUnRaidNotification += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -109,7 +110,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnNewSubscriber += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -135,7 +136,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnReSubscriber += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -161,7 +162,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnPrimePaidSubscriber += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -187,7 +188,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnGiftedSubscription += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -213,7 +214,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnCommunitySubscription += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -239,7 +240,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnContinuedGiftedSubscription += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));

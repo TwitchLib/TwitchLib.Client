@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 using TwitchLib.Client.Tests.TestHelper;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
@@ -56,7 +57,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnMessageThrottled += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         communicationClient.Send(messageNotSent);
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });

@@ -7,6 +7,7 @@ using Moq;
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
 using TwitchLib.Client.Tests.TestHelper;
 using TwitchLib.Communication.Events;
@@ -42,7 +43,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnChannelStateChanged += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -81,7 +82,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnFailureToReceiveJoinConfirmation += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
                         communicationClient.Send(String.Empty);
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
@@ -125,7 +126,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnJoinedChannel += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
                         communicationClient.Send(String.Empty);
                         client.JoinChannel(TWITCH_CHANNEL);
@@ -176,7 +177,7 @@ namespace TwitchLib.Client.Tests
                         client.OnJoinedChannel += (sender, args) => client.LeaveChannel(TWITCH_CHANNEL);
                         client.OnLeftChannel += (sender, args) => Assert.True(pauseCheck.Set());
 
-                        client.Initialize(new Models.ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
                         communicationClient.Send(String.Empty);
                         client.JoinChannel(TWITCH_CHANNEL);
