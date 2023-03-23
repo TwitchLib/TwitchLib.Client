@@ -51,7 +51,7 @@ namespace TwitchLib.Client
 
             if (!IsInitialized) HandleNotInitialized();
             Client.Close();
-            ChannelManager.Stop();
+            ConnectionStateManager.ResetConnected();
         }
         public void Reconnect()
         {

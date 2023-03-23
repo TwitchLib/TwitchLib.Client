@@ -84,8 +84,17 @@ namespace TwitchLib.Client
                 case IrcCommand.RPL_003:
                     break;
                 case IrcCommand.RPL_004:
+                    OnConnectedArgs args = new OnConnectedArgs { BotUsername = TwitchUsername, AutoJoinChannels = ChannelManager.AutoJoinChannels };
+                    if (ConnectionStateManager.WasConnected)
+                    {
+                        OnReconnected?.Invoke(this, args);
+                    }
+                    else
+                    {
+                        ConnectionStateManager.SetConnected();
+                        OnConnected?.Invoke(this, args);
+                    }
                     ChannelManager.Start();
-                    OnConnected?.Invoke(this, new OnConnectedArgs { BotUsername = TwitchUsername, AutoJoinChannels = ChannelManager.AutoJoinChannels });
                     break;
                 case IrcCommand.RPL_353:
                     OnExistingUsersDetected?.Invoke(this, new OnExistingUsersDetectedArgs { Channel = ircMessage.Channel, Users = ircMessage.Message.Split(' ').ToList() });

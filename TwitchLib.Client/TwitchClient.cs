@@ -28,6 +28,7 @@ namespace TwitchLib.Client
         #region Properties private
         private ISet<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
         private ILogger<ITwitchClient> LOGGER { get; }
+        private ConnectionStateManager ConnectionStateManager { get; } = new ConnectionStateManager();
         #endregion Properties private
 
 
