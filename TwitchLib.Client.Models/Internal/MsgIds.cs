@@ -21,9 +21,6 @@ namespace TwitchLib.Client.Models.Internal
         public const string FollowersOnZero = "followers_on_zero";
         public const string FollowersOff = "followers_off";
         public const string HighlightedMessage = "highlighted-message";
-        public const string ModeratorsReceived = "room_mods";
-        public const string NoMods = "no_mods";
-        public const string NoVIPs = "no_vips";
         [Obsolete("Not listet (anymore?): https://dev.twitch.tv/docs/irc/msg-id/")]
         public const string MsgBannedEmailAlias = "msg_banned_email_alias";
         public const string MsgChannelSuspended = "msg_channel_suspended";
@@ -59,7 +56,6 @@ namespace TwitchLib.Client.Models.Internal
         public const string UnbanSuccess = "unban_success";
         public const string UnrecognizedCmd = "unrecognized_cmd";
         public const string UserIntro = "user-intro";
-        public const string VIPsSuccess = "vips_success";
         public const string SkipSubsModeMessage = "skip-subs-mode-message";
     }
 }

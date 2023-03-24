@@ -19,14 +19,6 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event EventHandler<EventArgs> OnNoPermissionError;
         /// <summary>
-        ///     Occurs when [on moderators received].
-        /// </summary>
-        event EventHandler<OnModeratorsReceivedArgs> OnModeratorsReceived;
-        /// <summary>
-        ///     Occurs when [on vip received].
-        /// </summary>
-        event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
-        /// <summary>
         ///     Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
         /// </summary>
         event EventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;

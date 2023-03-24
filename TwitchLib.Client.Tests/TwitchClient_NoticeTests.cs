@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Threading;
 
 using Microsoft.Extensions.Logging;
@@ -17,61 +16,6 @@ namespace TwitchLib.Client.Tests
 {
     public class TwitchClient_NoticeTests : ATwitchClientTests<ITwitchClient_Notice>
     {
-
-        [Theory]
-        [InlineData(MsgIds.NoMods)]
-        [InlineData(MsgIds.ModeratorsReceived)]
-        public void TwitchClient_Raises_OnModeratorsReceived(string msgId)
-        {
-            string[] users = new string[] {
-                "testuser0",
-                "testuser1",
-                "testuser2"
-            };
-            StringBuilder builder = new StringBuilder($"@msg-id={msgId} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :");
-            if (String.Equals(MsgIds.NoMods, msgId))
-            {
-                builder.Append("There are no moderators of this channel.");
-            }
-            else
-            {
-                builder.Append("The moderators of this channel are: ");
-                builder.Append(String.Join(',', users));
-                builder.Append('.');
-            }
-
-            string message = builder.ToString();
-
-            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
-            // create one logger per test-method! - cause one file per test-method is generated
-            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
-            ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.RaisedEvent<OnModeratorsReceivedArgs> assertion = Assert.Raises<OnModeratorsReceivedArgs>(
-                    h => client.OnModeratorsReceived += h,
-                    h => client.OnModeratorsReceived -= h,
-                    () =>
-                    {
-                        client.OnModeratorsReceived += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
-                        // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        Assert.True(communicationClient.Send(String.Empty));
-                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
-                    });
-            Assert.NotNull(assertion.Arguments);
-            Assert.NotNull(assertion.Arguments.Channel);
-            Assert.NotNull(assertion.Arguments.Moderators);
-            if (String.Equals(MsgIds.ModeratorsReceived, msgId))
-            {
-                Assert.NotEmpty(assertion.Arguments.Moderators);
-                Assert.Equal(users.Length, assertion.Arguments.Moderators.Count);
-            }
-            else
-            {
-                Assert.Empty(assertion.Arguments.Moderators);
-            }
-            AssertChannel(assertion.Arguments);
-        }
         [Fact]
         public void TwitchClient_Raises_OnChatColorChanged()
         {
@@ -494,59 +438,6 @@ namespace TwitchLib.Client.Tests
             Assert.NotNull(assertion.Arguments);
             Assert.NotNull(assertion.Arguments.Channel);
             Assert.NotNull(assertion.Arguments.Message);
-            AssertChannel(assertion.Arguments);
-        }
-        [Theory]
-        [InlineData(MsgIds.NoVIPs)]
-        [InlineData(MsgIds.VIPsSuccess)]
-        public void TwitchClient_Raises_OnVIPsReceived(string msgId)
-        {
-            string[] users = new string[] {
-                "testuser0",
-                "testuser1",
-                "testuser2"
-            };
-            StringBuilder builder = new StringBuilder($"@msg-id={msgId} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :");
-            if (String.Equals(MsgIds.NoVIPs, msgId))
-            {
-                builder.Append("This channel does not have any VIPs.");
-            }
-            else
-            {
-                builder.Append("The VIPs of this channel are: ");
-                builder.Append(String.Join(',', users));
-                builder.Append('.');
-            }
-            string message = builder.ToString();
-
-            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
-            // create one logger per test-method! - cause one file per test-method is generated
-            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
-            ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.RaisedEvent<OnVIPsReceivedArgs> assertion = Assert.Raises<OnVIPsReceivedArgs>(
-                    h => client.OnVIPsReceived += h,
-                    h => client.OnVIPsReceived -= h,
-                    () =>
-                    {
-                        client.OnVIPsReceived += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
-                        // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        Assert.True(communicationClient.Send(String.Empty));
-                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
-                    });
-            Assert.NotNull(assertion.Arguments);
-            Assert.NotNull(assertion.Arguments.Channel);
-            Assert.NotNull(assertion.Arguments.VIPs);
-            if (String.Equals(MsgIds.VIPsSuccess, msgId))
-            {
-                Assert.NotEmpty(assertion.Arguments.VIPs);
-                Assert.Equal(users.Length, assertion.Arguments.VIPs.Count);
-            }
-            else
-            {
-                Assert.Empty(assertion.Arguments.VIPs);
-            }
             AssertChannel(assertion.Arguments);
         }
     }

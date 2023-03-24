@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Helpers;
@@ -569,22 +568,6 @@ namespace TwitchLib.Client.Extensions
         }
 
         /// <summary>
-        /// Invokes the moderators received.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="channel">The channel.</param>
-        /// <param name="moderators">The moderators.</param>
-        public static void InvokeModeratorsReceived(this TwitchClient client, string channel, List<string> moderators)
-        {
-            OnModeratorsReceivedArgs model = new OnModeratorsReceivedArgs()
-            {
-                Channel = channel,
-                Moderators = moderators
-            };
-            RaiseEventHelper.RaiseEvent(client, nameof(client.OnModeratorsReceived), model);
-        }
-
-        /// <summary>
         /// Invokes the new subscriber.
         /// </summary>
         /// <param name="client">The client.</param>
@@ -974,100 +957,6 @@ namespace TwitchLib.Client.Extensions
                 UserTimeout = new UserTimeout(channel, username, targetUserId, timeoutDuration, timeoutReason)
             };
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserTimedout), model);
-        }
-
-        /// <summary>
-        /// Invokes the whisper command received.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="badges">The badges.</param>
-        /// <param name="colorHex">The color hexadecimal.</param>
-        /// <param name="color">The color.</param>
-        /// <param name="username">The username.</param>
-        /// <param name="displayName">The display name.</param>
-        /// <param name="emoteSet">The emote set.</param>
-        /// <param name="threadId">The thread identifier.</param>
-        /// <param name="messageId">The message identifier.</param>
-        /// <param name="userId">The user identifier.</param>
-        /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
-        /// <param name="botUsername">The bot username.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="userType">Type of the user.</param>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="argumentsAsString">The arguments as string.</param>
-        /// <param name="argumentsAsList">The arguments as list.</param>
-        /// <param name="commandIdentifier">The command identifier.</param>
-        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
-        public static void InvokeWhisperCommandReceived(this TwitchClient client,
-                                                        List<KeyValuePair<string, string>> badges,
-                                                        string colorHex,
-                                                        Color color,
-                                                        string username,
-                                                        string displayName,
-                                                        EmoteSet emoteSet,
-                                                        string threadId,
-                                                        string messageId,
-                                                        string userId,
-                                                        bool isTurbo,
-                                                        string botUsername,
-                                                        string message,
-                                                        UserType userType,
-                                                        string commandText,
-                                                        string argumentsAsString,
-                                                        List<string> argumentsAsList,
-                                                        char commandIdentifier)
-        {
-
-        }
-
-        /// <summary>
-        /// Invokes the whisper received.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="badges">The badges.</param>
-        /// <param name="colorHex">The color hexadecimal.</param>
-        /// <param name="color">The color.</param>
-        /// <param name="username">The username.</param>
-        /// <param name="displayName">The display name.</param>
-        /// <param name="emoteSet">The emote set.</param>
-        /// <param name="threadId">The thread identifier.</param>
-        /// <param name="messageId">The message identifier.</param>
-        /// <param name="userId">The user identifier.</param>
-        /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
-        /// <param name="botUsername">The bot username.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="userType">Type of the user.</param>
-        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
-        public static void InvokeWhisperReceived(this TwitchClient client,
-                                                 List<KeyValuePair<string, string>> badges,
-                                                 string colorHex,
-                                                 Color color,
-                                                 string username,
-                                                 string displayName,
-                                                 EmoteSet emoteSet,
-                                                 string threadId,
-                                                 string messageId,
-                                                 string userId,
-                                                 bool isTurbo,
-                                                 string botUsername,
-                                                 string message,
-                                                 UserType userType)
-        {
-        }
-
-        /// <summary>
-        /// Invokes the whisper sent.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="username">The username.</param>
-        /// <param name="receiver">The receiver.</param>
-        /// <param name="message">The message.</param>
-        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
-        public static void InvokeWhisperSent(this TwitchClient client,
-                                             string username,
-                                             string receiver,
-                                             string message)
-        {
         }
     }
 }

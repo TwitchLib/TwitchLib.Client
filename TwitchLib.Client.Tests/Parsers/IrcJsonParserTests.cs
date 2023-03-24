@@ -54,6 +54,7 @@ public class IrcJsonParserTests
     [InlineData("MODE", "testuser", "testchannel", true, "", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", "-o {1}")]
     //
     [InlineData("USERSTATE", "testuser", "testchannel", true, "", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", null)]
+    [InlineData("USERSTATE", "testuser", "testchannel", true, "@id=msg_id_hash", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", null)]
     //
     [InlineData("CLEARMSG", "testuser", "testchannel", true, "@login={1};room-id=;target-msg-id=some_msg_id_hash;tmi-sent-ts=1", "tmi.twitch.tv {0} #{2}", "some message")]
     [InlineData("NOTICE", null, "testchannel", true, "@msg-id=msg_channel_suspended", "tmi.twitch.tv {0} #{2}", "This channel does not exist or has been suspended.")]
