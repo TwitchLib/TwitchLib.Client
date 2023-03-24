@@ -29,7 +29,7 @@ public class IrcCommandParserTests
     [InlineData("372", IrcCommand.RPL_372)]
     [InlineData("375", IrcCommand.RPL_375)]
     [InlineData("376", IrcCommand.RPL_376)]
-    [InlineData("WHISPER", IrcCommand.Whisper)]
+    [InlineData("WHISPER", IrcCommand.Unknown)]
     [InlineData("SERVERCHANGE", IrcCommand.ServerChange)]
     [InlineData("RECONNECT", IrcCommand.Reconnect)]
     [InlineData("ROOMSTATE", IrcCommand.RoomState)]

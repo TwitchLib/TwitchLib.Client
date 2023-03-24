@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Interfaces
@@ -17,8 +15,7 @@ namespace TwitchLib.Client.Interfaces
         ITwitchClient_MessageReceiving,
         ITwitchClient_MessageSending,
         ITwitchClient_Notice,
-        ITwitchClient_NoticeUser,
-        ITwitchClient_Whisper
+        ITwitchClient_NoticeUser
     {
         #region properties public
         /// <summary>
@@ -52,11 +49,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="chatCommandIdentifier">
         ///     The chat command identifier.
         /// </param>
-        /// <param name="whisperCommandIdentifier">
-        ///     The whisper command identifier.
-        /// </param>
-        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
-        void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
+        void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!');
         /// <summary>
         ///     Initializes the specified credentials.
         /// </summary>
@@ -69,11 +62,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="chatCommandIdentifier">
         ///     The chat command identifier.
         /// </param>
-        /// <param name="whisperCommandIdentifier">
-        ///     The whisper command identifier.
-        /// </param>
-        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
-        void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
+        void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!');
         /// <summary>
         ///     Adds the chat command identifier.
         /// </summary>

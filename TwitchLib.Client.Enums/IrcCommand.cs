@@ -1,8 +1,4 @@
-﻿using System;
-
-using TwitchLib.Client.Enums.Internal;
-
-namespace TwitchLib.Client.Enums
+﻿namespace TwitchLib.Client.Enums
 {
     public enum IrcCommand
     {
@@ -83,8 +79,6 @@ namespace TwitchLib.Client.Enums
         ///     End of Names List of detected Users
         /// </summary>
         RPL_366,
-        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessage)]
-        Whisper,
         RoomState,
         Reconnect,
         ServerChange,

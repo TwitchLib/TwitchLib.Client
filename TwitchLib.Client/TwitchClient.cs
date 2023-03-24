@@ -7,7 +7,6 @@ using System.Reflection;
 
 using Microsoft.Extensions.Logging;
 
-using TwitchLib.Client.Consts.Internal;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
@@ -66,22 +65,18 @@ namespace TwitchLib.Client
 
 
         #region initialization
-        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
         public void Initialize(ConnectionCredentials credentials,
                                string channel = null,
-                               char chatCommandIdentifier = '!',
-                               char whisperCommandIdentifier = '!')
+                               char chatCommandIdentifier = '!')
         {
             LOGGER?.TraceMethodCall(GetType());
             if (channel != null && channel[0] == '#')
                 channel = channel.Substring(1);
             InitializeHelper(credentials, new List<string>() { channel }, chatCommandIdentifier);
         }
-        [Obsolete(SystemMessageConstants.ObsoleteWhisperMessageParameter)]
         public void Initialize(ConnectionCredentials credentials,
                                List<string> channels,
-                               char chatCommandIdentifier = '!',
-                               char whisperCommandIdentifier = '!')
+                               char chatCommandIdentifier = '!')
         {
             LOGGER?.TraceMethodCall(GetType());
             channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();

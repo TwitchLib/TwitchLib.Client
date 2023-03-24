@@ -107,8 +107,6 @@ namespace TwitchLib.Client
                     break;
                 case IrcCommand.RPL_376:
                     break;
-                case IrcCommand.Whisper:
-                    break;
                 case IrcCommand.RoomState:
                     OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage, LOGGER), Channel = ircMessage.Channel });
                     break;
