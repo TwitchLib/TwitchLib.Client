@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
@@ -32,26 +33,65 @@ namespace TwitchLib.Client.Tests
         [Fact]
         public void TwitchClient_Raises_OnChannelStateChanged()
         {
-            throw new NotImplementedException("has to be modified to do the whole login sequence etc");
-            string message = "@emote-only=0;followers-only=0;r9k=0;room-id=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #testchannel";
-            IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
+            string channelStateInitialMessage = $"@emote-only=1;followers-only=0;r9k=0;room-id=0;slow=60;subs-only=1 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}";
+            string channelStateUpdateMessage = $"@followers-only=-1;room-id=0 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}";
+            Mock<IClient> mock = IClientMocker.GetIClientMock();
+            MockSequence sendMessageSequnce = new MockSequence();
+            IClientMocker.AddLogInToSendMessageSequence($":tmi.twitch.tv 004 {TWITCH_Username} :-", mock, sendMessageSequnce);
+            IClientMocker.AddToSendMessageSequence($":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}", mock, sendMessageSequnce);
+            IClientMocker.AddToSendMessageSequence(channelStateInitialMessage, mock, sendMessageSequnce);
+            IClientMocker.AddToSendMessageSequence(channelStateUpdateMessage, mock, sendMessageSequnce);
+            IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
             ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
-            ManualResetEvent pauseCheck = new ManualResetEvent(false);
-            Assert.RaisedEvent<OnChannelStateChangedArgs> assertion = Assert.Raises<OnChannelStateChangedArgs>(
+            ManualResetEvent pauseCheckInitial = new ManualResetEvent(false);
+            Assert.RaisedEvent<OnChannelStateChangedArgs> assertionInitial = Assert.Raises<OnChannelStateChangedArgs>(
                     h => client.OnChannelStateChanged += h,
                     h => client.OnChannelStateChanged -= h,
                     () =>
                     {
-                        client.OnChannelStateChanged += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
+                        client.OnChannelStateChanged += (sender, args) => Assert.True(pauseCheckInitial.Set());
+                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth), TWITCH_CHANNEL);
+                        client.Connect();
+                        // lets give the ITwitchClient some time to handle auth and autojoin ...
+                        Task.Delay(2000).GetAwaiter().GetResult();
+                        // we have to cheat a bit
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
-                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
+                        Assert.True(pauseCheckInitial.WaitOne(WaitOneDuration));
                     });
-            Assert.NotNull(assertion.Arguments);
-            AssertChannel(assertion.Arguments);
+            Assert.NotNull(assertionInitial.Arguments);
+            AssertChannel(assertionInitial.Arguments);
+            Assert.NotNull(assertionInitial.Arguments.ChannelState);
+            ChannelState channelStateInitial = assertionInitial.Arguments.ChannelState;
+            Assert.Equal(TimeSpan.FromMinutes(0), channelStateInitial.FollowersOnly);
+            Assert.True(channelStateInitial.EmoteOnly);
+            Assert.False(channelStateInitial.R9K);
+            Assert.Equal(60, channelStateInitial.SlowMode);
+            Assert.True(channelStateInitial.SubOnly);
+
+            ManualResetEvent pauseCheckUpdate = new ManualResetEvent(false);
+            Assert.RaisedEvent<OnChannelStateChangedArgs> assertionUpdate = Assert.Raises<OnChannelStateChangedArgs>(
+                    h => client.OnChannelStateChanged += h,
+                    h => client.OnChannelStateChanged -= h,
+                    () =>
+                    {
+                        client.OnChannelStateChanged += (sender, args) => Assert.True(pauseCheckUpdate.Set());
+                        // we have to cheat a bit
+                        // send is our trigger, to make the IClient-Mock raise OnMessage!
+                        Assert.True(communicationClient.Send(String.Empty));
+                        Assert.True(pauseCheckUpdate.WaitOne(WaitOneDuration));
+                    });
+            Assert.NotNull(assertionUpdate.Arguments);
+            AssertChannel(assertionUpdate.Arguments);
+            Assert.NotNull(assertionUpdate.Arguments.ChannelState);
+            ChannelState channelStateUpdate = assertionUpdate.Arguments.ChannelState;
+            Assert.Equal(null, channelStateUpdate.FollowersOnly);
+            Assert.Equal(channelStateInitial.EmoteOnly, channelStateUpdate.EmoteOnly);
+            Assert.Equal(channelStateInitial.R9K, channelStateUpdate.R9K);
+            Assert.Equal(channelStateInitial.SlowMode, channelStateUpdate.SlowMode);
+            Assert.Equal(channelStateInitial.SubOnly, channelStateUpdate.SubOnly);
         }
         [Fact]
         public void TwitchClient_Raises_OnFailureToReceiveJoinConfirmation()
