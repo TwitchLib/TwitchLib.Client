@@ -63,9 +63,9 @@ public class IrcJsonParserTests
     [InlineData("USERNOTICE", "testuser", "testchannel", true, "@badge-info=;badges=;color=#FF0000;display-name={1};emotes=;flags=;id=some_msg_id_hash;login={1};mod=0;msg-id=resub;msg-param-cumulative-months=5;msg-param-months=0;msg-param-multimonth-duration=0;msg-param-multimonth-tenure=0;msg-param-should-share-streak=1;msg-param-streak-months=1;msg-param-sub-plan-name=bla;msg-param-sub-plan=1000;msg-param-was-gifted=false;room-id=0;subscriber=1;system-msg={1}\\ssubscribed\\sat\\sTier\\s1.\\sThey've\\ssubscribed\\sfor\\s5\\smonths,\\scurrently\\son\\sa\\s1\\smonth\\sstreak!;tmi-sent-ts=1;user-id=0;user-type=", "tmi.twitch.tv {0} #{2}", null)]
     public void ParseTest(string cmd, string user, string channel, bool tagMetaSeperator, string tags, string meta, string message)
     {
-        string tagsPart = Format(tags, cmd, user, channel);
-        string metaPart = Format(meta, cmd, user, channel);
-        string messagePart = Format(message, cmd, user, channel);
+        string? tagsPart = Format(tags, cmd, user, channel);
+        string? metaPart = Format(meta, cmd, user, channel);
+        string? messagePart = Format(message, cmd, user, channel);
         StringBuilder ircBuilder = new StringBuilder();
         ircBuilder.Append(tagsPart);
         if (tagMetaSeperator)
@@ -104,7 +104,8 @@ public class IrcJsonParserTests
         //
         Assert.NotNull(ircMessage["tags"]);
         Assert.IsType<JObject>(ircMessage["tags"]);
-        JObject tags = (JObject) ircMessage["tags"];
+        JObject? tags = (JObject?) ircMessage["tags"];
+        Assert.NotNull(tags);
         Assert.NotNull(tags.Properties());
         Assert.Equal(18, tags.Properties().Count());
         Assert.Equal("a_hash", tags.Value<string>("client-nonce"));
@@ -125,14 +126,16 @@ public class IrcJsonParserTests
         //
         Assert.NotNull(tags["badge-info"]);
         Assert.IsType<JObject>(tags["badge-info"]);
-        JObject badgeInfo = (JObject) tags["badge-info"];
+        JObject? badgeInfo = (JObject?) tags["badge-info"];
+        Assert.NotNull(badgeInfo);
         Assert.NotNull(badgeInfo.Properties());
         Assert.Single(badgeInfo.Properties());
         Assert.Equal("22", badgeInfo.Value<string>("subscriber"));
         //
         Assert.NotNull(tags["badges"]);
         Assert.IsType<JObject>(tags["badges"]);
-        JObject badges = (JObject) tags["badges"];
+        JObject? badges = (JObject?) tags["badges"];
+        Assert.NotNull(badges);
         Assert.NotNull(badges.Properties());
         Assert.Equal(2, badges.Properties().Count());
         Assert.Equal("18", badges.Value<string>("subscriber"));
@@ -140,12 +143,14 @@ public class IrcJsonParserTests
         //
         Assert.NotNull(tags["emotes"]);
         Assert.IsType<JObject>(tags["emotes"]);
-        JObject emotes = (JObject) tags["emotes"];
+        JObject? emotes = (JObject?) tags["emotes"];
+        Assert.NotNull(emotes);
         Assert.NotNull(emotes.Properties());
         Assert.Equal(2, emotes.Properties().Count());
         // emote-id 1
         Assert.IsType<JArray>(emotes["1"]);
-        JArray emoteA = (JArray) emotes["1"];
+        JArray? emoteA = (JArray?) emotes["1"];
+        Assert.NotNull(emoteA);
         Assert.Equal(2, emoteA.Count());
         foreach (JToken indexToken in emoteA)
         {
@@ -160,13 +165,14 @@ public class IrcJsonParserTests
         }
         // emote-id 555555584
         Assert.IsType<JArray>(emotes["555555584"]);
-        JArray emoteB = (JArray) emotes["555555584"];
+        JArray? emoteB = (JArray?) emotes["555555584"];
+        Assert.NotNull(emoteB);
         Assert.Single(emoteB);
         Assert.Equal("4", emoteB[0].Value<string>("from"));
         Assert.Equal("5", emoteB[0].Value<string>("to"));
         //
     }
-    private static string Format(string stringToFormat, string cmd, string user, string channel)
+    private static string? Format(string stringToFormat, string cmd, string user, string channel)
     {
         if (stringToFormat == null)
         {

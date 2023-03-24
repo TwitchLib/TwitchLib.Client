@@ -27,7 +27,7 @@ namespace TwitchLib.Client.Tests.Managers
             IClient client = mock.Object;
             ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
             ChannelManager channelManager = new ChannelManager(client, null, null, logger);
-            string[] channels = new string[] {
+            string?[] channels = new string?[] {
                 "",
                 null,
                 " "

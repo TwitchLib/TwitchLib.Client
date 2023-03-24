@@ -90,7 +90,7 @@ namespace TwitchLib.Client.Parsers {
             if (!channel.IsNullOrEmptyOrWhitespace()) {
                 ircObject.Add(nameof(channel), new JValue(channel));
             }
-            string message = GetMessage(messageParts, hasTags, isPingOrPong);
+            string message = GetMessage(messageParts, hasTags);
             if (!message.IsNullOrEmptyOrWhitespace()) {
                 ircObject.Add(nameof(message), new JValue(message));
             }
@@ -128,7 +128,7 @@ namespace TwitchLib.Client.Parsers {
             return ircObject;
         }
 
-        private static string GetMessage(string[] messageParts, bool hasTags, bool isPingOrPong) {
+        private static string GetMessage(string[] messageParts, bool hasTags) {
             if (hasTags) {
                 if (messageParts.Length < 3) {
                     return null;

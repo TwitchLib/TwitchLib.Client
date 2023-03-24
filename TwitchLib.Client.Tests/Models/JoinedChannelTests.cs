@@ -84,7 +84,7 @@ namespace TwitchLib.Client.Tests.Models
             Assert.Equal(roomId, channelState.RoomId);
             Assert.True(channelState.EmoteOnly);
         }
-        private UserState GetUserState(bool join)
+        private static UserState GetUserState(bool join)
         {
             string irc = $":{Username}!{Username}@{Username}.tmi.twitch.tv USERSTATE #{Channel}";
             if (!join)

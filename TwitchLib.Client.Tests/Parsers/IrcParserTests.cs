@@ -92,7 +92,6 @@ public class IrcParserTests
             Assert.True(ircMessage.Tags.Any());
         }
         IrcCommand expectedIrcCommand = IrcCommandParser.GetIrcCommandFromString(cmd);
-        Assert.NotNull(expectedIrcCommand);
         Assert.NotEqual(IrcCommand.Unknown, expectedIrcCommand);
         Assert.Equal(expectedIrcCommand, ircMessage.Command);
     }
