@@ -19,19 +19,21 @@ namespace TwitchLib.Client.Tests
 {
     public class TwitchClient_ChannelTests : ATwitchClientTests<ITwitchClient_Channel>
     {
-        [Theory]
-        [InlineData("@emote-only=0;followers-only=0;r9k=0;room-id=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        [InlineData("@emote-only=1;followers-only=0;r9k=0;room-id=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        [InlineData("@emote-only=0;followers-only=1;r9k=0;room-id=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        [InlineData("@emote-only=0;followers-only=0;r9k=1;room-id=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        [InlineData("@emote-only=0;followers-only=0;r9k=0;room-id=0;slow=1;subs-only=0 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        [InlineData("@emote-only=0;followers-only=0;r9k=0;room-id=0;slow=0;subs-only=1 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        [InlineData("@emote-only=0;followers-only=0;r9k=0;room-id=0;slow=1;subs-only=1 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        [InlineData("@emote-only=0;followers-only=0;r9k=1;room-id=0;slow=1;subs-only=1 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        [InlineData("@emote-only=0;followers-only=1;r9k=1;room-id=0;slow=1;subs-only=1 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        [InlineData("@emote-only=1;followers-only=1;r9k=1;room-id=0;slow=1;subs-only=1 :tmi.twitch.tv ROOMSTATE #testchannel")]
-        public void TwitchClient_Raises_OnChannelStateChanged(string message)
+        /// <summary>
+        ///     only tests, if <see cref="ITwitchClient.OnChannelStateChanged"/> gets raised
+        ///     <br></br>
+        ///     <br></br>
+        ///     see also
+        ///     <br></br>
+        ///     <seealso cref="Models.JoinedChannelTests"/>
+        ///     <br></br>
+        ///     <seealso cref="TwitchLib.Client.Models.Tests.ChannelStateTests"/>
+        /// </summary>
+        [Fact]
+        public void TwitchClient_Raises_OnChannelStateChanged()
         {
+            throw new NotImplementedException("has to be modified to do the whole login sequence etc");
+            string message = "@emote-only=0;followers-only=0;r9k=0;room-id=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #testchannel";
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();

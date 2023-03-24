@@ -6,6 +6,7 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Helpers;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
@@ -17,7 +18,10 @@ namespace TwitchLib.Client.Models
     {
         #region properties private
         private ConcurrentDictionary<string, ChatMessage> BotMessages { get; } = new ConcurrentDictionary<string, ChatMessage>();
+        private ChannelState State { get; set; }
         #endregion properties private
+
+
 
 
         #region properties public
@@ -72,14 +76,53 @@ namespace TwitchLib.Client.Models
         {
             if (userState.Id.IsNullOrEmptyOrWhitespace())
             {
-                RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnUserStateChanged), new OnUserStateChangedArgs { UserState = userState, Channel = Channel });
+                OnUserStateChangedArgs args = new OnUserStateChangedArgs { UserState = userState, Channel = Channel };
+                RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnUserStateChanged), args);
                 return;
             }
             bool gotValue = BotMessages.TryRemove(userState.Id, out ChatMessage chatMessage);
             if (gotValue && chatMessage != null)
             {
-                RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnMessageSent), new OnMessageSentArgs() { SentMessage = chatMessage });
+                OnMessageSentArgs args = new OnMessageSentArgs() { SentMessage = chatMessage };
+                RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnMessageSent), args);
             }
+        }
+        /// <summary>
+        ///     <see href="https://dev.twitch.tv/docs/irc/tags/#roomstate-tags"/>
+        ///     <br></br>
+        ///     <br></br>
+        ///     <b>2nd paragraph:</b>
+        ///     <br></br>
+        ///     For JOIN messages, the message contains all chat room setting tags,
+        ///     <br></br>
+        ///     but for actions that change a single chat room setting,
+        ///     <br></br>
+        ///     the message includes only that chat room setting tag.
+        ///     <br></br>
+        ///     For example,
+        ///     <br></br>
+        ///     if the moderator turned on unique chat,
+        ///     <br></br>
+        ///     the message includes only the r9k tag.
+        /// </summary>
+        /// <param name="ircMessage">
+        ///     <see cref="IrcMessage"/>
+        /// </param>
+        /// <param name="twitchClient">
+        ///     <see cref="ITwitchClient"/>
+        /// </param>
+        internal void HandleROOMSTATE(IrcMessage ircMessage, ITwitchClient twitchClient)
+        {
+            if (State == null)
+            {
+                State = new ChannelState(ircMessage); ;
+            }
+            else
+            {
+                State.Apply(ircMessage);
+            }
+            OnChannelStateChangedArgs args = new OnChannelStateChangedArgs { ChannelState = State, Channel = Channel };
+            RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnChannelStateChanged), args);
         }
         #endregion methods public
     }

@@ -11,7 +11,9 @@ namespace TwitchLib.Client.Interfaces
     {
         #region events public
         /// <summary>
-        ///     Occurs when [on channel state changed].
+        ///     <see cref="OnChannelStateChangedArgs.ChannelState"/>
+        ///     <br></br>
+        ///     <inheritdoc cref="OnChannelStateChangedArgs.ChannelState"/>
         /// </summary>
         event EventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
         /// <summary>

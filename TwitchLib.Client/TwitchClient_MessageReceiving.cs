@@ -108,7 +108,8 @@ namespace TwitchLib.Client
                 case IrcCommand.RPL_376:
                     break;
                 case IrcCommand.RoomState:
-                    OnChannelStateChanged?.Invoke(this, new OnChannelStateChangedArgs { ChannelState = new ChannelState(ircMessage, LOGGER), Channel = ircMessage.Channel });
+                    JoinedChannel joinedChannel = GetJoinedChannel(ircMessage.Channel);
+                    joinedChannel?.HandleROOMSTATE(ircMessage, this);
                     break;
                 case IrcCommand.Reconnect:
                     Reconnect();
