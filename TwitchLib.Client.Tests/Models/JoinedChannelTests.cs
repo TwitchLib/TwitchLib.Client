@@ -21,6 +21,8 @@ namespace TwitchLib.Client.Tests.Models
         ///     <br></br>
         ///     <br></br>
         ///     <seealso cref="TwitchClient_MessageReceivingTests.TwitchClient_Raises_OnUserStateChanged"/>
+        ///     <br></br>
+        ///     <seealso cref="TwitchClient_MessageSendingTests.TwitchClient_Raises_OnMessageSent"/>
         /// </summary>
         [Fact]
         public void UserState_And_SentMessage_Test()
