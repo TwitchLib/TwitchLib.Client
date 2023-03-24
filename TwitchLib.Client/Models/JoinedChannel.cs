@@ -22,8 +22,6 @@ namespace TwitchLib.Client.Models
         #endregion properties private
 
 
-
-
         #region properties public
         /// <summary>
         ///     name of the channel
