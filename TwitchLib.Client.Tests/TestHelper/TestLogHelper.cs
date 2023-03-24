@@ -47,7 +47,7 @@ namespace TwitchLib.Client.Tests.TestHelper
         /// <returns>
         ///     <see cref="ILogger{TCategoryName}"/>
         /// </returns>
-        internal static ILogger<T> GetLogger<T>(Type overrideType = null,
+        internal static ILogger<T> GetLogger<T>(Type? overrideType = null,
                                                 LogEventLevel logEventLevel = LogEventLevel.Verbose,
                                                 [CallerMemberName] string callerMemberName = "TestMethod")
         {
