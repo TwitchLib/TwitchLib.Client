@@ -45,7 +45,7 @@ namespace TwitchLib.Client.Models.Internal
         public const string R9KOff = "r9k_off";
         public const string R9KOn = "r9k_on";
         public const string SlowOn = "slow_on";
-        public const string SlowOff = "slow_of";
+        public const string SlowOff = "slow_off";
         public const string SubGift = "subgift";
         public const string CommunitySubscription = "submysterygift";
         public const string ContinuedGiftedSubscription = "giftpaidupgrade";
