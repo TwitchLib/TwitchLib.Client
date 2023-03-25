@@ -57,5 +57,15 @@ namespace TwitchLib.Client.Models.Internal
         public const string UnrecognizedCmd = "unrecognized_cmd";
         public const string UserIntro = "user-intro";
         public const string SkipSubsModeMessage = "skip-subs-mode-message";
+
+        #region actually unhandled MsgId's
+        public const string CommunityPayForward = "communitypayforward";
+        public const string StandardPayForward = "standardpayforward";
+        public const string BITsBadgeTier = "bitsbadgetier";
+        public const string AnonGiftUpgrade = "anongiftpaidupgrade";
+        public const string Viewermilestone = "viewermilestone";
+        public const string CharityDonation = "charitydonation";
+        #endregion actually unhandled MsgId's
+
     }
 }
