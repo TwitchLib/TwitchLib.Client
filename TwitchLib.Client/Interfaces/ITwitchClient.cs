@@ -19,19 +19,18 @@ namespace TwitchLib.Client.Interfaces
     {
         #region properties public
         /// <summary>
-        /// Gets or sets a value indicating whether [disable automatic pong].
+        ///     Gets or sets a value indicating whether [disable automatic pong].
         /// </summary>
-        /// <value><c>true</c> if [disable automatic pong]; otherwise, <c>false</c>.</value>
         bool DisableAutoPong { get; set; }
         /// <summary>
-        /// Gets the twitch username.
+        ///     Gets the twitch username.
+        ///     <br></br>
+        ///     <see cref="ConnectionCredentials.TwitchUsername"/>
         /// </summary>
-        /// <value>The twitch username.</value>
         string TwitchUsername { get; }
         /// <summary>
-        /// Gets or sets a value indicating whether [will replace emotes].
+        ///     Gets or sets a value indicating whether [will replace emotes].
         /// </summary>
-        /// <value><c>true</c> if [will replace emotes]; otherwise, <c>false</c>.</value>
         bool WillReplaceEmotes { get; set; }
         #endregion properties public
 
