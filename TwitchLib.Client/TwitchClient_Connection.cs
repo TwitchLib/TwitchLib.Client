@@ -15,7 +15,7 @@ namespace TwitchLib.Client
         // it makes it easier to find the respective occurance from the log file
 
         #region properties public
-        public bool IsConnected => IsInitialized && Client != null && Client.IsConnected;
+        public bool IsConnected => Client.IsConnected;
         public ConnectionCredentials ConnectionCredentials { get; private set; }
         #endregion properties public
 
@@ -33,7 +33,6 @@ namespace TwitchLib.Client
         public bool Connect()
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
-            if (!IsInitialized) HandleNotInitialized();
             Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
 
             if (Client.Open())
@@ -48,23 +47,18 @@ namespace TwitchLib.Client
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
             Log("Disconnect Twitch Chat Client...");
-
-            if (!IsInitialized) HandleNotInitialized();
             Client.Close();
             ConnectionStateManager.ResetConnected();
         }
         public void Reconnect()
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
-            if (!IsInitialized) HandleNotInitialized();
             Log($"Reconnecting to Twitch");
             Client.Reconnect();
         }
         public void SetConnectionCredentials(ConnectionCredentials credentials)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
-            if (!IsInitialized)
-                HandleNotInitialized();
             if (IsConnected)
                 throw new IllegalAssignmentException("While the client is connected, you are unable to change the connection credentials. Please disconnect first and then change them.");
 

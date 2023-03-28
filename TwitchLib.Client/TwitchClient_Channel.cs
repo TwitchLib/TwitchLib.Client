@@ -37,27 +37,23 @@ namespace TwitchLib.Client
         public void JoinChannel(string channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
-            if (!IsInitialized) HandleNotInitialized();
             if (!IsConnected) HandleNotConnected();
             ChannelManager.JoinChannel(channel);
         }
         public JoinedChannel GetJoinedChannel(string channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
-            if (!IsInitialized) HandleNotInitialized();
             return ChannelManager.GetJoinedChannel(channel);
         }
 
         public void LeaveChannel(string channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
-            if (!IsInitialized) HandleNotInitialized();
             ChannelManager.LeaveChannel(channel);
         }
         public void LeaveChannel(JoinedChannel channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
-            if (!IsInitialized) HandleNotInitialized();
             LeaveChannel(channel.Channel);
         }
         #endregion methods public

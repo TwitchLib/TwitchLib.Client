@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -36,32 +34,6 @@ namespace TwitchLib.Client.Interfaces
 
 
         #region methods public
-        /// <summary>
-        ///     Initializes the specified credentials.
-        /// </summary>
-        /// <param name="credentials">
-        ///     <see cref="ConnectionCredentials"/>
-        /// </param>
-        /// <param name="channel">
-        ///     The channel.
-        /// </param>
-        /// <param name="chatCommandIdentifier">
-        ///     The chat command identifier.
-        /// </param>
-        void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!');
-        /// <summary>
-        ///     Initializes the specified credentials.
-        /// </summary>
-        /// <param name="credentials">
-        ///     <see cref="ConnectionCredentials"/>
-        /// </param>
-        /// <param name="channels">
-        ///     The channels to join once connected.
-        /// </param>
-        /// <param name="chatCommandIdentifier">
-        ///     The chat command identifier.
-        /// </param>
-        void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!');
         /// <summary>
         ///     Adds the chat command identifier.
         /// </summary>

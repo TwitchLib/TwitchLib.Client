@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 
 using Microsoft.Extensions.Logging;
@@ -33,14 +32,17 @@ namespace TwitchLib.Client
 
         #region Properties public
         public Version Version => Assembly.GetEntryAssembly().GetName().Version;
-        public string TwitchUsername { get; private set; }
+        public string TwitchUsername => ConnectionCredentials?.TwitchUsername;
         public bool DisableAutoPong { get; set; } = false;
         public bool WillReplaceEmotes { get; set; } = false;
         #endregion Properties public
 
 
         #region ctor
-        public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger<ITwitchClient> logger = null)
+        public TwitchClient(ConnectionCredentials connectionCredentials,
+                            IClient client = null,
+                            ClientProtocol protocol = ClientProtocol.WebSocket,
+                            ILogger<ITwitchClient> logger = null)
         {
             LOGGER = logger;
             Protocol = protocol;
@@ -60,42 +62,10 @@ namespace TwitchLib.Client
             Debug.Assert(Client != null, nameof(Client) + " != null");
             InitializeClient();
             ChannelManager = new ChannelManager(Client, Log, LogError, LOGGER);
+            SetConnectionCredentials(connectionCredentials);
+            ChatCommandIdentifiers.Add('!');
         }
         #endregion ctor
-
-
-        #region initialization
-        public void Initialize(ConnectionCredentials credentials,
-                               string channel = null,
-                               char chatCommandIdentifier = '!')
-        {
-            LOGGER?.TraceMethodCall(GetType());
-            if (channel != null && channel[0] == '#')
-                channel = channel.Substring(1);
-            InitializeHelper(credentials, new List<string>() { channel }, chatCommandIdentifier);
-        }
-        public void Initialize(ConnectionCredentials credentials,
-                               List<string> channels,
-                               char chatCommandIdentifier = '!')
-        {
-            LOGGER?.TraceMethodCall(GetType());
-            channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
-            InitializeHelper(credentials, channels, chatCommandIdentifier);
-        }
-        private void InitializeHelper(ConnectionCredentials credentials,
-                                      List<string> channels,
-                                      char chatCommandIdentifier = '!')
-        {
-            LOGGER?.TraceMethodCall(GetType());
-            Log($"TwitchLib-TwitchClient initialized, assembly version: {Assembly.GetExecutingAssembly().GetName().Version}");
-            ConnectionCredentials = credentials;
-            TwitchUsername = ConnectionCredentials.TwitchUsername;
-            if (chatCommandIdentifier != '\0')
-                ChatCommandIdentifiers.Add(chatCommandIdentifier);
-            ChannelManager.Credentials = ConnectionCredentials;
-            ChannelManager.JoinChannels(channels);
-        }
-        #endregion initialization
 
 
         #region Command Identifiers
@@ -103,16 +73,13 @@ namespace TwitchLib.Client
         public void AddChatCommandIdentifier(char identifier)
         {
             LOGGER?.TraceMethodCall(GetType());
-            if (!IsInitialized)
-                HandleNotInitialized();
-            ChatCommandIdentifiers.Add(identifier);
+            if (identifier != '\0')
+                ChatCommandIdentifiers.Add(identifier);
         }
 
         public void RemoveChatCommandIdentifier(char identifier)
         {
             LOGGER?.TraceMethodCall(GetType());
-            if (!IsInitialized)
-                HandleNotInitialized();
             ChatCommandIdentifiers.Remove(identifier);
         }
         #endregion

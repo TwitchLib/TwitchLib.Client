@@ -25,8 +25,6 @@ namespace TwitchLib.Client
         public void SendRaw(string message)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
-            if (!IsInitialized) HandleNotInitialized();
-
             Log($"Writing: {message}");
             // IDE0058 - client raises OnSendFailed if this method returns false
             Client.Send(message);
@@ -35,7 +33,6 @@ namespace TwitchLib.Client
         public void SendQueuedItem(string message)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
-            if (!IsInitialized) HandleNotInitialized();
             // IDE0058 - client raises OnSendFailed if this method returns false
             Client.Send(message);
         }
@@ -66,7 +63,6 @@ namespace TwitchLib.Client
         private void SendPONG()
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
-            if (!IsInitialized) HandleNotInitialized();
             string message = "PONG";
             Log($"Writing: {message}");
             // IDE0058 - client raises OnSendFailed if this method returns false
@@ -76,7 +72,6 @@ namespace TwitchLib.Client
         private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
-            if (!IsInitialized) HandleNotInitialized();
             if (channel == null || message == null || dryRun) return;
             if (message.Length > 500)
             {
