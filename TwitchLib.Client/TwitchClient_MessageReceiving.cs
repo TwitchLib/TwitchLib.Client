@@ -52,6 +52,7 @@ namespace TwitchLib.Client
                         SendPONG();
                     return;
                 case IrcCommand.Pong:
+                    OnError?.Invoke(this, new OnErrorEventArgs() { Exception = new KeepAliveException(TwitchUsername) });
                     return;
                 case IrcCommand.Join:
                     if (ircMessage.User == TwitchUsername)
