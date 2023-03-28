@@ -35,7 +35,7 @@ namespace TwitchLib.Client
 
 
         #region methods private
-        private void HandleNotice(IrcMessage ircMessage)
+        private bool HandleNotice(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Notice));
             bool success = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
@@ -43,6 +43,7 @@ namespace TwitchLib.Client
             {
                 OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
                 UnaccountedFor(ircMessage.ToString());
+                return false;
             }
 
             switch (msgId)
@@ -140,8 +141,9 @@ namespace TwitchLib.Client
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "NoticeHandling", RawIRC = ircMessage.ToString() });
                     UnaccountedFor(ircMessage.ToString());
-                    break;
+                    return false;
             }
+            return true;
         }
         #endregion methods private
     }
