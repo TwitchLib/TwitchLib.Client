@@ -2,7 +2,6 @@
 
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
-using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
@@ -23,11 +22,6 @@ namespace TwitchLib.Client
         private IClient Client { get; }
         private ClientProtocol Protocol { get; }
         #endregion properties private
-
-
-        #region properties public
-        public bool IsInitialized => Client != null;
-        #endregion properties public
 
 
         #region methods private
@@ -97,13 +91,5 @@ namespace TwitchLib.Client
                 Client.Send("CAP REQ twitch.tv/tags");
         }
         #endregion methods private
-
-
-        #region methods protected
-        protected static void HandleNotInitialized()
-        {
-            throw new ClientNotInitializedException("The twitch client has not been initialized and cannot be used. Please call Initialize();");
-        }
-        #endregion methods protected
     }
 }
