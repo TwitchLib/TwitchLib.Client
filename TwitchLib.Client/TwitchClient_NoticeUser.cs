@@ -17,7 +17,7 @@ namespace TwitchLib.Client
         #region events public
         public event EventHandler<OnAnnouncementArgs> OnAnnouncement;
         public event EventHandler<OnRaidNotificationArgs> OnRaidNotification;
-        public event EventHandler<OnUnRaidNotificationArgs> OnUnRaidNotification;
+        public event EventHandler<OnRaidNotificationArgs> OnUnRaidNotification;
 
         public event EventHandler<OnNewSubscriberArgs> OnNewSubscriber;
         public event EventHandler<OnReSubscriberArgs> OnReSubscriber;
@@ -53,7 +53,7 @@ namespace TwitchLib.Client
                     break;
                 case MsgIds.UnRaid:
                     RaidNotification unRaidNotification = new RaidNotification(ircMessage);
-                    OnUnRaidNotification?.Invoke(this, new OnUnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotification = unRaidNotification });
+                    OnUnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotification = unRaidNotification });
                     break;
                 case MsgIds.ReSubscription:
                     ReSubscriber resubscriber = new ReSubscriber(ircMessage, LOGGER);
