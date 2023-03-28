@@ -39,7 +39,7 @@ namespace TwitchLib.Client
         #endregion Properties public
 
 
-        #region cotr
+        #region ctor
         public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger<ITwitchClient> logger = null)
         {
             LOGGER = logger;
