@@ -152,7 +152,6 @@ namespace TwitchLib.Client
                 {
                     ChatCommand chatCommand = new ChatCommand(chatMessage);
                     OnChatCommandReceived?.Invoke(this, new OnChatCommandReceivedArgs { Command = chatCommand });
-                    return;
                 }
             }
         }
