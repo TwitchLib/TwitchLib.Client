@@ -157,3 +157,4 @@ TODO: OnConnected and OnReConnected AutoJoinChannels
 TODO: commits 2023-03-28
 TODO: 'replaced' ReadLineTest (commits 2023-03-28)
 TODO: removed `public MessageEmoteCollection ChannelEmotes => _channelEmotes;`
+TODO: OnChannelStateChanged always raises the 'complete' ChannelState
