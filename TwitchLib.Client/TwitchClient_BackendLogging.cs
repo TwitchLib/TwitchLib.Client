@@ -43,7 +43,7 @@ namespace TwitchLib.Client
             else
                 LOGGER?.LogInformation($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
 
-            OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
+            OnLog?.Invoke(this, new OnLogArgs { BotUsername = TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }
         private void LogError(string message, bool includeDate = false, bool includeTime = false)
         {
@@ -60,7 +60,7 @@ namespace TwitchLib.Client
             else
                 LOGGER?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
 
-            OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
+            OnLog?.Invoke(this, new OnLogArgs { BotUsername = TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }
         #endregion methods private
     }

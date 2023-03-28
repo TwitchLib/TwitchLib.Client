@@ -82,7 +82,7 @@ namespace TwitchLib.Client
             OutboundChatMessage twitchMessage = new OutboundChatMessage
             {
                 Channel = channel.Channel,
-                Username = ConnectionCredentials.TwitchUsername,
+                Username = TwitchUsername,
                 Message = message
             };
             if (replyToId != null)
