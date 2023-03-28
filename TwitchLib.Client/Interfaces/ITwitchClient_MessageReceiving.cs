@@ -1,6 +1,7 @@
 ﻿using System;
 
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -66,5 +67,33 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event EventHandler<OnUserIntroArgs> OnUserIntro;
         #endregion events public
+
+
+        #region methods public
+        /// <summary>
+        ///     parses the given <paramref name="ircMessage"/> and passes it to <see cref="HandleIrcMessage(IrcMessage)"/>
+        /// </summary>
+        /// <param name="ircMessage">
+        ///     raw irc-message as <see cref="String"/>
+        /// </param>
+        /// <returns>
+        ///     <see langword="false"/>, if the message was <see cref="ITwitchClient.OnUnaccountedFor"/>
+        ///     <br></br>
+        ///     <see langword="true"/> otherwise
+        /// </returns>
+        bool HandleIrcMessage(string ircMessage);
+        /// <summary>
+        ///     tries to handle the given <see cref="IrcMessage"/>
+        /// </summary>
+        /// <param name="ircMessage">
+        ///     <see cref="IrcMessage"/>
+        /// </param>
+        /// <returns>
+        ///     <see langword="false"/>, if the message was <see cref="ITwitchClient.OnUnaccountedFor"/>
+        ///     <br></br>
+        ///     <see langword="true"/> otherwise
+        /// </returns>
+        bool HandleIrcMessage(IrcMessage ircMessage);
+        #endregion methods public
     }
 }

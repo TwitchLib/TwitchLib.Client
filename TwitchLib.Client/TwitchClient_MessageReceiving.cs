@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using TwitchLib.Client.Enums;
@@ -8,11 +9,21 @@ using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
+using TwitchLib.Client.Parsers;
+using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client
 {
     public partial class TwitchClient : ITwitchClient_MessageReceiving
     {
+        #region properties private
+        private static IEnumerable<string> AuthErrorMessages { get; } =
+            new string[] { "login authentication failed",
+                           "improperly formatted auth"
+            };
+        #endregion properties private
+
+
         #region events public
         public event EventHandler<OnUserStateChangedArgs> OnUserStateChanged;
         public event EventHandler<OnMessageReceivedArgs> OnMessageReceived;
@@ -30,30 +41,34 @@ namespace TwitchLib.Client
         #endregion events public
 
 
-        #region methods private
-        private void HandleIrcMessage(IrcMessage ircMessage)
+        #region methods public
+        public bool HandleIrcMessage(string ircMessage)
         {
             LOGGER?.TraceMethodCall(GetType());
-            if (ircMessage.Message.Contains("Login authentication failed"))
+            return HandleIrcMessage(IrcParser.ParseIrcMessage(ircMessage));
+        }
+        public bool HandleIrcMessage(IrcMessage ircMessage)
+        {
+            LOGGER?.TraceMethodCall(GetType());
+            if (IsAuthError(ircMessage))
             {
                 OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
-                return;
+                return false;
             }
             switch (ircMessage.Command)
             {
                 case IrcCommand.PrivMsg:
                     HandlePrivMsg(ircMessage);
-                    return;
-                case IrcCommand.Notice:
-                    HandleNotice(ircMessage);
                     break;
+                case IrcCommand.Notice:
+                    return HandleNotice(ircMessage);
                 case IrcCommand.Ping:
                     if (!DisableAutoPong)
                         SendPONG();
-                    return;
+                    break;
                 case IrcCommand.Pong:
                     OnError?.Invoke(this, new OnErrorEventArgs() { Exception = new KeepAliveException(TwitchUsername) });
-                    return;
+                    break;
                 case IrcCommand.Join:
                     if (ircMessage.User == TwitchUsername)
                     {
@@ -116,8 +131,7 @@ namespace TwitchLib.Client
                     Reconnect();
                     break;
                 case IrcCommand.UserNotice:
-                    HandleUserNotice(ircMessage);
-                    break;
+                    return HandleUserNotice(ircMessage);
                 case IrcCommand.Mode:
                     HandleMode(ircMessage);
                     break;
@@ -129,9 +143,20 @@ namespace TwitchLib.Client
                 default:
                     OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = null, Location = "HandleIrcMessage", RawIRC = ircMessage.ToString() });
                     UnaccountedFor(ircMessage.ToString());
-                    break;
+                    return false;
             }
+            return true;
         }
+        #endregion methods public
+
+
+        #region methods private
+        private bool IsAuthError(IrcMessage ircMessage)
+        {
+            LOGGER?.TraceMethodCall(GetType());
+            return AuthErrorMessages.Contains(ircMessage.Message, StringComparer.OrdinalIgnoreCase);
+        }
+
         private void HandlePrivMsg(IrcMessage ircMessage)
         {
             LOGGER?.TraceMethodCall(GetType());

@@ -6,7 +6,6 @@ using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
-using TwitchLib.Client.Parsers;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
 
@@ -66,7 +65,7 @@ namespace TwitchLib.Client
                 OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Received, Data = line });
                 try
                 {
-                    HandleIrcMessage(IrcParser.ParseIrcMessage(line));
+                    HandleIrcMessage(line);
                 }
                 catch (Exception ex)
                 {
