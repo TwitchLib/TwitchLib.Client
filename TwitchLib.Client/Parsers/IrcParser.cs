@@ -9,7 +9,7 @@ namespace TwitchLib.Client.Parsers
     /// <summary>
     /// Class IrcParser.
     /// </summary>
-    internal static class IrcParser
+    public static class IrcParser
     {
 
         /// <summary>
