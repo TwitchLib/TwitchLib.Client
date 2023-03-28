@@ -25,7 +25,7 @@ public class IrcJsonParserTests
     //
     // --------------CMD---USER--CH--TMS--TAGS--META------------------------MSG
     [InlineData("CAP", null, null, true, "", "tmi.twitch.tv {0} * ACK", "twitch.tv/membership")]
-    [InlineData("NOTICE", null, null, true, "", "tmi.twitch.tv {0} {2}", "Login authentication failed")]
+    [InlineData("NOTICE", null, null, true, "", "tmi.twitch.tv {0} *", "Login authentication failed")]
     //
     // --------------CMD-------USER---------CH---------TMS--TAGS----META-------------------------------MSG
     [InlineData("353", "testuser", "testchannel", true, "", "{1}.tmi.twitch.tv {0} {1} = #{2}", "usera userb")]
@@ -94,7 +94,7 @@ public class IrcJsonParserTests
     [Fact]
     public void ParseTestDetailed()
     {
-        string irc = "@badge-info=subscriber/22;badges=subscriber/18,bits/1000;client-nonce=a_hash;color=#1E90FF;display-name=testuser;emote-only=1;emotes=1:0-1,8-9/555555584:4-5;first-msg=0;flags=;id=msg_id_hash;mod=0;returning-chatter=0;room-id=0;subscriber=1;tmi-sent-ts=1678800000000;turbo=0;user-id=1;user-type= :testuser!testuser@testuser.tmi.twitch.tv PRIVMSG #testchannel ::)  <3  :)";
+        string irc = "@badge-info=subscriber/22;badges=subscriber/18,bits/1000;client-nonce=a_hash;color=#1E90FF;display-name=testuser;emote-only=1;emotes=1:0-1,8-9/555555584:4-5;emote-sets=0,33,50,237,793,2126,3517,4578,5569,9400,10337,12239;first-msg=0;flags=;id=msg_id_hash;mod=0;returning-chatter=0;room-id=0;subscriber=1;tmi-sent-ts=1678800000000;turbo=0;user-id=1;user-type= :testuser!testuser@testuser.tmi.twitch.tv PRIVMSG #testchannel ::)  <3  :)";
         JObject ircMessage = IrcJsonParser.Parse(irc);
         Assert.Equal("PRIVMSG", ircMessage.Value<string>("command"));
         Assert.Equal("testuser", ircMessage.Value<string>("user"));
@@ -107,13 +107,13 @@ public class IrcJsonParserTests
         JObject? tags = (JObject?) ircMessage["tags"];
         Assert.NotNull(tags);
         Assert.NotNull(tags.Properties());
-        Assert.Equal(18, tags.Properties().Count());
+        Assert.Equal(19, tags.Properties().Count());
         Assert.Equal("a_hash", tags.Value<string>("client-nonce"));
         Assert.Equal("#1E90FF", tags.Value<string>("color"));
         Assert.Equal("testuser", tags.Value<string>("display-name"));
         Assert.Equal("1", tags.Value<string>("emote-only"));
         Assert.Equal("0", tags.Value<string>("first-msg"));
-        Assert.Equal("", tags.Value<string>("flags"));
+        Assert.Null(tags.Value<string>("flags"));
         Assert.Equal("msg_id_hash", tags.Value<string>("id"));
         Assert.Equal("0", tags.Value<string>("mod"));
         Assert.Equal("0", tags.Value<string>("returning-chatter"));
@@ -122,7 +122,7 @@ public class IrcJsonParserTests
         Assert.Equal("1678800000000", tags.Value<string>("tmi-sent-ts"));
         Assert.Equal("0", tags.Value<string>("turbo"));
         Assert.Equal("1", tags.Value<string>("user-id"));
-        Assert.Equal("", tags.Value<string>("user-type"));
+        Assert.Equal(null, tags.Value<string>("user-type"));
         //
         Assert.NotNull(tags["badge-info"]);
         Assert.IsType<JObject>(tags["badge-info"]);
@@ -171,6 +171,14 @@ public class IrcJsonParserTests
         Assert.Equal("4", emoteB[0].Value<string>("from"));
         Assert.Equal("5", emoteB[0].Value<string>("to"));
         //
+        Assert.NotNull(tags["emote-sets"]);
+        Assert.IsType<JArray>(tags["emote-sets"]);
+        JArray? emoteSets = tags.Value<JArray>("emote-sets");
+        Assert.NotNull(emoteSets);
+        int[] emoteSetIds = new int[] { 0, 33, 50, 237, 793, 2126, 3517, 4578, 5569, 9400, 10337, 12239 };
+        Assert.Equal(emoteSetIds.Length, emoteSets.Count);
+        Assert.Equal(emoteSetIds, emoteSets.Values<int>());
+
     }
     private static string? Format(string stringToFormat, string cmd, string user, string channel)
     {

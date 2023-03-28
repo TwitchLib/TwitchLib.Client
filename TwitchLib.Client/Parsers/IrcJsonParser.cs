@@ -25,13 +25,16 @@ namespace TwitchLib.Client.Parsers {
         ///     </code>
         ///     <br></br>
         ///     <br></br>
-        ///     only emote-indices are <see cref="JArray"/>s of <see cref="JObject"/>s having <see langword="from"/> and <see langword="to"/> as <see cref="JProperty"/>s
+        ///     emote-indices are <see cref="JArray"/>s of <see cref="JObject"/>s having <see langword="from"/> and <see langword="to"/> as <see cref="JProperty"/>s
         ///     <code>
         ///         ircObject.Value&lt;JObject&gt;("tags").Value&lt;JObject&gt;("emotes").Value&lt;JArray&gt;("2")
         ///     </code>
         ///     <br></br>
         ///     <br></br>
-        ///     tags, that are present within the raw irc, but have no value return an empty <see langword="string"/>
+        ///     emote-sets is an <see cref="JArray"/> of <see cref="JValue"/>s; each <see cref="JValue"/> represents one ID of an emote-set
+        ///     <br></br>
+        ///     <br></br>
+        ///     tags, that are present within the raw irc, but have no value return <see langword="null"/>
         ///     <br></br>
         ///     <br></br>
         ///     example:
@@ -68,6 +71,10 @@ namespace TwitchLib.Client.Parsers {
         ///                     }
         ///                 ]
         ///             },
+        ///             "emote-sets": [
+        ///                 "id 1",
+        ///                 "id 2"
+        ///             ]
         ///             "some tag name": "some tag value"
         ///         }
         ///     }
@@ -95,37 +102,49 @@ namespace TwitchLib.Client.Parsers {
                 ircObject.Add(nameof(message), new JValue(message));
             }
             if (hasTags) {
-                string tagPart = messageParts[0].Substring(1);
-
-                JObject tagObject = new JObject();
-
-                string[] tags = tagPart.Split(';');
-                foreach (string tag in tags) {
-                    string[] keyValue = tag.Split('=');
-
-                    string key = keyValue[0];
-                    string value = keyValue[1];
-                    JToken tagValue = new JValue("");
-                    if (String.Equals("emotes", key)) {
-                        if (!value.IsNullOrEmptyOrWhitespace()) {
-                            tagValue = GetEmotes(value);
-                        }
-                    } else if (key.StartsWith("badge")) {
-                        if (!value.IsNullOrEmptyOrWhitespace()) {
-                            tagValue = GetBadgeStuff(value);
-                        }
-                    } else {
-                        tagValue = new JValue(value);
-                    }
-
-                    tagObject.Add(key, tagValue);
-                }
-
+                JObject tagObject = GetTags(messageParts);
                 ircObject.Add("tags", tagObject);
             }
 
             ircObject.Add(nameof(irc), irc);
             return ircObject;
+        }
+
+        private static JObject GetTags(string[] messageParts) {
+            string tagPart = messageParts[0].Substring(1);
+            JObject tagObject = new JObject();
+            string[] tags = tagPart.Split(';');
+            foreach (string tag in tags) {
+                string[] keyValue = tag.Split('=');
+                string key = keyValue[0];
+                string value = keyValue[1];
+                JToken tagValue = null;
+                if (!value.IsNullOrEmptyOrWhitespace()) {
+                    tagValue = GetTagValue(key, value);
+                }
+                tagObject.Add(key, tagValue);
+            }
+            return tagObject;
+        }
+
+        private static JToken GetTagValue(string key, string value) {
+            if (String.Equals("emotes", key)) {
+                return GetEmotes(value);
+            } else if (String.Equals("emote-sets", key)) {
+                return GetEmoteSets(value);
+            } else if (key.StartsWith("badge")) {
+                return GetBadgeStuff(value);
+            }
+            return new JValue(value);
+        }
+
+        private static JToken GetEmoteSets(string value) {
+            JArray emoteSets = new JArray();
+            string[] emoteSetIds = value.Split(',');
+            foreach (string emoteSetId in emoteSetIds) {
+                emoteSets.Add(new JValue(emoteSetId));
+            }
+            return emoteSets;
         }
 
         private static string GetMessage(string[] messageParts, bool hasTags) {
