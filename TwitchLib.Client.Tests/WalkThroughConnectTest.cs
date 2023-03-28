@@ -56,9 +56,10 @@ namespace TwitchLib.Client.Tests
             //
             IClient communicationClient = mock.Object;
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>(GetType());
-            ITwitchClient twitchClient = new TwitchClient(communicationClient, logger: logger);
             ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
-            twitchClient.Initialize(connectionCredentials, TWITCH_CHANNEL);
+            ITwitchClient twitchClient = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(mock, true);
+            twitchClient.JoinChannel(TWITCH_CHANNEL);
             {
                 // check OnConnected and AutoJoin
                 //

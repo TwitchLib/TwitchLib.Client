@@ -51,7 +51,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(mock, true);
             ManualResetEvent pauseCheckJOIN = new ManualResetEvent(false);
             Assert.RaisedEvent<OnUserStateChangedArgs> assertionInitial = Assert.Raises<OnUserStateChangedArgs>(
                     h => client.OnUserStateChanged += h,
@@ -59,7 +61,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnUserStateChanged += (sender, args) => Assert.True(pauseCheckJOIN.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth), TWITCH_CHANNEL);
+                        client.JoinChannel(TWITCH_CHANNEL);
                         client.Connect();
                         // lets give the ITwitchClient some time to handle auth and autojoin ...
                         Task.Delay(2000).GetAwaiter().GetResult();
@@ -119,7 +121,8 @@ namespace TwitchLib.Client.Tests
 
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnMessageThrottledEventArgs> assertion = Assert.Raises<OnMessageThrottledEventArgs>(
                     h => client.OnMessageThrottled += h,
@@ -127,7 +130,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnMessageThrottled += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         communicationClient.Send(messageNotSent);
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });

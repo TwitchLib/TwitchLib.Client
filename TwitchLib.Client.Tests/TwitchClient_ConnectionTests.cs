@@ -45,7 +45,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(mock, true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnConnectedArgs> assertion = Assert.Raises<OnConnectedArgs>(
                     h => client.OnConnected += h,
@@ -53,7 +55,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnConnected += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         Assert.True(client.Connect());
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
@@ -76,7 +77,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnConnectedArgs> assertion = Assert.Raises<OnConnectedArgs>(
                     h => client.OnConnected += h,
@@ -84,7 +87,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnConnected += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -108,7 +110,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             try
             {
@@ -117,7 +121,6 @@ namespace TwitchLib.Client.Tests
                         h => client.OnConnected -= h,
                         () =>
                         {
-                            client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                             // send is our trigger, to make the IClient-Mock raise OnMessage!
                             Assert.True(communicationClient.Send(String.Empty));
                             // we dont need to wait to long, we expect it to fail
@@ -138,7 +141,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnDisconnectedArgs> assertion = Assert.Raises<OnDisconnectedArgs>(
                     h => client.OnDisconnected += h,
@@ -146,7 +151,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnDisconnected += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         client.Disconnect();
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
@@ -154,14 +158,17 @@ namespace TwitchLib.Client.Tests
             Assert.NotNull(assertion.Arguments.BotUsername);
             Assert.Equal(TWITCH_Username, assertion.Arguments.BotUsername);
         }
-        [Fact]
-        public void TwitchClient_Raises_OnIncorrectLogin()
+        [Theory]
+        [InlineData(":tmi.twitch.tv NOTICE * :Login authentication failed")]
+        [InlineData(":tmi.twitch.tv NOTICE * :Improperly formatted auth")]
+        public void TwitchClient_Raises_OnIncorrectLogin(string message)
         {
-            string message = ":tmi.twitch.tv NOTICE * :Login authentication failed";
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnIncorrectLoginArgs> assertion = Assert.Raises<OnIncorrectLoginArgs>(
                     h => client.OnIncorrectLogin += h,
@@ -169,7 +176,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnIncorrectLogin += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -188,7 +194,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(mock, true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnConnectionErrorArgs> assertion = Assert.Raises<OnConnectionErrorArgs>(
                     h => client.OnConnectionError += h,
@@ -196,7 +204,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnConnectionError += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         communicationClient.Send(String.Empty);
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
@@ -219,7 +226,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(mock, true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnConnectedArgs> assertion = Assert.Raises<OnConnectedArgs>(
                     h => client.OnReconnected += h,
@@ -227,7 +236,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnReconnected += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // first connect, to get ConnectionStateManager in correct state
                         client.Connect();
                         client.Reconnect();

@@ -29,7 +29,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnMessageReceivedArgs> assertion = Assert.Raises<OnMessageReceivedArgs>(
                     h => client.OnMessageReceived += h,
@@ -37,7 +39,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnMessageReceived += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -63,7 +64,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             try
             {
@@ -72,7 +75,6 @@ namespace TwitchLib.Client.Tests
                         h => client.OnMessageReceived -= h,
                         () =>
                         {
-                            client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                             // send is our trigger, to make the IClient-Mock raise OnMessage!
                             Assert.True(communicationClient.Send(String.Empty));
                             // we dont need to wait so long as `WaitOneDuration` specifies
@@ -101,7 +103,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(mock, true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnUserStateChangedArgs> assertion = Assert.Raises<OnUserStateChangedArgs>(
                     h => client.OnUserStateChanged += h,
@@ -109,7 +113,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnUserStateChanged += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth), TWITCH_CHANNEL);
+                        client.JoinChannel(TWITCH_CHANNEL);
                         client.Connect();
                         // lets wait a moment, otherwise it goes too fast...
                         Task.Delay(2000).GetAwaiter().GetResult();
@@ -129,7 +133,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnChatCommandReceivedArgs> assertion = Assert.Raises<OnChatCommandReceivedArgs>(
                     h => client.OnChatCommandReceived += h,
@@ -137,7 +143,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnChatCommandReceived += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -169,7 +174,9 @@ namespace TwitchLib.Client.Tests
 
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnUserJoinedArgs> assertion = Assert.Raises<OnUserJoinedArgs>(
                     h => client.OnUserJoined += h,
@@ -177,7 +184,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnUserJoined += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
                         communicationClient.Send(String.Empty);
                         // trigger the client to raise OnMessage ...
@@ -197,7 +203,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger); IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnUserLeftArgs> assertion = Assert.Raises<OnUserLeftArgs>(
                     h => client.OnUserLeft += h,
@@ -205,7 +213,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnUserLeft += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -224,7 +231,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnModeratorJoinedArgs> assertion = Assert.Raises<OnModeratorJoinedArgs>(
                     h => client.OnModeratorJoined += h,
@@ -232,7 +241,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnModeratorJoined += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -251,7 +259,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnModeratorLeftArgs> assertion = Assert.Raises<OnModeratorLeftArgs>(
                     h => client.OnModeratorLeft += h,
@@ -259,7 +269,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnModeratorLeft += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -277,7 +286,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnMessageClearedArgs> assertion = Assert.Raises<OnMessageClearedArgs>(
                     h => client.OnMessageCleared += h,
@@ -285,7 +296,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnMessageCleared += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -308,7 +318,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnExistingUsersDetectedArgs> assertion = Assert.Raises<OnExistingUsersDetectedArgs>(
                     h => client.OnExistingUsersDetected += h,
@@ -316,7 +328,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnExistingUsersDetected += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -336,7 +347,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnChatClearedArgs> assertion = Assert.Raises<OnChatClearedArgs>(
                     h => client.OnChatCleared += h,
@@ -344,7 +357,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnChatCleared += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -360,7 +372,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnUserTimedoutArgs> assertion = Assert.Raises<OnUserTimedoutArgs>(
                     h => client.OnUserTimedout += h,
@@ -368,7 +382,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnUserTimedout += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -385,7 +398,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnUserBannedArgs> assertion = Assert.Raises<OnUserBannedArgs>(
                     h => client.OnUserBanned += h,
@@ -393,7 +408,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnUserBanned += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
@@ -410,7 +424,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(Mock.Get(communicationClient), true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnUserIntroArgs> assertion = Assert.Raises<OnUserIntroArgs>(
                     h => client.OnUserIntro += h,
@@ -418,7 +434,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnUserIntro += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
                         Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));

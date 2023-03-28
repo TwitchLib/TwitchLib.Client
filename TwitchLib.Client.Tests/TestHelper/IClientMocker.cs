@@ -55,7 +55,7 @@ namespace TwitchLib.Client.Tests.TestHelper
         {
             Mock<IClient> mock = new Mock<IClient>();
             //
-            mock.Setup(c => c.IsConnected).Returns(true);
+            SetIsConnected(mock, false);
             mock.Setup(c => c.Options).Returns(new ClientOptions());
             //
             mock.SetupAdd(c => c.OnConnected += It.IsAny<EventHandler<OnConnectedEventArgs>>());
@@ -168,6 +168,10 @@ namespace TwitchLib.Client.Tests.TestHelper
                 .Setup(c => c.Send(It.IsAny<string>()))
                 .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = messageLogin });
+        }
+        public static void SetIsConnected(Mock<IClient> mock, bool isConnected)
+        {
+            mock.Setup(c => c.IsConnected).Returns(isConnected);
         }
     }
 }

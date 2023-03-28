@@ -28,7 +28,7 @@ namespace TwitchLib.Client.Tests.Models
         [InlineData("botusername", "botusername", 1)]
         public void UserState_And_SentMessage_Test(string botusername, string senderUsername, int expectedSize)
         {
-            ITwitchClient client = new TwitchClient();
+            ITwitchClient client = new TwitchClient(new ConnectionCredentials(botusername, "testoauth"));
             JoinedChannel joinedChannel = new JoinedChannel(Channel, botusername);
             ChatMessage chatMessage = GetChatMessage(senderUsername);
             joinedChannel.HandlePRIVMSG(chatMessage);

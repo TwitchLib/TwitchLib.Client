@@ -19,7 +19,7 @@ namespace TwitchLib.Client.Tests.Helpers
         {
             string message = "unused but needed";
             IClient communicationClient = IClientMocker.GetMessageRaisingICLient(message);
-            ITwitchClient client = new TwitchClient(communicationClient);
+            ITwitchClient client = new TwitchClient(new ConnectionCredentials("testusername", "testoauth"), communicationClient);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnConnectedArgs> assertion = Assert.Raises<OnConnectedArgs>(
                     h => client.OnConnected += h,
@@ -27,7 +27,6 @@ namespace TwitchLib.Client.Tests.Helpers
                     () =>
                     {
                         client.OnConnected += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials("testusername", "testoauth"));
                         RaiseEventHelper.RaiseEvent(client, nameof(client.OnConnected), new OnConnectedArgs());
                         Assert.True(pauseCheck.WaitOne(5_000));
                     });

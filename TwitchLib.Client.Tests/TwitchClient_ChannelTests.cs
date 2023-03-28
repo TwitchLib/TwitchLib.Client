@@ -44,7 +44,9 @@ namespace TwitchLib.Client.Tests
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(mock, true);
             ManualResetEvent pauseCheckInitial = new ManualResetEvent(false);
             Assert.RaisedEvent<OnChannelStateChangedArgs> assertionInitial = Assert.Raises<OnChannelStateChangedArgs>(
                     h => client.OnChannelStateChanged += h,
@@ -52,7 +54,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnChannelStateChanged += (sender, args) => Assert.True(pauseCheckInitial.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth), TWITCH_CHANNEL);
+                        client.JoinChannel(TWITCH_CHANNEL);
                         client.Connect();
                         // lets give the ITwitchClient some time to handle auth and autojoin ...
                         Task.Delay(2000).GetAwaiter().GetResult();
@@ -116,7 +118,8 @@ namespace TwitchLib.Client.Tests
 
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnFailureToReceiveJoinConfirmationArgs> assertion = Assert.Raises<OnFailureToReceiveJoinConfirmationArgs>(
                     h => client.OnFailureToReceiveJoinConfirmation += h,
@@ -124,7 +127,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnFailureToReceiveJoinConfirmation += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
                         communicationClient.Send(String.Empty);
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
@@ -140,7 +142,6 @@ namespace TwitchLib.Client.Tests
         public void TwitchClient_Raises_OnJoinedChannel()
         {
             Mock<IClient> mock = new Mock<IClient>();
-            mock.Setup(c => c.IsConnected).Returns(true);
             mock.SetupAdd(c => c.OnMessage += It.IsAny<EventHandler<OnMessageEventArgs>>());
             MockSequence sequence = new MockSequence();
             // to make the ITwitchClient call ChannelManager.Start()
@@ -160,7 +161,9 @@ namespace TwitchLib.Client.Tests
 
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(mock, true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnJoinedChannelArgs> assertion = Assert.Raises<OnJoinedChannelArgs>(
                     h => client.OnJoinedChannel += h,
@@ -168,7 +171,6 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnJoinedChannel += (sender, args) => Assert.True(pauseCheck.Set());
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
                         communicationClient.Send(String.Empty);
                         client.JoinChannel(TWITCH_CHANNEL);
@@ -183,7 +185,6 @@ namespace TwitchLib.Client.Tests
         public void TwitchClient_Raises_OnLeftChannel()
         {
             Mock<IClient> mock = new Mock<IClient>();
-            mock.Setup(c => c.IsConnected).Returns(true);
             mock.SetupAdd(c => c.OnMessage += It.IsAny<EventHandler<OnMessageEventArgs>>());
             MockSequence sequence = new MockSequence();
             // to make the ITwitchClient call ChannelManager.Start()
@@ -209,7 +210,9 @@ namespace TwitchLib.Client.Tests
 
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
-            ITwitchClient client = new TwitchClient(communicationClient, logger: logger);
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(connectionCredentials, communicationClient, logger: logger);
+            IClientMocker.SetIsConnected(mock, true);
             ManualResetEvent pauseCheck = new ManualResetEvent(false);
             Assert.RaisedEvent<OnLeftChannelArgs> assertion = Assert.Raises<OnLeftChannelArgs>(
                     h => client.OnLeftChannel += h,
@@ -218,8 +221,6 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnJoinedChannel += (sender, args) => client.LeaveChannel(TWITCH_CHANNEL);
                         client.OnLeftChannel += (sender, args) => Assert.True(pauseCheck.Set());
-
-                        client.Initialize(new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth));
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
                         communicationClient.Send(String.Empty);
                         client.JoinChannel(TWITCH_CHANNEL);
