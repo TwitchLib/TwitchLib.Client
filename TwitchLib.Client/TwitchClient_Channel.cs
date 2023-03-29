@@ -37,7 +37,6 @@ namespace TwitchLib.Client
         public void JoinChannel(string channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
-            if (!IsConnected) HandleNotConnected();
             ChannelManager.JoinChannel(channel);
         }
         public JoinedChannel GetJoinedChannel(string channel)
