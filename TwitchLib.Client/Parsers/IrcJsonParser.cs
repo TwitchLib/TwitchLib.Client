@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using Newtonsoft.Json.Linq;
 
@@ -15,7 +17,6 @@ namespace TwitchLib.Client.Parsers {
         /// <returns>
         ///     for easier access, almost everything is a <see cref="JObject"/> having <see cref="JObject"/>s as <see cref="JProperty"/>s
         ///     <br></br>
-        ///     <br></br>
         ///     <see cref="JObject.Properties()"/> are <see cref="IJEnumerable{T}"/> and can be accessed by their names, too, eg.:
         ///     <code>
         ///         ircObject["command"]
@@ -24,22 +25,19 @@ namespace TwitchLib.Client.Parsers {
         ///         ircObject.Value&lt;string&gt;("command")
         ///     </code>
         ///     <br></br>
-        ///     <br></br>
         ///     emote-indices are <see cref="JArray"/>s of <see cref="JObject"/>s having <see langword="from"/> and <see langword="to"/> as <see cref="JProperty"/>s
         ///     <code>
         ///         ircObject.Value&lt;JObject&gt;("tags").Value&lt;JObject&gt;("emotes").Value&lt;JArray&gt;("2")
         ///     </code>
         ///     <br></br>
+        ///     emotes has a property called "orderedIndexObjects" that contains all emote-indices ordered ascending by "from"-index
         ///     <br></br>
         ///     emote-sets is an <see cref="JArray"/> of <see cref="JValue"/>s; each <see cref="JValue"/> represents one ID of an emote-set
         ///     <br></br>
-        ///     <br></br>
         ///     tags, that are present within the raw irc, but have no value return <see langword="null"/>
         ///     <br></br>
-        ///     <br></br>
         ///     example:
-        ///     <code>
-        ///     {
+        ///     <code>{
         ///         "command": "irc command",
         ///         "user": "user-login",
         ///         "channel": "channel-name",
@@ -54,26 +52,46 @@ namespace TwitchLib.Client.Parsers {
         ///                 "bits": "1000"
         ///             },
         ///             "emotes": {
-        ///                 "id of an emote, eg 1": [
-        ///                     {
-        ///                         "from": "1",
-        ///                         "to": "2"
-        ///                     }
-        ///                 ],
-        ///                 "id of an emote, eg 2": [
-        ///                     {
+        ///                 "id of an emote, eg 1": [ {
+        ///                         "id": "id of an emote, eg 1",
+        ///                         "name": "name of an emote, eg '&lt;3'",
         ///                         "from": "4",
         ///                         "to": "5"
-        ///                     },
-        ///                     {
+        ///                     }
+        ///                 ],
+        ///                 "id of an emote, eg 2": [ {
+        ///                         "id": "id of an emote, eg 2",
+        ///                         "name": "name of an emote, eg ':)'",
+        ///                         "from": "1",
+        ///                         "to": "2"
+        ///                     }, {
+        ///                         "id": "id of an emote, eg 2",
+        ///                         "name": "name of an emote, eg ':)'",
+        ///                         "from": "7",
+        ///                         "to": "8"
+        ///                     }
+        ///                 ],
+        ///                 "orderedIndexObjects": [ {
+        ///                         "id": "id of an emote, eg 2",
+        ///                         "name": "name of an emote, eg ':)'",
+        ///                         "from": "1",
+        ///                         "to": "2"
+        ///                     }, {
+        ///                         "id": "id of an emote, eg 1",
+        ///                         "name": "name of an emote, eg '&lt;3'",
+        ///                         "from": "4",
+        ///                         "to": "5"
+        ///                     }, {
+        ///                         "id": "id of an emote, eg 2"
+        ///                         "name": "name of an emote, eg ':)'",
         ///                         "from": "7",
         ///                         "to": "8"
         ///                     }
         ///                 ]
         ///             },
         ///             "emote-sets": [
-        ///                 "id 1",
-        ///                 "id 2"
+        ///                 "id of an emote-set, eg 1",
+        ///                 "id of an emote-set, eg 2"
         ///             ]
         ///             "some tag name": "some tag value"
         ///         }
@@ -102,7 +120,9 @@ namespace TwitchLib.Client.Parsers {
                 ircObject.Add(nameof(message), new JValue(message));
             }
             if (hasTags) {
-                JObject tagObject = GetTags(messageParts);
+                // substring, to get rid of @-sign at the beginning
+                string tagPart = messageParts[0].Substring(1);
+                JObject tagObject = GetTags(tagPart, message);
                 ircObject.Add("tags", tagObject);
             }
 
@@ -110,8 +130,21 @@ namespace TwitchLib.Client.Parsers {
             return ircObject;
         }
 
-        private static JObject GetTags(string[] messageParts) {
-            string tagPart = messageParts[0].Substring(1);
+        /// <summary>
+        ///     handles the tags of an irc-message
+        /// </summary>
+        /// <param name="tagPart">
+        ///     that part of an raw irc-message, that starts with @-sign
+        ///     <br></br>
+        ///     @-sign should be removed before calling this method!
+        /// </param>
+        /// <param name="message">
+        ///     the users message
+        /// </param>
+        /// <returns>
+        ///     <see cref="JObject"/>
+        /// </returns>
+        private static JObject GetTags(string tagPart, string message) {
             JObject tagObject = new JObject();
             string[] tags = tagPart.Split(';');
             foreach (string tag in tags) {
@@ -120,16 +153,41 @@ namespace TwitchLib.Client.Parsers {
                 string value = keyValue[1];
                 JToken tagValue = null;
                 if (!value.IsNullOrEmptyOrWhitespace()) {
-                    tagValue = GetTagValue(key, value);
+                    tagValue = GetTagValue(key, value, message);
                 }
                 tagObject.Add(key, tagValue);
             }
             return tagObject;
         }
 
-        private static JToken GetTagValue(string key, string value) {
+        /// <summary>
+        ///     handles a tag and its value
+        ///     <code>
+        ///         emotes=1:0-1,8-9/555555584:4-5
+        ///     </code>
+        /// </summary>
+        /// <param name="key">
+        ///     eg
+        ///     <code>
+        ///         emotes
+        ///     </code>
+        /// </param>
+        /// <param name="value">
+        ///     eg
+        ///     <code>
+        ///         1:0-1,8-9/555555584:4-5
+        ///     </code>
+        /// </param>
+        /// <param name="message">
+        ///     eg
+        ///     <code>
+        ///         :) &lt;3 :)
+        ///     </code>
+        /// </param>
+        /// <returns></returns>
+        private static JToken GetTagValue(string key, string value, string message) {
             if (String.Equals("emotes", key)) {
-                return GetEmotes(value);
+                return GetEmotes(value, message);
             } else if (String.Equals("emote-sets", key)) {
                 return GetEmoteSets(value);
             } else if (key.StartsWith("badge")) {
@@ -209,10 +267,28 @@ namespace TwitchLib.Client.Parsers {
             return meta.Split(' ')[1];
         }
 
-        private static JToken GetEmotes(string value) {
-            //emotes
-            //=
-            //1:0-1,8-9/555555584:4-5;
+        /// <summary>
+        ///     handles the emotes-tags value
+        /// </summary>
+        /// <param name="value">
+        ///     tag-value
+        ///     <br></br>
+        ///     for
+        ///     <code>emotes=1:0-1,8-9/555555584:4-5</code>
+        ///     it would be
+        ///     <code>1:0-1,8-9/555555584:4-5</code>
+        /// </param>
+        /// <param name="message">
+        ///     the users message
+        /// </param>
+        /// <returns>
+        ///     <see cref="JToken"/>
+        /// </returns>
+        private static JToken GetEmotes(string value, string message) {
+            //
+            // collect all index objects to easily replace emotes within message
+            IList<JToken> indexObjects = new List<JToken>();
+
             JObject emotesObject = new JObject();
             string[] entries = value.Split('/');
             foreach (string entry in entries) {
@@ -223,12 +299,33 @@ namespace TwitchLib.Client.Parsers {
                 foreach (string index in indices) {
                     JObject indexObject = new JObject();
                     string[] fromTo = index.Split('-');
-                    indexObject.Add("from", fromTo[0]);
-                    indexObject.Add("to", fromTo[1]);
+                    bool fromParsed = Int32.TryParse(fromTo[0], out int fromIndex);
+                    bool toParsed = Int32.TryParse(fromTo[1], out int toIndex);
+                    // indexObject also gets the emote-id,
+                    // to easily replace emotes within message
+                    indexObject.Add("id", id);
+                    if (fromParsed && toParsed) {
+                        int emoteNameLength = toIndex - fromIndex + 1;
+                        string name = message.Substring(fromIndex, emoteNameLength);
+                        indexObject.Add(nameof(name), name);
+                        // if it got parsed,
+                        // use parsed values
+                        indexObject.Add("from", fromIndex);
+                        indexObject.Add("to", toIndex);
+                    } else {
+                        // if its not parsed,
+                        // use raw values
+                        indexObject.Add("from", fromTo[0]);
+                        indexObject.Add("to", fromTo[1]);
+                    }
+                    indexObjects.Add(indexObject);
                     indiceArray.Add(indexObject);
                 }
                 emotesObject.Add(id, indiceArray);
             }
+            // order indexObjects by from-index to easily replace emotes within message
+            IOrderedEnumerable<JToken> orderedIndexObjects = indexObjects.OrderBy(indexObject => indexObject["from"]);
+            emotesObject.Add(nameof(orderedIndexObjects), new JArray(orderedIndexObjects));
             return emotesObject;
         }
 

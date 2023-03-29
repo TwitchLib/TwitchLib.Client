@@ -11,8 +11,7 @@ using Xunit;
 
 namespace TwitchLib.Client.Tests.Parsers;
 
-public class IrcJsonParserTests
-{
+public class IrcJsonParserTests {
     [Theory]
     // --------------CMD-----USER-------CH---TMS--TAGS--META-------------------MSG
     [InlineData("001", "testuser", null, true, "", "tmi.twitch.tv {0} {1}", "Welcome, GLHF!")]
@@ -61,20 +60,17 @@ public class IrcJsonParserTests
     [InlineData("PRIVMSG", "testuser", "testchannel", true, "@badge-info=subscriber/36;badges=broadcaster/1,subscriber/3036,sub-gifter/5;client-nonce=hash;color=#B22222;display-name={1};emote-only=1;emotes=1:0-1;first-msg=0;flags=;id=some_msg_id_hash;mod=0;returning-chatter=0;room-id=0;subscriber=1;tmi-sent-ts=1;turbo=0;user-id=1;user-type=", "{1}!{1}@{1}.tmi.twitch.tv {0} #{2}", ":)")]
     [InlineData("ROOMSTATE", null, "testchannel", true, "@emote-only=0;followers-only=0;r9k=0;room-id=1;slow=0;subs-only=0", "tmi.twitch.tv {0} #{2}", null)]
     [InlineData("USERNOTICE", "testuser", "testchannel", true, "@badge-info=;badges=;color=#FF0000;display-name={1};emotes=;flags=;id=some_msg_id_hash;login={1};mod=0;msg-id=resub;msg-param-cumulative-months=5;msg-param-months=0;msg-param-multimonth-duration=0;msg-param-multimonth-tenure=0;msg-param-should-share-streak=1;msg-param-streak-months=1;msg-param-sub-plan-name=bla;msg-param-sub-plan=1000;msg-param-was-gifted=false;room-id=0;subscriber=1;system-msg={1}\\ssubscribed\\sat\\sTier\\s1.\\sThey've\\ssubscribed\\sfor\\s5\\smonths,\\scurrently\\son\\sa\\s1\\smonth\\sstreak!;tmi-sent-ts=1;user-id=0;user-type=", "tmi.twitch.tv {0} #{2}", null)]
-    public void ParseTest(string cmd, string user, string channel, bool tagMetaSeperator, string tags, string meta, string message)
-    {
+    public void ParseTest(string cmd, string user, string channel, bool tagMetaSeperator, string tags, string meta, string message) {
         string? tagsPart = Format(tags, cmd, user, channel);
         string? metaPart = Format(meta, cmd, user, channel);
         string? messagePart = Format(message, cmd, user, channel);
         StringBuilder ircBuilder = new StringBuilder();
         ircBuilder.Append(tagsPart);
-        if (tagMetaSeperator)
-        {
+        if (tagMetaSeperator) {
             ircBuilder.Append(" :");
         }
         ircBuilder.Append(metaPart);
-        if (!messagePart.IsNullOrEmptyOrWhitespace())
-        {
+        if (!messagePart.IsNullOrEmptyOrWhitespace()) {
             ircBuilder.Append(" :");
             ircBuilder.Append(messagePart);
         }
@@ -84,16 +80,14 @@ public class IrcJsonParserTests
         Assert.Equal(cmd, ircMessage.Value<string>("command"));
         Assert.Equal(irc, ircMessage.Value<string>("irc"));
         Assert.Equal(channel, ircMessage.Value<string>("channel"));
-        if (meta.Contains("{1}"))
-        {
+        if (meta.Contains("{1}")) {
             Assert.Equal(user, ircMessage.Value<string>("user"));
         }
         Assert.Equal(messagePart, ircMessage.Value<string>("message"));
 
     }
     [Fact]
-    public void ParseTestDetailed()
-    {
+    public void ParseTestDetailed() {
         string irc = "@badge-info=subscriber/22;badges=subscriber/18,bits/1000;client-nonce=a_hash;color=#1E90FF;display-name=testuser;emote-only=1;emotes=1:0-1,8-9/555555584:4-5;emote-sets=0,33,50,237,793,2126,3517,4578,5569,9400,10337,12239;first-msg=0;flags=;id=msg_id_hash;mod=0;returning-chatter=0;room-id=0;subscriber=1;tmi-sent-ts=1678800000000;turbo=0;user-id=1;user-type= :testuser!testuser@testuser.tmi.twitch.tv PRIVMSG #testchannel ::)  <3  :)";
         JObject ircMessage = IrcJsonParser.Parse(irc);
         Assert.Equal("PRIVMSG", ircMessage.Value<string>("command"));
@@ -122,7 +116,7 @@ public class IrcJsonParserTests
         Assert.Equal("1678800000000", tags.Value<string>("tmi-sent-ts"));
         Assert.Equal("0", tags.Value<string>("turbo"));
         Assert.Equal("1", tags.Value<string>("user-id"));
-        Assert.Equal(null, tags.Value<string>("user-type"));
+        Assert.Null(tags.Value<string>("user-type"));
         //
         Assert.NotNull(tags["badge-info"]);
         Assert.IsType<JObject>(tags["badge-info"]);
@@ -146,30 +140,39 @@ public class IrcJsonParserTests
         JObject? emotes = (JObject?) tags["emotes"];
         Assert.NotNull(emotes);
         Assert.NotNull(emotes.Properties());
-        Assert.Equal(2, emotes.Properties().Count());
+        Assert.Equal(3, emotes.Properties().Count());
+        //
         // emote-id 1
-        Assert.IsType<JArray>(emotes["1"]);
-        JArray? emoteA = (JArray?) emotes["1"];
-        Assert.NotNull(emoteA);
-        Assert.Equal(2, emoteA.Count());
-        foreach (JToken indexToken in emoteA)
-        {
-            JObject index = (JObject) indexToken;
-            if (String.Equals("0", index.Value<string>("from")))
-            {
-                Assert.Equal("1", index.Value<string>("to"));
-                continue;
-            }
-            Assert.Equal("8", index.Value<string>("from"));
-            Assert.Equal("9", index.Value<string>("to"));
-        }
+        string idA = "1";
+        string nameA = ":)";
+        this.CheckEmoteObject(emotes,
+                         idA,
+                         new[] { idA, idA },
+                         new[] { nameA, nameA },
+                         new[] { "0", "8" },
+                         new[] { "1", "9" });
+        //
         // emote-id 555555584
-        Assert.IsType<JArray>(emotes["555555584"]);
-        JArray? emoteB = (JArray?) emotes["555555584"];
-        Assert.NotNull(emoteB);
-        Assert.Single(emoteB);
-        Assert.Equal("4", emoteB[0].Value<string>("from"));
-        Assert.Equal("5", emoteB[0].Value<string>("to"));
+        string idB = "555555584";
+        string nameB = "<3";
+        this.CheckEmoteObject(emotes,
+                         idB,
+                         new[] { idB },
+                         new[] { nameB },
+                         new[] { "4" },
+                         new[] { "5" });
+        //
+        string orderedIndexObjectsPropertyName = "orderedIndexObjects";
+        Assert.IsType<JArray>(emotes[orderedIndexObjectsPropertyName]);
+        JArray? orderedIndexObjects = emotes.Value<JArray>(orderedIndexObjectsPropertyName);
+        Assert.NotNull(orderedIndexObjects);
+        Assert.Equal(3, orderedIndexObjects.Count);
+        this.CheckEmoteObject(emotes,
+                         orderedIndexObjectsPropertyName,
+                         new[] { "1", "555555584", "1" },
+                         new[] { ":)", "<3", ":)" },
+                         new[] { "0", "4", "8" },
+                         new[] { "1", "5", "9" });
         //
         Assert.NotNull(tags["emote-sets"]);
         Assert.IsType<JArray>(tags["emote-sets"]);
@@ -180,10 +183,49 @@ public class IrcJsonParserTests
         Assert.Equal(emoteSetIds, emoteSets.Values<int>());
 
     }
-    private static string? Format(string stringToFormat, string cmd, string user, string channel)
-    {
-        if (stringToFormat == null)
-        {
+
+    /// <param name="emotes">
+    ///     emotes-object
+    /// </param>
+    /// <param name="propertyName">
+    ///     expected id of the emote or "orderedIndexObjects"
+    /// </param>
+    /// <param name="ids">
+    ///     <see langword="string"/>[] with ids of emotes in order of expected appearance
+    /// </param>
+    /// <param name="names">
+    ///     <see langword="string"/>[] with names of emotes in order of expected appearance
+    /// </param>
+    /// <param name="froms">
+    ///     <see langword="string"/>[] with from-indices of emotes in order of expected appearance
+    /// </param>
+    /// <param name="tos">
+    ///     <see langword="string"/>[] with to-indices of emotes in order of expected appearance
+    /// </param>
+    private void CheckEmoteObject(JObject emotes, string propertyName, string[] ids, string[] names, string[] froms, string[] tos) {
+        Assert.IsType<JArray>(emotes[propertyName]);
+        JArray? indices = emotes.Value<JArray>(propertyName);
+        Assert.NotNull(indices);
+        Assert.Equal(names.Length, indices.Count);
+        for (int i = 0; i < names.Length; i++) {
+            string id = ids[i];
+            string name = names[i];
+            string from = froms[i];
+            string to = tos[i];
+            JObject indexObject = (JObject) indices[i];
+            CheckEmoteIndexObject(id, name, from, to, indexObject);
+        }
+    }
+
+    private static void CheckEmoteIndexObject(string id, string name, string from, string to, JObject indexObject) {
+        Assert.Equal(id, indexObject.Value<string>("id"));
+        Assert.Equal(name, indexObject.Value<string>("name"));
+        Assert.Equal(from, indexObject.Value<string>("from"));
+        Assert.Equal(to, indexObject.Value<string>("to"));
+    }
+
+    private static string? Format(string stringToFormat, string cmd, string user, string channel) {
+        if (stringToFormat == null) {
             return null;
         }
 
