@@ -9,7 +9,7 @@ namespace TwitchLib.Client.Models
     /// <summary>Class for maintaining emotes that may be substituted into messages.</summary>
     /// <remarks>
     ///     Also contains helpers to aid in performing actual replacements.
-    ///     Expected to be called from the context of <see cref="ChatMessage"/> and <see cref="WhisperMessage"/>.
+    ///     Expected to be called from the context of <see cref="ChatMessage"/>
     /// </remarks>
     public class MessageEmote
     {

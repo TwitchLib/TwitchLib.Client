@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace TwitchLib.Client.Models
 {
-    /// <summary>Class used to store credentials used to connect to Twitch chat/whisper.</summary>
+    /// <summary>Class used to store credentials used to connect to Twitch chat.</summary>
     public class ConnectionCredentials
     {
         public const string DefaultWebSocketUri = "wss://irc-ws.chat.twitch.tv:443";
