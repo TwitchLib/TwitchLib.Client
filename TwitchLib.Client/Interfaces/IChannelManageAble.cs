@@ -23,6 +23,13 @@ namespace TwitchLib.Client.Interfaces
         /// </param>
         void JoinChannel(string channel);
         /// <summary>
+        ///     enqueues the given <paramref name="channels"/> to get joined
+        /// </summary>
+        /// <param name="channels">
+        ///     names of the channels to join
+        /// </param>
+        void JoinChannels(IEnumerable<string> channels);
+        /// <summary>
         ///     returns the <see cref="JoinedChannel"/> of the channel with the given <paramref name="channel"/>-name
         ///     <br></br>
         ///     <br></br>

@@ -39,12 +39,16 @@ namespace TwitchLib.Client
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
             ChannelManager.JoinChannel(channel);
         }
+        public void JoinChannels(IEnumerable<string> channels)
+        {
+            LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
+            ChannelManager.JoinChannels(channels);
+        }
         public JoinedChannel GetJoinedChannel(string channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
             return ChannelManager.GetJoinedChannel(channel);
         }
-
         public void LeaveChannel(string channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
