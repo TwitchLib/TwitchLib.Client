@@ -45,6 +45,7 @@ namespace TwitchLib.Client
                             ILogger<ITwitchClient> logger = null)
         {
             LOGGER = logger;
+            LOGGER?.TraceMethodCall(GetType());
             // set them first,
             // cause they are mandatory
             // and SetConnectionCredentials throws ArgumentNullException
