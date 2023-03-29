@@ -39,12 +39,16 @@ namespace TwitchLib.Client
 
 
         #region ctor
-        public TwitchClient(ConnectionCredentials connectionCredentials,
+        public TwitchClient(ConnectionCredentials credentials,
                             IClient client = null,
                             ClientProtocol protocol = ClientProtocol.WebSocket,
                             ILogger<ITwitchClient> logger = null)
         {
             LOGGER = logger;
+            // set them first,
+            // cause they are mandatory
+            // and SetConnectionCredentials throws ArgumentNullException
+            SetConnectionCredentials(credentials);
             Protocol = protocol;
             Client = client;
             if (Client == null)
@@ -62,7 +66,6 @@ namespace TwitchLib.Client
             Debug.Assert(Client != null, nameof(Client) + " != null");
             InitializeClient();
             ChannelManager = new ChannelManager(Client, Log, LogError, LOGGER);
-            SetConnectionCredentials(connectionCredentials);
             ChatCommandIdentifiers.Add('!');
         }
         #endregion ctor

@@ -59,9 +59,14 @@ namespace TwitchLib.Client
         public void SetConnectionCredentials(ConnectionCredentials credentials)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
-            if (IsConnected)
+            if (credentials == null)
+            {
+                throw new ArgumentNullException(nameof(credentials), "ConnectionCredentials are mandatory");
+            }
+            else if (IsConnected)
+            {
                 throw new IllegalAssignmentException("While the client is connected, you are unable to change the connection credentials. Please disconnect first and then change them.");
-
+            }
             ConnectionCredentials = credentials;
             ChannelManager.Credentials = ConnectionCredentials;
         }
