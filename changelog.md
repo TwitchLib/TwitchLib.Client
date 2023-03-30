@@ -233,7 +233,7 @@ twitchClient.AddChatCommandIdentifier('!');
 twitchClient.AddChatCommandIdentifier('!');
 // each channel gets added to 'auto-join-channels' and is going to be re-joined after reconnecting with this instance of `ITwitchClient`
 twitchClient.JoinChannel("testchannel");
-// nothing happens, we already wanto to join or joined the "testchannel"
+// nothing happens, we already want to join or joined the "testchannel"
 twitchClient.JoinChannel("testchannel");
 twitchClient.JoinChannels(new string[]{"testchannel_a", "testchannel_b"});
 // subscribe to events ...
