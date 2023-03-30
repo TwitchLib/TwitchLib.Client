@@ -7,7 +7,10 @@ using Newtonsoft.Json.Linq;
 using TwitchLib.Client.Extensions.Internal;
 
 namespace TwitchLib.Client.Parsers {
-    internal class IrcJsonParser {
+    /// <summary>
+    ///     <see langword="class"/> to parse raw irc-messages as <see cref="JObject"/>s
+    /// </summary>
+    public static class IrcJsonParser {
         /// <summary>
         ///     parses the given <paramref name="irc"/>-message as <see cref="JObject"/>
         /// </summary>
