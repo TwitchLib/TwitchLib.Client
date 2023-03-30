@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
+
+using TwitchLib.Client.Models.Interfaces;
 
 namespace TwitchLib.Client.Exceptions
 {
@@ -7,12 +10,9 @@ namespace TwitchLib.Client.Exceptions
     ///     Exception representing credentials provided for logging in were bad.
     ///     Implements the <see cref="System.Exception" />
     /// </summary>
-    public class ErrorLoggingInException : Exception
+    public class ErrorLoggingInException : Exception, IAPIReferencesProvider
     {
-        /// <summary>
-        ///     Reference to TwitchAPI
-        /// </summary>
-        public string APIReference => "https://dev.twitch.tv/docs/irc/authenticate-bot/";
+        public IEnumerable<string> APIReferences => new[] { "https://dev.twitch.tv/docs/irc/authenticate-bot/" };
         /// <summary>
         ///     Exception representing username associated with bad login.
         /// </summary>
@@ -36,7 +36,7 @@ namespace TwitchLib.Client.Exceptions
             StringBuilder builder = new StringBuilder();
             builder.AppendLine($"{nameof(Username)}: {Username}");
             builder.AppendLine($"{nameof(Message)}: {Message}");
-            builder.AppendLine($"{nameof(APIReference)}: {APIReference}");
+            builder.AppendLine($"{nameof(APIReferences)}: {String.Join(", ", APIReferences)}");
             return builder.ToString();
         }
     }

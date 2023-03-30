@@ -1,21 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
+
+using TwitchLib.Client.Models.Interfaces;
 
 namespace TwitchLib.Client.Exceptions
 {
     /// <summary>
     ///     <see cref="Exception"/> for that case, that Twicht-Server failed to receive a KeepAlive-Message.
     /// </summary>
-    public class KeepAliveException : Exception
+    public class KeepAliveException : Exception, IAPIReferencesProvider
     {
         /// <summary>
         ///     <see langword="default"/> Message
         /// </summary>
         private static readonly string MESSAGE = "Twitch-Server failed to receive KeepAlive-Message (PONG). Twitch-Server terminates the connection.";
-        /// <summary>
-        ///     Reference to the TwitchAPI
-        /// </summary>
-        public string APIReference => "https://dev.twitch.tv/docs/irc/#keepalive-messages";
+        public IEnumerable<string> APIReferences => new[] { "https://dev.twitch.tv/docs/irc/#keepalive-messages" };
         /// <summary>
         ///     Bot-Username
         /// </summary>
@@ -32,7 +32,7 @@ namespace TwitchLib.Client.Exceptions
             StringBuilder builder = new StringBuilder();
             builder.AppendLine($"{nameof(Username)}: {Username}");
             builder.AppendLine($"{nameof(Message)}: {Message}");
-            builder.AppendLine($"{nameof(APIReference)}: {APIReference}");
+            builder.AppendLine($"{nameof(APIReferences)}: {String.Join(", ", APIReferences)}");
             return builder.ToString();
         }
     }
