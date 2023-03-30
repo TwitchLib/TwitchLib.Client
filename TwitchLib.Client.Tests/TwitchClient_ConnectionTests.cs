@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
@@ -222,7 +223,6 @@ namespace TwitchLib.Client.Tests
             IClientMocker.AddLogInToSendMessageSequence(messageLogin, mock, sendMessageSequence);
             // for call to ITwitchClient.Reconnect()
             IClientMocker.AddLogInToSendMessageSequence(messageLogin, mock, sendMessageSequence);
-
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
@@ -238,6 +238,14 @@ namespace TwitchLib.Client.Tests
                         client.OnReconnected += (sender, args) => Assert.True(pauseCheck.Set());
                         // first connect, to get ConnectionStateManager in correct state
                         client.Connect();
+                        // cheat a bit
+                        // the 'real' IClient.Reconnect()
+                        // would make a call to IClient.Close()
+                        // but here,
+                        // we only have a Mock of it
+                        communicationClient.Close();
+                        // lets take a breath and let ITwitchClient gets its work done...
+                        Task.Delay(WaitOneDuration).GetAwaiter().GetResult();
                         client.Reconnect();
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
