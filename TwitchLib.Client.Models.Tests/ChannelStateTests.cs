@@ -6,7 +6,7 @@ using TwitchLib.Client.Parsers;
 
 using Xunit;
 
-namespace TwitchLib.Client.Models.Test;
+namespace TwitchLib.Client.Models.Tests;
 public class ChannelStateTests
 {
     [Theory]
