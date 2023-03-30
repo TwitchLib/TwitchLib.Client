@@ -35,6 +35,7 @@
     - handles the given `IrcMessage`
     - `return`s `false`, if the given `IrcMessage` could not be handled and `OnUnaccountedFor` would have been/was raised
         - `true` otherwise
+- due to removal of initialization-stuff `void JoinChannels(IEnumerable<string> channels)` got added/introduced
 
 ##### removed
 - `bool AutoReListenOnException { get; set; }`
