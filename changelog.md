@@ -219,6 +219,8 @@
     - `TwitchLib.Client.TwitchClient`/`TwitchLib.Client.ITwitchClient`
         - `event EventHandler<OnModeratorsReceivedArgs> OnModeratorsReceived;`
         - `event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;`
+    - `TwitchLib.Client.Enums`
+        - `CommercialLengths`
 
 ---
 
