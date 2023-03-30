@@ -104,7 +104,6 @@ namespace TwitchLib.Client
                     }
                     else
                     {
-                        ConnectionStateManager.SetConnected();
                         OnConnected?.Invoke(this, args);
                     }
                     break;
