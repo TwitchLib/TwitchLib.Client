@@ -173,6 +173,16 @@
 
 ---
 
+#### ClientNotConnectedException
+- according to removal of `ITwitchClient` initialization-stuff, etsy
+
+---
+
+#### ClientNotInitializedException
+- according to removal of `ITwitchClient` initialization-stuff, etsy
+
+---
+
 #### Whispers
 - see also: https://discuss.dev.twitch.tv/t/deprecation-of-chat-commands-through-irc/40486
 - everything related to `WHISPERS` is gone
