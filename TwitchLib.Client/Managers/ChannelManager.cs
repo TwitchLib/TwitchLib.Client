@@ -84,7 +84,18 @@ namespace TwitchLib.Client.Managers
         public IReadOnlyCollection<string> JoiningChannels { get { lock (SYNC) { return Joining.ToList().AsReadOnly(); } } }
         public IReadOnlyCollection<string> JoiningChannelsExceptions { get { lock (SYNC) { return JoiningExceptions.ToList().AsReadOnly(); } } }
         public IReadOnlyCollection<string> JoinChannelRequested { get { lock (SYNC) { return JoinRequested.ToList().AsReadOnly(); } } }
-        public TimeSpan JoinRequestDelay => TimeSpan.FromSeconds(1);
+        /// <summary>
+        ///     <see href="https://dev.twitch.tv/docs/irc/#rate-limits"/>
+        ///     <br></br>
+        ///     20 joins per 10 seconds would result in 1 join per 500 milliseconds
+        ///     <br></br>
+        ///     we add 100 milliseconds to be sure, rate-limit isnt hit
+        /// </summary>
+        public TimeSpan JoinRequestDelay => TimeSpan.FromMilliseconds(600);
+        /// <summary>
+        ///     delay the whole <see cref="JoinChannelTaskAction"/> for one second
+        /// </summary>
+        public TimeSpan JoinTaskDelay => TimeSpan.FromSeconds(1);
 
         public ChannelManager(IClient client, Log log, Log logError, ILogger logger = null)
         {
@@ -247,6 +258,8 @@ namespace TwitchLib.Client.Managers
         private void JoinChannelTaskAction()
         {
             LOGGER?.TraceMethodCall(GetType());
+            // lets wait a second before joining...
+            Task.Delay(JoinTaskDelay).GetAwaiter().GetResult();
             while (Token != null && !Token.IsCancellationRequested)
             {
                 Task.Delay(JoinRequestDelay).GetAwaiter().GetResult();

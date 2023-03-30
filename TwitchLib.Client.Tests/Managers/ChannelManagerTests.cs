@@ -76,6 +76,8 @@ namespace TwitchLib.Client.Tests.Managers
             Assert.Empty(channelManager.JoinedChannels);
             //
             channelManager.Start();
+            // Joining-Task starts delayed
+            Task.Delay(channelManager.JoinTaskDelay).GetAwaiter().GetResult();
             Task.Delay(channelManager.JoinRequestDelay.Add(TimeSpan.FromMilliseconds(200))).GetAwaiter().GetResult();
             Assert.Single(channelManager.AutoJoinChannels);
             Assert.Equal(expected, channelManager.AutoJoinChannels.First());
@@ -138,6 +140,8 @@ namespace TwitchLib.Client.Tests.Managers
             Assert.Empty(channelManager.JoinedChannels);
             //
             channelManager.Start();
+            // Joining-Task starts delayed
+            Task.Delay(channelManager.JoinTaskDelay).GetAwaiter().GetResult();
             Task.Delay(channelManager.JoinRequestDelay.Add(TimeSpan.FromMilliseconds(200))).GetAwaiter().GetResult();
             Assert.Single(channelManager.AutoJoinChannels);
             Assert.Equal(expected, channelManager.AutoJoinChannels.First());
@@ -206,6 +210,8 @@ namespace TwitchLib.Client.Tests.Managers
             Assert.Empty(channelManager.JoinedChannels);
             //
             channelManager.Start();
+            // Joining-Task starts delayed
+            Task.Delay(channelManager.JoinTaskDelay).GetAwaiter().GetResult();
             Task.Delay(channelManager.JoinRequestDelay.Add(TimeSpan.FromMilliseconds(200))).GetAwaiter().GetResult();
             Assert.Single(channelManager.AutoJoinChannels);
             Assert.Equal(expected, channelManager.AutoJoinChannels.First());
@@ -279,6 +285,8 @@ namespace TwitchLib.Client.Tests.Managers
             Assert.Empty(channelManager.JoinedChannels);
             //
             channelManager.Start();
+            // Joining-Task starts delayed
+            Task.Delay(channelManager.JoinTaskDelay).GetAwaiter().GetResult();
             Task.Delay(channelManager.JoinRequestDelay.Add(TimeSpan.FromMilliseconds(200))).GetAwaiter().GetResult();
             Assert.Single(channelManager.AutoJoinChannels);
             Assert.Equal(expected, channelManager.AutoJoinChannels.First());
