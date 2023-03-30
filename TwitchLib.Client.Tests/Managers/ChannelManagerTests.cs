@@ -8,7 +8,7 @@ using Moq;
 
 using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;
-using TwitchLib.Client.Tests.TestHelper;
+using TwitchLib.Client.Tests.TestHelpers;
 using TwitchLib.Communication.Interfaces;
 
 using Xunit;

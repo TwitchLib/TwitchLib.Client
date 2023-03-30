@@ -9,7 +9,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 
-namespace TwitchLib.Client.Tests.TestHelper
+namespace TwitchLib.Client.Tests.TestHelpers
 {
     [SuppressMessage("Style", "IDE0058")]
     internal static class TestLogHelper
