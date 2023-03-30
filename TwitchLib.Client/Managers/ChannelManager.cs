@@ -300,7 +300,8 @@ namespace TwitchLib.Client.Managers
         {
             LOGGER?.TraceMethodCall(GetType());
             CTS?.Cancel();
-            JoiningTask?.GetAwaiter().GetResult();
+            // we just want to wait for the task to cancel/complete/run to completion/whatever...
+            try { JoiningTask?.GetAwaiter().GetResult(); } catch { }
             CTS?.Dispose();
             lock (SYNC)
             {
@@ -350,32 +351,44 @@ namespace TwitchLib.Client.Managers
         private void JoinChannelTaskAction()
         {
             LOGGER?.TraceMethodCall(GetType());
-            // lets wait a second before joining...
-            Task.Delay(JoinTaskDelay).GetAwaiter().GetResult();
-            while (Token != null && !Token.IsCancellationRequested)
+            try
             {
-                Task.Delay(JoinRequestDelay).GetAwaiter().GetResult();
-                string channelToJoin = null;
-                lock (SYNC)
+                // lets wait a second before joining...
+                Task.Delay(JoinTaskDelay).GetAwaiter().GetResult();
+                while (Token != null && !Token.IsCancellationRequested)
                 {
-                    bool dequeued = Joining.TryDequeue(out channelToJoin);
-                    if (!dequeued || channelToJoin == null)
+                    Task.Delay(JoinRequestDelay).GetAwaiter().GetResult();
+                    string channelToJoin = null;
+                    lock (SYNC)
                     {
-                        continue;
+                        bool dequeued = Joining.TryDequeue(out channelToJoin);
+                        if (!dequeued || channelToJoin == null)
+                        {
+                            continue;
+                        }
+                        if (JoiningExceptions.Remove(channelToJoin))
+                        {
+                            // if the channelToJoin
+                            // is within the JoiningExceptions
+                            // it got removed
+                            // and we dont join that ones
+                            continue;
+                        }
+                        Log?.Invoke($"Joining channel: {channelToJoin}");
+                        // IDE0058 - client raises OnSendFailed if this method returns false
+                        // important we set channel to lower case when sending join message
+                        Client.Send(Rfc2812.Join($"#{channelToJoin.ToLower()}"));
+                        JoinRequested.Add(channelToJoin);
                     }
-                    if (JoiningExceptions.Remove(channelToJoin))
-                    {
-                        // if the channelToJoin
-                        // is within the JoiningExceptions
-                        // it got removed
-                        // and we dont join that ones
-                        continue;
-                    }
-                    Log?.Invoke($"Joining channel: {channelToJoin}");
-                    // IDE0058 - client raises OnSendFailed if this method returns false
-                    // important we set channel to lower case when sending join message
-                    Client.Send(Rfc2812.Join($"#{channelToJoin.ToLower()}"));
-                    JoinRequested.Add(channelToJoin);
+                }
+            }
+            catch (Exception e)
+            {
+                LOGGER?.LogExceptionAsInformation(GetType(), e);
+                if (!typeof(TaskCanceledException).IsAssignableFrom(e.GetType()))
+                {
+                    LogError?.Invoke(e.ToString());
+                    LOGGER?.LogExceptionAsError(GetType(), e);
                 }
             }
         }
