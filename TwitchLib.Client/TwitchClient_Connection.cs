@@ -71,13 +71,5 @@ namespace TwitchLib.Client
             ChannelManager.Credentials = ConnectionCredentials;
         }
         #endregion methods public
-
-
-        #region methods protected
-        protected static void HandleNotConnected()
-        {
-            throw new ClientNotConnectedException("In order to perform this action, the client must be connected to Twitch. To confirm connection, try performing this action in or after the OnConnected event has been fired.");
-        }
-        #endregion methods protected
     }
 }
