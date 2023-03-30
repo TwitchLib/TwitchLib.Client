@@ -46,10 +46,10 @@ namespace TwitchLib.Client
         {
             LOGGER = logger;
             LOGGER?.TraceMethodCall(GetType());
-            // set them first,
-            // cause they are mandatory
-            // and SetConnectionCredentials throws ArgumentNullException
-            SetConnectionCredentials(credentials);
+            if (credentials == null)
+            {
+                throw new ArgumentNullException(nameof(credentials), "ConnectionCredentials are mandatory");
+            }
             Protocol = protocol;
             Client = client;
             if (Client == null)
@@ -67,6 +67,9 @@ namespace TwitchLib.Client
             Debug.Assert(Client != null, nameof(Client) + " != null");
             InitializeClient();
             ChannelManager = new ChannelManager(Client, Log, LogError, LOGGER);
+            // has to be done here,
+            // cause credentials are also set into ChannelManager
+            SetConnectionCredentials(credentials);
             ChatCommandIdentifiers.Add('!');
         }
         #endregion ctor
