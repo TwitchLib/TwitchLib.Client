@@ -64,7 +64,6 @@ namespace TwitchLib.Client
                     OnBannedEmailAlias?.Invoke(this, new OnBannedEmailAliasArgs { Channel = ircMessage.Channel, Message = ircMessage.Message });
                     break;
                 case MsgIds.MsgChannelSuspended:
-                    ChannelManager.JoinCanceld(ircMessage.Channel);
                     OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs
                     {
                         Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message),

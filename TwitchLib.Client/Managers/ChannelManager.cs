@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 using TwitchLib.Client.Delegates;
+using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
@@ -16,6 +17,49 @@ using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client.Managers
 {
+    /// <summary>
+    ///     <see langword="class"/> to manage Channels
+    ///     <br></br>
+    ///     <list type="number">
+    ///         <item>
+    ///             <see cref="JoinChannel(String)"/>/<see cref="JoinChannels(IEnumerable{String})"/>
+    ///             <br></br>
+    ///             add the channel to <see cref="WantToJoin"/>
+    ///             <br></br>
+    ///             and to <see cref="Joining"/>
+    ///         </item>
+    ///         <item>
+    ///             <see cref="JoinChannelTaskAction"/> takes and removes each channel
+    ///             <br></br>
+    ///             step by step
+    ///             <br></br>
+    ///             delayed by <see cref="JoinRequestDelay"/>
+    ///             <br></br>
+    ///             from <see cref="Joining"/>,
+    ///             <br></br>
+    ///             sends a join-irc-message
+    ///             <br></br>
+    ///             and puts it into <see cref="JoinRequested"/>
+    ///         </item>
+    ///         <item>
+    ///             by receiving <see cref="Enums.IrcCommand.Join"/>
+    ///             <br></br>
+    ///             and its 'us' who joins the specific channel
+    ///             <br></br>
+    ///             the specific channel gets removed from <see cref="JoinRequested"/>
+    ///             <br></br>
+    ///             and is put into <see cref="Joined"/> (<see cref="JoinedChannels"/>...) as <see cref="JoinedChannel"/>
+    ///         </item>
+    ///         <item>
+    ///             by receiving <see cref="Enums.IrcCommand.Notice"/> with the 'msg-id'-tag <see cref="Models.Internal.MsgIds.MsgChannelSuspended"/>
+    ///             <br></br>
+    ///             the specific channel gets removed from <see cref="JoinRequested"/>
+    ///         </item>
+    ///     </list>
+    ///     all of that is event-driven
+    ///     <br></br>
+    ///     <see cref="Subscribe(ITwitchClient)"/>
+    /// </summary>
     internal class ChannelManager : IChannelManageAble
     {
         /// <summary>
@@ -23,22 +67,20 @@ namespace TwitchLib.Client.Managers
         /// </summary>
         private static readonly object SYNC = new object();
 
+        #region properties private
 
-        private readonly ILogger LOGGER;
-
-
+        #region logging
+        private ILogger LOGGER { get; }
         private Log Log { get; }
         private Log LogError { get; }
-
+        #endregion logging
 
 
         private CancellationTokenSource CTS { get; set; }
         private CancellationToken Token => CTS.Token;
         public ConnectionCredentials Credentials { get; set; }
         private IClient Client { get; }
-
         private Task JoiningTask { get; set; }
-
         /// <summary>
         ///     holds the names of the channels, that we want to join, to be able to ReJoin them after a reconnect
         /// </summary>
@@ -70,6 +112,10 @@ namespace TwitchLib.Client.Managers
         ///     <see cref="ConcurrentDictionary{TKey, TValue}"/> with the channels that are already joined
         /// </summary>
         private ConcurrentDictionary<string, JoinedChannel> Joined { get; } = new ConcurrentDictionary<string, JoinedChannel>();
+        #endregion properties private
+
+
+        #region properties public
         /// <summary>
         ///     <see cref="IReadOnlyCollection{T}"/> with channel-names to join when connected
         ///     <br></br>
@@ -96,7 +142,10 @@ namespace TwitchLib.Client.Managers
         ///     delay the whole <see cref="JoinChannelTaskAction"/> for one second
         /// </summary>
         public TimeSpan JoinTaskDelay => TimeSpan.FromSeconds(1);
+        #endregion properties public
 
+
+        #region ctor
         public ChannelManager(IClient client, Log log, Log logError, ILogger logger = null)
         {
             Client = client;
@@ -104,9 +153,12 @@ namespace TwitchLib.Client.Managers
             LogError = logError;
             LOGGER = logger;
         }
+        #endregion ctor
 
 
+        #region methods public
 
+        #region methods visible to API consumers
         public JoinedChannel GetJoinedChannel(string channel)
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -193,11 +245,45 @@ namespace TwitchLib.Client.Managers
             LOGGER?.TraceMethodCall(GetType());
             LeaveChannel(channel.Channel);
         }
-        public void ReJoinChannels()
+        #endregion methods visible to API consumers
+
+
+        #region subscribe to ITwitchClient-Events
+        /// <summary>
+        ///     subsscribes
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <see cref="ITwitchClient.OnConnected"/> to get this instance started
+        ///         </item>
+        ///         <item>
+        ///             <see cref="ITwitchClient.OnReconnected"/> to get this instance started
+        ///         </item>
+        ///         <item>
+        ///             <see cref="ITwitchClient.OnDisconnected"/> to get this instance stopped
+        ///         </item>
+        ///         <item>
+        ///             <see cref="ITwitchClient.OnJoinedChannel"/> to get this instance add the joined channel to <see cref="JoinedChannels"/> and do some other work
+        ///         </item>
+        ///         <item>
+        ///             <see cref="ITwitchClient.OnFailureToReceiveJoinConfirmation"/> to get this instance do some work
+        ///         </item>
+        ///     </list>
+        /// </summary>
+        /// <param name="twitchClient">
+        ///     <see cref="ITwitchClient"/>
+        /// </param>
+        public void Subscribe(ITwitchClient twitchClient)
         {
-            LOGGER?.TraceMethodCall(GetType());
-            JoinChannels(WantToJoin);
+            twitchClient.OnConnected += TwitchClientOnConnected;
+            twitchClient.OnReconnected += TwitchClientOnConnected;
+            twitchClient.OnDisconnected += TwitchClientOnDisconnected;
+            twitchClient.OnJoinedChannel += TwitchClientOnJoinedChannel;
+            twitchClient.OnFailureToReceiveJoinConfirmation += TwitchClientOnFailureToReceiveJoinConfirmation;
         }
+        #endregion subscribe to ITwitchClient-Events
+
+
+        #region methods that should only be used for testing-purposes and by ITwitchClient-EventHandlers
         public void Start()
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -255,6 +341,12 @@ namespace TwitchLib.Client.Managers
             channel = CorrectChannelName(channel);
             lock (SYNC) { JoinRequested.Remove(channel); }
         }
+        #endregion methods that should only be used for testing-purposes and by ITwitchClient-EventHandlers
+
+        #endregion methods public
+
+
+        #region methods private
         private void JoinChannelTaskAction()
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -287,6 +379,20 @@ namespace TwitchLib.Client.Managers
                 }
             }
         }
+        private void ReJoinChannels()
+        {
+            LOGGER?.TraceMethodCall(GetType());
+            JoinChannels(WantToJoin);
+        }
+
+        #region ITwitchClient-EventHandlers
+        private void TwitchClientOnConnected(object sender, OnConnectedArgs e) { Start(); }
+        private void TwitchClientOnDisconnected(object sender, OnDisconnectedArgs e) { Stop(); }
+        private void TwitchClientOnJoinedChannel(object sender, OnJoinedChannelArgs e) { JoinCompleted(e.Channel); }
+        private void TwitchClientOnFailureToReceiveJoinConfirmation(object sender, OnFailureToReceiveJoinConfirmationArgs e) { JoinCanceld(e.Channel); }
+        #endregion ITwitchClient-EventHandlers
+
+
         private static string CorrectChannelName(string channel)
         {
             string channelName = channel.ToLower().Trim();
@@ -294,5 +400,7 @@ namespace TwitchLib.Client.Managers
                 channelName = channelName.Substring(1);
             return channelName;
         }
+        #endregion methods private
+
     }
 }

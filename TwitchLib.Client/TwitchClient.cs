@@ -67,6 +67,7 @@ namespace TwitchLib.Client
             Debug.Assert(Client != null, nameof(Client) + " != null");
             InitializeClient();
             ChannelManager = new ChannelManager(Client, Log, LogError, LOGGER);
+            ChannelManager.Subscribe(this);
             // has to be done here,
             // cause credentials are also set into ChannelManager
             SetConnectionCredentials(credentials);
