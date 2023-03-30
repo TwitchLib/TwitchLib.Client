@@ -8,6 +8,7 @@ using Moq;
 
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Exceptions;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Tests.TestHelpers;
@@ -250,6 +251,41 @@ namespace TwitchLib.Client.Tests
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
+        }
+        [Fact]
+        public void SetConnectionCredentialsNullTest()
+        {
+            ConnectionCredentials credentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(credentials);
+            try
+            {
+                client.SetConnectionCredentials(null);
+                Assert.Fail($"{typeof(ArgumentNullException)} expected!");
+            }
+            catch (Exception e)
+            {
+                Assert.NotNull(e);
+                Assert.IsType<ArgumentNullException>(e);
+            }
+        }
+        [Fact]
+        public void SetConnectionCredentialsConnectedTest()
+        {
+            Mock<IClient> mock = IClientMocker.GetIClientMock();
+            IClient communicationClient = mock.Object;
+            ConnectionCredentials credentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(credentials, communicationClient);
+            IClientMocker.SetIsConnected(mock, true);
+            try
+            {
+                client.SetConnectionCredentials(credentials);
+                Assert.Fail($"{typeof(IllegalAssignmentException)} expected!");
+            }
+            catch (Exception e)
+            {
+                Assert.NotNull(e);
+                Assert.IsType<IllegalAssignmentException>(e);
+            }
         }
     }
 }
