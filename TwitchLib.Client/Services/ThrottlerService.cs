@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Helpers;
@@ -197,10 +198,20 @@ namespace TwitchLib.Client.Services
                              localSentCount);
                     return;
                 }
-
-                Client.Send(messageTupel.Item2.ToString());
-
-                IncrementSentCount();
+                string messageToSend = messageTupel.Item2.ToString();
+                bool sent = Client.Send(messageToSend);
+                // only if it seems to be sent
+                // IClient raises the corresponding error and send-failed event if its not the case
+                if (sent)
+                {
+                    OnSendReceiveDataArgs args = new OnSendReceiveDataArgs()
+                    {
+                        Direction = SendReceiveDirection.Sent,
+                        Data = messageToSend
+                    };
+                    RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnSendReceiveData), args);
+                    IncrementSentCount();
+                }
             }
             catch (Exception ex) when (ex.GetType() == typeof(TaskCanceledException) || ex.GetType() == typeof(OperationCanceledException))
             {
