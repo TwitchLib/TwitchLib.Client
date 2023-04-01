@@ -2,7 +2,6 @@
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
-using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -19,7 +18,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         ///     Occurs when [on message throttled].
         /// </summary>
-        event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
+        event EventHandler<OnMessageThrottledArgs> OnMessageThrottled;
         #endregion events public
 
 

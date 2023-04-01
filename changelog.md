@@ -36,6 +36,8 @@
     - `return`s `false`, if the given `IrcMessage` could not be handled and `OnUnaccountedFor` would have been/was raised
         - `true` otherwise
 - due to removal of initialization-stuff `void JoinChannels(IEnumerable<string> channels)` got added/introduced
+- `event EventHandler<OnSendFailedEventArgs> OnSendFailed;`
+    - was and is part of `TwitchLib.Communication.IClient`
 
 ##### removed
 - `bool AutoReListenOnException { get; set; }`
@@ -58,6 +60,8 @@
     - exclamationmark is added within ctor
         - can be removed via `ITwitchClient.RemoveChatCommandIdentifier(char identifier)`
     - channels can be added to 'auto-join-channels' via `ITwitchClient.JoinChannels(...)`
+- `void SendQueuedItem(string message);`
+    - messages are queued/throttled by default
 
 ##### changed
 - constructor (ctor)

@@ -31,15 +31,17 @@ namespace TwitchLib.Client
             Client.OnMessage += Client_OnMessage;
             Client.OnDisconnected += Client_OnDisconnected;
             Client.OnFatality += Client_OnFatality;
-            Client.OnMessageThrottled += Client_OnMessageThrottled;
             // INFO: TwitchLib.Communication.IClient doesnt raise OnConnected when it reconnects!
             Client.OnReconnected += Client_OnConnected;
+            Client.OnSendFailed += Client_OnSendFailed;
         }
-        private void Client_OnMessageThrottled(object sender, OnMessageThrottledEventArgs e)
+
+        private void Client_OnSendFailed(object sender, OnSendFailedEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
-            OnMessageThrottled?.Invoke(sender, e);
+            OnSendFailed?.Invoke(this, e);
         }
+
         private void Client_OnFatality(object sender, OnFatalErrorEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));

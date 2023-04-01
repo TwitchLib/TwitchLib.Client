@@ -45,7 +45,6 @@ namespace TwitchLib.Client.Tests.TestHelpers
         {
             Mock<IClient> mock = GetIClientMock();
             mock.Setup(c => c.Send(It.IsAny<string>()))
-                .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = message });
 
             IClient client = mock.Object;
@@ -97,7 +96,6 @@ namespace TwitchLib.Client.Tests.TestHelpers
         {
             mock.InSequence(sendMessageSequence)
                             .Setup(c => c.Send(It.IsAny<string>()))
-                            .Returns(true)
                             .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = messageToSend });
         }
         /// <summary>
@@ -122,7 +120,6 @@ namespace TwitchLib.Client.Tests.TestHelpers
         {
             mock.InSequence(sendMessageSequence)
                             .Setup(c => c.Send(It.Is<string>(s => String.Equals(messageExpectedToJoin, s))))
-                            .Returns(true)
                             .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = messageJoinCompleted });
         }
         /// <summary>
@@ -144,29 +141,23 @@ namespace TwitchLib.Client.Tests.TestHelpers
         {
             // ITwichClient.Client_OnConnected sends PASS
             mock.InSequence(sendMessageSequence)
-                .Setup(c => c.Send(It.IsAny<string>()))
-                .Returns(true);
+                .Setup(c => c.Send(It.IsAny<string>()));
             // ITwichClient.Client_OnConnected sends NICK
             mock.InSequence(sendMessageSequence)
-                .Setup(c => c.Send(It.IsAny<string>()))
-                .Returns(true);
+                .Setup(c => c.Send(It.IsAny<string>()));
             // ITwichClient.Client_OnConnected sends USER
             mock.InSequence(sendMessageSequence)
-                .Setup(c => c.Send(It.IsAny<string>()))
-                .Returns(true);
+                .Setup(c => c.Send(It.IsAny<string>()));
             // ITwichClient.Client_OnConnected sends CAP membership
             mock.InSequence(sendMessageSequence)
-                .Setup(c => c.Send(It.IsAny<string>()))
-                .Returns(true);
+                .Setup(c => c.Send(It.IsAny<string>()));
             // ITwichClient.Client_OnConnected sends CAP commands
             mock.InSequence(sendMessageSequence)
-                .Setup(c => c.Send(It.IsAny<string>()))
-                .Returns(true);
+                .Setup(c => c.Send(It.IsAny<string>()));
             // ITwichClient.Client_OnConnected sends CAP tags
             // only this last call to IClient.Send() has to trigger raise OnMessage
             mock.InSequence(sendMessageSequence)
                 .Setup(c => c.Send(It.IsAny<string>()))
-                .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = messageLogin });
         }
         public static void SetIsConnected(Mock<IClient> mock, bool isConnected)

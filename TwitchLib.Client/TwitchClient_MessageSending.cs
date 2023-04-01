@@ -1,9 +1,13 @@
 ﻿using System;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Services;
 using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client
@@ -14,10 +18,16 @@ namespace TwitchLib.Client
         // TraceMethodCall should use the Type of the interface,
         // that this class extends;
         // it makes it easier to find the respective occurance from the log file
+        #region properties private
+        private ThrottlerService ThrottlerService { get; }
+        #endregion properties private
+
+
 
         #region events public
         public event EventHandler<OnMessageSentArgs> OnMessageSent;
-        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
+        public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
+        public event EventHandler<OnMessageThrottledArgs> OnMessageThrottled;
         #endregion events public
 
 
@@ -25,8 +35,7 @@ namespace TwitchLib.Client
         public void SendRaw(string message)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
-            Log($"Writing: {message}");
-            // IDE0058 - client raises OnSendFailed if this method returns false
+            Log($"Sending raw: '{message}'");
             Client.Send(message);
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
@@ -57,10 +66,11 @@ namespace TwitchLib.Client
         private void SendPONG()
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
-            string message = "PONG";
-            Log($"Writing: {message}");
+            string message = Rfc2812.Pong(":tmi.twitch.tv");
+            Log($"Sending: '{message}'");
+            LOGGER?.LogInformation("Sending: '{message}'", message);
             // IDE0058 - client raises OnSendFailed if this method returns false
-            Client.SendPONG();
+            Client.Send(message);
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
         private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
@@ -83,8 +93,7 @@ namespace TwitchLib.Client
             {
                 twitchMessage.ReplyToId = replyToId;
             }
-            // IDE0058 - client raises OnSendFailed if this method returns false
-            Client.Send(twitchMessage.ToString());
+            ThrottlerService.Enqueue(twitchMessage);
         }
         #endregion methods private
     }
