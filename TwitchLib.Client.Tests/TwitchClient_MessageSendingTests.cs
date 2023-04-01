@@ -11,6 +11,7 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Tests.TestHelpers;
+using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
 
 using Xunit;
@@ -132,6 +133,42 @@ namespace TwitchLib.Client.Tests
             Assert.Equal(sendsAllowedInPeriod, assertion.Arguments.AllowedInPeriod);
         }
         [Fact]
-        public void TwitchClient_Raises_OnSendFailed() { throw new NotImplementedException(); }
+        public void TwitchClient_Raises_OnSendFailed()
+        {
+            string messageNotSent = "This message has not been sent!";
+            Mock<IClient> mock = IClientMocker.GetIClientMock();
+            MockSequence sendMessageSequence = new MockSequence();
+            IClientMocker.AddLogInToSendMessageSequence($":tmi.twitch.tv 004 {TWITCH_Username} :-", mock, sendMessageSequence);
+            IClientMocker.AddToSendMessageSequence($":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}", mock, sendMessageSequence);
+            mock.InSequence(sendMessageSequence)
+                .Setup(c => c.Send(It.IsAny<string>()))
+                .Raises(c => c.OnSendFailed += null, new OnSendFailedEventArgs() { Data = messageNotSent });
+            IClient communicationClient = mock.Object;
+
+            // create one logger per test-method! - cause one file per test-method is generated
+            ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials(TWITCH_Username, TWITCH_OAuth);
+            ITwitchClient client = new TwitchClient(credentials: connectionCredentials,
+                                                    client: communicationClient,
+                                                    logger: logger);
+            client.JoinChannel(TWITCH_CHANNEL);
+            ManualResetEvent pauseCheck = new ManualResetEvent(false);
+            Assert.RaisedEvent<OnSendFailedEventArgs> assertion = Assert.Raises<OnSendFailedEventArgs>(
+                    h => client.OnSendFailed += h,
+                    h => client.OnSendFailed -= h,
+                    () =>
+                    {
+                        client.OnSendFailed += (sender, args) => Assert.True(pauseCheck.Set());
+                        IClientMocker.SetIsConnected(mock, true);
+                        client.Connect();
+                        // wait to connect and join
+                        Task.Delay(2000).GetAwaiter().GetResult();
+                        client.SendMessage(TWITCH_CHANNEL, messageNotSent);
+                        Assert.True(pauseCheck.WaitOne(WaitOneDuration));
+                    });
+            Assert.NotNull(assertion.Arguments);
+            Assert.NotNull(assertion.Arguments.Data);
+            Assert.Equal(messageNotSent, assertion.Arguments.Data);
+        }
     }
 }
