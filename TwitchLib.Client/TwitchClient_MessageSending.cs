@@ -23,7 +23,6 @@ namespace TwitchLib.Client
         #endregion properties private
 
 
-
         #region events public
         public event EventHandler<OnMessageSentArgs> OnMessageSent;
         public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
@@ -76,7 +75,7 @@ namespace TwitchLib.Client
         private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
-            if (channel == null || message == null || dryRun) return;
+            if (channel == null || message == null) return;
             if (message.Length > 500)
             {
                 LogError("Message length has exceeded the maximum character count. (500)");
@@ -93,7 +92,9 @@ namespace TwitchLib.Client
             {
                 twitchMessage.ReplyToId = replyToId;
             }
+            if (dryRun) return;
             ThrottlerService.Enqueue(twitchMessage);
+            // ThrottlerService invokes OnSendReceiveData if the enqueued message seems to be sent
         }
         #endregion methods private
     }
