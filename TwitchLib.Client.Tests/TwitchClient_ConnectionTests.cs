@@ -191,6 +191,7 @@ namespace TwitchLib.Client.Tests
         {
             Mock<IClient> mock = IClientMocker.GetIClientMock();
             mock.Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(false)
                 .Raises(c => c.OnFatality += null, new OnFatalErrorEventArgs("Fatal network error."));
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated

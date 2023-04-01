@@ -142,6 +142,7 @@ namespace TwitchLib.Client.Tests
             IClientMocker.AddToSendMessageSequence($":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}", mock, sendMessageSequence);
             mock.InSequence(sendMessageSequence)
                 .Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(false)
                 .Raises(c => c.OnSendFailed += null, new OnSendFailedEventArgs() { Data = messageNotSent });
             IClient communicationClient = mock.Object;
 

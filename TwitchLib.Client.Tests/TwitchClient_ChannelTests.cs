@@ -104,12 +104,14 @@ namespace TwitchLib.Client.Tests
             // to make the ITwitchClient call ChannelManager.Start()
             mock.InSequence(sequence)
                 .Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = $":tmi.twitch.tv 004 {TWITCH_Username} :-" });
 
 
             string message = $"@msg-id={MsgIds.MsgChannelSuspended} :tmi.twitch.tv NOTICE #{TWITCH_CHANNEL} :This channel does not exist or has been suspended.";
             mock.InSequence(sequence)
                 .Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = message });
 
             IClient communicationClient = mock.Object;
@@ -145,12 +147,14 @@ namespace TwitchLib.Client.Tests
             // to make the ITwitchClient call ChannelManager.Start()
             mock.InSequence(sequence)
                 .Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = $":tmi.twitch.tv 004 {TWITCH_Username} :-" });
 
             // after calling IClient.JoinChannel([...]), the ChannelManager should send "JOIN #[...]"
             // and we want to raise the Join-Confirmation-Message, that we recveive from twitch
             mock.InSequence(sequence)
                 .Setup(c => c.Send(It.Is<string>(s => String.Equals($"JOIN #{TWITCH_CHANNEL}", s))))
+                .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = $":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}" });
 
             IClient communicationClient = mock.Object;
@@ -186,17 +190,20 @@ namespace TwitchLib.Client.Tests
             // to make the ITwitchClient call ChannelManager.Start()
             mock.InSequence(sequence)
                 .Setup(c => c.Send(It.IsAny<string>()))
+                .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = $":tmi.twitch.tv 004 {TWITCH_Username} :-" });
 
             // after calling IClient.JoinChannel([...]), the ChannelManager should send "JOIN #[...]"
             // and we want to raise the Join-Confirmation-Message, that we recveive from twitch
             mock.InSequence(sequence)
                 .Setup(c => c.Send(It.Is<string>(s => String.Equals($"JOIN #{TWITCH_CHANNEL}", s))))
+                .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = $":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}" });
 
             // 
             mock.InSequence(sequence)
                 .Setup(c => c.Send(It.Is<string>(s => String.Equals($"PART #{TWITCH_CHANNEL}", s))))
+                .Returns(true)
                 .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = $":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv PART #{TWITCH_CHANNEL}" });
 
             IClient communicationClient = mock.Object;
