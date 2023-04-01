@@ -41,12 +41,12 @@ namespace TwitchLib.Client.Tests
             string privmsgMessage = $"@badge-info=subscriber/22;badges=subscriber/18,bits/1000;client-nonce=a_hash;color=#1E90FF;display-name=testuser;emote-only=1;emotes=1:0-1,8-9/555555584:4-5;first-msg=0;flags=;id={messageId};mod=0;returning-chatter=0;room-id=0;subscriber=1;tmi-sent-ts=1678800000000;turbo=0;user-id=1;user-type= :{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv PRIVMSG #{TWITCH_CHANNEL} ::)  <3  :)";
             string userStateMessageAfterPRIVMSG = $"@id={messageId} :{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv USERSTATE #{TWITCH_CHANNEL}";
             Mock<IClient> mock = IClientMocker.GetIClientMock();
-            MockSequence sendMessageSequnce = new MockSequence();
-            IClientMocker.AddLogInToSendMessageSequence($":tmi.twitch.tv 004 {TWITCH_Username} :-", mock, sendMessageSequnce);
-            IClientMocker.AddToSendMessageSequence($":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}", mock, sendMessageSequnce);
-            IClientMocker.AddToSendMessageSequence(userStateMessageOnJOIN, mock, sendMessageSequnce);
-            IClientMocker.AddToSendMessageSequence(privmsgMessage, mock, sendMessageSequnce);
-            IClientMocker.AddToSendMessageSequence(userStateMessageAfterPRIVMSG, mock, sendMessageSequnce);
+            MockSequence sendMessageSequence = new MockSequence();
+            IClientMocker.AddLogInToSendMessageSequence($":tmi.twitch.tv 004 {TWITCH_Username} :-", mock, sendMessageSequence);
+            IClientMocker.AddToSendMessageSequence($":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}", mock, sendMessageSequence);
+            IClientMocker.AddToSendMessageSequence(userStateMessageOnJOIN, mock, sendMessageSequence);
+            IClientMocker.AddToSendMessageSequence(privmsgMessage, mock, sendMessageSequence);
+            IClientMocker.AddToSendMessageSequence(userStateMessageAfterPRIVMSG, mock, sendMessageSequence);
             IClient communicationClient = mock.Object;
             // create one logger per test-method! - cause one file per test-method is generated
             ILogger<ITwitchClient> logger = TestLogHelper.GetLogger<ITwitchClient>();
@@ -97,9 +97,9 @@ namespace TwitchLib.Client.Tests
             TimeSpan throttlingTimeSpan = TimeSpan.FromSeconds(30);
             string messageNotSent = "This message has not been sent!";
             Mock<IClient> mock = IClientMocker.GetIClientMock();
-            MockSequence sendMessageSequnce = new MockSequence();
-            IClientMocker.AddLogInToSendMessageSequence($":tmi.twitch.tv 004 {TWITCH_Username} :-", mock, sendMessageSequnce);
-            IClientMocker.AddToSendMessageSequence($":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}", mock, sendMessageSequnce);
+            MockSequence sendMessageSequence = new MockSequence();
+            IClientMocker.AddLogInToSendMessageSequence($":tmi.twitch.tv 004 {TWITCH_Username} :-", mock, sendMessageSequence);
+            IClientMocker.AddToSendMessageSequence($":{TWITCH_Username}!{TWITCH_Username}@{TWITCH_Username}.tmi.twitch.tv JOIN #{TWITCH_CHANNEL}", mock, sendMessageSequence);
             IClient communicationClient = mock.Object;
 
             // create one logger per test-method! - cause one file per test-method is generated
