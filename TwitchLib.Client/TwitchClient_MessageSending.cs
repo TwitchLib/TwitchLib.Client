@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Microsoft.Extensions.Logging;
-
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
@@ -35,8 +33,10 @@ namespace TwitchLib.Client
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
             Log($"Sending raw: '{message}'");
-            Client.Send(message);
-            OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
+            bool sent = Client.Send(message);
+            // only if its really sent
+            // IClient raises OnSendFailed otherwise
+            if (sent) OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
         public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
         {
@@ -66,11 +66,7 @@ namespace TwitchLib.Client
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
             string message = Rfc2812.Pong(":tmi.twitch.tv");
-            Log($"Sending: '{message}'");
-            LOGGER?.LogInformation("Sending: '{message}'", message);
-            // IDE0058 - client raises OnSendFailed if this method returns false
-            Client.Send(message);
-            OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
+            SendRaw(message);
         }
         private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
