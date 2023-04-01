@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Moq;
 
@@ -14,6 +15,7 @@ namespace TwitchLib.Client.Tests.TestHelpers
     ///     <br></br>
     ///     <see href="https://github.com/Moq/moq4/wiki/Quickstart#events"/>
     /// </summary>
+    [SuppressMessage("Style", "IDE0058")]
     internal static class IClientMocker
     {
         /// <summary>

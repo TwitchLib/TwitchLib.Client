@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ using Xunit;
 
 namespace TwitchLib.Client.Tests.Managers
 {
+    [SuppressMessage("Style", "IDE0058")]
     public class ChannelManagerTests
     {
         /// <summary>
@@ -158,8 +160,8 @@ namespace TwitchLib.Client.Tests.Managers
             Assert.Empty(channelManager.JoinChannelRequested);
             Assert.Empty(channelManager.JoiningChannelsExceptions);
             Assert.Single(channelManager.JoinedChannels);
-            Assert.NotNull(channelManager.JoinedChannels.First());
-            Assert.Equal(expected, channelManager.JoinedChannels.First().Channel);
+            Assert.NotNull(channelManager.JoinedChannels[0]);
+            Assert.Equal(expected, channelManager.JoinedChannels[0].Channel);
             //
             JoinedChannel joinedChannel = channelManager.GetJoinedChannel(channel);
             Assert.NotNull(joinedChannel);
@@ -228,8 +230,8 @@ namespace TwitchLib.Client.Tests.Managers
             Assert.Empty(channelManager.JoinChannelRequested);
             Assert.Empty(channelManager.JoiningChannelsExceptions);
             Assert.Single(channelManager.JoinedChannels);
-            Assert.NotNull(channelManager.JoinedChannels.First());
-            Assert.Equal(expected, channelManager.JoinedChannels.First().Channel);
+            Assert.NotNull(channelManager.JoinedChannels[0]);
+            Assert.Equal(expected, channelManager.JoinedChannels[0].Channel);
             //
             JoinedChannel joinedChannel = channelManager.GetJoinedChannel(channel);
             Assert.NotNull(joinedChannel);

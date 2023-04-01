@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ using Xunit;
 
 namespace TwitchLib.Client.Tests
 {
-
+    [SuppressMessage("Style", "IDE0058")]
     public class TwitchClient_ConnectionTests : ATwitchClientTests<ITwitchClient_Connection>
     {
         public TwitchClient_ConnectionTests() { }
@@ -90,7 +91,7 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnConnected += (sender, args) => Assert.True(pauseCheck.Set());
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
@@ -124,7 +125,7 @@ namespace TwitchLib.Client.Tests
                         () =>
                         {
                             // send is our trigger, to make the IClient-Mock raise OnMessage!
-                            communicationClient.Send(String.Empty);
+                            Assert.True(communicationClient.Send(String.Empty));
                             // we dont need to wait to long, we expect it to fail
                             Assert.False(pauseCheck.WaitOne(WaitOneDurationShort));
                         });
@@ -179,7 +180,7 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnIncorrectLogin += (sender, args) => Assert.True(pauseCheck.Set());
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
@@ -206,7 +207,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         client.OnConnectionError += (sender, args) => Assert.True(pauseCheck.Set());
-                        communicationClient.Send(String.Empty);
+                        Assert.False(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
 
@@ -238,7 +239,7 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnReconnected += (sender, args) => Assert.True(pauseCheck.Set());
                         // first connect, to get ConnectionStateManager in correct state
-                        client.Connect();
+                        Assert.True(client.Connect());
                         // cheat a bit
                         // the 'real' IClient.Reconnect()
                         // would make a call to IClient.Close()

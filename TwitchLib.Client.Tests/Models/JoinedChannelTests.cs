@@ -64,8 +64,7 @@ namespace TwitchLib.Client.Tests.Models
             Assert.NotNull(property);
             object? value = property.GetValue(joinedChannel);
             Assert.NotNull(value);
-            Assert.IsType<ChannelState>(value);
-            ChannelState channelState = (ChannelState) value;
+            ChannelState channelState = Assert.IsType<ChannelState>(value);
             Assert.NotNull(channelState);
 
             Assert.Equal(channel, channelState.Channel);

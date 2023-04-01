@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions.Internal;
@@ -58,6 +59,7 @@ namespace TwitchLib.Client.Models
 
         #region methods public
         /// <summary>Handles a message</summary>
+        [SuppressMessage("Style", "IDE0058")]
         internal void HandlePRIVMSG(ChatMessage message)
         {
             if (String.Equals(message?.Username?.ToLower(), BotUsername))

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ using Xunit;
 
 namespace TwitchLib.Client.Tests
 {
+    [SuppressMessage("Style", "IDE0058")]
     public class TwitchClient_ChannelTests : ATwitchClientTests<ITwitchClient_Channel>
     {
         /// <summary>
@@ -55,12 +57,12 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnChannelStateChanged += (sender, args) => Assert.True(pauseCheckInitial.Set());
                         client.JoinChannel(TWITCH_CHANNEL);
-                        client.Connect();
+                        Assert.True(client.Connect());
                         // lets give the ITwitchClient some time to handle auth and autojoin ...
                         Task.Delay(2000).GetAwaiter().GetResult();
                         // we have to cheat a bit
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheckInitial.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertionInitial.Arguments);
@@ -82,14 +84,14 @@ namespace TwitchLib.Client.Tests
                         client.OnChannelStateChanged += (sender, args) => Assert.True(pauseCheckUpdate.Set());
                         // we have to cheat a bit
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheckUpdate.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertionUpdate.Arguments);
             AssertChannel(assertionUpdate.Arguments);
             Assert.NotNull(assertionUpdate.Arguments.ChannelState);
-            ChannelState channelStateUpdate = assertionUpdate.Arguments.ChannelState;
-            Assert.Equal(null, channelStateUpdate.FollowersOnly);
+            ChannelState? channelStateUpdate = assertionUpdate.Arguments.ChannelState;
+            Assert.Null(channelStateUpdate.FollowersOnly);
             Assert.Equal(channelStateInitial.EmoteOnly, channelStateUpdate.EmoteOnly);
             Assert.Equal(channelStateInitial.R9K, channelStateUpdate.R9K);
             Assert.Equal(channelStateInitial.SlowMode, channelStateUpdate.SlowMode);
@@ -128,9 +130,9 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnFailureToReceiveJoinConfirmation += (sender, args) => Assert.True(pauseCheck.Set());
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
@@ -172,7 +174,7 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnJoinedChannel += (sender, args) => Assert.True(pauseCheck.Set());
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         client.JoinChannel(TWITCH_CHANNEL);
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
@@ -222,7 +224,7 @@ namespace TwitchLib.Client.Tests
                         client.OnJoinedChannel += (sender, args) => client.LeaveChannel(TWITCH_CHANNEL);
                         client.OnLeftChannel += (sender, args) => Assert.True(pauseCheck.Set());
                         // make the client raise OnConnected and ITwitchClient start ChannelManager
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         client.JoinChannel(TWITCH_CHANNEL);
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });

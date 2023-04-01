@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,6 +61,7 @@ namespace TwitchLib.Client.Managers
     ///     <br></br>
     ///     <see cref="Subscribe(ITwitchClient)"/>
     /// </summary>
+    [SuppressMessage("Style", "IDE0058")]
     internal class ChannelManager : IChannelManageAble
     {
         /// <summary>

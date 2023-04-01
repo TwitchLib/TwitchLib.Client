@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TwitchLib.Client.Enums.Parsers
 {
@@ -19,6 +20,7 @@ namespace TwitchLib.Client.Enums.Parsers
         ///     <br></br>
         ///     <see cref="IrcCommand.Unknown"/>, if no <see cref="IrcCommand"/> matches the given <paramref name="cmd"/>
         /// </returns>
+        [SuppressMessage("Style", "IDE0018")]
         public static IrcCommand GetIrcCommandFromString(string cmd)
         {
             IrcCommand result;

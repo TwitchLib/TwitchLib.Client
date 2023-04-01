@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -10,7 +11,7 @@ using TwitchLib.Client.Parsers;
 using Xunit;
 
 namespace TwitchLib.Client.Tests.Parsers;
-
+[SuppressMessage("Style", "IDE0058")]
 public class IrcJsonParserTests {
     [Theory]
     // --------------CMD-----USER-------CH---TMS--TAGS--META-------------------MSG
@@ -97,8 +98,7 @@ public class IrcJsonParserTests {
         Assert.Equal(irc, ircMessage.Value<string>("irc"));
         //
         Assert.NotNull(ircMessage["tags"]);
-        Assert.IsType<JObject>(ircMessage["tags"]);
-        JObject? tags = (JObject?) ircMessage["tags"];
+        JObject? tags = Assert.IsType<JObject>(ircMessage["tags"]);
         Assert.NotNull(tags);
         Assert.NotNull(tags.Properties());
         Assert.Equal(19, tags.Properties().Count());
@@ -119,16 +119,14 @@ public class IrcJsonParserTests {
         Assert.Null(tags.Value<string>("user-type"));
         //
         Assert.NotNull(tags["badge-info"]);
-        Assert.IsType<JObject>(tags["badge-info"]);
-        JObject? badgeInfo = (JObject?) tags["badge-info"];
+        JObject? badgeInfo = Assert.IsType<JObject>(tags["badge-info"]);
         Assert.NotNull(badgeInfo);
         Assert.NotNull(badgeInfo.Properties());
         Assert.Single(badgeInfo.Properties());
         Assert.Equal("22", badgeInfo.Value<string>("subscriber"));
         //
         Assert.NotNull(tags["badges"]);
-        Assert.IsType<JObject>(tags["badges"]);
-        JObject? badges = (JObject?) tags["badges"];
+        JObject? badges = Assert.IsType<JObject>(tags["badges"]);
         Assert.NotNull(badges);
         Assert.NotNull(badges.Properties());
         Assert.Equal(2, badges.Properties().Count());
@@ -136,8 +134,7 @@ public class IrcJsonParserTests {
         Assert.Equal("1000", badges.Value<string>("bits"));
         //
         Assert.NotNull(tags["emotes"]);
-        Assert.IsType<JObject>(tags["emotes"]);
-        JObject? emotes = (JObject?) tags["emotes"];
+        JObject? emotes = Assert.IsType<JObject>(tags["emotes"]);
         Assert.NotNull(emotes);
         Assert.NotNull(emotes.Properties());
         Assert.Equal(3, emotes.Properties().Count());
@@ -145,7 +142,7 @@ public class IrcJsonParserTests {
         // emote-id 1
         string idA = "1";
         string nameA = ":)";
-        this.CheckEmoteObject(emotes,
+        CheckEmoteObject(emotes,
                          idA,
                          new[] { idA, idA },
                          new[] { nameA, nameA },
@@ -155,7 +152,7 @@ public class IrcJsonParserTests {
         // emote-id 555555584
         string idB = "555555584";
         string nameB = "<3";
-        this.CheckEmoteObject(emotes,
+        CheckEmoteObject(emotes,
                          idB,
                          new[] { idB },
                          new[] { nameB },
@@ -163,11 +160,10 @@ public class IrcJsonParserTests {
                          new[] { "5" });
         //
         string orderedIndexObjectsPropertyName = "orderedIndexObjects";
-        Assert.IsType<JArray>(emotes[orderedIndexObjectsPropertyName]);
-        JArray? orderedIndexObjects = emotes.Value<JArray>(orderedIndexObjectsPropertyName);
+        JArray? orderedIndexObjects = Assert.IsType<JArray>(emotes[orderedIndexObjectsPropertyName]);
         Assert.NotNull(orderedIndexObjects);
         Assert.Equal(3, orderedIndexObjects.Count);
-        this.CheckEmoteObject(emotes,
+        CheckEmoteObject(emotes,
                          orderedIndexObjectsPropertyName,
                          new[] { "1", "555555584", "1" },
                          new[] { ":)", "<3", ":)" },
@@ -175,8 +171,7 @@ public class IrcJsonParserTests {
                          new[] { "1", "5", "9" });
         //
         Assert.NotNull(tags["emote-sets"]);
-        Assert.IsType<JArray>(tags["emote-sets"]);
-        JArray? emoteSets = tags.Value<JArray>("emote-sets");
+        JArray? emoteSets = Assert.IsType<JArray>(tags["emote-sets"]);
         Assert.NotNull(emoteSets);
         int[] emoteSetIds = new int[] { 0, 33, 50, 237, 793, 2126, 3517, 4578, 5569, 9400, 10337, 12239 };
         Assert.Equal(emoteSetIds.Length, emoteSets.Count);
@@ -202,9 +197,8 @@ public class IrcJsonParserTests {
     /// <param name="tos">
     ///     <see langword="string"/>[] with to-indices of emotes in order of expected appearance
     /// </param>
-    private void CheckEmoteObject(JObject emotes, string propertyName, string[] ids, string[] names, string[] froms, string[] tos) {
-        Assert.IsType<JArray>(emotes[propertyName]);
-        JArray? indices = emotes.Value<JArray>(propertyName);
+    private static void CheckEmoteObject(JObject emotes, string propertyName, string[] ids, string[] names, string[] froms, string[] tos) {
+        JArray? indices = Assert.IsType<JArray>(emotes[propertyName]);
         Assert.NotNull(indices);
         Assert.Equal(names.Length, indices.Count);
         for (int i = 0; i < names.Length; i++) {

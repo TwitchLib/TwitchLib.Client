@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 using TwitchLib.Client.Models.Interfaces;
@@ -27,6 +28,7 @@ namespace TwitchLib.Client.Exceptions
         ///     Bot-Username
         /// </param>
         public KeepAliveException(string username) : base(MESSAGE) { Username = username; }
+        [SuppressMessage("Style", "IDE0058")]
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();

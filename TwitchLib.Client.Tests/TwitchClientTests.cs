@@ -40,7 +40,7 @@ namespace TwitchLib.Client.Tests
             client.AddChatCommandIdentifier('/');
             CheckChatCommandIdentifiers(client, 2, new[] { '!', '/' });
         }
-        private void CheckChatCommandIdentifiers(ITwitchClient client, int expectedSize, char[] expectedContent)
+        private static void CheckChatCommandIdentifiers(ITwitchClient client, int expectedSize, char[] expectedContent)
         {
             TypeInfo typeInfo = client.GetType().GetTypeInfo();
             PropertyInfo? propertyInfo = typeInfo.GetDeclaredProperty("ChatCommandIdentifiers");

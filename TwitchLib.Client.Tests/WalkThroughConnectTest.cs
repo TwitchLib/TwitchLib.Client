@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
@@ -16,6 +17,7 @@ using Xunit;
 
 namespace TwitchLib.Client.Tests
 {
+    [SuppressMessage("Style", "IDE0058")]
     public class WalkThroughConnectTest : ATwitchClientTests<ITwitchClient>
     {
         [Fact]
@@ -158,7 +160,7 @@ namespace TwitchLib.Client.Tests
                         // so we have to make a call to close, to get OnDisconnected raised by IClient
                         communicationClient.Close();
                         // triggers communicationClient to Send messageReconnect
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheck.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertion.Arguments);
@@ -175,7 +177,7 @@ namespace TwitchLib.Client.Tests
                     () =>
                     {
                         twitchClient.OnConnected += (sender, args) => Assert.True(pauseCheck.Set());
-                        twitchClient.Connect();
+                        Assert.True(twitchClient.Connect());
                         //Assert.True(pauseCheck.WaitOne(500000000));
                         Assert.True(pauseCheck.WaitOne(WaitOneDurationShort));
                     });

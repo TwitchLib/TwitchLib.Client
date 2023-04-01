@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ using Xunit;
 
 namespace TwitchLib.Client.Tests
 {
+    [SuppressMessage("Style", "IDE0058")]
     public class TwitchClient_MessageSendingTests : ATwitchClientTests<ITwitchClient_MessageSending>
     {
         /// <summary>
@@ -62,12 +64,12 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnUserStateChanged += (sender, args) => Assert.True(pauseCheckJOIN.Set());
                         client.JoinChannel(TWITCH_CHANNEL);
-                        client.Connect();
+                        Assert.True(client.Connect());
                         // lets give the ITwitchClient some time to handle auth and autojoin ...
                         Task.Delay(2000).GetAwaiter().GetResult();
                         // we have to cheat a bit
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheckJOIN.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertionInitial.Arguments);
@@ -85,7 +87,7 @@ namespace TwitchLib.Client.Tests
                         client.OnMessageSent += (sender, args) => Assert.True(pauseCheckUpdate.Set());
                         // we have to cheat a bit
                         // send is our trigger, to make the IClient-Mock raise OnMessage!
-                        communicationClient.Send(String.Empty);
+                        Assert.True(communicationClient.Send(String.Empty));
                         Assert.True(pauseCheckUpdate.WaitOne(WaitOneDuration));
                     });
             Assert.NotNull(assertionUpdate.Arguments);
@@ -119,7 +121,7 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnMessageThrottled += (sender, args) => Assert.True(pauseCheck.Set());
                         IClientMocker.SetIsConnected(mock, true);
-                        client.Connect();
+                        Assert.True(client.Connect());
                         // wait to connect and join
                         Task.Delay(2000).GetAwaiter().GetResult();
                         client.SendMessage(TWITCH_CHANNEL, messageNotSent);
@@ -161,7 +163,7 @@ namespace TwitchLib.Client.Tests
                     {
                         client.OnSendFailed += (sender, args) => Assert.True(pauseCheck.Set());
                         IClientMocker.SetIsConnected(mock, true);
-                        client.Connect();
+                        Assert.True(client.Connect());
                         // wait to connect and join
                         Task.Delay(2000).GetAwaiter().GetResult();
                         client.SendMessage(TWITCH_CHANNEL, messageNotSent);
