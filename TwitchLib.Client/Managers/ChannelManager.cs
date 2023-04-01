@@ -284,6 +284,12 @@ namespace TwitchLib.Client.Managers
 
 
         #region methods that should only be used for testing-purposes and by ITwitchClient-EventHandlers
+        /// <summary>
+        ///     should only be used for testing-purposes
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///     if <see cref="ChannelManager"/> is already started
+        /// </exception>
         public void Start()
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -296,6 +302,9 @@ namespace TwitchLib.Client.Managers
             ReJoinChannels();
             JoiningTask = Task.Run(JoinChannelTaskAction, Token);
         }
+        /// <summary>
+        ///     should only be used for testing-purposes 
+        /// </summary>
         public void Stop()
         {
             LOGGER?.TraceMethodCall(GetType());

@@ -16,6 +16,9 @@ namespace TwitchLib.Client
 
         #region properties public
         public bool IsConnected => Client.IsConnected;
+        /// <summary>
+        ///     <inheritdoc cref="Models.ConnectionCredentials"/>
+        /// </summary>
         public ConnectionCredentials ConnectionCredentials { get; private set; }
         #endregion properties public
 
