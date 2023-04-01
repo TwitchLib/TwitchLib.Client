@@ -2,6 +2,7 @@
 
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
+using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -15,6 +16,10 @@ namespace TwitchLib.Client.Interfaces
         ///     Occurs when [on message sent].
         /// </summary>
         event EventHandler<OnMessageSentArgs> OnMessageSent;
+        /// <summary>
+        ///     Occurs when [on message send failed].
+        /// </summary>
+        event EventHandler<OnSendFailedEventArgs> OnSendFailed;
         /// <summary>
         ///     Occurs when [on message throttled].
         /// </summary>
