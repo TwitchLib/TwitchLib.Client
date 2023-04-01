@@ -6,7 +6,7 @@ namespace TwitchLib.Client.Tests.Services
 {
     public class ThrottlerServiceTests
     {
-        [Fact]
+        [Fact(Skip = "coming up next")]
         public void DoSomeTests() { throw new NotImplementedException(); }
     }
 }
