@@ -30,12 +30,6 @@ namespace TwitchLib.Client
             Client.Send(message);
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
-        public void SendQueuedItem(string message)
-        {
-            LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
-            // IDE0058 - client raises OnSendFailed if this method returns false
-            Client.Send(message);
-        }
         public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));

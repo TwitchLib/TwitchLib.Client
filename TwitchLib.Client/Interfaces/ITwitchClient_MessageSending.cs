@@ -55,11 +55,6 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
         void SendReply(string channel, string replyToId, string message, bool dryRun = false);
         /// <summary>
-        ///     Sends the queued item.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        void SendQueuedItem(string message);
-        /// <summary>
         ///     Sends the raw.
         /// </summary>
         /// <param name="message">The message.</param>
