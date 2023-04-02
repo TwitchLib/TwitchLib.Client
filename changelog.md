@@ -12,6 +12,7 @@
 - https://github.com/TwitchLib/TwitchLib.Client/pull/208
 - https://github.com/TwitchLib/TwitchLib.Client/pull/213
 - https://github.com/TwitchLib/TwitchLib.Client/pull/214
+- https://github.com/TwitchLib/TwitchLib.Client/pull/218
 
 ---
 ### Changes
