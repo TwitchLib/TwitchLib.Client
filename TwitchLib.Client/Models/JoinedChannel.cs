@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -11,7 +11,6 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    // TODO: Missing builder
     /// <summary>
     ///     Class representing a joined channel.
     /// </summary>
