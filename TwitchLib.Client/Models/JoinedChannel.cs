@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -58,7 +58,12 @@ namespace TwitchLib.Client.Models
 
 
         #region methods public
-        /// <summary>Handles a message</summary>
+        /// <summary>
+        ///     handles a <see cref="ChatMessage"/> that is a <see cref="Enums.IrcCommand.PrivMsg"/>
+        /// </summary>
+        /// <param name="message">
+        ///     <see cref="ChatMessage"/>
+        /// </param>
         [SuppressMessage("Style", "IDE0058")]
         internal void HandlePRIVMSG(ChatMessage message)
         {
