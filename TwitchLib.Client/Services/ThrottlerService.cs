@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,31 +21,25 @@ namespace TwitchLib.Client.Services
 
     internal class ThrottlerService
     {
-        #region variables private
-        private long sentMessageCount = 0;
-        #endregion variables private
-
-
         #region properties private
         private ILogger LOGGER { get; }
         private ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>> Queue { get; } = new ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>>();
         private IClient Client { get; }
         private CancellationTokenSource TokenSource { get; set; }
         private CancellationToken Token => TokenSource.Token;
-        private Timer ResetThrottlingWindowTimer { get; set; }
         private ISendOptions SendOptions { get; }
-        private TwitchClient TwitchClient { get; }
-
+        private ITwitchClient TwitchClient { get; }
         /// <summary>
         ///     get is never used, cause the <see cref="Task"/> is canceled by the <see cref="Token"/>
         /// </summary>
         private Task SendTask { get; set; }
+        private Throttler Throttler { get; }
         #endregion properties private
 
 
         #region ctors
         internal ThrottlerService(IClient client,
-                                  TwitchClient twitchClient,
+                                  ITwitchClient twitchClient,
                                   ISendOptions messageSendOptions,
                                   ILogger logger = null)
         {
@@ -54,6 +47,7 @@ namespace TwitchLib.Client.Services
             TwitchClient = twitchClient;
             Client = client;
             SendOptions = messageSendOptions;
+            Throttler = new Throttler(SendOptions);
         }
         #endregion ctors
 
@@ -96,19 +90,15 @@ namespace TwitchLib.Client.Services
         internal bool Enqueue(OutboundChatMessage message)
         {
             LOGGER?.TraceMethodCall(GetType());
-            try
+            if (!Client.IsConnected
+                || Queue.Count >= SendOptions.QueueCapacity
+                || message == null)
             {
-                if (!Client.IsConnected || Queue.Count >= SendOptions.QueueCapacity)
-                    return false;
-                Queue.Enqueue(new Tuple<DateTime, OutboundChatMessage>(DateTime.UtcNow, message));
-                return true;
+                return false;
             }
-            catch (Exception ex)
-            {
-                LOGGER?.LogExceptionAsError(GetType(), ex);
-                RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnError), new OnErrorEventArgs() { Exception = ex });
-                throw;
-            }
+            Queue.Enqueue(new Tuple<DateTime, OutboundChatMessage>(DateTime.UtcNow, message));
+            return true;
+
         }
         /// <summary>
         ///     should only be used for testing-purposes and within <see cref="Subscribe(ITwitchClient)"/>
@@ -122,9 +112,15 @@ namespace TwitchLib.Client.Services
         internal void Start(object sender, OnConnectedArgs args)
         {
             LOGGER?.TraceMethodCall(GetType());
-            StartResetWindowTimer();
-            if (TokenSource != null) LOGGER.LogError("{type} should only be started once", GetType().Name);
-            StartSendTask();
+            if (TokenSource != null)
+            {
+                string message = String.Format("{0} should only be started once", GetType().Name);
+                LOGGER?.LogError(message);
+                RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnError), new OnErrorEventArgs() { Exception = new InvalidOperationException(message) });
+                return;
+            }
+            TokenSource = new CancellationTokenSource();
+            SendTask = Task.Run(SendTaskAction, Token);
         }
         /// <summary>
         ///     should only be used for testing-purposes and within <see cref="Subscribe(ITwitchClient)"/>
@@ -140,32 +136,11 @@ namespace TwitchLib.Client.Services
             LOGGER?.TraceMethodCall(GetType());
             TokenSource?.Cancel();
             TokenSource = null;
-            ResetThrottlingWindowTimer?.Dispose();
         }
         #endregion methods internal
 
 
         #region methods private
-        private void StartResetWindowTimer()
-        {
-            LOGGER?.TraceMethodCall(GetType());
-            ResetThrottlingWindowTimer = new Timer(ResetCallback,
-                                                   null,
-                                                   TimeSpan.FromSeconds(0),
-                                                   SendOptions.ThrottlingPeriod);
-        }
-        [SuppressMessage("Style", "IDE0058")]
-        private void ResetCallback(object state)
-        {
-            LOGGER?.TraceMethodCall(GetType());
-            Interlocked.Exchange(ref sentMessageCount, 0);
-        }
-        private void StartSendTask()
-        {
-            LOGGER?.TraceMethodCall(GetType());
-            TokenSource = new CancellationTokenSource();
-            SendTask = Task.Run(SendTaskAction, Token);
-        }
         private void SendTaskAction()
         {
             LOGGER?.TraceMethodCall(GetType());
@@ -177,25 +152,27 @@ namespace TwitchLib.Client.Services
         }
         private void TrySend()
         {
-            long localSentCount = ReadSentCount();
             try
             {
                 // Sequence: always try to dequeue first
                 bool taken = Queue.TryDequeue(out Tuple<DateTime, OutboundChatMessage> messageTupel);
                 if (!taken || messageTupel == null)
+                {
                     return;
+                }
                 // Sequence: now check CacheItemTimeout
                 if (messageTupel.Item1.Add(SendOptions.CacheItemTimeout) < DateTime.UtcNow)
+                {
                     return;
+                }
                 // Sequence: now check for throttling
                 //           if the consumer of this API passes zero for SendsAllowedInPeriod
                 //           to the ctor of SendOptions
                 //           this Sequence-order makes it transparent
                 //           cause Throttle raises the corresponding Event with the needed information
-                if (localSentCount >= SendOptions.SendsAllowedInPeriod)
+                if (Throttler.Throttle())
                 {
-                    Throttle(messageTupel?.Item2,
-                             localSentCount);
+                    Throttle(messageTupel?.Item2);
                     return;
                 }
                 string messageToSend = messageTupel.Item2.ToString();
@@ -210,7 +187,6 @@ namespace TwitchLib.Client.Services
                         Data = messageToSend
                     };
                     RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnSendReceiveData), args);
-                    IncrementSentCount();
                 }
             }
             catch (Exception ex) when (ex.GetType() == typeof(TaskCanceledException) || ex.GetType() == typeof(OperationCanceledException))
@@ -221,21 +197,10 @@ namespace TwitchLib.Client.Services
             catch (Exception ex)
             {
                 LOGGER?.LogExceptionAsError(GetType(), ex);
-                // msg may be null
                 RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnError), new OnErrorEventArgs() { Exception = ex });
             }
         }
-        private long ReadSentCount()
-        {
-            return Interlocked.Read(ref sentMessageCount);
-        }
-        [SuppressMessage("Style", "IDE0058")]
-        private void IncrementSentCount()
-        {
-            Interlocked.Increment(ref sentMessageCount);
-        }
-        private void Throttle(OutboundChatMessage itemNotSent,
-                              long sentCount)
+        private void Throttle(OutboundChatMessage itemNotSent)
         {
             LOGGER?.TraceMethodCall(GetType());
             LOGGER?.TraceAction(GetType(), "Message throttled");
@@ -245,8 +210,7 @@ namespace TwitchLib.Client.Services
                 ItemNotSent = itemNotSent,
                 Reason = msg,
                 AllowedInPeriod = SendOptions.SendsAllowedInPeriod,
-                Period = SendOptions.ThrottlingPeriod,
-                SentCount = sentCount
+                Period = SendOptions.ThrottlingPeriod
             };
             RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnMessageThrottled), args);
         }
