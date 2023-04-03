@@ -74,7 +74,9 @@ namespace TwitchLib.Client.Services {
         public bool Throttle() {
             if (this.IsThrottlingPeriodExceeded()) {
                 this.Reset();
-            } else if (this.SentItemCount >= this.SendOptions.SendsAllowedInPeriod) {
+            }
+            // no else-if to catch `this.SendOptions.SendsAllowedInPeriod = 0`
+            if (this.SentItemCount >= this.SendOptions.SendsAllowedInPeriod) {
                 return true;
             }
             this.SentItemCount++;
