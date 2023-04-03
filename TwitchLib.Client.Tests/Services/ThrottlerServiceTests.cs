@@ -9,7 +9,6 @@ using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Services;
 using TwitchLib.Communication.Events;
-using TwitchLib.Communication.Interfaces;
 
 using Xunit;
 
@@ -27,13 +26,11 @@ namespace TwitchLib.Client.Tests.Services
         {
             uint sendsAllowedInPeriod = (uint) MessageRateLimit.Limit_20_in_30_Seconds;
             ISendOptions sendOptions = new SendOptions(sendsAllowedInPeriod, queueCapacity);
-            Mock<IClient> communicationClientMock = new Mock<IClient>();
-            communicationClientMock.Setup(c => c.IsConnected)
-                .Returns(isConnected);
-            IClient communicationClient = communicationClientMock.Object;
             Mock<ITwitchClient> twitchClientMock = new Mock<ITwitchClient>();
+            twitchClientMock.Setup(c => c.IsConnected)
+                .Returns(isConnected);
             ITwitchClient twitchClient = twitchClientMock.Object;
-            ThrottlerService throttlerService = new ThrottlerService(communicationClient, twitchClient, sendOptions);
+            ThrottlerService throttlerService = new ThrottlerService(twitchClient, sendOptions);
             OutboundChatMessage? message = null;
             if (withMessage)
             {
@@ -47,10 +44,8 @@ namespace TwitchLib.Client.Tests.Services
         {
             uint sendsAllowedInPeriod = (uint) MessageRateLimit.Limit_20_in_30_Seconds;
             ISendOptions sendOptions = new SendOptions(sendsAllowedInPeriod);
-            Mock<IClient> communicationClientMock = new Mock<IClient>();
-            IClient communicationClient = communicationClientMock.Object;
             ITwitchClient twitchClient = new TwitchClient(new ConnectionCredentials("user", "auth"));
-            ThrottlerService throttlerService = new ThrottlerService(communicationClient, twitchClient, sendOptions);
+            ThrottlerService throttlerService = new ThrottlerService(twitchClient, sendOptions);
             try
             {
                 ManualResetEvent pauseCheck = new ManualResetEvent(false);

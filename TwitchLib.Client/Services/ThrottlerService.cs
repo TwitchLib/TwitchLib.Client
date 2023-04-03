@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
-using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Helpers;
@@ -14,7 +13,6 @@ using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Extensions;
-using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client.Services
 {
@@ -24,7 +22,6 @@ namespace TwitchLib.Client.Services
         #region properties private
         private ILogger LOGGER { get; }
         private ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>> Queue { get; } = new ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>>();
-        private IClient Client { get; }
         private CancellationTokenSource TokenSource { get; set; }
         private CancellationToken Token => TokenSource.Token;
         private ISendOptions SendOptions { get; }
@@ -38,14 +35,12 @@ namespace TwitchLib.Client.Services
 
 
         #region ctors
-        internal ThrottlerService(IClient client,
-                                  ITwitchClient twitchClient,
+        internal ThrottlerService(ITwitchClient twitchClient,
                                   ISendOptions messageSendOptions,
                                   ILogger logger = null)
         {
             LOGGER = logger;
             TwitchClient = twitchClient;
-            Client = client;
             SendOptions = messageSendOptions;
             Throttler = new Throttler(SendOptions);
         }
@@ -90,7 +85,7 @@ namespace TwitchLib.Client.Services
         internal bool Enqueue(OutboundChatMessage message)
         {
             LOGGER?.TraceMethodCall(GetType());
-            if (!Client.IsConnected
+            if (!TwitchClient.IsConnected
                 || Queue.Count >= SendOptions.QueueCapacity
                 || message == null)
             {
@@ -144,7 +139,7 @@ namespace TwitchLib.Client.Services
         private void SendTaskAction()
         {
             LOGGER?.TraceMethodCall(GetType());
-            while (Client.IsConnected && !Token.IsCancellationRequested)
+            while (TwitchClient.IsConnected && !Token.IsCancellationRequested)
             {
                 TrySend();
                 Task.Delay(SendOptions.SendDelay).GetAwaiter().GetResult();
@@ -176,18 +171,7 @@ namespace TwitchLib.Client.Services
                     return;
                 }
                 string messageToSend = messageTupel.Item2.ToString();
-                bool sent = Client.Send(messageToSend);
-                // only if it seems to be sent
-                // IClient raises the corresponding error and send-failed event if its not the case
-                if (sent)
-                {
-                    OnSendReceiveDataArgs args = new OnSendReceiveDataArgs()
-                    {
-                        Direction = SendReceiveDirection.Sent,
-                        Data = messageToSend
-                    };
-                    RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnSendReceiveData), args);
-                }
+                TwitchClient.SendRaw(messageToSend);
             }
             catch (Exception ex) when (ex.GetType() == typeof(TaskCanceledException) || ex.GetType() == typeof(OperationCanceledException))
             {

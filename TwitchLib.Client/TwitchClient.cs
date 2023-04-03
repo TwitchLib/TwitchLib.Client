@@ -116,8 +116,7 @@ namespace TwitchLib.Client
             SetConnectionCredentials(credentials);
             ChatCommandIdentifiers.Add('!');
             if (sendOptions == null) sendOptions = new SendOptions((uint) MessageRateLimit.Limit_20_in_30_Seconds);
-            ThrottlerService = new Services.ThrottlerService(Client,
-                                                             this,
+            ThrottlerService = new Services.ThrottlerService(this,
                                                              sendOptions,
                                                              LOGGER);
             ThrottlerService.Subscribe(this);

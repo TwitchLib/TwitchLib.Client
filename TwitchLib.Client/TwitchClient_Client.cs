@@ -79,16 +79,16 @@ namespace TwitchLib.Client
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
             // IDE0058 - client raises OnSendFailed if this method returns false
-            Client.Send(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
-            Client.Send(Rfc2812.Nick(TwitchUsername));
-            Client.Send(Rfc2812.User(TwitchUsername, 0, TwitchUsername));
+            SendRaw(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
+            SendRaw(Rfc2812.Nick(TwitchUsername));
+            SendRaw(Rfc2812.User(TwitchUsername, 0, TwitchUsername));
 
             if (ConnectionCredentials.Capabilities.Membership)
-                Client.Send("CAP REQ twitch.tv/membership");
+                SendRaw("CAP REQ twitch.tv/membership");
             if (ConnectionCredentials.Capabilities.Commands)
-                Client.Send("CAP REQ twitch.tv/commands");
+                SendRaw("CAP REQ twitch.tv/commands");
             if (ConnectionCredentials.Capabilities.Tags)
-                Client.Send("CAP REQ twitch.tv/tags");
+                SendRaw("CAP REQ twitch.tv/tags");
         }
         #endregion methods private
     }
