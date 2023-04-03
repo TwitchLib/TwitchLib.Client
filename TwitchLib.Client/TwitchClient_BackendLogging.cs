@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 
 using Microsoft.Extensions.Logging;
 
@@ -39,9 +38,9 @@ namespace TwitchLib.Client
                 dateTimeStr = $"{DateTime.UtcNow.ToShortTimeString()}";
 
             if (includeDate || includeTime)
-                LOGGER?.LogInformation($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
+                LOGGER?.LogInformation($"[TwitchLib, {Version} - {dateTimeStr}] {message}");
             else
-                LOGGER?.LogInformation($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
+                LOGGER?.LogInformation($"[TwitchLib, {Version}] {message}");
 
             OnLog?.Invoke(this, new OnLogArgs { BotUsername = TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }
@@ -56,9 +55,9 @@ namespace TwitchLib.Client
                 dateTimeStr = $"{DateTime.UtcNow.ToShortTimeString()}";
 
             if (includeDate || includeTime)
-                LOGGER?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
+                LOGGER?.LogError($"[TwitchLib, {Version} - {dateTimeStr}] {message}");
             else
-                LOGGER?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
+                LOGGER?.LogError($"[TwitchLib, {Version}] {message}");
 
             OnLog?.Invoke(this, new OnLogArgs { BotUsername = TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }

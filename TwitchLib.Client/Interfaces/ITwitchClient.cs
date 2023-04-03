@@ -1,4 +1,6 @@
-﻿using TwitchLib.Client.Models;
+﻿using System;
+
+using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Interfaces
 {
@@ -30,6 +32,10 @@ namespace TwitchLib.Client.Interfaces
         ///     Gets or sets a value indicating whether [will replace emotes].
         /// </summary>
         bool WillReplaceEmotes { get; set; }
+        /// <summary>
+        ///     Version of this Assembly
+        /// </summary>
+        Version Version { get; }
         #endregion properties public
 
 

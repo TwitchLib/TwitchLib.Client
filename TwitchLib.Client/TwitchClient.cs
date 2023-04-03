@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 using Microsoft.Extensions.Logging;
 
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Extensions.Internal;
+using TwitchLib.Client.Helpers;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;
@@ -32,7 +32,7 @@ namespace TwitchLib.Client
 
 
         #region Properties public
-        public Version Version => Assembly.GetEntryAssembly().GetName().Version;
+        public Version Version { get; }
         public string TwitchUsername => ConnectionCredentials?.TwitchUsername;
         public bool DisableAutoPong { get; set; } = false;
         public bool WillReplaceEmotes { get; set; } = false;
@@ -86,6 +86,7 @@ namespace TwitchLib.Client
         {
             LOGGER = logger;
             LOGGER?.TraceMethodCall(GetType());
+            Version = VersionHelper.AssemblyVersion;
             if (credentials == null)
             {
                 throw new ArgumentNullException(nameof(credentials), "ConnectionCredentials are mandatory");
