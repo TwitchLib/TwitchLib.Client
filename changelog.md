@@ -121,8 +121,8 @@
     - their `EventArgs` are `OnConnectedArgs`
     - yes, also `ITwitchClient.OnReConnected`
     - the `event` itself determines wether its a connect or reconnect
-- according to https://dev.twitch.tv/docs/irc/#keepalive-messages
-    - after receiving `IrcCommand.Pong` from twitch, `ITwitchClient` raises `OnError`
+
+TODO: add changes related to Throttling/ThrottlerService: Send, SendRaw
 
 ---
 
@@ -148,10 +148,13 @@
 
 #### ASubscriptionBase
 - the following `class`es now have a common `abstract` `base`-`class` `TwitchLib.Client.Models.ASubscriptionBase`
+    - `TwitchLib.Client.Models.CommunitySubscription`
+    - `TwitchLib.Client.Models.ContinuedGiftedSubscription`
+    - `TwitchLib.Client.Models.GiftedSubscription`
 
 ---
 
-#### SentMessage
+#### <span id="SentMessage">SentMessage</span>
 - `TwitchLib.Client.Models.SentMessage` is gone
     - now, a `JoinedChannel` handles messages, `TwitchClient` sends
         - whenever we really send a message, we are going to get it back from twitch as `ChatMessage`
@@ -165,27 +168,29 @@
 #### SentMessageBuilder
 - `TwitchLib.Client.Models.Builders.SentMessageBuilder` is gone
     - cause `SentMessage` is gone
+    - [see also SentMessage](#SentMessage)
 
 ---
 
 #### OnSentMessageEventArgs
 - the `SentMessage` propertys `Type` has changed from `TwitchLib.Client.Models.SentMessage` to `TwitchLib.Client.Models.ChatMessage` due to changes mentioned before
+- [see also SentMessage](#SentMessage)
 
 ---
 
 #### EventInvocationExt
 - `TwitchLib.Client.Extensions.EventInvocationExt.InvokeMessageSent(...)`
     - now takes the parameters to create a `ChatMessage` due to changes mentioned before
-
+    - [see also SentMessage](#SentMessage)
 ---
 
 #### ClientNotConnectedException
-- according to removal of `ITwitchClient` initialization-stuff, etsy
+- got removed according to removal of `ITwitchClient` initialization-stuff, etsy
 
 ---
 
 #### ClientNotInitializedException
-- according to removal of `ITwitchClient` initialization-stuff, etsy
+- got removed according to removal of `ITwitchClient` initialization-stuff, etsy
 
 ---
 
@@ -240,7 +245,29 @@
 
 ---
 
+#### Throttling/ThrottlerService
+- see also https://dev.twitch.tv/docs/irc/#rate-limits
+
+- Throttler and ThrottlerService
+    - `TwitchLib.Client.Services.Throttler`
+    - `TwitchLib.Client.Services.ThrottlerService`
+- SendOptions and MessageRateLimit
+    - `TwitchLib.Client.Models.Interfaces.ISendOptions`
+        - provides the following properties
+            - `uint SendsAllowedInPeriod { get; }`
+                - `uint` to allow lower `value`s than listed in the API
+            - `TimeSpan ThrottlingPeriod { get; }`
+                - should be the fix `value` `TimeSpan.FromSeconds(30)`
+            - `TimeSpan CacheItemTimeout { get; }`
+            - `uint QueueCapacity { get; }`
+    - `TwitchLib.Client.Models.SendOptions`
+        - `default` implementation/realization of `TwitchLib.Client.Models.Interfaces.ISendOptions`
+    - `TwitchLib.Client.Enums.MessageRateLimit`
+        - `uint`s according to the three max-`value`s the API mentions
+
 TODO: add changes related to Throttling/ThrottlerService
+
+---
 
 ### Code Example
 
