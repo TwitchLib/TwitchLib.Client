@@ -10,7 +10,6 @@ using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
 using TwitchLib.Client.Parsers;
-using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client
 {
@@ -67,7 +66,6 @@ namespace TwitchLib.Client
                         SendPONG();
                     break;
                 case IrcCommand.Pong:
-                    OnError?.Invoke(this, new OnErrorEventArgs() { Exception = new KeepAliveException(TwitchUsername) });
                     break;
                 case IrcCommand.Join:
                     if (ircMessage.User == TwitchUsername)
