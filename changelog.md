@@ -240,6 +240,8 @@
 
 ---
 
+TODO: add changes related to Throttling/ThrottlerService
+
 ### Code Example
 
 ```
