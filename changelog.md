@@ -44,7 +44,7 @@
 - `bool AutoReListenOnException { get; set; }`
     - has never been used
 - `public MessageEmoteCollection ChannelEmotes => _channelEmotes;`
-    - property, call ChannelEmotes with a `Type` of `MessageEmoteCollection`
+    - property, called ChannelEmotes with a `Type` of `MessageEmoteCollection`
         - none of it was correct
 - `void OnReadLineTest(string rawIrc);`
     - got removed
