@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 
 using Moq;
 
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Managers;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Tests.TestHelpers;
@@ -25,10 +26,12 @@ namespace TwitchLib.Client.Tests.Managers
         [Fact]
         public void JoinChannels_Incorrect_Test()
         {
+            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
+
             Mock<IClient> mock = new Mock<IClient>();
             IClient client = mock.Object;
-            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
-            ChannelManager channelManager = new ChannelManager(client, null, null, logger);
+            ITwitchClient twitchClient = new TwitchClient(new ConnectionCredentials("user", "auth"), client);
+            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger);
             string?[] channels = new string?[] {
                 "",
                 null,
@@ -60,12 +63,14 @@ namespace TwitchLib.Client.Tests.Managers
         [InlineData(" #Testchannel", "testchannel")]
         public void JoinChannels_Canceled_Test(string channel, string expected)
         {
+            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
             Mock<IClient> mock = new Mock<IClient>();
             IClient client = mock.Object;
-            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
-            ChannelManager channelManager = new ChannelManager(client, null, null, logger)
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials("testusername", "testoauth");
+            TwitchClient twitchClient = new TwitchClient(connectionCredentials, client);
+            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger)
             {
-                Credentials = new ConnectionCredentials("testusername", "testoauth")
+                Credentials = connectionCredentials
             };
             //
             channelManager.JoinChannels(new string[] { channel });
@@ -124,12 +129,14 @@ namespace TwitchLib.Client.Tests.Managers
         [InlineData(" #Testchannel", "testchannel")]
         public void JoinChannels_Completed_Test(string channel, string expected)
         {
+            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
             Mock<IClient> mock = new Mock<IClient>();
             IClient client = mock.Object;
-            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
-            ChannelManager channelManager = new ChannelManager(client, null, null, logger)
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials("testusername", "testoauth");
+            ITwitchClient twitchClient = new TwitchClient(connectionCredentials, client);
+            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger)
             {
-                Credentials = new ConnectionCredentials("testusername", "testoauth")
+                Credentials = connectionCredentials
             };
             //
             channelManager.JoinChannels(new string[] { channel });
@@ -194,12 +201,14 @@ namespace TwitchLib.Client.Tests.Managers
         [InlineData(" #Testchannel", "testchannel")]
         public void JoinChannels_Completed_Leave_Test(string channel, string expected)
         {
+            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
             Mock<IClient> mock = new Mock<IClient>();
             IClient client = mock.Object;
-            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
-            ChannelManager channelManager = new ChannelManager(client, null, null, logger)
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials("testusername", "testoauth");
+            ITwitchClient twitchClient = new TwitchClient(connectionCredentials, client);
+            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger)
             {
-                Credentials = new ConnectionCredentials("testusername", "testoauth")
+                Credentials = connectionCredentials
             };
             //
             channelManager.JoinChannels(new string[] { channel });
@@ -269,12 +278,14 @@ namespace TwitchLib.Client.Tests.Managers
         [InlineData(" #Testchannel", "testchannel")]
         public void JoinChannels_Leave_Before_CanceledCompleted_Test(string channel, string expected)
         {
+            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
             Mock<IClient> mock = new Mock<IClient>();
             IClient client = mock.Object;
-            ILogger<ChannelManager> logger = TestLogHelper.GetLogger<ChannelManager>();
-            ChannelManager channelManager = new ChannelManager(client, null, null, logger)
+            ConnectionCredentials connectionCredentials = new ConnectionCredentials("testusername", "testoauth");
+            ITwitchClient twitchClient = new TwitchClient(connectionCredentials, client);
+            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger)
             {
-                Credentials = new ConnectionCredentials("testusername", "testoauth")
+                Credentials = connectionCredentials
             };
             //
             channelManager.JoinChannels(new string[] { channel });

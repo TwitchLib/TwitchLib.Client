@@ -109,7 +109,7 @@ namespace TwitchLib.Client
             //
             ConnectionStateManager.Subscribe(this);
             //
-            ChannelManager = new ChannelManager(Client, Log, LogError, LOGGER);
+            ChannelManager = new ChannelManager(this, Log, LogError, LOGGER);
             ChannelManager.Subscribe(this);
             // has to be done here,
             // cause credentials are also set into ChannelManager

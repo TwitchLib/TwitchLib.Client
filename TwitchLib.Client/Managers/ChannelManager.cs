@@ -14,7 +14,6 @@ using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
-using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client.Managers
 {
@@ -81,7 +80,7 @@ namespace TwitchLib.Client.Managers
         private CancellationTokenSource CTS { get; set; }
         private CancellationToken Token => CTS.Token;
         public ConnectionCredentials Credentials { get; set; }
-        private IClient Client { get; }
+        private ITwitchClient TwitchClient { get; }
         private Task JoiningTask { get; set; }
         /// <summary>
         ///     holds the names of the channels, that we want to join, to be able to ReJoin them after a reconnect
@@ -148,9 +147,9 @@ namespace TwitchLib.Client.Managers
 
 
         #region ctor
-        public ChannelManager(IClient client, Log log, Log logError, ILogger logger = null)
+        public ChannelManager(ITwitchClient twitchClient, Log log, Log logError, ILogger logger = null)
         {
-            Client = client;
+            TwitchClient = twitchClient;
             Log = log;
             LogError = logError;
             LOGGER = logger;
@@ -223,7 +222,7 @@ namespace TwitchLib.Client.Managers
                 {
                     // if its already joined: send PART
                     // IDE0058 - client raises OnSendFailed if this method returns false
-                    Client.Send(Rfc2812.Part($"#{channel}"));
+                    TwitchClient.SendRaw(Rfc2812.Part($"#{channel}"));
                     // we dont want to join it anymore
                     WantToJoin.Remove(channel);
                     // we are fine
@@ -388,7 +387,7 @@ namespace TwitchLib.Client.Managers
                         Log?.Invoke($"Joining channel: {channelToJoin}");
                         // IDE0058 - client raises OnSendFailed if this method returns false
                         // important we set channel to lower case when sending join message
-                        Client.Send(Rfc2812.Join($"#{channelToJoin.ToLower()}"));
+                        TwitchClient.SendRaw(Rfc2812.Join($"#{channelToJoin.ToLower()}"));
                         JoinRequested.Add(channelToJoin);
                     }
                 }
