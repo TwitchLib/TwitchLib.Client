@@ -143,7 +143,7 @@
 
 #### IrcCommand
 - went from `TwitchLib.Client.Enums.Internal` to `TwitchLib.Client.Enums`
-
+    - it was already `public`ly visible
 ---
 
 #### ASubscriptionBase
