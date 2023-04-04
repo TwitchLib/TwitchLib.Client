@@ -126,8 +126,15 @@
     - their `EventArgs` are `OnConnectedArgs`
     - yes, also `ITwitchClient.OnReConnected`
     - the `event` itself determines wether its a connect or reconnect
-
-TODO: add changes related to Throttling/ThrottlerService: Send, SendRaw
+- `void SendRaw(string message)`
+    - see also [ITwitchClient and TwitchClient removed SendQueuedItem(string message)](#ITwitchClient.Removed.SendQueuedItem)
+    - now `SendRaw(string message)` is internally
+        - used to
+            - bypass `Services.ThrottlerService`
+            - send `JOIN`s and `PARTS`
+            - send LogIn-information
+        - used by
+            - `Services.ThrottlerService` to send queued Messages
 
 ---
 
