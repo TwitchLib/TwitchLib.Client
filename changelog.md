@@ -277,8 +277,6 @@
     - `TwitchLib.Client.Enums.MessageRateLimit`
         - `uint`s according to the three max-`value`s the API mentions
 
-TODO: add changes related to Throttling/ThrottlerService
-
 ---
 
 ### Code Example
