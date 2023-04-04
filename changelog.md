@@ -282,7 +282,7 @@ TODO: add changes related to Throttling/ThrottlerService
 ---
 
 ### Code Example
-
+#### <span id="CodeExample.WithDefaults">with defaults</span>
 ```
 ConnectionCredentials credentials = new ConnectionCredentials("username", "auth-token");
 ITwitchClient twitchClient = new TwitchClient(credentials);
@@ -299,4 +299,35 @@ twitchClient.JoinChannels(new string[]{"testchannel_a", "testchannel_b"});
 // and connect
 twitchClient.Connect();
 ...
+```
+
+#### show defaults in detail
+The [Code Example with defaults](#CodeExample.WithDefaults) call to `TwichtClient`s ctor
+```
+ConnectionCredentials credentials = new ConnectionCredentials("username", "auth-token");
+ITwitchClient twitchClient = new TwitchClient(credentials);
+```
+is equivalent to the following
+```
+ConnectionCredentials credentials = new ConnectionCredentials("username", "auth-token");
+
+ReconnectionPolicy reconnectionPolicy = new ReconnectionPolicy(reconnectInterval: 3_000,
+                                                               maxAttempts: 10);
+
+IClientOptions clientOptions = new ClientOptions(reconnectionPolicy: reconnectionPolicy,
+                                                 useSsl: true,
+                                                 disconnectWait: 1_500,
+                                                 clientType: Communication.Enums.ClientType.Chat);
+
+IClient communicationClient = new WebSocketClient(options: clientOptions);
+
+ISendOptions sendOptions = new SendOptions(sendsAllowedInPeriod: (uint) MessageRateLimit.Limit_20_in_30_Seconds,
+                                           queueCapacity: 10_000,
+                                           cacheItemTimeoutInMinutes: 30,
+                                           sendDelay: 50);
+
+ITwitchClient twitchClient = new TwitchClient(credentials: credentials,
+                                              client: communicationClient,
+                                              protocol: ClientProtocol.WebSocket,
+                                              sendOptions: sendOptions);
 ```
