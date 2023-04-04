@@ -90,7 +90,9 @@ namespace TwitchLib.Client
             }
             if (dryRun) return;
             ThrottlerService.Enqueue(twitchMessage);
-            // ThrottlerService invokes OnSendReceiveData if the enqueued message seems to be sent
+            // ThrottlerService invokes this instances SendRaw(string message)
+            // which then raises OnSendReceiveData,
+            // if the message seems to be sent
         }
         #endregion methods private
     }
