@@ -61,8 +61,13 @@
     - exclamationmark is added within ctor
         - can be removed via `ITwitchClient.RemoveChatCommandIdentifier(char identifier)`
     - channels can be added to 'auto-join-channels' via `ITwitchClient.JoinChannels(...)`
-- `void SendQueuedItem(string message);`
+- `void SendQueuedItem(string message);`<span id="ITwitchClient.Removed.SendQueuedItem"></span>
     - messages are queued/throttled by default
+        - see also `ITwitchClient`s methods:
+            - `void SendMessage(string channel, string message, bool dryRun = false);`
+            - `void SendMessage(JoinedChannel channel, string message, bool dryRun = false);`
+            - `void SendReply(string channel, string replyToId, string message, bool dryRun = false);`
+            - `void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false);`
 
 ##### changed
 - constructor (ctor)
