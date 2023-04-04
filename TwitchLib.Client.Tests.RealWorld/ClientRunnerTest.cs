@@ -24,8 +24,20 @@ public class ClientRunnerTest {
     private string TwitchUsername => throw new NotImplementedException();
     private string TwitchOAuth => throw new NotImplementedException();
     private IEnumerable<string> Channels => throw new NotImplementedException();
-    private int WaitSecondsAfterDisconnect => 20;
-    [Fact(Skip = "should be done manually")]
+    /// <summary>
+    ///     just to see what happens within this time span
+    /// </summary>
+    private int WaitSecondsAfterDisconnect => 60;
+    /// <summary>
+    ///     with a value &gt; 5
+    ///     <br></br>
+    ///     PING-PONG appears in Log-File
+    /// </summary>
+    private int ListenDurationInMinutes => 1;
+    /// <summary>
+    ///     its rather a run and read the log-file test than a run and try to dynamically assert stuff test
+    /// </summary>
+    [Fact(Skip = "should be run manually")]
     public void Run() {
         ConnectionCredentials credentials = new ConnectionCredentials(this.TwitchUsername, this.TwitchOAuth);
         IClient communicationClient = new WebSocketClient(logger: LOGGER);
@@ -40,25 +52,27 @@ public class ClientRunnerTest {
         twitchClient.OnUserJoined += this.OnUserJoined;
         twitchClient.OnSendReceiveData += this.OnSendReceiveData;
         twitchClient.OnExistingUsersDetected += this.OnExistingUsersDetected;
+        // initial connect
         Assert.True(twitchClient.Connect());
-        Task.Delay(TimeSpan.FromMinutes(10)).GetAwaiter().GetResult();
-        //twitchClient.Reconnect();
-        //Task.Delay(TimeSpan.FromMinutes(2)).GetAwaiter().GetResult();
-        //twitchClient.Disconnect();
-        //Task.Delay(TimeSpan.FromSeconds(this.WaitSecondsAfterDisconnect)).GetAwaiter().GetResult();
-        //twitchClient.Reconnect();
-        //Task.Delay(TimeSpan.FromMinutes(2)).GetAwaiter().GetResult();
-        //twitchClient.Disconnect();
-        //Task.Delay(TimeSpan.FromSeconds(this.WaitSecondsAfterDisconnect)).GetAwaiter().GetResult();
-        //Assert.True(twitchClient.Connect());
-        //Task.Delay(TimeSpan.FromMinutes(2)).GetAwaiter().GetResult();
-        //twitchClient.Disconnect();
-        //Task.Delay(TimeSpan.FromSeconds(this.WaitSecondsAfterDisconnect)).GetAwaiter().GetResult();
-
-        // TODO: assertions...
-        // TODO: disconnect
-        // TODO: connect
-        // TODO: reconnect
+        Task.Delay(TimeSpan.FromMinutes(this.ListenDurationInMinutes)).GetAwaiter().GetResult();
+        // reconnect while connected
+        twitchClient.Reconnect();
+        Task.Delay(TimeSpan.FromMinutes(this.ListenDurationInMinutes)).GetAwaiter().GetResult();
+        // disconnect gracefully
+        twitchClient.Disconnect();
+        Task.Delay(TimeSpan.FromSeconds(this.WaitSecondsAfterDisconnect)).GetAwaiter().GetResult();
+        // reconnect while disconnected
+        twitchClient.Reconnect();
+        Task.Delay(TimeSpan.FromMinutes(this.ListenDurationInMinutes)).GetAwaiter().GetResult();
+        // disconnect gracefully
+        twitchClient.Disconnect();
+        Task.Delay(TimeSpan.FromSeconds(this.WaitSecondsAfterDisconnect)).GetAwaiter().GetResult();
+        // connect gracefully again
+        Assert.True(twitchClient.Connect());
+        Task.Delay(TimeSpan.FromMinutes(this.ListenDurationInMinutes)).GetAwaiter().GetResult();
+        // disconnect gracefully
+        twitchClient.Disconnect();
+        Task.Delay(TimeSpan.FromSeconds(this.WaitSecondsAfterDisconnect)).GetAwaiter().GetResult();
     }
     private void OnConnected(object? sender, OnConnectedArgs args) {
         LOGGER.LogInformation("connected");
@@ -72,8 +86,14 @@ public class ClientRunnerTest {
     private void OnJoinedChannel(object? sender, OnJoinedChannelArgs args) {
         LOGGER.LogInformation("#{channel} joined", args.Channel);
     }
+    private void OnLeftChannel(object? sender, OnLeftChannelArgs args) {
+        LOGGER.LogInformation("#{channel} left", args.Channel);
+    }
     private void OnUserJoined(object? sender, OnUserJoinedArgs args) {
         LOGGER.LogInformation("{username} joined #{channel}", args.Username, args.Channel);
+    }
+    private void OnUserLeft(object? sender, OnUserLeftArgs args) {
+        LOGGER.LogInformation("{username} left #{channel}", args.Username, args.Channel);
     }
     private void OnExistingUsersDetected(object? sender, OnExistingUsersDetectedArgs args) {
         LOGGER.LogInformation("{username} detected in #{channel}", String.Join(", ", args.Users), args.Channel);
