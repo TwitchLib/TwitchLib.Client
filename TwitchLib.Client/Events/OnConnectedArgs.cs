@@ -19,11 +19,11 @@ namespace TwitchLib.Client.Events
         ///     <br></br>
         ///     the presence of this <see cref="IEnumerable{T}"/> <b>does not</b> indicate they are already joined!
         /// </summary>
-        public IEnumerable<string> AutoJoinChannels { get; set; } = new List<string>();
+        public IEnumerable<string> AutoJoinChannels { get; set; } = Array.Empty<string>();
         public OnConnectedArgs(string botUsername, IEnumerable<string> autoJoinChannels)
         {
             BotUsername = botUsername;
-            AutoJoinChannels = autoJoinChannels;
+            if (autoJoinChannels != null) AutoJoinChannels = autoJoinChannels;
         }
     }
 }
