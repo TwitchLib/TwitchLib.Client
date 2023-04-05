@@ -82,14 +82,14 @@ namespace TwitchLib.Client.Models
         {
             if (userState.Id == null || userState.Id.IsNullOrEmptyOrWhitespace())
             {
-                OnUserStateChangedArgs args = new OnUserStateChangedArgs { UserState = userState, Channel = Channel };
+                OnUserStateChangedArgs args = new OnUserStateChangedArgs(Channel, userState);
                 RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnUserStateChanged), args);
                 return;
             }
             bool gotValue = BotMessages.TryRemove(userState.Id, out ChatMessage chatMessage);
             if (gotValue && chatMessage != null)
             {
-                OnMessageSentArgs args = new OnMessageSentArgs() { SentMessage = chatMessage, Channel = Channel };
+                OnMessageSentArgs args = new OnMessageSentArgs(Channel, chatMessage);
                 RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnMessageSent), args);
             }
         }
@@ -127,7 +127,7 @@ namespace TwitchLib.Client.Models
             {
                 State.Apply(ircMessage);
             }
-            OnChannelStateChangedArgs args = new OnChannelStateChangedArgs { ChannelState = State, Channel = Channel };
+            OnChannelStateChangedArgs args = new OnChannelStateChangedArgs(Channel, State);
             RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnChannelStateChanged), args);
         }
         #endregion methods public

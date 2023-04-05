@@ -1,5 +1,6 @@
 ﻿using System;
 
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions.Internal;
 using TwitchLib.Client.Interfaces;
@@ -36,7 +37,7 @@ namespace TwitchLib.Client
             bool sent = Client.Send(message);
             // only if its really sent
             // IClient raises OnSendFailed otherwise
-            if (sent) OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
+            if (sent) OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs(SendReceiveDirection.Sent, message));
         }
         public void SendMessage(JoinedChannel? channel, string message, bool dryRun = false)
         {

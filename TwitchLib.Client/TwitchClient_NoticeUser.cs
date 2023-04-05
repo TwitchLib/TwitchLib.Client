@@ -36,7 +36,7 @@ namespace TwitchLib.Client
             bool successMsgId = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
             if (!successMsgId)
             {
-                OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
+                OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs(ircMessage.Channel, TwitchUsername, "UserNoticeHandling", ircMessage.ToString()));
                 UnaccountedFor(ircMessage.ToString());
                 return false;
             }
@@ -45,42 +45,42 @@ namespace TwitchLib.Client
             {
                 case MsgIds.Announcement:
                     Announcement announcement = new Announcement(ircMessage);
-                    OnAnnouncement?.Invoke(this, new OnAnnouncementArgs { Announcement = announcement, Channel = ircMessage.Channel });
+                    OnAnnouncement?.Invoke(this, new OnAnnouncementArgs(ircMessage.Channel, announcement));
                     break;
                 case MsgIds.Raid:
                     RaidNotification raidNotification = new RaidNotification(ircMessage);
-                    OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotification = raidNotification });
+                    OnRaidNotification?.Invoke(this, new OnRaidNotificationArgs(ircMessage.Channel, raidNotification));
                     break;
                 case MsgIds.UnRaid:
                     RaidNotification unRaidNotification = new RaidNotification(ircMessage);
-                    OnUnRaidNotification?.Invoke(this, new OnRaidNotificationArgs { Channel = ircMessage.Channel, RaidNotification = unRaidNotification });
+                    OnUnRaidNotification?.Invoke(this, new OnRaidNotificationArgs(ircMessage.Channel, unRaidNotification));
                     break;
                 case MsgIds.ReSubscription:
                     ReSubscriber resubscriber = new ReSubscriber(ircMessage, LOGGER);
-                    OnReSubscriber?.Invoke(this, new OnReSubscriberArgs { ReSubscriber = resubscriber, Channel = ircMessage.Channel });
+                    OnReSubscriber?.Invoke(this, new OnReSubscriberArgs(ircMessage.Channel, resubscriber));
                     break;
                 case MsgIds.SubGift:
                     GiftedSubscription giftedSubscription = new GiftedSubscription(ircMessage, LOGGER);
-                    OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs { GiftedSubscription = giftedSubscription, Channel = ircMessage.Channel });
+                    OnGiftedSubscription?.Invoke(this, new OnGiftedSubscriptionArgs(ircMessage.Channel, giftedSubscription));
                     break;
                 case MsgIds.CommunitySubscription:
                     CommunitySubscription communitySubscription = new CommunitySubscription(ircMessage, LOGGER);
-                    OnCommunitySubscription?.Invoke(this, new OnCommunitySubscriptionArgs { GiftedSubscription = communitySubscription, Channel = ircMessage.Channel });
+                    OnCommunitySubscription?.Invoke(this, new OnCommunitySubscriptionArgs(ircMessage.Channel, communitySubscription));
                     break;
                 case MsgIds.ContinuedGiftedSubscription:
                     ContinuedGiftedSubscription continuedGiftedSubscription = new ContinuedGiftedSubscription(ircMessage);
-                    OnContinuedGiftedSubscription?.Invoke(this, new OnContinuedGiftedSubscriptionArgs { ContinuedGiftedSubscription = continuedGiftedSubscription, Channel = ircMessage.Channel });
+                    OnContinuedGiftedSubscription?.Invoke(this, new OnContinuedGiftedSubscriptionArgs(ircMessage.Channel, continuedGiftedSubscription));
                     break;
                 case MsgIds.Subscription:
                     Subscriber subscriber = new Subscriber(ircMessage, LOGGER);
-                    OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs { Subscriber = subscriber, Channel = ircMessage.Channel });
+                    OnNewSubscriber?.Invoke(this, new OnNewSubscriberArgs(ircMessage.Channel, subscriber));
                     break;
                 case MsgIds.PrimePaidUprade:
                     PrimePaidSubscriber primePaidSubscriber = new PrimePaidSubscriber(ircMessage, LOGGER);
-                    OnPrimePaidSubscriber?.Invoke(this, new OnPrimePaidSubscriberArgs { PrimePaidSubscriber = primePaidSubscriber, Channel = ircMessage.Channel });
+                    OnPrimePaidSubscriber?.Invoke(this, new OnPrimePaidSubscriberArgs(ircMessage.Channel, primePaidSubscriber));
                     break;
                 default:
-                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "UserNoticeHandling", RawIRC = ircMessage.ToString() });
+                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs(ircMessage.Channel, TwitchUsername, "UserNoticeHandling", ircMessage.ToString()));
                     UnaccountedFor(ircMessage.ToString());
                     return false;
             }

@@ -45,12 +45,12 @@ namespace TwitchLib.Client
         private void Client_OnFatality(object sender, OnFatalErrorEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
-            OnConnectionError?.Invoke(this, new OnConnectionErrorArgs { BotUsername = TwitchUsername, Error = new ErrorEvent { Message = e.Reason } });
+            OnConnectionError?.Invoke(this, new OnConnectionErrorArgs(TwitchUsername, new ErrorEvent { Message = e.Reason }));
         }
         private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Client));
-            OnDisconnected?.Invoke(sender, new OnDisconnectedArgs() { BotUsername = TwitchUsername });
+            OnDisconnected?.Invoke(sender, new OnDisconnectedArgs(TwitchUsername));
         }
         private void Client_OnMessage(object sender, OnMessageEventArgs e)
         {
@@ -63,7 +63,7 @@ namespace TwitchLib.Client
                     continue;
 
                 Log($"Received: {line}");
-                OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Received, Data = line });
+                OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs(SendReceiveDirection.Received, line));
                 try
                 {
                     HandleIrcMessage(line);

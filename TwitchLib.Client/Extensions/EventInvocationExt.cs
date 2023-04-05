@@ -33,11 +33,7 @@ namespace TwitchLib.Client.Extensions
             bool subOnly, int slowMode, bool emoteOnly, string broadcasterLanguage, TimeSpan followersOnly, bool mercury, string roomId)
         {
             ChannelState state = new ChannelState(r9k, rituals, subOnly, slowMode, emoteOnly, broadcasterLanguage, channel, followersOnly, mercury, roomId);
-            OnChannelStateChangedArgs model = new OnChannelStateChangedArgs()
-            {
-                Channel = channel,
-                ChannelState = state
-            };
+            OnChannelStateChangedArgs model = new OnChannelStateChangedArgs(channel, state);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnChannelStateChanged), model);
         }
 
@@ -48,10 +44,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">The channel.</param>
         public static void InvokeChatCleared(this TwitchClient client, string channel)
         {
-            OnChatClearedArgs model = new OnChatClearedArgs()
-            {
-                Channel = channel
-            };
+            OnChatClearedArgs model = new OnChatClearedArgs(channel);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnChatCleared), model);
         }
 
@@ -153,10 +146,7 @@ namespace TwitchLib.Client.Extensions
                                               cheerBadge,
                                               bits,
                                               bitsInDollars);
-            OnChatCommandReceivedArgs model = new OnChatCommandReceivedArgs()
-            {
-                Command = new ChatCommand(msg, commandText, argumentsAsString, argumentsAsList, commandIdentifier)
-            };
+            OnChatCommandReceivedArgs model = new OnChatCommandReceivedArgs(new ChatCommand(msg, commandText, argumentsAsString, argumentsAsList, commandIdentifier));
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnChatCommandReceived), model);
         }
 
@@ -168,11 +158,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="botUsername">The bot username.</param>
         public static void InvokeConnected(this TwitchClient client, string autoJoinChannel, string botUsername)
         {
-            OnConnectedArgs model = new OnConnectedArgs()
-            {
-                AutoJoinChannels = new string[] { autoJoinChannel },
-                BotUsername = botUsername
-            };
+            OnConnectedArgs model = new OnConnectedArgs(botUsername, new string[] { autoJoinChannel });
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnConnected), model);
         }
 
@@ -184,11 +170,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="errorEvent">The error event.</param>
         public static void InvokeConnectionError(this TwitchClient client, string botUsername, ErrorEvent errorEvent)
         {
-            OnConnectionErrorArgs model = new OnConnectionErrorArgs()
-            {
-                BotUsername = botUsername,
-                Error = errorEvent
-            };
+            OnConnectionErrorArgs model = new OnConnectionErrorArgs(botUsername, errorEvent);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnConnectionError), model);
         }
 
@@ -199,10 +181,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="botUsername">The bot username.</param>
         public static void InvokeDisconnected(this TwitchClient client, string botUsername)
         {
-            OnDisconnectedArgs model = new OnDisconnectedArgs()
-            {
-                BotUsername = botUsername
-            };
+            OnDisconnectedArgs model = new OnDisconnectedArgs(botUsername);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnDisconnected), model);
         }
 
@@ -214,11 +193,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="users">The users.</param>
         public static void InvokeExistingUsersDetected(this TwitchClient client, string channel, List<string> users)
         {
-            OnExistingUsersDetectedArgs model = new OnExistingUsersDetectedArgs()
-            {
-                Channel = channel,
-                Users = users
-            };
+            OnExistingUsersDetectedArgs model = new OnExistingUsersDetectedArgs(channel, users);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnExistingUsersDetected), model);
         }
 
@@ -276,33 +251,7 @@ namespace TwitchLib.Client.Extensions
                                                     UserType userType,
                                                     string userId)
         {
-            OnGiftedSubscriptionArgs model = new OnGiftedSubscriptionArgs()
-            {
-                GiftedSubscription = new GiftedSubscription(badges,
-                                                            badgeInfo,
-                                                            color,
-                                                            displayName,
-                                                            emotes,
-                                                            id,
-                                                            login,
-                                                            isModerator,
-                                                            msgId,
-                                                            msgParamMonths,
-                                                            msgParamRecipientDisplayName,
-                                                            msgParamRecipientId,
-                                                            msgParamRecipientUserName,
-                                                            msgParamSubPlanName,
-                                                            msgMultiMonthGiftDuration,
-                                                            msgParamSubPlan,
-                                                            roomId,
-                                                            isSubscriber,
-                                                            systemMsg,
-                                                            systemMsgParsed,
-                                                            tmiSentTs,
-                                                            isTurbo,
-                                                            userType,
-                                                            userId)
-            };
+            OnGiftedSubscriptionArgs model = new OnGiftedSubscriptionArgs(null, new GiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName, msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgMultiMonthGiftDuration, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo, userType, userId));
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnGiftedSubscription), model);
         }
 
@@ -313,10 +262,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="ex">The ex.</param>
         public static void InvokeIncorrectLogin(this TwitchClient client, Exceptions.ErrorLoggingInException ex)
         {
-            OnIncorrectLoginArgs model = new OnIncorrectLoginArgs()
-            {
-                Exception = ex
-            };
+            OnIncorrectLoginArgs model = new OnIncorrectLoginArgs(ex);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnIncorrectLogin), model);
         }
 
@@ -328,11 +274,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">The channel.</param>
         public static void InvokeJoinedChannel(this TwitchClient client, string botUsername, string channel)
         {
-            OnJoinedChannelArgs model = new OnJoinedChannelArgs()
-            {
-                BotUsername = botUsername,
-                Channel = channel
-            };
+            OnJoinedChannelArgs model = new OnJoinedChannelArgs(botUsername, channel);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnJoinedChannel), model);
         }
 
@@ -344,11 +286,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="channel">The channel.</param>
         public static void InvokeLeftChannel(this TwitchClient client, string botUsername, string channel)
         {
-            OnLeftChannelArgs model = new OnLeftChannelArgs()
-            {
-                BotUsername = botUsername,
-                Channel = channel
-            };
+            OnLeftChannelArgs model = new OnLeftChannelArgs(channel, botUsername);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnLeftChannel), model);
         }
 
@@ -361,12 +299,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="dateTime">The date time.</param>
         public static void InvokeLog(this TwitchClient client, string botUsername, string data, DateTime dateTime)
         {
-            OnLogArgs model = new OnLogArgs()
-            {
-                BotUsername = botUsername,
-                Data = data,
-                DateTime = dateTime
-            };
+            OnLogArgs model = new OnLogArgs(botUsername, data, dateTime);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnLog), model);
         }
 
@@ -432,37 +365,7 @@ namespace TwitchLib.Client.Extensions
                                                  int bits,
                                                  double bitsInDollars)
         {
-            OnMessageReceivedArgs model = new OnMessageReceivedArgs()
-            {
-                ChatMessage = new ChatMessage(botUsername,
-                                              userId,
-                                              userName,
-                                              displayName,
-                                              colorHex,
-                                              color,
-                                              emoteSet,
-                                              message,
-                                              userType,
-                                              channel,
-                                              id,
-                                              isSubscriber,
-                                              subscribedMonthCount,
-                                              roomId,
-                                              isTurbo,
-                                              isModerator,
-                                              isMe,
-                                              isBroadcaster,
-                                              isVip,
-                                              isPartner,
-                                              isStaff,
-                                              noisy,
-                                              rawIrcMessage,
-                                              emoteReplacedMessage,
-                                              badges,
-                                              cheerBadge,
-                                              bits,
-                                              bitsInDollars)
-            };
+            OnMessageReceivedArgs model = new OnMessageReceivedArgs(channel, new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, id, isSubscriber, subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, isVip, isPartner, isStaff, noisy, rawIrcMessage, emoteReplacedMessage, badges, cheerBadge, bits, bitsInDollars));
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnMessageReceived), model);
         }
 
@@ -501,37 +404,34 @@ namespace TwitchLib.Client.Extensions
                                              int bits,
                                              double bitsInDollars)
         {
-            OnMessageSentArgs model = new OnMessageSentArgs()
-            {
-                SentMessage = new ChatMessage(botUsername,
-                                              userId,
-                                              userName,
-                                              displayName,
-                                              colorHex,
-                                              color,
-                                              emoteSet,
-                                              message,
-                                              userType,
-                                              channel,
-                                              id,
-                                              isSubscriber,
-                                              subscribedMonthCount,
-                                              roomId,
-                                              isTurbo,
-                                              isModerator,
-                                              isMe,
-                                              isBroadcaster,
-                                              isVip,
-                                              isPartner,
-                                              isStaff,
-                                              noisy,
-                                              rawIrcMessage,
-                                              emoteReplacedMessage,
-                                              badges,
-                                              cheerBadge,
-                                              bits,
-                                              bitsInDollars)
-            };
+            OnMessageSentArgs model = new OnMessageSentArgs(channel, new ChatMessage(botUsername,
+                                                                                     userId,
+                                                                                     userName,
+                                                                                     displayName,
+                                                                                     colorHex,
+                                                                                     color,
+                                                                                     emoteSet,
+                                                                                     message,
+                                                                                     userType,
+                                                                                     channel,
+                                                                                     id,
+                                                                                     isSubscriber,
+                                                                                     subscribedMonthCount,
+                                                                                     roomId,
+                                                                                     isTurbo,
+                                                                                     isModerator,
+                                                                                     isMe,
+                                                                                     isBroadcaster,
+                                                                                     isVip,
+                                                                                     isPartner,
+                                                                                     isStaff,
+                                                                                     noisy,
+                                                                                     rawIrcMessage,
+                                                                                     emoteReplacedMessage,
+                                                                                     badges,
+                                                                                     cheerBadge,
+                                                                                     bits,
+                                                                                     bitsInDollars));
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnMessageSent), model);
         }
 
@@ -543,11 +443,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="username">The username.</param>
         public static void InvokeModeratorJoined(this TwitchClient client, string channel, string username)
         {
-            OnModeratorJoinedArgs model = new OnModeratorJoinedArgs()
-            {
-                Channel = channel,
-                Username = username
-            };
+            OnModeratorJoinedArgs model = new OnModeratorJoinedArgs(channel, username);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnModeratorJoined), model);
         }
 
@@ -559,11 +455,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="username">The username.</param>
         public static void InvokeModeratorLeft(this TwitchClient client, string channel, string username)
         {
-            OnModeratorLeftArgs model = new OnModeratorLeftArgs()
-            {
-                Channel = channel,
-                Username = username
-            };
+            OnModeratorLeftArgs model = new OnModeratorLeftArgs(channel, username);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnModeratorLeft), model);
         }
 
@@ -627,36 +519,35 @@ namespace TwitchLib.Client.Extensions
                                                string rawIrc,
                                                string channel)
         {
-            OnNewSubscriberArgs model = new OnNewSubscriberArgs()
-            {
-                Subscriber = new Subscriber(badges,
-                                            badgeInfo,
-                                            colorHex,
-                                            color,
-                                            displayName,
-                                            emoteSet,
-                                            id,
-                                            login,
-                                            systemMessage,
-                                            msgId,
-                                            msgParamCumulativeMonths,
-                                            msgParamStreakMonths,
-                                            msgParamShouldShareStreak,
-                                            systemMessageParsed,
-                                            resubMessage,
-                                            subscriptionPlan,
-                                            subscriptionPlanName,
-                                            roomId,
-                                            userId,
-                                            isModerator,
-                                            isTurbo,
-                                            isSubscriber,
-                                            isPartner,
-                                            tmiSentTs,
-                                            userType,
-                                            rawIrc,
-                                            channel)
-            };
+            OnNewSubscriberArgs model = new OnNewSubscriberArgs(channel,
+                                                                new Subscriber(badges,
+                                                                               badgeInfo,
+                                                                               colorHex,
+                                                                               color,
+                                                                               displayName,
+                                                                               emoteSet,
+                                                                               id,
+                                                                               login,
+                                                                               systemMessage,
+                                                                               msgId,
+                                                                               msgParamCumulativeMonths,
+                                                                               msgParamStreakMonths,
+                                                                               msgParamShouldShareStreak,
+                                                                               systemMessageParsed,
+                                                                               resubMessage,
+                                                                               subscriptionPlan,
+                                                                               subscriptionPlanName,
+                                                                               roomId,
+                                                                               userId,
+                                                                               isModerator,
+                                                                               isTurbo,
+                                                                               isSubscriber,
+                                                                               isPartner,
+                                                                               tmiSentTs,
+                                                                               userType,
+                                                                               rawIrc,
+                                                                               channel)
+            );
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnNewSubscriber), model);
         }
 
@@ -708,30 +599,27 @@ namespace TwitchLib.Client.Extensions
                                                   UserType userType,
                                                   string userId)
         {
-            OnRaidNotificationArgs model = new OnRaidNotificationArgs()
-            {
-                Channel = channel,
-                RaidNotification = new RaidNotification(badges,
-                                                        badgeInfo,
-                                                        color,
-                                                        displayName,
-                                                        emotes,
-                                                        id,
-                                                        login,
-                                                        moderator,
-                                                        msgId,
-                                                        msgParamDisplayName,
-                                                        msgParamLogin,
-                                                        msgParamViewerCount,
-                                                        roomId,
-                                                        subscriber,
-                                                        systemMsg,
-                                                        systemMsgParsed,
-                                                        tmiSentTs,
-                                                        turbo,
-                                                        userType,
-                                                        userId)
-            };
+            OnRaidNotificationArgs model = new OnRaidNotificationArgs(channel,
+                                                                      new RaidNotification(badges,
+                                                                                           badgeInfo,
+                                                                                           color,
+                                                                                           displayName,
+                                                                                           emotes,
+                                                                                           id,
+                                                                                           login,
+                                                                                           moderator,
+                                                                                           msgId,
+                                                                                           msgParamDisplayName,
+                                                                                           msgParamLogin,
+                                                                                           msgParamViewerCount,
+                                                                                           roomId,
+                                                                                           subscriber,
+                                                                                           systemMsg,
+                                                                                           systemMsgParsed,
+                                                                                           tmiSentTs,
+                                                                                           turbo,
+                                                                                           userType,
+                                                                                           userId));
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnRaidNotification), model);
         }
 
@@ -795,36 +683,7 @@ namespace TwitchLib.Client.Extensions
                                               string rawIrc,
                                               string channel)
         {
-            OnReSubscriberArgs model = new OnReSubscriberArgs()
-            {
-                ReSubscriber = new ReSubscriber(badges,
-                                                badgeInfo,
-                                                colorHex,
-                                                color,
-                                                displayName,
-                                                emoteSet,
-                                                id,
-                                                login,
-                                                systemMessage,
-                                                msgId,
-                                                msgParamCumulativeMonths,
-                                                msgParamStreakMonths,
-                                                msgParamShouldShareStreak,
-                                                systemMessageParsed,
-                                                resubMessage,
-                                                subscriptionPlan,
-                                                subscriptionPlanName,
-                                                roomId,
-                                                userId,
-                                                isModerator,
-                                                isTurbo,
-                                                isSubscriber,
-                                                isPartner,
-                                                tmiSentTs,
-                                                userType,
-                                                rawIrc,
-                                                channel)
-            };
+            OnReSubscriberArgs model = new OnReSubscriberArgs(channel, new ReSubscriber(badges, badgeInfo, colorHex, color, displayName, emoteSet, id, login, systemMessage, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, systemMessageParsed, resubMessage, subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel));
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnReSubscriber), model);
         }
 
@@ -836,11 +695,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="direction">The direction.</param>
         public static void InvokeSendReceiveData(this TwitchClient client, string data, SendReceiveDirection direction)
         {
-            OnSendReceiveDataArgs model = new OnSendReceiveDataArgs()
-            {
-                Data = data,
-                Direction = direction
-            };
+            OnSendReceiveDataArgs model = new OnSendReceiveDataArgs(direction, data);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnSendReceiveData), model);
         }
 
@@ -855,10 +710,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="targetUserId">The user id.</param>
         public static void InvokeUserBanned(this TwitchClient client, string channel, string username, string banReason, string roomId, string targetUserId)
         {
-            OnUserBannedArgs model = new OnUserBannedArgs()
-            {
-                UserBan = new UserBan(channel, username, banReason, roomId, targetUserId)
-            };
+            OnUserBannedArgs model = new OnUserBannedArgs(channel, new UserBan(channel, username, banReason, roomId, targetUserId));
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserBanned), model);
         }
 
@@ -870,11 +722,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="username">The username.</param>
         public static void InvokeUserJoined(this TwitchClient client, string channel, string username)
         {
-            OnUserJoinedArgs model = new OnUserJoinedArgs()
-            {
-                Channel = channel,
-                Username = username
-            };
+            OnUserJoinedArgs model = new OnUserJoinedArgs(channel, username);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserJoined), model);
         }
 
@@ -886,11 +734,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="username">The username.</param>
         public static void InvokeUserLeft(this TwitchClient client, string channel, string username)
         {
-            OnUserLeftArgs model = new OnUserLeftArgs()
-            {
-                Channel = channel,
-                Username = username
-            };
+            OnUserLeftArgs model = new OnUserLeftArgs(channel, username);
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserLeft), model);
         }
 
@@ -920,19 +764,7 @@ namespace TwitchLib.Client.Extensions
                                                   bool isModerator,
                                                   UserType userType)
         {
-            OnUserStateChangedArgs model = new OnUserStateChangedArgs()
-            {
-                UserState = new UserState(badges,
-                                          badgeInfo,
-                                          colorHex,
-                                          displayName,
-                                          emoteSet,
-                                          channel,
-                                          id,
-                                          isSubscriber,
-                                          isModerator,
-                                          userType)
-            };
+            OnUserStateChangedArgs model = new OnUserStateChangedArgs(channel, new UserState(badges, badgeInfo, colorHex, displayName, emoteSet, channel, id, isSubscriber, isModerator, userType));
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserStateChanged), model);
         }
 
@@ -952,10 +784,7 @@ namespace TwitchLib.Client.Extensions
                                               int timeoutDuration,
                                               string timeoutReason)
         {
-            OnUserTimedoutArgs model = new OnUserTimedoutArgs()
-            {
-                UserTimeout = new UserTimeout(channel, username, targetUserId, timeoutDuration, timeoutReason)
-            };
+            OnUserTimedoutArgs model = new OnUserTimedoutArgs(channel, new UserTimeout(channel, username, targetUserId, timeoutDuration, timeoutReason));
             RaiseEventHelper.RaiseEvent(client, nameof(client.OnUserTimedout), model);
         }
     }

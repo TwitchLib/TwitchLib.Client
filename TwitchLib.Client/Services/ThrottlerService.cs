@@ -189,13 +189,10 @@ namespace TwitchLib.Client.Services
             LOGGER?.TraceMethodCall(GetType());
             LOGGER?.TraceAction(GetType(), "Message throttled");
             string msg = $"Message Throttle Occured. Too Many Messages within the period specified in WebsocketClientOptions.";
-            OnMessageThrottledArgs args = new OnMessageThrottledArgs
-            {
-                ItemNotSent = itemNotSent,
-                Reason = msg,
-                AllowedInPeriod = SendOptions.SendsAllowedInPeriod,
-                Period = SendOptions.ThrottlingPeriod
-            };
+            OnMessageThrottledArgs args = new OnMessageThrottledArgs(msg,
+                                                                     itemNotSent,
+                                                                     SendOptions.ThrottlingPeriod,
+                                                                     SendOptions.SendsAllowedInPeriod);
             RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnMessageThrottled), args);
         }
         #endregion methods private

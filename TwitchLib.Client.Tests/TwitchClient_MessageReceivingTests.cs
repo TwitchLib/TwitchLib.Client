@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -341,7 +342,7 @@ namespace TwitchLib.Client.Tests
             Assert.NotNull(assertion.Arguments);
             Assert.NotNull(assertion.Arguments.Users);
             Assert.NotEmpty(assertion.Arguments.Users);
-            Assert.Equal(users.Length, assertion.Arguments.Users.Count);
+            Assert.Equal(users.Length, assertion.Arguments.Users.Count());
             Assert.NotNull(assertion.Arguments.Channel);
             AssertChannel(assertion.Arguments);
 

@@ -51,7 +51,7 @@ namespace TwitchLib.Client
             LOGGER?.TraceMethodCall(GetType());
             if (IsAuthError(ircMessage))
             {
-                OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
+                OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs(new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername)));
                 return false;
             }
             switch (ircMessage.Command)
@@ -70,9 +70,9 @@ namespace TwitchLib.Client
                 case IrcCommand.Join:
                     if (ircMessage.User == TwitchUsername)
                     {
-                        OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
+                        OnJoinedChannel?.Invoke(this, new OnJoinedChannelArgs(ircMessage.Channel, TwitchUsername));
                     }
-                    OnUserJoined?.Invoke(this, new OnUserJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
+                    OnUserJoined?.Invoke(this, new OnUserJoinedArgs(ircMessage.Channel, ircMessage.User));
                     break;
                 case IrcCommand.Part:
                     HandlePart(ircMessage);
@@ -81,7 +81,7 @@ namespace TwitchLib.Client
                     HandleClearChat(ircMessage);
                     break;
                 case IrcCommand.ClearMsg:
-                    OnMessageCleared?.Invoke(this, new OnMessageClearedArgs { Channel = ircMessage.Channel, Message = ircMessage.Message, TargetMessageId = ircMessage.ToString().Split('=')[3].Split(';')[0], TmiSentTs = ircMessage.ToString().Split('=')[4].Split(' ')[0] });
+                    OnMessageCleared?.Invoke(this, new OnMessageClearedArgs(ircMessage.Channel, ircMessage.Message, ircMessage.ToString().Split('=')[3].Split(';')[0], ircMessage.ToString().Split('=')[4].Split(' ')[0]));
                     break;
                 case IrcCommand.UserState:
                     HandleUserState(ircMessage);
@@ -95,7 +95,7 @@ namespace TwitchLib.Client
                 case IrcCommand.RPL_003:
                     break;
                 case IrcCommand.RPL_004:
-                    OnConnectedArgs args = new OnConnectedArgs { BotUsername = TwitchUsername, AutoJoinChannels = ChannelManager.AutoJoinChannels };
+                    OnConnectedArgs args = new OnConnectedArgs(TwitchUsername, ChannelManager.AutoJoinChannels);
                     if (ConnectionStateManager.WasConnected)
                     {
                         OnReconnected?.Invoke(this, args);
@@ -106,7 +106,7 @@ namespace TwitchLib.Client
                     }
                     break;
                 case IrcCommand.RPL_353:
-                    OnExistingUsersDetected?.Invoke(this, new OnExistingUsersDetectedArgs { Channel = ircMessage.Channel, Users = ircMessage.Message.Split(' ').ToList() });
+                    OnExistingUsersDetected?.Invoke(this, new OnExistingUsersDetectedArgs(ircMessage.Channel, ircMessage.Message.Split(' ').ToList()));
                     break;
                 case IrcCommand.RPL_366:
                     break;
@@ -134,7 +134,7 @@ namespace TwitchLib.Client
                 case IrcCommand.Unknown:
                 // fall through
                 default:
-                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = null, Location = "HandleIrcMessage", RawIRC = ircMessage.ToString() });
+                    OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs(ircMessage.Channel, TwitchUsername, "HandleIrcMessage", ircMessage.ToString()));
                     UnaccountedFor(ircMessage.ToString());
                     return false;
             }
@@ -157,12 +157,12 @@ namespace TwitchLib.Client
             JoinedChannel? joinedChannel = GetJoinedChannel(ircMessage.Channel);
             joinedChannel?.HandlePRIVMSG(chatMessage);
 
-            OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage, Channel = ircMessage.Channel });
+            OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs(ircMessage.Channel, chatMessage));
 
             if (ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId))
             {
                 if (msgId == MsgIds.UserIntro)
-                    OnUserIntro?.Invoke(this, new OnUserIntroArgs { ChatMessage = chatMessage, Channel = ircMessage.Channel });
+                    OnUserIntro?.Invoke(this, new OnUserIntroArgs(ircMessage.Channel, chatMessage));
             }
 
             if (ChatCommandIdentifiers != null && ChatCommandIdentifiers.Count != 0
@@ -172,7 +172,7 @@ namespace TwitchLib.Client
                 if (ChatCommandIdentifiers.Contains(chatMessage.Message[0]))
                 {
                     ChatCommand chatCommand = new ChatCommand(chatMessage);
-                    OnChatCommandReceived?.Invoke(this, new OnChatCommandReceivedArgs { Command = chatCommand });
+                    OnChatCommandReceived?.Invoke(this, new OnChatCommandReceivedArgs(chatCommand));
                 }
             }
         }
@@ -182,11 +182,11 @@ namespace TwitchLib.Client
             if (String.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
             {
                 ChannelManager.LeaveChannel(ircMessage.Channel);
-                OnLeftChannel?.Invoke(this, new OnLeftChannelArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel });
+                OnLeftChannel?.Invoke(this, new OnLeftChannelArgs(ircMessage.Channel, TwitchUsername));
             }
             else
             {
-                OnUserLeft?.Invoke(this, new OnUserLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.User });
+                OnUserLeft?.Invoke(this, new OnUserLeftArgs(ircMessage.Channel, ircMessage.User));
             }
         }
         private void HandleClearChat(IrcMessage ircMessage)
@@ -194,7 +194,7 @@ namespace TwitchLib.Client
             LOGGER?.TraceMethodCall(GetType());
             if (String.IsNullOrWhiteSpace(ircMessage.Message))
             {
-                OnChatCleared?.Invoke(this, new OnChatClearedArgs { Channel = ircMessage.Channel });
+                OnChatCleared?.Invoke(this, new OnChatClearedArgs(ircMessage.Channel));
                 return;
             }
 
@@ -202,12 +202,12 @@ namespace TwitchLib.Client
             if (successBanDuration)
             {
                 UserTimeout userTimeout = new UserTimeout(ircMessage);
-                OnUserTimedout?.Invoke(this, new OnUserTimedoutArgs { UserTimeout = userTimeout, Channel = ircMessage.Channel });
+                OnUserTimedout?.Invoke(this, new OnUserTimedoutArgs(ircMessage.Channel, userTimeout));
                 return;
             }
 
             UserBan userBan = new UserBan(ircMessage);
-            OnUserBanned?.Invoke(this, new OnUserBannedArgs { UserBan = userBan, Channel = ircMessage.Channel });
+            OnUserBanned?.Invoke(this, new OnUserBannedArgs(ircMessage.Channel, userBan));
         }
         /// <summary>
         ///     <see href="https://dev.twitch.tv/docs/irc/commands/#userstate"/>
@@ -229,13 +229,13 @@ namespace TwitchLib.Client
             LOGGER?.TraceMethodCall(GetType());
             if (ircMessage.Message.StartsWith("+o"))
             {
-                OnModeratorJoined?.Invoke(this, new OnModeratorJoinedArgs { Channel = ircMessage.Channel, Username = ircMessage.Message.Split(' ')[1] });
+                OnModeratorJoined?.Invoke(this, new OnModeratorJoinedArgs(ircMessage.Channel, ircMessage.Message.Split(' ')[1]));
                 return;
             }
 
             if (ircMessage.Message.StartsWith("-o"))
             {
-                OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs { Channel = ircMessage.Channel, Username = ircMessage.Message.Split(' ')[1] });
+                OnModeratorLeft?.Invoke(this, new OnModeratorLeftArgs(ircMessage.Channel, ircMessage.Message.Split(' ')[1]));
             }
         }
         #endregion methods private

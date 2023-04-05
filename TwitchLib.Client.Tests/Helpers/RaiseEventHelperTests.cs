@@ -27,7 +27,7 @@ namespace TwitchLib.Client.Tests.Helpers
                     () =>
                     {
                         client.OnConnected += (sender, args) => Assert.True(pauseCheck.Set());
-                        RaiseEventHelper.RaiseEvent(client, nameof(client.OnConnected), new OnConnectedArgs());
+                        RaiseEventHelper.RaiseEvent(client, nameof(client.OnConnected), new OnConnectedArgs("testusername", new[] { "testchannel" }));
                         Assert.True(pauseCheck.WaitOne(5_000));
                     });
             Assert.NotNull(assertion.Arguments);
