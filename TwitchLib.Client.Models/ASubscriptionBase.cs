@@ -10,26 +10,26 @@ namespace TwitchLib.Client.Models
     public abstract class ASubscriptionBase
     {
         protected const string AnonymousGifterUserId = "274598607";
-        public List<KeyValuePair<string, string>> Badges { get; }
-        public List<KeyValuePair<string, string>> BadgeInfo { get; }
-        public string Color { get; }
-        public string DisplayName { get; }
-        public string Emotes { get; }
-        public string Flags { get; }
-        public string Id { get; }
-        public string Login { get; }
-        public string MsgId { get; }
+        public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
+        public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
+        public string? Color { get; }
+        public string? DisplayName { get; }
+        public string? Emotes { get; }
+        public string? Flags { get; }
+        public string? Id { get; }
+        public string? Login { get; }
+        public string? MsgId { get; }
         public UserType UserType { get; }
-        public string SystemMsg { get; }
-        public string SystemMsgParsed { get; }
-        public string TmiSentTs { get; }
-        public string RoomId { get; }
-        public string UserId { get; }
-        public bool IsModerator { get; }
-        public bool IsTurbo { get; }
-        public bool IsSubscriber { get; }
-        public bool IsAnonymous { get; }
-        protected ASubscriptionBase(IrcMessage ircMessage, ILogger logger = null)
+        public string? SystemMsg { get; }
+        public string? SystemMsgParsed { get; }
+        public string? TmiSentTs { get; }
+        public string? RoomId { get; }
+        public string? UserId { get; }
+        public bool IsModerator { get; } = false;
+        public bool IsTurbo { get; } = false;
+        public bool IsSubscriber { get; } = false;
+        public bool IsAnonymous { get; } = false;
+        protected ASubscriptionBase(IrcMessage ircMessage, ILogger? logger = null)
         {
             foreach (string tag in ircMessage.Tags.Keys)
             {

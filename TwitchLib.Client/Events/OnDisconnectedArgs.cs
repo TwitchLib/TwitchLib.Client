@@ -11,6 +11,6 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Username of the bot that was disconnected.
         /// </summary>
-        public string BotUsername;
+        public string? BotUsername;
     }
 }

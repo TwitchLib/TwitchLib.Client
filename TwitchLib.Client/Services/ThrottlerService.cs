@@ -20,16 +20,16 @@ namespace TwitchLib.Client.Services
     internal class ThrottlerService
     {
         #region properties private
-        private ILogger LOGGER { get; }
+        private ILogger? LOGGER { get; }
         private ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>> Queue { get; } = new ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>>();
-        private CancellationTokenSource TokenSource { get; set; }
+        private CancellationTokenSource? TokenSource { get; set; }
         private CancellationToken Token => TokenSource.Token;
         private ISendOptions SendOptions { get; }
         private ITwitchClient TwitchClient { get; }
         /// <summary>
         ///     get is never used, cause the <see cref="Task"/> is canceled by the <see cref="Token"/>
         /// </summary>
-        private Task SendTask { get; set; }
+        private Task? SendTask { get; set; }
         private Throttler Throttler { get; }
         #endregion properties private
 
@@ -37,7 +37,7 @@ namespace TwitchLib.Client.Services
         #region ctors
         internal ThrottlerService(ITwitchClient twitchClient,
                                   ISendOptions messageSendOptions,
-                                  ILogger logger = null)
+                                  ILogger? logger = null)
         {
             LOGGER = logger;
             TwitchClient = twitchClient;
@@ -104,14 +104,14 @@ namespace TwitchLib.Client.Services
         /// <param name="args">
         ///     unused, maybe <see langword="null"/>
         /// </param>
-        internal void Start(object sender, OnConnectedArgs args)
+        internal void Start(object? sender, OnConnectedArgs? args)
         {
             LOGGER?.TraceMethodCall(GetType());
             if (TokenSource != null)
             {
                 string message = String.Format("{0} should only be started once", GetType().Name);
                 LOGGER?.LogError(message);
-                RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnError), new OnErrorEventArgs() { Exception = new InvalidOperationException(message) });
+                RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnError), new OnErrorEventArgs(new InvalidOperationException(message)));
                 return;
             }
             TokenSource = new CancellationTokenSource();
@@ -126,7 +126,7 @@ namespace TwitchLib.Client.Services
         /// <param name="args">
         ///     unused, maybe <see langword="null"/>
         /// </param>
-        internal void Stop(object sender, OnDisconnectedArgs args)
+        internal void Stop(object? sender, OnDisconnectedArgs? args)
         {
             LOGGER?.TraceMethodCall(GetType());
             TokenSource?.Cancel();
@@ -167,7 +167,7 @@ namespace TwitchLib.Client.Services
                 //           cause Throttle raises the corresponding Event with the needed information
                 if (Throttler.Throttle())
                 {
-                    Throttle(messageTupel?.Item2);
+                    Throttle(messageTupel.Item2);
                     return;
                 }
                 string messageToSend = messageTupel.Item2.ToString();
@@ -181,7 +181,7 @@ namespace TwitchLib.Client.Services
             catch (Exception ex)
             {
                 LOGGER?.LogExceptionAsError(GetType(), ex);
-                RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnError), new OnErrorEventArgs() { Exception = ex });
+                RaiseEventHelper.RaiseEvent(TwitchClient, nameof(TwitchClient.OnError), new OnErrorEventArgs(ex));
             }
         }
         private void Throttle(OutboundChatMessage itemNotSent)

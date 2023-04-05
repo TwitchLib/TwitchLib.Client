@@ -12,7 +12,7 @@ namespace TwitchLib.Client.Models
     {
         public int Months => monthsInternal;
 
-        public ReSubscriber(IrcMessage ircMessage, ILogger logger = null) : base(ircMessage, logger) { }
+        public ReSubscriber(IrcMessage ircMessage, ILogger? logger = null) : base(ircMessage, logger) { }
 
         public ReSubscriber(
             List<KeyValuePair<string, string>> badges,

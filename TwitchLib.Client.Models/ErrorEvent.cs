@@ -4,6 +4,6 @@
     public class ErrorEvent
     {
         /// <summary>Message pertaining to the error.</summary>
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 }

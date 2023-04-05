@@ -15,15 +15,15 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         ///     Occurs when [on message sent].
         /// </summary>
-        event EventHandler<OnMessageSentArgs> OnMessageSent;
+        event EventHandler<OnMessageSentArgs>? OnMessageSent;
         /// <summary>
         ///     Occurs when [on message send failed].
         /// </summary>
-        event EventHandler<OnSendFailedEventArgs> OnSendFailed;
+        event EventHandler<OnSendFailedEventArgs>? OnSendFailed;
         /// <summary>
         ///     Occurs when [on message throttled].
         /// </summary>
-        event EventHandler<OnMessageThrottledArgs> OnMessageThrottled;
+        event EventHandler<OnMessageThrottledArgs>? OnMessageThrottled;
         #endregion events public
 
 

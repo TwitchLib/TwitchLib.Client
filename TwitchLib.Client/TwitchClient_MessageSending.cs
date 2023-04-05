@@ -22,9 +22,9 @@ namespace TwitchLib.Client
 
 
         #region events public
-        public event EventHandler<OnMessageSentArgs> OnMessageSent;
-        public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
-        public event EventHandler<OnMessageThrottledArgs> OnMessageThrottled;
+        public event EventHandler<OnMessageSentArgs>? OnMessageSent;
+        public event EventHandler<OnSendFailedEventArgs>? OnSendFailed;
+        public event EventHandler<OnMessageThrottledArgs>? OnMessageThrottled;
         #endregion events public
 
 
@@ -38,7 +38,7 @@ namespace TwitchLib.Client
             // IClient raises OnSendFailed otherwise
             if (sent) OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
-        public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
+        public void SendMessage(JoinedChannel? channel, string message, bool dryRun = false)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
             SendTwitchMessage(channel, message, null, dryRun);
@@ -48,7 +48,7 @@ namespace TwitchLib.Client
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
             SendMessage(GetJoinedChannel(channel), message, dryRun);
         }
-        public void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
+        public void SendReply(JoinedChannel? channel, string replyToId, string message, bool dryRun = false)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
             SendTwitchMessage(channel, message, replyToId, dryRun);
@@ -68,7 +68,7 @@ namespace TwitchLib.Client
             string message = Rfc2812.Pong(":tmi.twitch.tv");
             SendRaw(message);
         }
-        private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
+        private void SendTwitchMessage(JoinedChannel? channel, string message, string? replyToId = null, bool dryRun = false)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_MessageSending));
             if (channel == null || message == null) return;

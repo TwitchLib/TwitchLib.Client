@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -25,7 +26,7 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// Command parameters
         /// </summary>
-        private string[] Parameters { get; }
+        private string[] Parameters { get; } = Array.Empty<string>();
 
         /// <summary>
         /// The user whose message it is
@@ -35,7 +36,7 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// Hostmask of the user
         /// </summary>
-        public string Hostmask { get; }
+        public string? Hostmask { get; }
 
         /// <summary>
         /// Raw Command
@@ -45,7 +46,7 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// IRCv3 tags
         /// </summary>
-        public Dictionary<string, string> Tags { get; }
+        public Dictionary<string, string> Tags { get; } = new Dictionary<string, string>();
 
         /// <summary>
         /// Create an INCOMPLETE IrcMessage only carrying username
@@ -53,11 +54,9 @@ namespace TwitchLib.Client.Models.Internal
         /// <param name="user"></param>
         public IrcMessage(string user)
         {
-            Parameters = null;
             User = user;
             Hostmask = null;
             Command = IrcCommand.Unknown;
-            Tags = null;
         }
 
         /// <summary>
@@ -71,14 +70,14 @@ namespace TwitchLib.Client.Models.Internal
             IrcCommand command,
             string[] parameters,
             string hostmask,
-            Dictionary<string, string> tags = null)
+            Dictionary<string, string>? tags = null)
         {
             int idx = hostmask.IndexOf('!');
             User = idx != -1 ? hostmask.Substring(0, idx) : hostmask;
             Hostmask = hostmask;
             Parameters = parameters;
             Command = command;
-            Tags = tags;
+            Tags = tags ?? new Dictionary<string, string>();
 
             if (command == IrcCommand.RPL_353)
             {

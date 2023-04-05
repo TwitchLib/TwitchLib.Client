@@ -11,6 +11,6 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     The username of the bot that left the channel.
         /// </summary>
-        public string BotUsername { get; set; }
+        public string? BotUsername { get; set; }
     }
 }

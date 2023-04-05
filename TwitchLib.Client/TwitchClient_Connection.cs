@@ -24,11 +24,11 @@ namespace TwitchLib.Client
 
 
         #region events public
-        public event EventHandler<OnConnectedArgs> OnConnected;
-        public event EventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
-        public event EventHandler<OnDisconnectedArgs> OnDisconnected;
-        public event EventHandler<OnConnectionErrorArgs> OnConnectionError;
-        public event EventHandler<OnConnectedArgs> OnReconnected;
+        public event EventHandler<OnConnectedArgs>? OnConnected;
+        public event EventHandler<OnIncorrectLoginArgs>? OnIncorrectLogin;
+        public event EventHandler<OnDisconnectedArgs>? OnDisconnected;
+        public event EventHandler<OnConnectionErrorArgs>? OnConnectionError;
+        public event EventHandler<OnConnectedArgs>? OnReconnected;
         #endregion events public
 
 
@@ -36,7 +36,7 @@ namespace TwitchLib.Client
         public bool Connect()
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Connection));
-            Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
+            Log($"Connecting to twitch");
 
             if (Client.Open())
             {
@@ -71,7 +71,6 @@ namespace TwitchLib.Client
                 throw new IllegalAssignmentException("While the client is connected, you are unable to change the connection credentials. Please disconnect first and then change them.");
             }
             ConnectionCredentials = credentials;
-            ChannelManager.Credentials = ConnectionCredentials;
         }
         #endregion methods public
     }

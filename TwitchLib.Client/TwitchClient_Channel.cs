@@ -26,38 +26,38 @@ namespace TwitchLib.Client
 
 
         #region events public
-        public event EventHandler<OnJoinedChannelArgs> OnJoinedChannel;
-        public event EventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
-        public event EventHandler<OnLeftChannelArgs> OnLeftChannel;
-        public event EventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
+        public event EventHandler<OnJoinedChannelArgs>? OnJoinedChannel;
+        public event EventHandler<OnChannelStateChangedArgs>? OnChannelStateChanged;
+        public event EventHandler<OnLeftChannelArgs>? OnLeftChannel;
+        public event EventHandler<OnFailureToReceiveJoinConfirmationArgs>? OnFailureToReceiveJoinConfirmation;
         #endregion events public
 
 
         #region methods public
-        public void JoinChannel(string channel)
+        public void JoinChannel(string? channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
             ChannelManager.JoinChannel(channel);
         }
-        public void JoinChannels(IEnumerable<string> channels)
+        public void JoinChannels(IEnumerable<string?> channels)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
             ChannelManager.JoinChannels(channels);
         }
-        public JoinedChannel GetJoinedChannel(string channel)
+        public JoinedChannel? GetJoinedChannel(string? channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
             return ChannelManager.GetJoinedChannel(channel);
         }
-        public void LeaveChannel(string channel)
+        public void LeaveChannel(string? channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
             ChannelManager.LeaveChannel(channel);
         }
-        public void LeaveChannel(JoinedChannel channel)
+        public void LeaveChannel(JoinedChannel? channel)
         {
             LOGGER?.TraceMethodCall(typeof(ITwitchClient_Channel));
-            LeaveChannel(channel.Channel);
+            LeaveChannel(channel?.Channel);
         }
         #endregion methods public
     }

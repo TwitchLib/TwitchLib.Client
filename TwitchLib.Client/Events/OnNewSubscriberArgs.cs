@@ -12,6 +12,6 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing subscriber object.
         /// </summary>
-        public Subscriber Subscriber { get; set; }
+        public Subscriber? Subscriber { get; set; }
     }
 }

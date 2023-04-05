@@ -26,14 +26,14 @@ namespace TwitchLib.Client
     {
         #region Properties private
         private ISet<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
-        private ILogger<ITwitchClient> LOGGER { get; }
+        private ILogger<ITwitchClient>? LOGGER { get; }
         private ConnectionStateManager ConnectionStateManager { get; } = new ConnectionStateManager();
         #endregion Properties private
 
 
         #region Properties public
         public Version Version { get; }
-        public string TwitchUsername => ConnectionCredentials?.TwitchUsername;
+        public string TwitchUsername => ConnectionCredentials.TwitchUsername;
         public bool DisableAutoPong { get; set; } = false;
         public bool WillReplaceEmotes { get; set; } = false;
         #endregion Properties public
@@ -79,10 +79,10 @@ namespace TwitchLib.Client
         ///     if <paramref name="credentials"/> is <see langword="null"/>
         /// </exception>
         public TwitchClient(ConnectionCredentials credentials,
-                            IClient client = null,
+                            IClient? client = null,
                             ClientProtocol protocol = ClientProtocol.WebSocket,
-                            ISendOptions sendOptions = null,
-                            ILogger<ITwitchClient> logger = null)
+                            ISendOptions? sendOptions = null,
+                            ILogger<ITwitchClient>? logger = null)
         {
             LOGGER = logger;
             LOGGER?.TraceMethodCall(GetType());
@@ -92,18 +92,20 @@ namespace TwitchLib.Client
                 throw new ArgumentNullException(nameof(credentials), "ConnectionCredentials are mandatory");
             }
             Protocol = protocol;
-            Client = client;
-            if (Client == null)
+            if (client == null)
             {
-                switch (Protocol)
+                if (protocol == ClientProtocol.TCP)
                 {
-                    case ClientProtocol.TCP:
-                        Client = new TcpClient();
-                        break;
-                    case ClientProtocol.WebSocket:
-                        Client = new WebSocketClient();
-                        break;
+                    Client = new TcpClient();
                 }
+                else
+                {
+                    Client = new WebSocketClient();
+                }
+            }
+            else
+            {
+                Client = client;
             }
             Debug.Assert(Client != null, nameof(Client) + " != null");
             InitializeClient();
@@ -116,7 +118,7 @@ namespace TwitchLib.Client
             // cause credentials are also set into ChannelManager
             SetConnectionCredentials(credentials);
             ChatCommandIdentifiers.Add('!');
-            if (sendOptions == null) sendOptions = new SendOptions((uint) MessageRateLimit.Limit_20_in_30_Seconds);
+            sendOptions ??= new SendOptions((uint) MessageRateLimit.Limit_20_in_30_Seconds);
             ThrottlerService = new Services.ThrottlerService(this,
                                                              sendOptions,
                                                              LOGGER);

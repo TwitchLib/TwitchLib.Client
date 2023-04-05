@@ -68,10 +68,7 @@ namespace TwitchLib.Client.Tests.Managers
             IClient client = mock.Object;
             ConnectionCredentials connectionCredentials = new ConnectionCredentials("testusername", "testoauth");
             TwitchClient twitchClient = new TwitchClient(connectionCredentials, client);
-            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger)
-            {
-                Credentials = connectionCredentials
-            };
+            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger);
             //
             channelManager.JoinChannels(new string[] { channel });
             Assert.Single(channelManager.AutoJoinChannels);
@@ -134,10 +131,7 @@ namespace TwitchLib.Client.Tests.Managers
             IClient client = mock.Object;
             ConnectionCredentials connectionCredentials = new ConnectionCredentials("testusername", "testoauth");
             ITwitchClient twitchClient = new TwitchClient(connectionCredentials, client);
-            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger)
-            {
-                Credentials = connectionCredentials
-            };
+            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger);
             //
             channelManager.JoinChannels(new string[] { channel });
             Assert.Single(channelManager.AutoJoinChannels);
@@ -170,7 +164,7 @@ namespace TwitchLib.Client.Tests.Managers
             Assert.NotNull(channelManager.JoinedChannels[0]);
             Assert.Equal(expected, channelManager.JoinedChannels[0].Channel);
             //
-            JoinedChannel joinedChannel = channelManager.GetJoinedChannel(channel);
+            JoinedChannel? joinedChannel = channelManager.GetJoinedChannel(channel);
             Assert.NotNull(joinedChannel);
             Assert.Equal(expected, joinedChannel.Channel);
             //
@@ -206,10 +200,7 @@ namespace TwitchLib.Client.Tests.Managers
             IClient client = mock.Object;
             ConnectionCredentials connectionCredentials = new ConnectionCredentials("testusername", "testoauth");
             ITwitchClient twitchClient = new TwitchClient(connectionCredentials, client);
-            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger)
-            {
-                Credentials = connectionCredentials
-            };
+            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger);
             //
             channelManager.JoinChannels(new string[] { channel });
             Assert.Single(channelManager.AutoJoinChannels);
@@ -242,7 +233,7 @@ namespace TwitchLib.Client.Tests.Managers
             Assert.NotNull(channelManager.JoinedChannels[0]);
             Assert.Equal(expected, channelManager.JoinedChannels[0].Channel);
             //
-            JoinedChannel joinedChannel = channelManager.GetJoinedChannel(channel);
+            JoinedChannel? joinedChannel = channelManager.GetJoinedChannel(channel);
             Assert.NotNull(joinedChannel);
             Assert.Equal(expected, joinedChannel.Channel);
             channelManager.LeaveChannel(joinedChannel);
@@ -283,10 +274,7 @@ namespace TwitchLib.Client.Tests.Managers
             IClient client = mock.Object;
             ConnectionCredentials connectionCredentials = new ConnectionCredentials("testusername", "testoauth");
             ITwitchClient twitchClient = new TwitchClient(connectionCredentials, client);
-            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger)
-            {
-                Credentials = connectionCredentials
-            };
+            ChannelManager channelManager = new ChannelManager(twitchClient, null, null, logger);
             //
             channelManager.JoinChannels(new string[] { channel });
             Assert.Single(channelManager.AutoJoinChannels);

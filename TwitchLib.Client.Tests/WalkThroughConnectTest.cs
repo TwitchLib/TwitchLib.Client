@@ -165,6 +165,7 @@ namespace TwitchLib.Client.Tests
                     });
             Assert.NotNull(assertion.Arguments);
             Assert.Equal(TWITCH_Username, assertion.Arguments.BotUsername);
+            Assert.NotNull(assertion.Arguments.AutoJoinChannels);
             Assert.Single(assertion.Arguments.AutoJoinChannels);
             Assert.Equal(TWITCH_CHANNEL, assertion.Arguments.AutoJoinChannels.First());
         }
@@ -183,6 +184,7 @@ namespace TwitchLib.Client.Tests
                     });
             Assert.NotNull(assertion.Arguments);
             Assert.Equal(TWITCH_Username, assertion.Arguments.BotUsername);
+            Assert.NotNull(assertion.Arguments.AutoJoinChannels);
             Assert.Single(assertion.Arguments.AutoJoinChannels);
             Assert.Equal(TWITCH_CHANNEL, assertion.Arguments.AutoJoinChannels.First());
         }
@@ -201,7 +203,7 @@ namespace TwitchLib.Client.Tests
             Assert.Equal(TWITCH_CHANNEL, assertion.Arguments.Channel);
             Assert.Equal(TWITCH_Username, assertion.Arguments.BotUsername);
             Assert.Single(twitchClient.JoinedChannels);
-            Assert.Equal(TWITCH_CHANNEL, twitchClient.GetJoinedChannel(TWITCH_CHANNEL).Channel);
+            Assert.Equal(TWITCH_CHANNEL, twitchClient.GetJoinedChannel(TWITCH_CHANNEL)?.Channel);
         }
     }
 }

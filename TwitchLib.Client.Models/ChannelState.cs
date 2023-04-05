@@ -48,14 +48,14 @@ namespace TwitchLib.Client.Models
         /// <summary>
         ///     Twitch assigned room id
         /// </summary>
-        public string RoomId { get; }
+        public string? RoomId { get; }
         #endregion wont change within lifecycle
 
 
         /// <summary>
         ///     Property representing the current broadcaster language.
         /// </summary>
-        public string BroadcasterLanguage { get; private set; }
+        public string? BroadcasterLanguage { get; private set; }
         /// <summary>
         ///     Property representing whether EmoteOnly mode is being applied to chat or not.
         /// </summary>
@@ -101,7 +101,7 @@ namespace TwitchLib.Client.Models
         /// <param name="logger">
         ///     optional <see cref="ILogger"/>
         /// </param>
-        public ChannelState(IrcMessage ircMessage, ILogger logger = null)
+        public ChannelState(IrcMessage ircMessage, ILogger? logger = null)
         {
 
             Channel = ircMessage.Channel;
@@ -136,7 +136,7 @@ namespace TwitchLib.Client.Models
 
 
         #region methods public
-        public void Apply(IrcMessage ircMessage, ILogger logger = null)
+        public void Apply(IrcMessage ircMessage, ILogger? logger = null)
         {
             //@broadcaster-lang=;emote-only=0;r9k=0;slow=0;subs-only=1 :tmi.twitch.tv ROOMSTATE #burkeblack
             foreach (string tag in ircMessage.Tags.Keys)

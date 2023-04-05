@@ -24,19 +24,19 @@ namespace TwitchLib.Client
 
 
         #region events public
-        public event EventHandler<OnUserStateChangedArgs> OnUserStateChanged;
-        public event EventHandler<OnMessageReceivedArgs> OnMessageReceived;
-        public event EventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
-        public event EventHandler<OnUserJoinedArgs> OnUserJoined;
-        public event EventHandler<OnUserLeftArgs> OnUserLeft;
-        public event EventHandler<OnModeratorJoinedArgs> OnModeratorJoined;
-        public event EventHandler<OnModeratorLeftArgs> OnModeratorLeft;
-        public event EventHandler<OnMessageClearedArgs> OnMessageCleared;
-        public event EventHandler<OnExistingUsersDetectedArgs> OnExistingUsersDetected;
-        public event EventHandler<OnChatClearedArgs> OnChatCleared;
-        public event EventHandler<OnUserTimedoutArgs> OnUserTimedout;
-        public event EventHandler<OnUserBannedArgs> OnUserBanned;
-        public event EventHandler<OnUserIntroArgs> OnUserIntro;
+        public event EventHandler<OnUserStateChangedArgs>? OnUserStateChanged;
+        public event EventHandler<OnMessageReceivedArgs>? OnMessageReceived;
+        public event EventHandler<OnChatCommandReceivedArgs>? OnChatCommandReceived;
+        public event EventHandler<OnUserJoinedArgs>? OnUserJoined;
+        public event EventHandler<OnUserLeftArgs>? OnUserLeft;
+        public event EventHandler<OnModeratorJoinedArgs>? OnModeratorJoined;
+        public event EventHandler<OnModeratorLeftArgs>? OnModeratorLeft;
+        public event EventHandler<OnMessageClearedArgs>? OnMessageCleared;
+        public event EventHandler<OnExistingUsersDetectedArgs>? OnExistingUsersDetected;
+        public event EventHandler<OnChatClearedArgs>? OnChatCleared;
+        public event EventHandler<OnUserTimedoutArgs>? OnUserTimedout;
+        public event EventHandler<OnUserBannedArgs>? OnUserBanned;
+        public event EventHandler<OnUserIntroArgs>? OnUserIntro;
         #endregion events public
 
 
@@ -117,7 +117,7 @@ namespace TwitchLib.Client
                 case IrcCommand.RPL_376:
                     break;
                 case IrcCommand.RoomState:
-                    JoinedChannel joinedChannel = GetJoinedChannel(ircMessage.Channel);
+                    JoinedChannel? joinedChannel = GetJoinedChannel(ircMessage.Channel);
                     joinedChannel?.HandleROOMSTATE(ircMessage, this);
                     break;
                 case IrcCommand.Reconnect:
@@ -154,7 +154,7 @@ namespace TwitchLib.Client
         {
             LOGGER?.TraceMethodCall(GetType());
             ChatMessage chatMessage = new ChatMessage(TwitchUsername, ircMessage, WillReplaceEmotes);
-            JoinedChannel joinedChannel = GetJoinedChannel(ircMessage.Channel);
+            JoinedChannel? joinedChannel = GetJoinedChannel(ircMessage.Channel);
             joinedChannel?.HandlePRIVMSG(chatMessage);
 
             OnMessageReceived?.Invoke(this, new OnMessageReceivedArgs { ChatMessage = chatMessage, Channel = ircMessage.Channel });
@@ -165,7 +165,9 @@ namespace TwitchLib.Client
                     OnUserIntro?.Invoke(this, new OnUserIntroArgs { ChatMessage = chatMessage, Channel = ircMessage.Channel });
             }
 
-            if (ChatCommandIdentifiers != null && ChatCommandIdentifiers.Count != 0 && !String.IsNullOrEmpty(chatMessage.Message))
+            if (ChatCommandIdentifiers != null && ChatCommandIdentifiers.Count != 0
+                && chatMessage.Message != null
+                && !chatMessage.Message.IsNullOrEmptyOrWhitespace())
             {
                 if (ChatCommandIdentifiers.Contains(chatMessage.Message[0]))
                 {
@@ -219,7 +221,7 @@ namespace TwitchLib.Client
         {
             LOGGER?.TraceMethodCall(GetType());
             UserState userState = new UserState(ircMessage, LOGGER);
-            JoinedChannel joinedChannel = GetJoinedChannel(userState.Channel);
+            JoinedChannel? joinedChannel = GetJoinedChannel(userState.Channel);
             joinedChannel?.HandleUSERSTATE(userState, this);
         }
         private void HandleMode(IrcMessage ircMessage)

@@ -11,6 +11,6 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing username of joined viewer.
         /// </summary>
-        public string Username { get; set; }
+        public string? Username { get; set; }
     }
 }

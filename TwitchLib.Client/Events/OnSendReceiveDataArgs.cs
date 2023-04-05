@@ -11,10 +11,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing the direction of the data.
         /// </summary>
-        public Enums.SendReceiveDirection Direction { get; set; }
+        public Enums.SendReceiveDirection? Direction { get; set; }
         /// <summary>
         ///     Property representing the data that was either sent or received.
         /// </summary>
-        public string Data { get; set; }
+        public string? Data { get; set; }
     }
 }

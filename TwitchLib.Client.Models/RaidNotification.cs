@@ -7,43 +7,43 @@ namespace TwitchLib.Client.Models
 {
     public class RaidNotification
     {
-        public List<KeyValuePair<string, string>> Badges { get; }
+        public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
 
-        public List<KeyValuePair<string, string>> BadgeInfo { get; }
+        public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
 
-        public string Color { get; }
+        public string? Color { get; }
 
-        public string DisplayName { get; }
+        public string? DisplayName { get; }
 
-        public string Emotes { get; }
+        public string? Emotes { get; }
 
-        public string Id { get; }
+        public string? Id { get; }
 
-        public string Login { get; }
+        public string? Login { get; }
 
-        public bool Moderator { get; }
+        public bool Moderator { get; } = false;
 
-        public string MsgId { get; }
+        public string? MsgId { get; }
 
-        public string MsgParamDisplayName { get; }
+        public string? MsgParamDisplayName { get; }
 
-        public string MsgParamLogin { get; }
+        public string? MsgParamLogin { get; }
 
-        public string MsgParamViewerCount { get; }
+        public string? MsgParamViewerCount { get; }
 
-        public string RoomId { get; }
+        public string? RoomId { get; }
 
-        public bool Subscriber { get; }
+        public bool Subscriber { get; } = false;
 
-        public string SystemMsg { get; }
+        public string? SystemMsg { get; }
 
-        public string SystemMsgParsed { get; }
+        public string? SystemMsgParsed { get; }
 
-        public string TmiSentTs { get; }
+        public string? TmiSentTs { get; }
 
-        public bool Turbo { get; }
+        public bool Turbo { get; } = false;
 
-        public string UserId { get; }
+        public string? UserId { get; }
 
         public UserType UserType { get; }
 

@@ -145,7 +145,7 @@ namespace TwitchLib.Client.Tests
             mock.InSequence(sendMessageSequence)
                 .Setup(c => c.Send(It.IsAny<string>()))
                 .Returns(false)
-                .Raises(c => c.OnSendFailed += null, new OnSendFailedEventArgs() { Data = messageNotSent });
+                .Raises(c => c.OnSendFailed += null, new OnSendFailedEventArgs(messageNotSent, new Exception("something went wrong :D")));
             IClient communicationClient = mock.Object;
 
             // create one logger per test-method! - cause one file per test-method is generated

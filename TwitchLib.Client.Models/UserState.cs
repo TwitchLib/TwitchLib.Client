@@ -18,16 +18,16 @@ namespace TwitchLib.Client.Models
         public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
 
         /// <summary>Property representing channel.</summary>
-        public string Channel { get; }
+        public string? Channel { get; }
 
         /// <summary>Properrty representing HEX user's name.</summary>
-        public string ColorHex { get; }
+        public string? ColorHex { get; }
 
         /// <summary>Property representing user's display name.</summary>
-        public string DisplayName { get; }
+        public string? DisplayName { get; }
 
         /// <summary>Property representing emote sets available to user.</summary>
-        public string EmoteSet { get; }
+        public string? EmoteSet { get; }
 
         /// <summary>
         ///     <see href="https://dev.twitch.tv/docs/irc/tags/#userstate-tags"/>
@@ -36,13 +36,13 @@ namespace TwitchLib.Client.Models
         ///     <br></br>
         ///     If a <see cref="IrcCommand.PrivMsg"/> was sent, an ID that uniquely identifies the message.
         /// </summary>
-        public string Id { get; }
+        public string? Id { get; }
 
         /// <summary>Property representing Turbo status.</summary>
-        public bool IsModerator { get; }
+        public bool IsModerator { get; } = false;
 
         /// <summary>Property representing subscriber status.</summary>
-        public bool IsSubscriber { get; }
+        public bool IsSubscriber { get; } = false;
 
         /// <summary>Property representing returned user type of user.</summary>
         public UserType UserType { get; }
@@ -50,7 +50,7 @@ namespace TwitchLib.Client.Models
         /// <summary>
         /// Constructor for UserState.
         /// </summary>
-        public UserState(IrcMessage ircMessage, ILogger logger = null)
+        public UserState(IrcMessage ircMessage, ILogger? logger = null)
         {
             Channel = ircMessage.Channel;
 

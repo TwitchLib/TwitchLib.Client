@@ -15,17 +15,17 @@ namespace TwitchLib.Client
         // it makes it easier to find the respective occurance from the log file
 
         #region events public
-        public event EventHandler<OnAnnouncementArgs> OnAnnouncement;
-        public event EventHandler<OnRaidNotificationArgs> OnRaidNotification;
-        public event EventHandler<OnRaidNotificationArgs> OnUnRaidNotification;
+        public event EventHandler<OnAnnouncementArgs>? OnAnnouncement;
+        public event EventHandler<OnRaidNotificationArgs>? OnRaidNotification;
+        public event EventHandler<OnRaidNotificationArgs>? OnUnRaidNotification;
 
-        public event EventHandler<OnNewSubscriberArgs> OnNewSubscriber;
-        public event EventHandler<OnReSubscriberArgs> OnReSubscriber;
-        public event EventHandler<OnPrimePaidSubscriberArgs> OnPrimePaidSubscriber;
+        public event EventHandler<OnNewSubscriberArgs>? OnNewSubscriber;
+        public event EventHandler<OnReSubscriberArgs>? OnReSubscriber;
+        public event EventHandler<OnPrimePaidSubscriberArgs>? OnPrimePaidSubscriber;
 
-        public event EventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
-        public event EventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
-        public event EventHandler<OnContinuedGiftedSubscriptionArgs> OnContinuedGiftedSubscription;
+        public event EventHandler<OnGiftedSubscriptionArgs>? OnGiftedSubscription;
+        public event EventHandler<OnCommunitySubscriptionArgs>? OnCommunitySubscription;
+        public event EventHandler<OnContinuedGiftedSubscriptionArgs>? OnContinuedGiftedSubscription;
         #endregion events public
 
 

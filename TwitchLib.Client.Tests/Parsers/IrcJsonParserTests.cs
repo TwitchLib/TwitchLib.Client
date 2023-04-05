@@ -71,7 +71,7 @@ public class IrcJsonParserTests {
             ircBuilder.Append(" :");
         }
         ircBuilder.Append(metaPart);
-        if (!messagePart.IsNullOrEmptyOrWhitespace()) {
+        if (messagePart != null && !messagePart.IsNullOrEmptyOrWhitespace()) {
             ircBuilder.Append(" :");
             ircBuilder.Append(messagePart);
         }

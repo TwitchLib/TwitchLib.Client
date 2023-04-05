@@ -198,7 +198,7 @@ namespace TwitchLib.Client.Models
             string text,
             EmoteSource source = EmoteSource.Twitch,
             EmoteSize size = EmoteSize.Small,
-            ReplaceEmoteDelegate replacementDelegate = null)
+            ReplaceEmoteDelegate? replacementDelegate = null)
         {
             Id = id;
             Text = text;
@@ -221,15 +221,15 @@ namespace TwitchLib.Client.Models
         private const string BasePattern = @"(\b{0}\b)";
 
         /// <summary> Do not access directly! Backing field for <see cref="CurrentPattern"/> </summary>
-        private string _currentPattern;
-        private Regex _regex;
+        private string? _currentPattern;
+        private Regex? _regex;
         private readonly EmoteFilterDelegate _preferredFilter;
 
         /// <summary>
         ///     Property so that we can be confident <see cref="PatternChanged"/>
         ///     always reflects changes to <see cref="CurrentPattern"/>.
         /// </summary>
-        private string CurrentPattern
+        private string? CurrentPattern
         {
             get => _currentPattern;
             set
@@ -240,7 +240,7 @@ namespace TwitchLib.Client.Models
             }
         }
 
-        private Regex CurrentRegex
+        private Regex? CurrentRegex
         {
             get
             {
@@ -374,7 +374,7 @@ namespace TwitchLib.Client.Models
         ///     A string where all of the original emote text has been replaced with
         ///     its designated <see cref="MessageEmote.ReplacementString"/>s
         /// </returns>
-        public string ReplaceEmotes(string originalMessage, EmoteFilterDelegate del = null)
+        public string ReplaceEmotes(string originalMessage, EmoteFilterDelegate? del = null)
         {
             if (CurrentRegex == null) return originalMessage;
             if (del != null && del != CurrentEmoteFilter) CurrentEmoteFilter = del;

@@ -5,7 +5,7 @@
         /// <summary>
         ///     Property representing message send with the NOTICE
         /// </summary>
-        public string Message { get; set; }
-        public bool IsOn { get; set; }
+        public string? Message { get; set; }
+        public bool IsOn { get; set; } = false;
     }
 }

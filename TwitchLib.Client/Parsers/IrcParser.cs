@@ -33,7 +33,7 @@ namespace TwitchLib.Client.Parsers
                     starts[(int) state] = ++i;
 
                     int start = i;
-                    string key = null;
+                    string? key = null;
                     for (; i < raw.Length; ++i)
                     {
                         if (raw[i] == '=')

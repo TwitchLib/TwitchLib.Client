@@ -21,14 +21,14 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">
         ///     name of the channel to join
         /// </param>
-        void JoinChannel(string channel);
+        void JoinChannel(string? channel);
         /// <summary>
         ///     enqueues the given <paramref name="channels"/> to get joined
         /// </summary>
         /// <param name="channels">
         ///     names of the channels to join
         /// </param>
-        void JoinChannels(IEnumerable<string> channels);
+        void JoinChannels(IEnumerable<string?> channels);
         /// <summary>
         ///     returns the <see cref="JoinedChannel"/> of the channel with the given <paramref name="channel"/>-name
         ///     <br></br>
@@ -44,21 +44,21 @@ namespace TwitchLib.Client.Interfaces
         ///     <br></br>
         ///     <see langword="null"/> otherwise (if its (still) not joined)
         /// </returns>
-        JoinedChannel GetJoinedChannel(string channel);
+        JoinedChannel? GetJoinedChannel(string? channel);
         /// <summary>
         ///     
         /// </summary>
         /// <param name="channel">
         ///     name of the channel to leave
         /// </param>
-        void LeaveChannel(string channel);
+        void LeaveChannel(string? channel);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="channel">
         ///     <see cref="JoinedChannel"/> to leave
         /// </param>
-        void LeaveChannel(JoinedChannel channel);
+        void LeaveChannel(JoinedChannel? channel);
         #endregion methods public
     }
 }

@@ -10,7 +10,7 @@ namespace TwitchLib.Client.Models
 {
     public class PrimePaidSubscriber : SubscriberBase
     {
-        public PrimePaidSubscriber(IrcMessage ircMessage, ILogger logger = null) : base(ircMessage, logger) { }
+        public PrimePaidSubscriber(IrcMessage ircMessage, ILogger? logger = null) : base(ircMessage, logger) { }
 
         public PrimePaidSubscriber(
             List<KeyValuePair<string, string>> badges,

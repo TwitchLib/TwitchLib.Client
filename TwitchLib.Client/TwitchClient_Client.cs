@@ -70,7 +70,7 @@ namespace TwitchLib.Client
                 }
                 catch (Exception ex)
                 {
-                    LOGGER.LogExceptionAsError(GetType(), ex);
+                    LOGGER?.LogExceptionAsError(GetType(), ex);
                     LogError(ex.ToString());
                 }
             }

@@ -260,7 +260,9 @@ namespace TwitchLib.Client.Tests
             ITwitchClient client = new TwitchClient(credentials);
             try
             {
+#pragma warning disable CS8625 // null-literal: should get tested
                 client.SetConnectionCredentials(null);
+#pragma warning restore CS8625 // null-literal: should get tested
                 Assert.Fail($"{typeof(ArgumentNullException)} expected!");
             }
             catch (Exception e)

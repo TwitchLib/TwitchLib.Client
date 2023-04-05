@@ -12,6 +12,6 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing prime gaming -> paid subscriber object.
         /// </summary>
-        public PrimePaidSubscriber PrimePaidSubscriber { get; set; }
+        public PrimePaidSubscriber? PrimePaidSubscriber { get; set; }
     }
 }

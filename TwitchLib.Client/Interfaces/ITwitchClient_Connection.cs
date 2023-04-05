@@ -26,23 +26,23 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         ///     Occurs when [on connected].
         /// </summary>
-        event EventHandler<OnConnectedArgs> OnConnected;
+        event EventHandler<OnConnectedArgs>? OnConnected;
         /// <summary>
         ///     Occurs when [on connection error].
         /// </summary>
-        event EventHandler<OnConnectionErrorArgs> OnConnectionError;
+        event EventHandler<OnConnectionErrorArgs>? OnConnectionError;
         /// <summary>
         ///     Occurs when [on disconnected].
         /// </summary>
-        event EventHandler<OnDisconnectedArgs> OnDisconnected;
+        event EventHandler<OnDisconnectedArgs>? OnDisconnected;
         /// <summary>
         ///     Occurs when [on incorrect login].
         /// </summary>
-        event EventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
+        event EventHandler<OnIncorrectLoginArgs>? OnIncorrectLogin;
         /// <summary>
         ///     Occurs when [on reconnected].
         /// </summary>
-        event EventHandler<OnConnectedArgs> OnReconnected;
+        event EventHandler<OnConnectedArgs>? OnReconnected;
         #endregion events public
 
 

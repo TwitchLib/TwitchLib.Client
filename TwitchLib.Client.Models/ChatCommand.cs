@@ -7,19 +7,19 @@ namespace TwitchLib.Client.Models
     public class ChatCommand
     {
         /// <summary>Property representing all arguments received in a List form.</summary>
-        public List<string> ArgumentsAsList { get; }
+        public List<string> ArgumentsAsList { get; } = new List<string>();
 
         /// <summary>Property representing all arguments received in a string form.</summary>
-        public string ArgumentsAsString { get; }
+        public string? ArgumentsAsString { get; }
 
         /// <summary>Property representing the chat message that the command came in.</summary>
-        public ChatMessage ChatMessage { get; }
+        public ChatMessage? ChatMessage { get; }
 
         /// <summary>Property representing the command identifier (ie command prefix).</summary>
-        public char CommandIdentifier { get; }
+        public char? CommandIdentifier { get; }
 
         /// <summary>Property representing the actual command (without the command prefix).</summary>
-        public string CommandText { get; }
+        public string? CommandText { get; }
 
         /// <summary>ChatCommand constructor.</summary>
         /// <param name="chatMessage"></param>

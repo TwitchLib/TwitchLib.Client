@@ -71,17 +71,16 @@ namespace TwitchLib.Client.Managers
         #region properties private
 
         #region logging
-        private ILogger LOGGER { get; }
-        private Log Log { get; }
-        private Log LogError { get; }
+        private ILogger? LOGGER { get; }
+        private Log? Log { get; }
+        private Log? LogError { get; }
         #endregion logging
 
 
-        private CancellationTokenSource CTS { get; set; }
+        private CancellationTokenSource? CTS { get; set; }
         private CancellationToken Token => CTS.Token;
-        public ConnectionCredentials Credentials { get; set; }
         private ITwitchClient TwitchClient { get; }
-        private Task JoiningTask { get; set; }
+        private Task? JoiningTask { get; set; }
         /// <summary>
         ///     holds the names of the channels, that we want to join, to be able to ReJoin them after a reconnect
         /// </summary>
@@ -147,7 +146,10 @@ namespace TwitchLib.Client.Managers
 
 
         #region ctor
-        public ChannelManager(ITwitchClient twitchClient, Log log, Log logError, ILogger logger = null)
+        public ChannelManager(ITwitchClient twitchClient,
+                              Log? log,
+                              Log? logError,
+                              ILogger? logger = null)
         {
             TwitchClient = twitchClient;
             Log = log;
@@ -160,10 +162,10 @@ namespace TwitchLib.Client.Managers
         #region methods public
 
         #region methods visible to API consumers
-        public JoinedChannel GetJoinedChannel(string channel)
+        public JoinedChannel? GetJoinedChannel(string? channel)
         {
             LOGGER?.TraceMethodCall(GetType());
-            if (channel.IsNullOrEmptyOrWhitespace()) return null;
+            if (channel == null || channel.IsNullOrEmptyOrWhitespace()) return null;
             channel = CorrectChannelName(channel);
             // no sync is needed, its a cuncurrent dictionary
             bool found = Joined.TryGetValue(channel, out JoinedChannel joinedChannel);
@@ -173,10 +175,10 @@ namespace TwitchLib.Client.Managers
             }
             return null;
         }
-        public void JoinChannel(string channel)
+        public void JoinChannel(string? channel)
         {
             LOGGER?.TraceMethodCall(GetType());
-            if (channel.IsNullOrEmptyOrWhitespace()) return;
+            if (channel == null || channel.IsNullOrEmptyOrWhitespace()) return;
             channel = CorrectChannelName(channel);
 
             lock (SYNC)
@@ -198,19 +200,19 @@ namespace TwitchLib.Client.Managers
                 // afterwards JoinComplete has to be called to complete the join and to put the channel into Joined
             }
         }
-        public void JoinChannels(IEnumerable<string> channels)
+        public void JoinChannels(IEnumerable<string?> channels)
         {
             LOGGER?.TraceMethodCall(GetType());
             if (channels == null) return;
-            foreach (string channel in channels)
+            foreach (string? channel in channels)
             {
                 JoinChannel(channel);
             }
         }
-        public void LeaveChannel(string channel)
+        public void LeaveChannel(string? channel)
         {
             LOGGER?.TraceMethodCall(GetType());
-            if (channel.IsNullOrEmptyOrWhitespace()) return;
+            if (channel == null || channel.IsNullOrEmptyOrWhitespace()) return;
             channel = CorrectChannelName(channel);
             Log?.Invoke($"Leaving channel: {channel}");
             lock (SYNC)
@@ -241,10 +243,10 @@ namespace TwitchLib.Client.Managers
                 }
             }
         }
-        public void LeaveChannel(JoinedChannel channel)
+        public void LeaveChannel(JoinedChannel? channel)
         {
             LOGGER?.TraceMethodCall(GetType());
-            LeaveChannel(channel.Channel);
+            LeaveChannel(channel?.Channel);
         }
         #endregion methods visible to API consumers
 
@@ -324,16 +326,16 @@ namespace TwitchLib.Client.Managers
             // that it wont get restarted
             CTS = null;
         }
-        public void JoinCompleted(string channel)
+        public void JoinCompleted(string? channel)
         {
             LOGGER?.TraceMethodCall(GetType());
             if (Token == null || Token.IsCancellationRequested) return;
-            if (channel.IsNullOrEmptyOrWhitespace()) return;
+            if (channel == null || channel.IsNullOrEmptyOrWhitespace()) return;
             channel = CorrectChannelName(channel);
             lock (SYNC)
             {
                 JoinRequested.Remove(channel);
-                Joined.TryAdd(channel, new JoinedChannel(channel, Credentials.TwitchUsername));
+                Joined.TryAdd(channel, new JoinedChannel(channel, TwitchClient.TwitchUsername));
                 // ChannelManager requested JOIN
                 // meanwhile we want to leave
                 //
@@ -344,11 +346,11 @@ namespace TwitchLib.Client.Managers
                 if (JoiningExceptions.Contains(channel)) LeaveChannel(channel);
             }
         }
-        public void JoinCanceld(string channel)
+        public void JoinCanceld(string? channel)
         {
             LOGGER?.TraceMethodCall(GetType());
             if (Token == null || Token.IsCancellationRequested) return;
-            if (channel.IsNullOrEmptyOrWhitespace()) return;
+            if (channel == null || channel.IsNullOrEmptyOrWhitespace()) return;
             channel = CorrectChannelName(channel);
             lock (SYNC) { JoinRequested.Remove(channel); }
         }
@@ -368,7 +370,7 @@ namespace TwitchLib.Client.Managers
                 while (Token != null && !Token.IsCancellationRequested)
                 {
                     Task.Delay(JoinRequestDelay).GetAwaiter().GetResult();
-                    string channelToJoin = null;
+                    string? channelToJoin = null;
                     lock (SYNC)
                     {
                         bool dequeued = Joining.TryDequeue(out channelToJoin);
@@ -409,9 +411,9 @@ namespace TwitchLib.Client.Managers
         }
 
         #region ITwitchClient-EventHandlers
-        private void TwitchClientOnConnected(object sender, OnConnectedArgs e) { Start(); }
-        private void TwitchClientOnDisconnected(object sender, OnDisconnectedArgs e) { Stop(); }
-        private void TwitchClientOnJoinedChannel(object sender, OnJoinedChannelArgs e) { JoinCompleted(e.Channel); }
+        private void TwitchClientOnConnected(object? sender, OnConnectedArgs e) { Start(); }
+        private void TwitchClientOnDisconnected(object? sender, OnDisconnectedArgs e) { Stop(); }
+        private void TwitchClientOnJoinedChannel(object? sender, OnJoinedChannelArgs e) { JoinCompleted(e.Channel); }
         private void TwitchClientOnFailureToReceiveJoinConfirmation(object sender, OnFailureToReceiveJoinConfirmationArgs e) { JoinCanceld(e.Channel); }
         #endregion ITwitchClient-EventHandlers
 

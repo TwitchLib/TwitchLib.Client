@@ -13,6 +13,6 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     The command
         /// </summary>
-        public ChatCommand Command { get; set; }
+        public ChatCommand? Command { get; set; }
     }
 }

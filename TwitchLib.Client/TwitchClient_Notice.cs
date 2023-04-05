@@ -15,22 +15,22 @@ namespace TwitchLib.Client
         // it makes it easier to find the respective occurance from the log file
 
         #region events public
-        public event EventHandler<OnChatColorChangedArgs> OnChatColorChanged;
-        public event EventHandler<OnBannedArgs> OnBanned;
-        public event EventHandler<OnFollowersOnlyArgs> OnFollowersOnly;
-        public event EventHandler<OnSubsOnlyArgs> OnSubsOnly;
-        public event EventHandler<OnEmoteOnlyArgs> OnEmoteOnly;
-        public event EventHandler<OnSuspendedArgs> OnSuspended;
-        public event EventHandler<OnSlowModeArgs> OnSlowMode;
-        public event EventHandler<OnR9kModeArgs> OnR9kMode;
-        public event EventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
-        public event EventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
-        public event EventHandler<OnRateLimitArgs> OnRateLimit;
-        public event EventHandler<OnDuplicateArgs> OnDuplicate;
-        public event EventHandler<EventArgs> OnSelfRaidError;
-        public event EventHandler<EventArgs> OnNoPermissionError;
-        public event EventHandler<EventArgs> OnRaidedChannelIsMatureAudience;
-        public event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+        public event EventHandler<OnChatColorChangedArgs>? OnChatColorChanged;
+        public event EventHandler<OnBannedArgs>? OnBanned;
+        public event EventHandler<OnFollowersOnlyArgs>? OnFollowersOnly;
+        public event EventHandler<OnSubsOnlyArgs>? OnSubsOnly;
+        public event EventHandler<OnEmoteOnlyArgs>? OnEmoteOnly;
+        public event EventHandler<OnSuspendedArgs>? OnSuspended;
+        public event EventHandler<OnSlowModeArgs>? OnSlowMode;
+        public event EventHandler<OnR9kModeArgs>? OnR9kMode;
+        public event EventHandler<OnRequiresVerifiedEmailArgs>? OnRequiresVerifiedEmail;
+        public event EventHandler<OnRequiresVerifiedPhoneNumberArgs>? OnRequiresVerifiedPhoneNumber;
+        public event EventHandler<OnRateLimitArgs>? OnRateLimit;
+        public event EventHandler<OnDuplicateArgs>? OnDuplicate;
+        public event EventHandler<EventArgs>? OnSelfRaidError;
+        public event EventHandler<EventArgs>? OnNoPermissionError;
+        public event EventHandler<EventArgs>? OnRaidedChannelIsMatureAudience;
+        public event EventHandler<OnBannedEmailAliasArgs>? OnBannedEmailAlias;
         #endregion events public
 
 

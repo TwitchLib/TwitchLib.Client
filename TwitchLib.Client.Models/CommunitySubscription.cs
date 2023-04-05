@@ -12,10 +12,10 @@ namespace TwitchLib.Client.Models
     {
         public int MsgParamMassGiftCount { get; }
         public int MsgParamSenderCount { get; }
-        public SubscriptionPlan MsgParamSubPlan { get; }
-        public string MsgParamMultiMonthGiftDuration { get; }
+        public SubscriptionPlan MsgParamSubPlan { get; } = SubscriptionPlan.NotSet;
+        public string? MsgParamMultiMonthGiftDuration { get; }
         [SuppressMessage("Style", "IDE0058")]
-        public CommunitySubscription(IrcMessage ircMessage, ILogger logger = null) : base(ircMessage, logger)
+        public CommunitySubscription(IrcMessage ircMessage, ILogger? logger = null) : base(ircMessage, logger)
         {
             foreach (string tag in ircMessage.Tags.Keys)
             {
@@ -38,9 +38,8 @@ namespace TwitchLib.Client.Models
                             case "3000":
                                 MsgParamSubPlan = SubscriptionPlan.Tier3;
                                 break;
-                            case "":
-                                break;
                             default:
+                                MsgParamSubPlan = SubscriptionPlan.NotSet;
                                 Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
                                                                                tagValue,
                                                                                $"switch-case and/or {nameof(Enums.SubscriptionPlan)} have/has to be extended.");

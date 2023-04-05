@@ -11,21 +11,21 @@ namespace TwitchLib.Client.Models
     public class GiftedSubscription : ASubscriptionBase
     {
 
-        public string MsgParamMonths { get; }
+        public string? MsgParamMonths { get; }
 
-        public string MsgParamRecipientDisplayName { get; }
+        public string? MsgParamRecipientDisplayName { get; }
 
-        public string MsgParamRecipientId { get; }
+        public string? MsgParamRecipientId { get; }
 
-        public string MsgParamRecipientUserName { get; }
+        public string? MsgParamRecipientUserName { get; }
 
-        public string MsgParamSubPlanName { get; }
+        public string? MsgParamSubPlanName { get; }
 
-        public SubscriptionPlan MsgParamSubPlan { get; }
+        public SubscriptionPlan MsgParamSubPlan { get; } = SubscriptionPlan.NotSet;
 
-        public string MsgParamMultiMonthGiftDuration { get; }
+        public string? MsgParamMultiMonthGiftDuration { get; }
 
-        public GiftedSubscription(IrcMessage ircMessage, ILogger logger = null) : base(ircMessage, logger)
+        public GiftedSubscription(IrcMessage ircMessage, ILogger? logger = null) : base(ircMessage, logger)
         {
             foreach (string tag in ircMessage.Tags.Keys)
             {
@@ -63,9 +63,8 @@ namespace TwitchLib.Client.Models
                             case "3000":
                                 MsgParamSubPlan = SubscriptionPlan.Tier3;
                                 break;
-                            case "":
-                                break;
                             default:
+                                MsgParamSubPlan = SubscriptionPlan.NotSet;
                                 Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
                                                                                tagValue,
                                                                                $"switch-case and/or {nameof(Enums.SubscriptionPlan)} have/has to be extended.");

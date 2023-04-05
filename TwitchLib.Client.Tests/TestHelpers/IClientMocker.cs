@@ -48,7 +48,7 @@ namespace TwitchLib.Client.Tests.TestHelpers
             Mock<IClient> mock = GetIClientMock();
             mock.Setup(c => c.Send(It.IsAny<string>()))
                 .Returns(true)
-                .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = message });
+                .Raises(c => c.OnMessage += null, new OnMessageEventArgs(message));
 
             IClient client = mock.Object;
             return client;
@@ -100,7 +100,7 @@ namespace TwitchLib.Client.Tests.TestHelpers
             mock.InSequence(sendMessageSequence)
                             .Setup(c => c.Send(It.IsAny<string>()))
                             .Returns(true)
-                            .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = messageToSend });
+                            .Raises(c => c.OnMessage += null, new OnMessageEventArgs(messageToSend));
         }
         /// <summary>
         ///     adds joining a channel to the given <paramref name="sendMessageSequence"/>
@@ -125,7 +125,7 @@ namespace TwitchLib.Client.Tests.TestHelpers
             mock.InSequence(sendMessageSequence)
                             .Setup(c => c.Send(It.Is<string>(s => String.Equals(messageExpectedToJoin, s))))
                             .Returns(true)
-                            .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = messageJoinCompleted });
+                            .Raises(c => c.OnMessage += null, new OnMessageEventArgs(messageJoinCompleted));
         }
         /// <summary>
         ///     adds the sequence of messages that the <see cref="ITwitchClient"/> is going to send,
@@ -164,7 +164,7 @@ namespace TwitchLib.Client.Tests.TestHelpers
             mock.InSequence(sendMessageSequence)
                 .Setup(c => c.Send(It.IsAny<string>()))
                 .Returns(true)
-                .Raises(c => c.OnMessage += null, new OnMessageEventArgs() { Message = messageLogin });
+                .Raises(c => c.OnMessage += null, new OnMessageEventArgs(messageLogin));
         }
         public static void SetIsConnected(Mock<IClient> mock, bool isConnected)
         {

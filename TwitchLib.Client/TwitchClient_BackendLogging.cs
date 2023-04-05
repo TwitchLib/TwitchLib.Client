@@ -15,10 +15,10 @@ namespace TwitchLib.Client
         // it makes it easier to find the respective occurance from the log file
 
         #region events public
-        public event EventHandler<OnErrorEventArgs> OnError;
-        public event EventHandler<OnLogArgs> OnLog;
-        public event EventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
-        public event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+        public event EventHandler<OnErrorEventArgs>? OnError;
+        public event EventHandler<OnLogArgs>? OnLog;
+        public event EventHandler<OnSendReceiveDataArgs>? OnSendReceiveData;
+        public event EventHandler<OnUnaccountedForArgs>? OnUnaccountedFor;
         #endregion events public
 
 

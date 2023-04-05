@@ -11,14 +11,14 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Gets or sets the raw irc.
         /// </summary>
-        public string RawIRC { get; set; }
+        public string? RawIRC { get; set; }
         /// <summary>
         ///     Gets or sets the location.
         /// </summary>
-        public string Location { get; set; }
+        public string? Location { get; set; }
         /// <summary>
         ///     Gets or sets the bot username.
         /// </summary>
-        public string BotUsername { get; set; }
+        public string? BotUsername { get; set; }
     }
 }

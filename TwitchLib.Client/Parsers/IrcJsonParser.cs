@@ -110,16 +110,16 @@ namespace TwitchLib.Client.Parsers {
             if (!command.IsNullOrEmptyOrWhitespace()) {
                 ircObject.Add(nameof(command), new JValue(command));
             }
-            string user = GetUser(messageParts, command, hasTags, isPingOrPong);
-            if (!user.IsNullOrEmptyOrWhitespace()) {
+            string? user = GetUser(messageParts, command, hasTags, isPingOrPong);
+            if (user != null && !user.IsNullOrEmptyOrWhitespace()) {
                 ircObject.Add(nameof(user), new JValue(user));
             }
-            string channel = GetChannel(messageParts, hasTags, isPingOrPong);
-            if (!channel.IsNullOrEmptyOrWhitespace()) {
+            string? channel = GetChannel(messageParts, hasTags, isPingOrPong);
+            if (channel != null && !channel.IsNullOrEmptyOrWhitespace()) {
                 ircObject.Add(nameof(channel), new JValue(channel));
             }
-            string message = GetMessage(messageParts, hasTags);
-            if (!message.IsNullOrEmptyOrWhitespace()) {
+            string? message = GetMessage(messageParts, hasTags);
+            if (message != null && !message.IsNullOrEmptyOrWhitespace()) {
                 ircObject.Add(nameof(message), new JValue(message));
             }
             if (hasTags) {
@@ -147,14 +147,14 @@ namespace TwitchLib.Client.Parsers {
         /// <returns>
         ///     <see cref="JObject"/>
         /// </returns>
-        private static JObject GetTags(string tagPart, string message) {
+        private static JObject GetTags(string tagPart, string? message) {
             JObject tagObject = new JObject();
             string[] tags = tagPart.Split(';');
             foreach (string tag in tags) {
                 string[] keyValue = tag.Split('=');
                 string key = keyValue[0];
                 string value = keyValue[1];
-                JToken tagValue = null;
+                JToken? tagValue = null;
                 if (!value.IsNullOrEmptyOrWhitespace()) {
                     tagValue = GetTagValue(key, value, message);
                 }
@@ -188,7 +188,7 @@ namespace TwitchLib.Client.Parsers {
         ///     </code>
         /// </param>
         /// <returns></returns>
-        private static JToken GetTagValue(string key, string value, string message) {
+        private static JToken GetTagValue(string key, string value, string? message) {
             if (String.Equals("emotes", key)) {
                 return GetEmotes(value, message);
             } else if (String.Equals("emote-sets", key)) {
@@ -208,7 +208,7 @@ namespace TwitchLib.Client.Parsers {
             return emoteSets;
         }
 
-        private static string GetMessage(string[] messageParts, bool hasTags) {
+        private static string? GetMessage(string[] messageParts, bool hasTags) {
             if (hasTags) {
                 if (messageParts.Length < 3) {
                     return null;
@@ -221,7 +221,7 @@ namespace TwitchLib.Client.Parsers {
             return messageParts[1];
         }
 
-        private static string GetChannel(string[] messageParts, bool hasTags, bool isPingOrPong) {
+        private static string? GetChannel(string[] messageParts, bool hasTags, bool isPingOrPong) {
             if (isPingOrPong) {
                 return null;
             }
@@ -237,7 +237,7 @@ namespace TwitchLib.Client.Parsers {
             return meta.Substring(meta.IndexOf("#") + 1);
         }
 
-        private static string GetUser(string[] messageParts, string command, bool hasTags, bool isPingOrPong) {
+        private static string? GetUser(string[] messageParts, string command, bool hasTags, bool isPingOrPong) {
             if (isPingOrPong) {
                 return null;
             }
@@ -287,7 +287,7 @@ namespace TwitchLib.Client.Parsers {
         /// <returns>
         ///     <see cref="JToken"/>
         /// </returns>
-        private static JToken GetEmotes(string value, string message) {
+        private static JToken GetEmotes(string value, string? message) {
             //
             // collect all index objects to easily replace emotes within message
             IList<JToken> indexObjects = new List<JToken>();
@@ -307,7 +307,7 @@ namespace TwitchLib.Client.Parsers {
                     // indexObject also gets the emote-id,
                     // to easily replace emotes within message
                     indexObject.Add("id", id);
-                    if (fromParsed && toParsed) {
+                    if (fromParsed && toParsed && message != null) {
                         int emoteNameLength = toIndex - fromIndex + 1;
                         string name = message.Substring(fromIndex, emoteNameLength);
                         indexObject.Add(nameof(name), name);

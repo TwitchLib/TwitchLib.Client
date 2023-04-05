@@ -58,7 +58,9 @@ namespace TwitchLib.Client.Tests.Models
             // initial irc after joining a channel
             string initialRawIRC = $"@emote-only=0;followers-only=-1;r9k=0;room-id={roomId};slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #{channel}";
             IrcMessage initialIrcMessage = IrcParser.ParseIrcMessage(initialRawIRC);
+#pragma warning disable CS8625 // null-literal: not needed
             joinedChannel.HandleROOMSTATE(initialIrcMessage, null);
+#pragma warning restore CS8625 // null-literal: not needed
             TypeInfo typeInfo = joinedChannel.GetType().GetTypeInfo();
             PropertyInfo? property = typeInfo.GetDeclaredProperty("State");
             Assert.NotNull(property);
@@ -77,7 +79,9 @@ namespace TwitchLib.Client.Tests.Models
 
             string changeRawIRC = $"@room-id={roomId};emote-only=1 :tmi.twitch.tv ROOMSTATE #{channel}";
             IrcMessage changeIrcMessage = IrcParser.ParseIrcMessage(changeRawIRC);
+#pragma warning disable CS8625 // null-literal: not needed
             joinedChannel.HandleROOMSTATE(changeIrcMessage, null);
+#pragma warning restore CS8625 // null-literal: not needed
 
             Assert.NotNull(channelState);
             Assert.Equal(channel, channelState.Channel);

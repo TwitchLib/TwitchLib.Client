@@ -18,7 +18,7 @@ namespace TwitchLib.Client.Models
     {
         #region properties private
         private ConcurrentDictionary<string, ChatMessage> BotMessages { get; } = new ConcurrentDictionary<string, ChatMessage>();
-        private ChannelState State { get; set; }
+        private ChannelState? State { get; set; }
         #endregion properties private
 
 
@@ -66,7 +66,9 @@ namespace TwitchLib.Client.Models
         [SuppressMessage("Style", "IDE0058")]
         internal void HandlePRIVMSG(ChatMessage message)
         {
-            if (String.Equals(message?.Username?.ToLower(), BotUsername))
+            if (String.Equals(message.Username?.ToLower(), BotUsername)
+                && message.Id != null
+                && !message.Id.IsNullOrEmptyOrWhitespace())
             {
                 BotMessages.TryAdd(message.Id, message);
             }
@@ -78,7 +80,7 @@ namespace TwitchLib.Client.Models
         /// </summary>
         internal void HandleUSERSTATE(UserState userState, ITwitchClient twitchClient)
         {
-            if (userState.Id.IsNullOrEmptyOrWhitespace())
+            if (userState.Id == null || userState.Id.IsNullOrEmptyOrWhitespace())
             {
                 OnUserStateChangedArgs args = new OnUserStateChangedArgs { UserState = userState, Channel = Channel };
                 RaiseEventHelper.RaiseEvent(twitchClient, nameof(twitchClient.OnUserStateChanged), args);

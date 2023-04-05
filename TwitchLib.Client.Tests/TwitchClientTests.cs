@@ -16,7 +16,9 @@ namespace TwitchLib.Client.Tests
         {
             try
             {
+#pragma warning disable CS8625 // null-literal: should get tested
                 ITwitchClient client = new TwitchClient(null);
+#pragma warning restore CS8625 // null-literal: should get tested
                 Assert.Fail($"{typeof(ArgumentNullException)} expected!");
             }
             catch (Exception e)

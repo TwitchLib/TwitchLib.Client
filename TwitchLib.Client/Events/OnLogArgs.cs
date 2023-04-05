@@ -11,14 +11,14 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     The bot username
         /// </summary>
-        public string BotUsername { get; set; }
+        public string? BotUsername { get; set; }
         /// <summary>
         ///     The data
         /// </summary>
-        public string Data { get; set; }
+        public string? Data { get; set; }
         /// <summary>
         ///     The date time
         /// </summary>
-        public DateTime DateTime { get; set; }
+        public DateTime? DateTime { get; set; }
     }
 }

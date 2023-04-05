@@ -36,7 +36,9 @@ namespace TwitchLib.Client.Tests.Services
             {
                 message = new OutboundChatMessage();
             }
+#pragma warning disable CS8604 // null-literal: should get tested
             bool enqueued = throttlerService.Enqueue(message);
+#pragma warning restore CS8604 // null-literal: should get tested
             Assert.Equal(expected, enqueued);
         }
         [Fact]

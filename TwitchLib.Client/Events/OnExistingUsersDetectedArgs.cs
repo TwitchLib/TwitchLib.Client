@@ -13,6 +13,6 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing string list of existing users.
         /// </summary>
-        public List<string> Users { get; set; }
+        public List<string> Users { get; set; } = new List<string>();
     }
 }

@@ -14,19 +14,19 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         ///     Occurs when [on unaccounted for].
         /// </summary>
-        event EventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
+        event EventHandler<OnUnaccountedForArgs>? OnUnaccountedFor;
         /// <summary>
         ///     Occurs when [on log].
         /// </summary>
-        event EventHandler<OnLogArgs> OnLog;
+        event EventHandler<OnLogArgs>? OnLog;
         /// <summary>
         ///     Occurs when [on send receive data].
         /// </summary>
-        event EventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
+        event EventHandler<OnSendReceiveDataArgs>? OnSendReceiveData;
         /// <summary>
         /// Occurs when [on error].
         /// </summary>
-        event EventHandler<OnErrorEventArgs> OnError;
+        event EventHandler<OnErrorEventArgs>? OnError;
         #endregion events public
     }
 }

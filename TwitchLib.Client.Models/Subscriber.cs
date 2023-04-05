@@ -10,7 +10,7 @@ namespace TwitchLib.Client.Models
 {
     public class Subscriber : SubscriberBase
     {
-        public Subscriber(IrcMessage ircMessage, ILogger logger = null) : base(ircMessage, logger) { }
+        public Subscriber(IrcMessage ircMessage, ILogger? logger = null) : base(ircMessage, logger) { }
 
         public Subscriber(
             List<KeyValuePair<string, string>> badges,
