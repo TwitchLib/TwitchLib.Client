@@ -13,7 +13,7 @@ namespace TwitchLib.Client.Events
         ///     Property representing the PRIVMSG
         /// </summary>
         public ChatMessage ChatMessage { get; }
-        public OnUserIntroArgs(ChatMessage chatMessage)
+        public OnUserIntroArgs(string channel, ChatMessage chatMessage) : base(channel)
         {
             ChatMessage = chatMessage;
         }

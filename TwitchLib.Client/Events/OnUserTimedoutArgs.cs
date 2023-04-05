@@ -13,7 +13,7 @@ namespace TwitchLib.Client.Events
         ///     The user timeout
         /// </summary>
         public UserTimeout UserTimeout { get; }
-        public OnUserTimedoutArgs(UserTimeout userTimeout)
+        public OnUserTimedoutArgs(string channel, UserTimeout userTimeout) : base(channel)
         {
             UserTimeout = userTimeout;
         }

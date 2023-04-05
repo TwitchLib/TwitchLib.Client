@@ -12,7 +12,7 @@ namespace TwitchLib.Client.Events
         ///     Property representing username of joined viewer.
         /// </summary>
         public string Username { get; }
-        public OnUserJoinedArgs(string username)
+        public OnUserJoinedArgs(string channel, string username) : base(channel)
         {
             Username = username;
         }

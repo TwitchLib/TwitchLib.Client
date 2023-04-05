@@ -12,7 +12,7 @@ namespace TwitchLib.Client.Events
         ///     Property representing username of user that left.
         /// </summary>
         public string Username { get; }
-        public OnUserLeftArgs(string username)
+        public OnUserLeftArgs(string channel, string username) : base(channel)
         {
             Username = username;
         }
