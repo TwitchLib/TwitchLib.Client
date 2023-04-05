@@ -1,33 +1,30 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Class OnUnaccountedForArgs.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Class OnUnaccountedForArgs.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    public class OnUnaccountedForArgs : EventArgs
+    public class OnUnaccountedForArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Gets or sets the raw irc.
+        ///     Gets or sets the raw irc.
         /// </summary>
-        /// <value>The raw irc.</value>
-        public string RawIRC { get; set; }
+        public string RawIRC { get; }
         /// <summary>
-        /// Gets or sets the location.
+        ///     Gets or sets the location.
         /// </summary>
-        /// <value>The location.</value>
-        public string Location { get; set; }
+        public string Location { get; }
         /// <summary>
-        /// Gets or sets the bot username.
+        ///     Gets or sets the bot username.
         /// </summary>
-        /// <value>The bot username.</value>
-        public string BotUsername { get; set; } // may not be available
-        /// <summary>
-        /// Gets or sets the channel.
-        /// </summary>
-        /// <value>The channel.</value>
-        public string Channel { get; set; } // may not be available
+        public string BotUsername { get; }
+        public OnUnaccountedForArgs(string channel, string botUsername, string location, string rawIrc) : base(channel)
+        {
+            BotUsername = botUsername;
+            Location = location;
+            RawIRC = rawIrc;
+        }
     }
 }

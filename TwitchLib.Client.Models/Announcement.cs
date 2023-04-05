@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Extensions.NetCore;
 using TwitchLib.Client.Models.Internal;
@@ -10,73 +11,73 @@ namespace TwitchLib.Client.Models
     public class Announcement
     {
         /// <summary>Property representing announcement message id</summary>
-        public string Id { get; }
+        public string? Id { get; }
 
         /// <summary>Property representing list of badges assigned.</summary>
-        public List<KeyValuePair<string, string>> Badges { get; }
+        public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
 
         /// <summary>Metadata associated with each badge</summary>
-        public List<KeyValuePair<string, string>> BadgeInfo { get; }
+        public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
 
         /// <summary>Property representing internal system message value.</summary>
-        public string SystemMessage { get; }
+        public string? SystemMessage { get; }
 
         /// <summary>Property representing internal system message value, parsed.</summary>
-        public string SystemMessageParsed { get; }
+        public string? SystemMessageParsed { get; }
 
         /// <summary>Property representing whether or not the announcer is the broadcaster.</summary>
-        public bool IsBroadcaster { get; }
+        public bool IsBroadcaster { get; } = false;
 
         /// <summary>Property representing whether or not the announcer is a moderator.</summary>
-        public bool IsModerator { get; }
+        public bool IsModerator { get; } = false;
 
         /// <summary>Property representing whether or not announcer is a partner.</summary>
-        public bool IsPartner { get; }
+        public bool IsPartner { get; } = false;
 
         /// <summary>Property representing whether or not the announcer is a subscriber.</summary>
-        public bool IsSubscriber { get; }
+        public bool IsSubscriber { get; } = false;
 
         /// <summary>Property representing whether or not the announcer is a twitch staff member.</summary>
-        public bool IsStaff { get; }
+        public bool IsStaff { get; } = false;
 
         /// <summary>Property representing whether or not the announcer is a turbo member.</summary>
-        public bool IsTurbo { get; }
+        public bool IsTurbo { get; } = false;
 
         /// <summary>Property representing the user's login.</summary>
-        public string Login { get; }
+        public string? Login { get; }
 
         /// <summary>Property representing the user's id.</summary>
-        public string UserId { get; }
+        public string? UserId { get; }
 
         /// <summary>Property representing the room id.</summary>
-        public string RoomId { get; }
+        public string? RoomId { get; }
 
         /// <summary>Property representing the user type of the announcer.</summary>
         public UserType UserType { get; }
 
         /// <summary>Property representing the tmi-sent-ts value.</summary>
-        public string TmiSentTs { get; }
+        public string? TmiSentTs { get; }
 
         /// <summary>Property representing emote set of announcement.</summary>
-        public string EmoteSet { get; }
+        public string? EmoteSet { get; }
 
         /// <summary>Property representing the raw IRC message (for debugging/customized parsing)</summary>
-        public string RawIrc { get; }
+        public string? RawIrc { get; }
 
         /// <summary>Property representing the msg-id value.</summary>
-        public string MsgId { get; }
+        public string? MsgId { get; }
 
         /// <summary>Property representing the color value of the announcement.</summary>
-        public string MsgParamColor { get; }
+        public string? MsgParamColor { get; }
 
         /// <summary>Property representing the colorhex of the announcer.</summary>
-        public string ColorHex { get; }
+        public string? ColorHex { get; }
 
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
         public Color Color { get; }
 
         /// <summary>Property representing the message of the announcement.</summary>
-        public string Message { get; }
+        public string? Message { get; }
 
         /// SAMPLE: @badge-info=;badges=broadcaster/1,ambassador/1;color=#033700;display-name=BarryCarlyon;emotes=;flags=;id=55d90904-e515-47d0-ac1d-879f7f1d7b01;login=barrycarlyon;mod=0;msg-id=announcement;msg-param-color=PRIMARY;room-id=15185913;subscriber=0;system-msg=;tmi-sent-ts=1648758023469;user-id=15185913;user-type= :tmi.twitch.tv USERNOTICE #barrycarlyon :test announcment main
         /// <summary>Announcement object constructor.</summary>
@@ -86,15 +87,15 @@ namespace TwitchLib.Client.Models
             RawIrc = ircMessage.ToString();
             Message = ircMessage.Message;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {
                     case Tags.Badges:
                         Badges = Common.Helpers.ParseBadges(tagValue);
-                        foreach (var badge in Badges)
+                        foreach (KeyValuePair<string, string> badge in Badges)
                         {
                             switch (badge.Key)
                             {
@@ -127,7 +128,7 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Color:
                         ColorHex = tagValue;
-                        if (!string.IsNullOrEmpty(ColorHex))
+                        if (!System.String.IsNullOrEmpty(ColorHex))
                             Color = ColorTranslator.FromHtml(ColorHex);
                         break;
                     case Tags.MsgParamColor:

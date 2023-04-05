@@ -7,8 +7,8 @@ namespace TwitchLib.Client.Models.Extensions.NetCore
     {
         public static Color FromHtml(string hexColor)
         {
-            hexColor = hexColor + 00;
-            var argb = int.Parse(hexColor.Replace("#", ""), NumberStyles.HexNumber);
+            hexColor += 00;
+            int argb = System.Int32.Parse(hexColor.Replace("#", ""), NumberStyles.HexNumber);
             return Color.FromArgb(argb);
         }
     }

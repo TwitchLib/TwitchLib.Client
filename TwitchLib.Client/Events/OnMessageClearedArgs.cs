@@ -1,33 +1,33 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing a cleared message event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing a cleared message event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnMessageClearedArgs : EventArgs
+    public class OnMessageClearedArgs : AChannelProvidingEventArgs
     {
-        /// <summary>
-        /// Channel that had message cleared event.
-        /// </summary>
-        public string Channel;
 
         /// <summary>
-        /// Message contents that received clear message
+        ///     Message contents that received clear message
         /// </summary>
-        public string Message;
+        public string Message { get; set; }
 
         /// <summary>
-        /// Message ID representing the message that was cleared
+        ///     Message ID representing the message that was cleared
         /// </summary>
-        public string TargetMessageId;
+        public string TargetMessageId { get; set; }
 
         /// <summary>
-        /// Timestamp of when message was sent
+        ///     Timestamp of when message was sent
         /// </summary>
-        public string TmiSentTs;
+        public string TmiSentTs { get; set; }
+        public OnMessageClearedArgs(string channel, string message, string targetMessageId, string tmiSentTs) : base(channel)
+        {
+            Message = message;
+            TargetMessageId = targetMessageId;
+            TmiSentTs = tmiSentTs;
+        }
     }
 }

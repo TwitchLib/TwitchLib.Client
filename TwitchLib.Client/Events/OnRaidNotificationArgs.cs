@@ -1,22 +1,21 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Class OnRaidNotificationArgs.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Class OnRaidNotificationArgs.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    public class OnRaidNotificationArgs : EventArgs
+    public class OnRaidNotificationArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// The raid notification
+        ///     The raid notification
         /// </summary>
-        public RaidNotification RaidNotification;
-        /// <summary>
-        /// The channel
-        /// </summary>
-        public string Channel;
+        public RaidNotification RaidNotification { get; }
+        public OnRaidNotificationArgs(string channel, RaidNotification raidNotification) : base(channel)
+        {
+            RaidNotification = raidNotification;
+        }
     }
 }

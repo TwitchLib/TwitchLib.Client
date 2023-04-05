@@ -1,22 +1,20 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing on channel joined event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing on channel joined event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnJoinedChannelArgs : EventArgs
+    public class OnJoinedChannelArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Property representing bot username.
+        ///     Property representing bot username.
         /// </summary>
-        public string BotUsername;
-        /// <summary>
-        /// Property representing the channel that was joined.
-        /// </summary>
-        public string Channel;
+        public string BotUsername { get; }
+        public OnJoinedChannelArgs(string channel, string botUsername) : base(channel)
+        {
+            BotUsername = botUsername;
+        }
     }
 }

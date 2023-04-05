@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Extensions.NetCore;
 using TwitchLib.Client.Models.Internal;
@@ -13,100 +15,100 @@ namespace TwitchLib.Client.Models
     public class SubscriberBase
     {
         /// <summary>Property representing list of badges assigned.</summary>
-        public List<KeyValuePair<string, string>> Badges { get; }
+        public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
 
         /// <summary>Metadata associated with each badge</summary>
-        public List<KeyValuePair<string, string>> BadgeInfo { get; }
+        public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
 
         /// <summary>Property representing the colorhex of the resubscriber.</summary>
-        public string ColorHex { get; }
+        public string? ColorHex { get; }
 
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
         public Color Color { get; }
 
         /// <summary>Property representing resubscriber's customized display name.</summary>
-        public string DisplayName { get; }
+        public string? DisplayName { get; }
 
         /// <summary>Property representing emote set of resubscriber.</summary>
-        public string EmoteSet { get; }
+        public string? EmoteSet { get; }
 
         /// <summary>Property representing resub message id</summary>
-        public string Id { get; }
+        public string? Id { get; }
 
         /// <summary>Property representing whether or not the resubscriber is a moderator.</summary>
-        public bool IsModerator { get; }
+        public bool IsModerator { get; } = false;
 
         /// <summary>Property representing whether or not person is a partner.</summary>
-        public bool IsPartner { get; }
+        public bool IsPartner { get; } = false;
 
         /// <summary>Property representing whether or not the resubscriber is a subscriber (YES).</summary>
-        public bool IsSubscriber { get; }
+        public bool IsSubscriber { get; } = false;
 
         /// <summary>Property representing whether or not the resubscriber is a turbo member.</summary>
-        public bool IsTurbo { get; }
+        public bool IsTurbo { get; } = false;
 
         /// <summary>Property representing login of resubscription event.</summary>
-        public string Login { get; }
+        public string? Login { get; }
 
-        public string MsgId { get; }
+        public string? MsgId { get; }
 
-        public string MsgParamCumulativeMonths { get; }
+        public string? MsgParamCumulativeMonths { get; }
 
-        public bool MsgParamShouldShareStreak { get; }
+        public bool MsgParamShouldShareStreak { get; } = false;
 
-        public string MsgParamStreakMonths { get; }
+        public string? MsgParamStreakMonths { get; }
 
         /// <summary>Property representing the raw IRC message (for debugging/customized parsing)</summary>
-        public string RawIrc { get; }
+        public string? RawIrc { get; }
 
         /// <summary>Property representing system message.</summary>
-        public string ResubMessage { get; }
+        public string? ResubMessage { get; }
 
         /// <summary>Property representing the room id.</summary>
-        public string RoomId { get; }
+        public string? RoomId { get; }
 
         /// <summary>Property representing the plan a user is on.</summary>
         public SubscriptionPlan SubscriptionPlan { get; } = SubscriptionPlan.NotSet;
 
         /// <summary>Property representing the subscription plan name.</summary>
-        public string SubscriptionPlanName { get; }
+        public string? SubscriptionPlanName { get; }
 
         /// <summary>Property representing internval system message value.</summary>
-        public string SystemMessage { get; }
+        public string? SystemMessage { get; }
 
         /// <summary>Property representing internal system message value, parsed.</summary>
-        public string SystemMessageParsed { get; }
+        public string? SystemMessageParsed { get; }
 
         /// <summary>Property representing the tmi-sent-ts value.</summary>
-        public string TmiSentTs { get; }
+        public string? TmiSentTs { get; }
 
         /// <summary>Property representing the user's id.</summary>
-        public string UserId { get; }
+        public string? UserId { get; }
 
         /// <summary>Property representing the user type of the resubscriber.</summary>
         public UserType UserType { get; }
 
-        public string Channel { get; }
+        public string? Channel { get; }
 
         // @badges=subscriber/1,turbo/1;color=#2B119C;display-name=JustFunkIt;emotes=;id=9dasn-asdibas-asdba-as8as;login=justfunkit;mod=0;msg-id=resub;msg-param-months=2;room-id=44338537;subscriber=1;system-msg=JustFunkIt\ssubscribed\sfor\s2\smonths\sin\sa\srow!;turbo=1;user-id=26526370;user-type= :tmi.twitch.tv USERNOTICE #burkeblack :AVAST YEE SCURVY DOG
 
         protected readonly int monthsInternal;
 
         /// <summary>Subscriber object constructor.</summary>
-        protected SubscriberBase(IrcMessage ircMessage)
+        protected SubscriberBase(IrcMessage ircMessage, ILogger? logger = null)
         {
             RawIrc = ircMessage.ToString();
             ResubMessage = ircMessage.Message;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
                 switch (tag)
                 {
                     case Tags.Badges:
                         Badges = Common.Helpers.ParseBadges(tagValue);
                         // iterate through badges for special circumstances
-                        foreach (var badge in Badges)
+                        foreach (KeyValuePair<string, string> badge in Badges)
                         {
                             if (badge.Key == "partner")
                                 IsPartner = true;
@@ -117,7 +119,7 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Color:
                         ColorHex = tagValue;
-                        if (!string.IsNullOrEmpty(ColorHex))
+                        if (!String.IsNullOrEmpty(ColorHex))
                             Color = ColorTranslator.FromHtml(ColorHex);
                         break;
                     case Tags.DisplayName:
@@ -163,7 +165,12 @@ namespace TwitchLib.Client.Models
                                 SubscriptionPlan = SubscriptionPlan.Tier3;
                                 break;
                             default:
-                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
+                                SubscriptionPlan = SubscriptionPlan.NotSet;
+                                Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                               tagValue,
+                                                                               $"switch-case and/or {nameof(Enums.SubscriptionPlan)} have/has to be extended.");
+                                logger?.LogExceptionAsError(GetType(), ex);
+                                break;
                         }
                         break;
                     case Tags.MsgParamSubPlanName:
@@ -260,7 +267,6 @@ namespace TwitchLib.Client.Models
             SubscriptionPlan = subscriptionPlan;
             SubscriptionPlanName = subscriptionPlanName;
             RoomId = roomId;
-            UserId = UserId;
             IsModerator = isModerator;
             IsTurbo = isTurbo;
             IsSubscriber = isSubscriber;

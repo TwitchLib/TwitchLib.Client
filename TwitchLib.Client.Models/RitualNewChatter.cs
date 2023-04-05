@@ -7,41 +7,41 @@ namespace TwitchLib.Client.Models
 {
     public class RitualNewChatter
     {
-        public List<KeyValuePair<string, string>> Badges { get; }
+        public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
 
-        public List<KeyValuePair<string, string>> BadgeInfo { get; }
+        public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
 
-        public string Color { get; }
+        public string? Color { get; }
 
-        public string DisplayName { get; }
+        public string? DisplayName { get; }
 
-        public string Emotes { get; }
+        public string? Emotes { get; }
 
-        public string Id { get; }
+        public string? Id { get; }
 
-        public bool IsModerator { get; }
+        public bool IsModerator { get; } = false;
 
-        public bool IsSubscriber { get; }
+        public bool IsSubscriber { get; } = false;
 
-        public bool IsTurbo { get; }
+        public bool IsTurbo { get; } = false;
 
-        public string Login { get; }
+        public string? Login { get; }
 
-        public string Message { get; }
+        public string? Message { get; }
 
-        public string MsgId { get; }
+        public string? MsgId { get; }
 
-        public string MsgParamRitualName { get; }
+        public string? MsgParamRitualName { get; }
 
-        public string RoomId { get; }
+        public string? RoomId { get; }
 
-        public string SystemMsgParsed { get; }
+        public string? SystemMsgParsed { get; }
 
-        public string SystemMsg { get; }
+        public string? SystemMsg { get; }
 
-        public string TmiSentTs { get; }
+        public string? TmiSentTs { get; }
 
-        public string UserId { get; }
+        public string? UserId { get; }
 
         public UserType UserType { get; }
 
@@ -52,9 +52,9 @@ namespace TwitchLib.Client.Models
         public RitualNewChatter(IrcMessage ircMessage)
         {
             Message = ircMessage.Message;
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
 
                 switch (tag)
                 {

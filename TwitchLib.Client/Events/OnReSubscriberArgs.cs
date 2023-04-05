@@ -1,23 +1,21 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing resubscriber event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing resubscriber event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnReSubscriberArgs : EventArgs
+    public class OnReSubscriberArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Property representing resubscriber object.
+        ///     Property representing resubscriber object.
         /// </summary>
-        public ReSubscriber ReSubscriber;
-        /// <summary>
-        /// Property representing the Twitch channel this event fired from.
-        /// </summary>
-        public string Channel;
+        public ReSubscriber ReSubscriber { get; }
+        public OnReSubscriberArgs(string channel, ReSubscriber reSubscriber) : base(channel)
+        {
+            ReSubscriber = reSubscriber;
+        }
     }
 }

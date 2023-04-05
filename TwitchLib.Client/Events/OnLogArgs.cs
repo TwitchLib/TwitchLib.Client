@@ -3,23 +3,28 @@
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Class OnLogArgs.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Class OnLogArgs.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
     public class OnLogArgs : EventArgs
     {
         /// <summary>
-        /// The bot username
+        ///     The bot username
         /// </summary>
-        public string BotUsername;
+        public string BotUsername { get; set; }
         /// <summary>
-        /// The data
+        ///     The data
         /// </summary>
-        public string Data;
+        public string Data { get; set; }
         /// <summary>
-        /// The date time
+        ///     The date time
         /// </summary>
-        public DateTime DateTime;
+        public DateTime DateTime { get; set; }
+        public OnLogArgs(string botUsername, string data, DateTime dateTime)
+        {
+            BotUsername = botUsername;
+            Data = data;
+            DateTime = dateTime;
+        }
     }
 }

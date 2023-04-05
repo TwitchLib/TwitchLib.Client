@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -34,7 +35,7 @@ namespace TwitchLib.Client.Internal
         /// <returns><c>true</c> if [is valid nickname] [the specified nickname]; otherwise, <c>false</c>.</returns>
         public static bool IsValidNickname(string nickname)
         {
-            return !string.IsNullOrEmpty(nickname) &&
+            return !String.IsNullOrEmpty(nickname) &&
                    NicknameRegex.Match(nickname).Success;
         }
 
@@ -120,7 +121,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Join(string[] channels)
         {
-            return $"JOIN {string.Join(",", channels)}";
+            return $"JOIN {String.Join(",", channels)}";
         }
 
         /// <summary>
@@ -142,7 +143,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Join(string[] channels, string[] keys)
         {
-            return $"JOIN {string.Join(",", channels)} {string.Join(",", keys)}";
+            return $"JOIN {String.Join(",", channels)} {String.Join(",", keys)}";
         }
 
         /// <summary>
@@ -162,7 +163,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Part(string[] channels)
         {
-            return $"PART {string.Join(",", channels)}";
+            return $"PART {String.Join(",", channels)}";
         }
 
         /// <summary>
@@ -184,7 +185,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Part(string[] channels, string partmessage)
         {
-            return $"PART {string.Join(",", channels)} :{partmessage}";
+            return $"PART {String.Join(",", channels)} :{partmessage}";
         }
 
         /// <summary>
@@ -218,7 +219,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Kick(string[] channels, string nickname)
         {
-            return $"KICK {string.Join(",", channels)} {nickname}";
+            return $"KICK {String.Join(",", channels)} {nickname}";
         }
 
         /// <summary>
@@ -230,7 +231,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Kick(string[] channels, string nickname, string comment)
         {
-            return $"KICK {string.Join(",", channels)} {nickname} :{comment}";
+            return $"KICK {String.Join(",", channels)} {nickname} :{comment}";
         }
 
         /// <summary>
@@ -241,7 +242,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Kick(string channel, string[] nicknames)
         {
-            return $"KICK {channel} {string.Join(",", nicknames)}";
+            return $"KICK {channel} {String.Join(",", nicknames)}";
         }
 
         /// <summary>
@@ -253,7 +254,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Kick(string channel, string[] nicknames, string comment)
         {
-            return $"KICK {channel} {string.Join(",", nicknames)} :{comment}";
+            return $"KICK {channel} {String.Join(",", nicknames)} :{comment}";
         }
 
         /// <summary>
@@ -264,7 +265,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Kick(string[] channels, string[] nicknames)
         {
-            return $"KICK {string.Join(",", channels)} {string.Join(",", nicknames)}";
+            return $"KICK {String.Join(",", channels)} {String.Join(",", nicknames)}";
         }
 
         /// <summary>
@@ -276,7 +277,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Kick(string[] channels, string[] nicknames, string comment)
         {
-            return $"KICK {string.Join(",", channels)} {string.Join(",", nicknames)} :{comment}";
+            return $"KICK {String.Join(",", channels)} {String.Join(",", nicknames)} :{comment}";
         }
 
         /// <summary>
@@ -573,7 +574,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string List(string[] channels)
         {
-            return $"LIST {string.Join(",", channels)}";
+            return $"LIST {String.Join(",", channels)}";
         }
 
         /// <summary>
@@ -595,7 +596,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string List(string[] channels, string target)
         {
-            return $"LIST {string.Join(",", channels)} {target}";
+            return $"LIST {String.Join(",", channels)} {target}";
         }
 
         /// <summary>
@@ -624,7 +625,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Names(string[] channels)
         {
-            return $"NAMES {string.Join(",", channels)}";
+            return $"NAMES {String.Join(",", channels)}";
         }
 
         /// <summary>
@@ -646,7 +647,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Names(string[] channels, string target)
         {
-            return $"NAMES {string.Join(",", channels)} {target}";
+            return $"NAMES {String.Join(",", channels)} {target}";
         }
 
         /// <summary>
@@ -703,6 +704,8 @@ namespace TwitchLib.Client.Internal
         /// newModeParameters</exception>
         /// <exception cref="ArgumentException">newModes and newModeParameters must have the same size.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Length - Mode change list is too large (&gt; {maxModeChanges}</exception>
+        [SuppressMessage("Style", "IDE0058")]
+        [Obsolete("This method doesnt seem to be used")]
         public static string Mode(string target, string[] newModes, string[] newModeParameters)
         {
             if (newModes == null)
@@ -739,6 +742,7 @@ namespace TwitchLib.Client.Internal
                     {
                         break;
                     }
+                    // SuppressMessage IDE0058 - no daisy chaining
                     newMode.Append(newModes[i + j]);
                 }
 
@@ -748,7 +752,9 @@ namespace TwitchLib.Client.Internal
                     {
                         break;
                     }
+                    // SuppressMessage IDE0058 - no daisy chaining
                     newModeParameter.Append(newModeParameters[i + j]);
+                    // SuppressMessage IDE0058 - no daisy chaining
                     newModeParameter.Append(" ");
                 }
             }
@@ -757,7 +763,9 @@ namespace TwitchLib.Client.Internal
 
             // remove trailing space
             newModeParameter.Length--;
+            // SuppressMessage IDE0058 - no daisy chaining
             newMode.Append(" ");
+            // SuppressMessage IDE0058 - no daisy chaining
             newMode.Append(newModeParameter);
 
             return Mode(target, newMode.ToString());
@@ -833,7 +841,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Whois(string[] masks)
         {
-            return $"WHOIS {string.Join(",", masks)}";
+            return $"WHOIS {String.Join(",", masks)}";
         }
 
         /// <summary>
@@ -855,7 +863,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Whois(string target, string[] masks)
         {
-            return $"WHOIS {target} {string.Join(",", masks)}";
+            return $"WHOIS {target} {String.Join(",", masks)}";
         }
 
         /// <summary>
@@ -875,7 +883,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Whowas(string[] nicknames)
         {
-            return $"WHOWAS {string.Join(",", nicknames)}";
+            return $"WHOWAS {String.Join(",", nicknames)}";
         }
 
         /// <summary>
@@ -897,7 +905,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Whowas(string[] nicknames, string count)
         {
-            return $"WHOWAS {string.Join(",", nicknames)} {count} ";
+            return $"WHOWAS {String.Join(",", nicknames)} {count} ";
         }
 
         /// <summary>
@@ -921,7 +929,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Whowas(string[] nicknames, string count, string target)
         {
-            return $"WHOWAS {string.Join(",", nicknames)} {count} {target}";
+            return $"WHOWAS {String.Join(",", nicknames)} {count} {target}";
         }
 
         /// <summary>
@@ -1112,7 +1120,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Userhost(string[] nicknames)
         {
-            return $"USERHOST {string.Join(" ", nicknames)}";
+            return $"USERHOST {String.Join(" ", nicknames)}";
         }
 
         /// <summary>
@@ -1132,7 +1140,7 @@ namespace TwitchLib.Client.Internal
         /// <returns>System.String.</returns>
         public static string Ison(string[] nicknames)
         {
-            return $"ISON {string.Join(" ", nicknames)}";
+            return $"ISON {String.Join(" ", nicknames)}";
         }
 
         /// <summary>

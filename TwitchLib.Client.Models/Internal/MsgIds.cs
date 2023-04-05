@@ -1,4 +1,6 @@
-﻿namespace TwitchLib.Client.Models.Internal
+﻿using System;
+
+namespace TwitchLib.Client.Models.Internal
 {
     public static class MsgIds
     {
@@ -15,10 +17,11 @@
         public const string ColorChanged = "color_changed";
         public const string EmoteOnlyOff = "emote_only_off";
         public const string EmoteOnlyOn = "emote_only_on";
+        public const string FollowersOn = "followers_on";
+        public const string FollowersOnZero = "followers_on_zero";
+        public const string FollowersOff = "followers_off";
         public const string HighlightedMessage = "highlighted-message";
-        public const string ModeratorsReceived = "room_mods";
-        public const string NoMods = "no_mods";
-        public const string NoVIPs = "no_vips";
+        [Obsolete("Not listet (anymore?): https://dev.twitch.tv/docs/irc/msg-id/")]
         public const string MsgBannedEmailAlias = "msg_banned_email_alias";
         public const string MsgChannelSuspended = "msg_channel_suspended";
         public const string MsgRequiresVerifiedPhoneNumber = "msg_requires_verified_phone_number";
@@ -35,11 +38,14 @@
         public const string NoPermission = "no_permission";
         public const string PrimePaidUprade = "primepaidupgrade";
         public const string Raid = "raid";
+        public const string UnRaid = "unraid";
         public const string RaidErrorSelf = "raid_error_self";
         public const string RaidNoticeMature = "raid_notice_mature";
         public const string ReSubscription = "resub";
         public const string R9KOff = "r9k_off";
         public const string R9KOn = "r9k_on";
+        public const string SlowOn = "slow_on";
+        public const string SlowOff = "slow_off";
         public const string SubGift = "subgift";
         public const string CommunitySubscription = "submysterygift";
         public const string ContinuedGiftedSubscription = "giftpaidupgrade";
@@ -50,7 +56,16 @@
         public const string UnbanSuccess = "unban_success";
         public const string UnrecognizedCmd = "unrecognized_cmd";
         public const string UserIntro = "user-intro";
-        public const string VIPsSuccess = "vips_success";
         public const string SkipSubsModeMessage = "skip-subs-mode-message";
+
+        #region actually unhandled MsgId's
+        public const string CommunityPayForward = "communitypayforward";
+        public const string StandardPayForward = "standardpayforward";
+        public const string BITsBadgeTier = "bitsbadgetier";
+        public const string AnonGiftUpgrade = "anongiftpaidupgrade";
+        public const string Viewermilestone = "viewermilestone";
+        public const string CharityDonation = "charitydonation";
+        #endregion actually unhandled MsgId's
+
     }
 }

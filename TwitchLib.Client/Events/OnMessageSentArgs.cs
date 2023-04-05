@@ -1,19 +1,21 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing message sent event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing message sent event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnMessageSentArgs : EventArgs
+    public class OnMessageSentArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Property representing a chat message that was just sent (check null on properties before using).
+        ///     Property representing a chat message that was just sent (check null on properties before using).
         /// </summary>
-        public SentMessage SentMessage;
+        public ChatMessage SentMessage { get; }
+        public OnMessageSentArgs(string channel, ChatMessage sentMessage) : base(channel)
+        {
+            SentMessage = sentMessage;
+        }
     }
 }

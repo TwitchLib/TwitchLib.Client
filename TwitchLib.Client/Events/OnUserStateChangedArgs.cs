@@ -1,19 +1,21 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing on user state changed event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing on user state changed event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnUserStateChangedArgs : EventArgs
+    public class OnUserStateChangedArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Property representing user state object.
+        ///     Property representing user state object.
         /// </summary>
-        public UserState UserState;
+        public UserState UserState { get; }
+        public OnUserStateChangedArgs(string channel, UserState userState) : base(channel)
+        {
+            UserState = userState;
+        }
     }
 }

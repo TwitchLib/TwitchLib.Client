@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using Microsoft.Extensions.Logging;
+
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -16,25 +18,31 @@ namespace TwitchLib.Client.Models
         public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
 
         /// <summary>Property representing channel.</summary>
-        public string Channel { get; }
+        public string? Channel { get; }
 
         /// <summary>Properrty representing HEX user's name.</summary>
-        public string ColorHex { get; }
+        public string? ColorHex { get; }
 
         /// <summary>Property representing user's display name.</summary>
-        public string DisplayName { get; }
+        public string? DisplayName { get; }
 
         /// <summary>Property representing emote sets available to user.</summary>
-        public string EmoteSet { get; }
-        
-        /// <summary>Property representing the user's Id.</summary>
-        public string Id { get; }
+        public string? EmoteSet { get; }
+
+        /// <summary>
+        ///     <see href="https://dev.twitch.tv/docs/irc/tags/#userstate-tags"/>
+        ///     <br></br>
+        ///     The Twitch IRC server sends this message after the bot joins a channel or sends a <see cref="IrcCommand.PrivMsg"/> message.
+        ///     <br></br>
+        ///     If a <see cref="IrcCommand.PrivMsg"/> was sent, an ID that uniquely identifies the message.
+        /// </summary>
+        public string? Id { get; }
 
         /// <summary>Property representing Turbo status.</summary>
-        public bool IsModerator { get; }
+        public bool IsModerator { get; } = false;
 
         /// <summary>Property representing subscriber status.</summary>
-        public bool IsSubscriber { get; }
+        public bool IsSubscriber { get; } = false;
 
         /// <summary>Property representing returned user type of user.</summary>
         public UserType UserType { get; }
@@ -42,14 +50,13 @@ namespace TwitchLib.Client.Models
         /// <summary>
         /// Constructor for UserState.
         /// </summary>
-        /// <param name="ircMessage"></param>
-        public UserState(IrcMessage ircMessage)
+        public UserState(IrcMessage ircMessage, ILogger? logger = null)
         {
             Channel = ircMessage.Channel;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (string tag in ircMessage.Tags.Keys)
             {
-                var tagValue = ircMessage.Tags[tag];
+                string tagValue = ircMessage.Tags[tag];
                 switch (tag)
                 {
                     case Tags.Badges:
@@ -98,12 +105,15 @@ namespace TwitchLib.Client.Models
                         break;
                     default:
                         // This should never happen, unless Twitch changes their shit
-                        Console.WriteLine($"Unaccounted for [UserState]: {tag}");
+                        Exception ex = new ArgumentOutOfRangeException(nameof(tagValue),
+                                                                       tagValue,
+                                                                       $"switch-case and/or {nameof(Tags)} have/has to be extended.");
+                        logger?.LogExceptionAsError(GetType(), ex);
                         break;
                 }
             }
 
-            if (string.Equals(ircMessage.User, Channel, StringComparison.InvariantCultureIgnoreCase))
+            if (String.Equals(ircMessage.User, Channel, StringComparison.InvariantCultureIgnoreCase))
                 UserType = UserType.Broadcaster;
         }
 

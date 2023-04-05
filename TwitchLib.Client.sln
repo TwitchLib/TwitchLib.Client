@@ -1,19 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client", "TwitchLib.Client\TwitchLib.Client.csproj", "{44B88EFA-1500-4005-AF27-A9BCB9DD79C1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Models", "TwitchLib.Client.Models\TwitchLib.Client.Models.csproj", "{C77438A0-7745-4F4F-BB8A-CFFA52DC5E18}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Enums", "TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj", "{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Test", "TwitchLib.Client.Test\TwitchLib.Client.Test.csproj", "{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8C69E628-6CFC-4F25-8CAC-EC63927C0120}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client", "TwitchLib.Client\TwitchLib.Client.csproj", "{29740499-A381-4945-9CC1-DFA733FCB9F0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Tests", "TwitchLib.Client.Tests\TwitchLib.Client.Tests.csproj", "{FBF1893D-2CA4-47B4-9B4A-DB7385739FB0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.Client.Enums.Tests", "TwitchLib.Client.Enums.Tests\TwitchLib.Client.Enums.Tests.csproj", "{7D3A3259-EDD2-4EE3-9805-B6A6A6FF56EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.Client.Models.Tests", "TwitchLib.Client.Models.Tests\TwitchLib.Client.Models.Tests.csproj", "{23875ED2-D560-4CD4-B8F8-9495DFC76D79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.Client.Tests.RealWorld", "TwitchLib.Client.Tests.RealWorld\TwitchLib.Client.Tests.RealWorld.csproj", "{67D0CE93-4CDB-4ABF-A9F9-9FE25CB994CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +27,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{44B88EFA-1500-4005-AF27-A9BCB9DD79C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44B88EFA-1500-4005-AF27-A9BCB9DD79C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44B88EFA-1500-4005-AF27-A9BCB9DD79C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44B88EFA-1500-4005-AF27-A9BCB9DD79C1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C77438A0-7745-4F4F-BB8A-CFFA52DC5E18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C77438A0-7745-4F4F-BB8A-CFFA52DC5E18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C77438A0-7745-4F4F-BB8A-CFFA52DC5E18}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,19 +35,38 @@ Global
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29740499-A381-4945-9CC1-DFA733FCB9F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29740499-A381-4945-9CC1-DFA733FCB9F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29740499-A381-4945-9CC1-DFA733FCB9F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29740499-A381-4945-9CC1-DFA733FCB9F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF1893D-2CA4-47B4-9B4A-DB7385739FB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF1893D-2CA4-47B4-9B4A-DB7385739FB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF1893D-2CA4-47B4-9B4A-DB7385739FB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF1893D-2CA4-47B4-9B4A-DB7385739FB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D3A3259-EDD2-4EE3-9805-B6A6A6FF56EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D3A3259-EDD2-4EE3-9805-B6A6A6FF56EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D3A3259-EDD2-4EE3-9805-B6A6A6FF56EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D3A3259-EDD2-4EE3-9805-B6A6A6FF56EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23875ED2-D560-4CD4-B8F8-9495DFC76D79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23875ED2-D560-4CD4-B8F8-9495DFC76D79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23875ED2-D560-4CD4-B8F8-9495DFC76D79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23875ED2-D560-4CD4-B8F8-9495DFC76D79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67D0CE93-4CDB-4ABF-A9F9-9FE25CB994CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67D0CE93-4CDB-4ABF-A9F9-9FE25CB994CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67D0CE93-4CDB-4ABF-A9F9-9FE25CB994CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67D0CE93-4CDB-4ABF-A9F9-9FE25CB994CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{44B88EFA-1500-4005-AF27-A9BCB9DD79C1} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
 		{C77438A0-7745-4F4F-BB8A-CFFA52DC5E18} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
 		{BA43ED8E-04B3-4F04-B828-EC5D7684FEED} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
-		{4E8210DE-33A6-42B0-89F9-ED84A8AC197C} = {8C69E628-6CFC-4F25-8CAC-EC63927C0120}
+		{29740499-A381-4945-9CC1-DFA733FCB9F0} = {7495B75C-C415-4CED-A4D9-6DE4DE9B0A04}
+		{FBF1893D-2CA4-47B4-9B4A-DB7385739FB0} = {8C69E628-6CFC-4F25-8CAC-EC63927C0120}
+		{7D3A3259-EDD2-4EE3-9805-B6A6A6FF56EB} = {8C69E628-6CFC-4F25-8CAC-EC63927C0120}
+		{23875ED2-D560-4CD4-B8F8-9495DFC76D79} = {8C69E628-6CFC-4F25-8CAC-EC63927C0120}
+		{67D0CE93-4CDB-4ABF-A9F9-9FE25CB994CF} = {8C69E628-6CFC-4F25-8CAC-EC63927C0120}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {019DD8EE-F4C0-4687-AD7C-FFBB0C8B5DA6}

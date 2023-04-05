@@ -1,22 +1,20 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing the client left a channel event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing the client left a channel event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnLeftChannelArgs : EventArgs
+    public class OnLeftChannelArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// The username of the bot that left the channel.
+        ///     The username of the bot that left the channel.
         /// </summary>
-        public string BotUsername;
-        /// <summary>
-        /// Channel that bot just left (parted).
-        /// </summary>
-        public string Channel;
+        public string BotUsername { get; }
+        public OnLeftChannelArgs(string channel, string botUsername) : base(channel)
+        {
+            BotUsername = botUsername;
+        }
     }
 }

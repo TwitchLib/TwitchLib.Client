@@ -14,6 +14,9 @@
 
         /// <summary>Returns string value for overriden ToString()</summary>
         /// <returns>Enum value</returns>
-        public override string ToString() => Value;
+        public override string ToString()
+        {
+            return Value;
+        }
     }
 }

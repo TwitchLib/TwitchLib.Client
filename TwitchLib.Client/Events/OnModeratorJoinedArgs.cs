@@ -1,22 +1,20 @@
-﻿using System;
+﻿using TwitchLib.Client.Events.Abstracts;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing moderator joined event.
-    /// Implements the <see cref="System.EventArgs" />
+    ///     Args representing moderator joined event.
+    ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    /// <seealso cref="System.EventArgs" />
-    /// <inheritdoc />
-    public class OnModeratorJoinedArgs : EventArgs
+    public class OnModeratorJoinedArgs : AChannelProvidingEventArgs
     {
         /// <summary>
-        /// Property representing username of joined moderator.
+        ///     Property representing username of joined moderator.
         /// </summary>
-        public string Username;
-        /// <summary>
-        /// Property representing channel bot is connected to.
-        /// </summary>
-        public string Channel;
+        public string Username { get; }
+        public OnModeratorJoinedArgs(string channel, string username) : base(channel)
+        {
+            Username = username;
+        }
     }
 }
