@@ -8,6 +8,6 @@ namespace TwitchLib.Client.Events
     /// </summary>
     public class OnR9kModeArgs : AChannelStateSwitchAbleEventArgs
     {
-        // marker-class
+        public OnR9kModeArgs(string channel, string message, bool isOn) : base(channel, message, isOn) { }
     }
 }

@@ -30,6 +30,10 @@ namespace TwitchLib.Client.Events
         ///     <br></br>
         ///     the message includes only the r9k tag.
         /// </summary>
-        public ChannelState? ChannelState { get; set; }
+        public ChannelState ChannelState { get; }
+        public OnChannelStateChangedArgs(string channel, ChannelState channelState) : base(channel)
+        {
+            ChannelState = channelState;
+        }
     }
 }

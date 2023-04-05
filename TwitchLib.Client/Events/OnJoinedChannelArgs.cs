@@ -11,6 +11,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing bot username.
         /// </summary>
-        public string? BotUsername { get; set; }
+        public string BotUsername { get; }
+        public OnJoinedChannelArgs(string channel, string botUsername) : base(channel)
+        {
+            BotUsername = botUsername;
+        }
     }
 }

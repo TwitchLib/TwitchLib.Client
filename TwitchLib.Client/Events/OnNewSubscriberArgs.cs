@@ -12,6 +12,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing subscriber object.
         /// </summary>
-        public Subscriber? Subscriber { get; set; }
+        public Subscriber Subscriber { get; }
+        public OnNewSubscriberArgs(string channel, Subscriber subscriber) : base(channel)
+        {
+            Subscriber = subscriber;
+        }
     }
 }

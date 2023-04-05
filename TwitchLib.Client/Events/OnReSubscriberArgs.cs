@@ -12,6 +12,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing resubscriber object.
         /// </summary>
-        public ReSubscriber? ReSubscriber { get; set; }
+        public ReSubscriber ReSubscriber { get; }
+        public OnReSubscriberArgs(string channel, ReSubscriber reSubscriber) : base(channel)
+        {
+            ReSubscriber = reSubscriber;
+        }
     }
 }

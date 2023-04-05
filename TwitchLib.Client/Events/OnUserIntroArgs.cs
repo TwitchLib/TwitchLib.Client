@@ -12,6 +12,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing the PRIVMSG
         /// </summary>
-        public ChatMessage? ChatMessage { get; set; }
+        public ChatMessage ChatMessage { get; }
+        public OnUserIntroArgs(ChatMessage chatMessage)
+        {
+            ChatMessage = chatMessage;
+        }
     }
 }

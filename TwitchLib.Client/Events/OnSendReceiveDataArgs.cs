@@ -1,5 +1,7 @@
 ﻿using System;
 
+using TwitchLib.Client.Enums;
+
 namespace TwitchLib.Client.Events
 {
     /// <summary>
@@ -11,10 +13,15 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing the direction of the data.
         /// </summary>
-        public Enums.SendReceiveDirection? Direction { get; set; }
+        public SendReceiveDirection Direction { get; }
         /// <summary>
         ///     Property representing the data that was either sent or received.
         /// </summary>
-        public string? Data { get; set; }
+        public string Data { get; }
+        public OnSendReceiveDataArgs(SendReceiveDirection direction, string data)
+        {
+            Direction = direction;
+            Data = data;
+        }
     }
 }

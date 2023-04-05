@@ -12,6 +12,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     The user ban
         /// </summary>
-        public UserBan? UserBan { get; set; }
+        public UserBan UserBan { get; }
+        public OnUserBannedArgs(UserBan userBan)
+        {
+            UserBan = userBan;
+        }
     }
 }

@@ -12,6 +12,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing user state object.
         /// </summary>
-        public UserState? UserState { get; set; }
+        public UserState UserState { get; }
+        public OnUserStateChangedArgs(UserState userState)
+        {
+            UserState = userState;
+        }
     }
 }

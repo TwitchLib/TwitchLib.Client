@@ -9,10 +9,18 @@ namespace TwitchLib.Client.Events
 
     public class OnMessageThrottledArgs : EventArgs
     {
-        public string? Reason { get; set; }
-        public OutboundChatMessage? ItemNotSent { get; set; }
-        public TimeSpan? Period { get; set; }
-        public uint? AllowedInPeriod { get; set; }
+        public string Reason { get; set; }
+        public OutboundChatMessage ItemNotSent { get; set; }
+        public TimeSpan Period { get; set; }
+        public uint AllowedInPeriod { get; set; }
+        public OnMessageThrottledArgs(string reason, OutboundChatMessage itemNotSent, TimeSpan period, uint allowedInPeriod)
+        {
+            Reason = reason;
+            ItemNotSent = itemNotSent;
+            Period = period;
+            AllowedInPeriod = allowedInPeriod;
+        }
+
         [SuppressMessage("Style", "IDE0058")]
         public override string ToString()
         {

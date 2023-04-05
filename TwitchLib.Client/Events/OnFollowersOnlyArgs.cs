@@ -8,6 +8,6 @@ namespace TwitchLib.Client.Events
     /// </summary>
     public class OnFollowersOnlyArgs : AChannelStateSwitchAbleEventArgs
     {
-        //marker-class
+        public OnFollowersOnlyArgs(string channel, string message, bool isOn) : base(channel, message, isOn) { }
     }
 }

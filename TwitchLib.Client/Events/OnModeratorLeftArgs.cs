@@ -11,6 +11,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing username of moderator that left..
         /// </summary>
-        public string? Username { get; set; }
+        public string Username { get; }
+        public OnModeratorLeftArgs(string channel, string username) : base(channel)
+        {
+            Username = username;
+        }
     }
 }

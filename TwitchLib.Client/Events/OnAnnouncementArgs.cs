@@ -12,6 +12,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing the announcement send with the USERNOTICE
         /// </summary>
-        public Announcement? Announcement { get; set; }
+        public Announcement Announcement { get; }
+        public OnAnnouncementArgs(string channel, Announcement announcement) : base(channel)
+        {
+            Announcement = announcement;
+        }
     }
 }

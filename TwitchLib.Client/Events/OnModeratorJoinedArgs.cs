@@ -11,6 +11,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing username of joined moderator.
         /// </summary>
-        public string? Username { get; set; }
+        public string Username { get; }
+        public OnModeratorJoinedArgs(string channel, string username) : base(channel)
+        {
+            Username = username;
+        }
     }
 }

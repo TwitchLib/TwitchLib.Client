@@ -13,10 +13,15 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     The error
         /// </summary>
-        public ErrorEvent? Error { get; set; }
+        public ErrorEvent Error { get; }
         /// <summary>
         ///     Username of the bot that suffered connection error.
         /// </summary>
-        public string? BotUsername { get; set; }
+        public string BotUsername { get; }
+        public OnConnectionErrorArgs(string botUsername, ErrorEvent error)
+        {
+            BotUsername = botUsername;
+            Error = error;
+        }
     }
 }

@@ -10,6 +10,6 @@ namespace TwitchLib.Client.Events
     /// <inheritdoc />
     public class OnSubsOnlyArgs : AChannelStateSwitchAbleEventArgs
     {
-        // marker-class
+        public OnSubsOnlyArgs(string channel, string message, bool isOn) : base(channel, message, isOn) { }
     }
 }

@@ -6,5 +6,8 @@ namespace TwitchLib.Client.Events
     ///     Args representing a successful chat color change request.
     ///     Implements the <see cref="System.EventArgs" />
     /// </summary>
-    public class OnChatColorChangedArgs : AChannelProvidingEventArgs { }
+    public class OnChatColorChangedArgs : AChannelProvidingEventArgs
+    {
+        public OnChatColorChangedArgs(string channel) : base(channel) { }
+    }
 }

@@ -8,6 +8,6 @@ namespace TwitchLib.Client.Events
     /// </summary>
     public class OnEmoteOnlyArgs : AChannelStateSwitchAbleEventArgs
     {
-        // marker-class
+        public OnEmoteOnlyArgs(string channel, string message, bool isOn) : base(channel, message, isOn) { }
     }
 }

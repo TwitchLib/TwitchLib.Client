@@ -8,6 +8,6 @@ namespace TwitchLib.Client.Events
     /// </summary>
     public class OnSlowModeArgs : AChannelStateSwitchAbleEventArgs
     {
-        // marker-class
+        public OnSlowModeArgs(string channel, string message, bool isOn) : base(channel, message, isOn) { }
     }
 }

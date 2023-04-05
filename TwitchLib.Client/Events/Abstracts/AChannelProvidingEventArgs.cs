@@ -10,6 +10,10 @@ namespace TwitchLib.Client.Events.Abstracts
         /// <summary>
         ///     Channel-Name
         /// </summary>
-        public string? Channel { get; set; }
+        public string Channel { get; }
+        public AChannelProvidingEventArgs(string channel)
+        {
+            Channel = channel;
+        }
     }
 }

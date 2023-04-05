@@ -12,6 +12,10 @@ namespace TwitchLib.Client.Events
         /// <summary>
         ///     Property representing received chat message.
         /// </summary>
-        public ChatMessage? ChatMessage { get; set; }
+        public ChatMessage ChatMessage { get; }
+        public OnMessageReceivedArgs(string channel, ChatMessage chatMessage) : base(channel)
+        {
+            ChatMessage = chatMessage;
+        }
     }
 }
