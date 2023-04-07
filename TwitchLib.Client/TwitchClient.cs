@@ -1056,7 +1056,7 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private void HandleIrcMessage(IrcMessage ircMessage)
         {
-            if (ircMessage.Message.Contains("Login authentication failed"))
+            if (ircMessage.ToString().StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed"))
             {
                 OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
                 return;
