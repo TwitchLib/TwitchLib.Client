@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
 
@@ -6,11 +7,6 @@ namespace TwitchLib.Client.Test
 {
     public class MockIClient : IClient
     {
-        public void WhisperThrottled(OnWhisperThrottledEventArgs eventArgs)
-        {
-            throw new NotImplementedException();
-        }
-
         public TimeSpan DefaultKeepAliveInterval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public int SendQueueLength => throw new NotImplementedException();
@@ -21,21 +17,18 @@ namespace TwitchLib.Client.Test
         public int WhisperQueueLength => throw new NotImplementedException();
 
         public event EventHandler<OnConnectedEventArgs> OnConnected;
-        public event EventHandler<OnDataEventArgs> OnData;
         public event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
         public event EventHandler<OnErrorEventArgs> OnError;
         public event EventHandler<OnFatalErrorEventArgs> OnFatality;
         public event EventHandler<OnMessageEventArgs> OnMessage;
         public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
-        public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
-        public event EventHandler<OnReconnectedEventArgs> OnReconnected;
-        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
-        public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
+        public event EventHandler<OnConnectedEventArgs> OnReconnected;
 
-        public void Close(bool callDisconnect = true)
+        public Task CloseAsync()
         {
             IsConnected = false;
             OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs());
+            return Task.CompletedTask;
         }
 
         public void Dispose()
@@ -44,22 +37,18 @@ namespace TwitchLib.Client.Test
         public void Dispose(bool waitForSendsToComplete)
         { }
 
-        public bool Open()
+        public Task<bool> OpenAsync()
         {
             IsConnected = true;
             OnConnected?.Invoke(this, new OnConnectedEventArgs());
-            return true;
+            return Task.FromResult(true);
         }
 
-        public void Reconnect()
+        public Task<bool> ReconnectAsync()
         {
             IsConnected = true;
-            OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
-        }
-
-        public void MessageThrottled(OnMessageThrottledEventArgs eventArgs)
-        {
-            throw new NotImplementedException();
+            OnReconnected?.Invoke(this, new OnConnectedEventArgs());
+            return Task.FromResult(true);
         }
 
         public void SendFailed(OnSendFailedEventArgs eventArgs)
@@ -72,9 +61,9 @@ namespace TwitchLib.Client.Test
             throw new NotImplementedException();
         }
 
-        public bool Send(string data)
+        public Task<bool> SendAsync(string data)
         {
-            return true;
+            return Task.FromResult(true);
         }
 
         public void ReceiveMessage(string message)
