@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
@@ -337,12 +338,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when a Message has been throttled.
         /// </summary>
-        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
-
-        /// <summary>
-        /// Fires when a Whisper has been throttled.
-        /// </summary>
-        public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
+        public event EventHandler<OnMessageThrottledArgs> OnMessageThrottled;
 
         /// <summary>
         /// Occurs when an Error is thrown in the protocol client
@@ -352,7 +348,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Occurs when a reconnection occurs.
         /// </summary>
-        public event EventHandler<OnReconnectedEventArgs> OnReconnected;
+        public event EventHandler<OnConnectedEventArgs> OnReconnected;
 
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
@@ -473,7 +469,7 @@ namespace TwitchLib.Client
         public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
         {
             if (channel != null && channel[0] == '#') channel = channel.Substring(1);
-            initializeHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
+            InitializationHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
         }
 
         /// <summary>
@@ -487,7 +483,7 @@ namespace TwitchLib.Client
         public void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
         {
             channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
-            initializeHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
+            InitializationHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
         }
 
         /// <summary>
@@ -498,7 +494,12 @@ namespace TwitchLib.Client
         /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
         /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
-        private void initializeHelper(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
+        private void InitializationHelper(
+            ConnectionCredentials credentials, 
+            List<string> channels, 
+            char chatCommandIdentifier = '!', 
+            char whisperCommandIdentifier = '!', 
+            bool autoReListenOnExceptions = true)
         {
             Log($"TwitchLib-TwitchClient initialized, assembly version: {Assembly.GetExecutingAssembly().GetName().Version}", level: LogLevel.Information);
             ConnectionCredentials = credentials;
@@ -520,6 +521,7 @@ namespace TwitchLib.Client
                     // Check to see if client is already in channel
                     if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channels[i]) != null)
                         return;
+                    
                     _joinChannelQueue.Enqueue(new JoinedChannel(channels[i]));
                 }
             }
@@ -547,12 +549,10 @@ namespace TwitchLib.Client
 
             Debug.Assert(_client != null, nameof(_client) + " != null");
 
-            _client.OnConnected += _client_OnConnected;
+            _client.OnConnected += _client_OnConnectedAsync;
             _client.OnMessage += _client_OnMessage;
             _client.OnDisconnected += _client_OnDisconnected;
             _client.OnFatality += _client_OnFatality;
-            _client.OnMessageThrottled += _client_OnMessageThrottled;
-            _client.OnWhisperThrottled += _client_OnWhisperThrottled;
             _client.OnReconnected += _client_OnReconnected;
         }
 
@@ -565,9 +565,9 @@ namespace TwitchLib.Client
         /// <param name="args">The arguments.</param>
         internal void RaiseEvent(string eventName, object args = null)
         {
-            FieldInfo fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
-            MulticastDelegate multi = fInfo.GetValue(this) as MulticastDelegate;
-            foreach (Delegate del in multi.GetInvocationList())
+            var fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
+            var multi = fInfo.GetValue(this) as MulticastDelegate;
+            foreach (var del in multi.GetInvocationList())
             {
                 del.Method.Invoke(del.Target, args == null ? new object[] { this, new EventArgs() } : new[] { this, args });
             }
@@ -579,31 +579,44 @@ namespace TwitchLib.Client
         /// <param name="message">The RAW message to be sent.</param>
         public void SendRaw(string message)
         {
-            if (!IsInitialized) HandleNotInitialized();
+            SendRawAsync(message).GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task SendRawAsync(string message)
+        {
+            if (!IsInitialized) 
+                HandleNotInitialized();
 
             Log($"Writing: {message}");
-            _client.Send(message);
+            await _client.SendAsync(message);
+            
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
         }
 
         #region SendMessage
 
-        private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
+        private async Task SendTwitchMessageAsync(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
-            if (!IsInitialized) HandleNotInitialized();
-            if (channel == null || message == null || dryRun) return;
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
+            if (channel == null || message == null || dryRun) 
+                return;
+            
             if (message.Length > 500)
             {
                 LogError("Message length has exceeded the maximum character count. (500)");
                 return;
             }
 
-            OutboundChatMessage twitchMessage = new OutboundChatMessage
+            var twitchMessage = new OutboundChatMessage
             {
                 Channel = channel.Channel,
                 Username = ConnectionCredentials.TwitchUsername,
                 Message = message
             };
+            
             if(replyToId != null)
             {
                 twitchMessage.ReplyToId = replyToId;
@@ -611,8 +624,7 @@ namespace TwitchLib.Client
 
             _lastMessageSent = message;
 
-
-            _client.Send(twitchMessage.ToString());
+            await _client.SendAsync(twitchMessage.ToString());
         }
 
         /// <summary>
@@ -623,7 +635,13 @@ namespace TwitchLib.Client
         /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
         public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
         {
-            SendTwitchMessage(channel, message, null, dryRun);
+            SendMessageAsync(channel, message, dryRun).GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false)
+        {
+            await SendTwitchMessageAsync(channel, message, null, dryRun);
         }
 
         /// <summary>
@@ -636,6 +654,12 @@ namespace TwitchLib.Client
         {
             SendMessage(GetJoinedChannel(channel), message, dryRun);
         }
+        
+        /// <inheritdoc />
+        public async Task SendMessageAsync(string channel, string message, bool dryRun = false)
+        {
+            await SendMessageAsync(GetJoinedChannel(channel), message, dryRun);
+        }
 
         /// <summary>
         /// Sends a formatted Twitch chat message reply.
@@ -646,7 +670,13 @@ namespace TwitchLib.Client
         /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
         public void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
         {
-            SendTwitchMessage(channel, message, replyToId, dryRun);
+            SendReplyAsync(channel, replyToId, message, dryRun).GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task SendReplyAsync(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
+        {
+            await SendTwitchMessageAsync(channel, message, replyToId, dryRun);
         }
 
         /// <summary>
@@ -658,56 +688,45 @@ namespace TwitchLib.Client
         /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
         public void SendReply(string channel, string replyToId, string message, bool dryRun = false)
         {
-            SendReply(GetJoinedChannel(channel), replyToId, message, dryRun);
+            SendReplyAsync(channel, replyToId, message, dryRun).GetAwaiter().GetResult();
         }
-
-        #endregion
-
-        #region Whispers
-        /// <summary>
-        /// Sends a formatted whisper message to someone.
-        /// </summary>
-        /// <param name="receiver">The receiver of the whisper.</param>
-        /// <param name="message">The message to be sent.</param>
-        /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
-        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Whispers.SendWhisperAsync() instead.")]
-        public void SendWhisper(string receiver, string message, bool dryRun = false)
+        
+        /// <inheritdoc />
+        public async Task SendReplyAsync(string channel, string replyToId, string message, bool dryRun = false)
         {
-            if (!IsInitialized) HandleNotInitialized();
-            if (dryRun) return;
-
-            OutboundWhisperMessage twitchMessage = new OutboundWhisperMessage
-            {
-                Receiver = receiver,
-                Username = ConnectionCredentials.TwitchUsername,
-                Message = message
-            };
-
-            _client.SendWhisper(twitchMessage.ToString());
-
-            OnWhisperSent?.Invoke(this, new OnWhisperSentArgs { Receiver = receiver, Message = message });
+            await SendReplyAsync(GetJoinedChannel(channel), replyToId, message, dryRun);
         }
 
         #endregion
 
         #region Connection Calls
+
         /// <summary>
         /// Start connecting to the Twitch IRC chat.
         /// </summary>
         /// <returns>bool representing Connect() result</returns>
         public bool Connect()
         {
-            if (!IsInitialized) HandleNotInitialized();
+            return ConnectAsync().GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task<bool> ConnectAsync()
+        {
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
             Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}", level: LogLevel.Information);
 
 			// Clear instance data
             _joinedChannelManager.Clear();
 
-            if(_client.Open())
+            if(await _client.OpenAsync())
             {
                 Log("Should be connected!");
                 return true;
             }
+            
             return false;
         }
 
@@ -716,10 +735,18 @@ namespace TwitchLib.Client
         /// </summary>
         public void Disconnect()
         {
+            DisconnectAsync().GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task DisconnectAsync()
+        {
             Log("Disconnecting Twitch Chat Client...", level: LogLevel.Information);
 
-            if (!IsInitialized) HandleNotInitialized();
-            _client.Close();
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
+            await _client.CloseAsync();
 
             // Clear instance data
             _joinedChannelManager.Clear();
@@ -731,9 +758,17 @@ namespace TwitchLib.Client
         /// </summary>
         public void Reconnect()
         {
-            if (!IsInitialized) HandleNotInitialized();
-            Log($"Reconnecting to Twitch", level: LogLevel.Information);
-            _client.Reconnect();
+            ReconnectAsync().GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task ReconnectAsync()
+        {
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
+            Log("Reconnecting to Twitch", level: LogLevel.Information);
+            await _client.ReconnectAsync();
         }
         #endregion
 
@@ -799,6 +834,7 @@ namespace TwitchLib.Client
         #endregion
 
         #region Channel Calls
+
         /// <summary>
         /// Join the Twitch IRC chat of <paramref name="channel" />.
         /// </summary>
@@ -806,15 +842,29 @@ namespace TwitchLib.Client
         /// <param name="overrideCheck">Override a join check.</param>
         public void JoinChannel(string channel, bool overrideCheck = false)
         {
-            if (!IsInitialized) HandleNotInitialized();
-            if (!IsConnected) HandleNotConnected();
+            JoinChannelAsync(channel, overrideCheck).GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task JoinChannelAsync(string channel, bool overrideCheck = false)
+        {
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
+            if (!IsConnected) 
+                HandleNotConnected();
+            
             // Check to see if client is already in channel
             if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channel && !overrideCheck) != null)
                 return;
-            if (channel[0] == '#') channel = channel.Substring(1);
+            
+            if (channel[0] == '#') 
+                channel = channel.Substring(1);
+            
             _joinChannelQueue.Enqueue(new JoinedChannel(channel));
+            
             if (!_currentlyJoiningChannels)
-                QueueingJoinCheck();
+                await QueueingJoinCheckAsync();
         }
 
         /// <summary>
@@ -825,10 +875,15 @@ namespace TwitchLib.Client
         /// <exception cref="TwitchLib.Client.Exceptions.BadStateException">Must be connected to at least one channel.</exception>
         public JoinedChannel GetJoinedChannel(string channel)
         {
-            if (!IsInitialized) HandleNotInitialized();
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
             if (JoinedChannels.Count == 0)
                 throw new BadStateException("Must be connected to at least one channel.");
-            if (channel[0] == '#') channel = channel.Substring(1);
+            
+            if (channel[0] == '#') 
+                channel = channel.Substring(1);
+            
             return _joinedChannelManager.GetJoinedChannel(channel);
         }
 
@@ -839,14 +894,25 @@ namespace TwitchLib.Client
         /// <returns>True is returned if the passed channel was found, false if channel not found.</returns>
         public void LeaveChannel(string channel)
         {
-            if (!IsInitialized) HandleNotInitialized();
+            LeaveChannelAsync(channel).GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task LeaveChannelAsync(string channel)
+        {
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
             // Channel MUST be lower case
             channel = channel.ToLower();
-            if (channel[0] == '#') channel = channel.Substring(1);
+            if (channel[0] == '#') 
+                channel = channel.Substring(1);
+            
             Log($"Leaving channel: {channel}", level: LogLevel.Information);
-            JoinedChannel joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
+            var joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
+            
             if (joinedChannel != null)
-                _client.Send(Rfc2812.Part($"#{channel}"));
+                await _client.SendAsync(Rfc2812.Part($"#{channel}"));
         }
 
         /// <summary>
@@ -856,8 +922,16 @@ namespace TwitchLib.Client
         /// <returns>True is returned if the passed channel was found, false if channel not found.</returns>
         public void LeaveChannel(JoinedChannel channel)
         {
-            if (!IsInitialized) HandleNotInitialized();
-            LeaveChannel(channel.Channel);
+            LeaveChannelAsync(channel).GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task LeaveChannelAsync(JoinedChannel channel)
+        {
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
+            await LeaveChannelAsync(channel.Channel);
         }
 
         #endregion
@@ -868,29 +942,28 @@ namespace TwitchLib.Client
         /// <param name="rawIrc">This should be a raw IRC message resembling one received from Twitch IRC.</param>
         public void OnReadLineTest(string rawIrc)
         {
-            if (!IsInitialized) HandleNotInitialized();
-            HandleIrcMessage(_ircParser.ParseIrcMessage(rawIrc));
+            OnReadLineTestAsync(rawIrc).GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task OnReadLineTestAsync(string rawIrc)
+        {
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
+            await HandleIrcMessageAsync(_ircParser.ParseIrcMessage(rawIrc));
         }
 
         #region Client Events
 
         /// <summary>
-        /// Handles the OnWhisperThrottled event of the _client control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="OnWhisperThrottledEventArgs" /> instance containing the event data.</param>
-        private void _client_OnWhisperThrottled(object sender, OnWhisperThrottledEventArgs e)
-        {
-            OnWhisperThrottled?.Invoke(sender, e);
-        }
-
-        /// <summary>
         /// Handles the OnMessageThrottled event of the _client control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="OnMessageThrottledEventArgs" /> instance containing the event data.</param>
-        private void _client_OnMessageThrottled(object sender, OnMessageThrottledEventArgs e)
+        /// <param name="e">The <see cref="OnMessageThrottledArgs" /> instance containing the event data.</param>
+        private void _client_OnMessageThrottled(object sender, OnMessageThrottledArgs e)
         {
+            // TODO: Reimplement throttling
             OnMessageThrottled?.Invoke(sender, e);
         }
 
@@ -918,12 +991,17 @@ namespace TwitchLib.Client
         /// Handles the OnReconnected event of the _client control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="OnReconnectedEventArgs" /> instance containing the event data.</param>
-        private void _client_OnReconnected(object sender, OnReconnectedEventArgs e)
+        /// <param name="e">The <see cref="OnConnectedEventArgs" /> instance containing the event data.</param>
+        private void _client_OnReconnected(object sender, OnConnectedEventArgs e)
         {
             foreach (var channel in _joinedChannelManager.GetJoinedChannels())
-                if(!string.Equals(channel.Channel, TwitchUsername, StringComparison.CurrentCultureIgnoreCase))
+            {
+                if (!string.Equals(channel.Channel, TwitchUsername, StringComparison.CurrentCultureIgnoreCase))
+                {
                     _joinChannelQueue.Enqueue(channel);
+                }
+            }
+            
             _joinedChannelManager.Clear();
             OnReconnected?.Invoke(sender, e);
         }
@@ -933,18 +1011,18 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="OnMessageEventArgs" /> instance containing the event data.</param>
-        private void _client_OnMessage(object sender, OnMessageEventArgs e)
+        private async void _client_OnMessage(object sender, OnMessageEventArgs e)
         {
-            string[] stringSeparators = new[] { "\r\n" };
-            string[] lines = e.Message.Split(stringSeparators, StringSplitOptions.None);
-            foreach (string line in lines)
+            var stringSeparators = new[] { "\r\n" };
+            var lines = e.Message.Split(stringSeparators, StringSplitOptions.None);
+            foreach (var line in lines)
             {
                 if (line.Length <= 1)
                     continue;
 
                 Log($"Received: {line}", level: LogLevel.Trace);
-                OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Received, Data = line });
-                HandleIrcMessage(_ircParser.ParseIrcMessage(line));
+                OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = SendReceiveDirection.Received, Data = line });
+                await HandleIrcMessageAsync(_ircParser.ParseIrcMessage(line));
             }
         }
 
@@ -953,25 +1031,25 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private void _client_OnConnected(object sender, object e)
+        private async void _client_OnConnectedAsync(object sender, object e)
         {
-            _client.Send(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
-            _client.Send(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));
-            _client.Send(Rfc2812.User(ConnectionCredentials.TwitchUsername, 0, ConnectionCredentials.TwitchUsername));
+            await _client.SendAsync(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
+            await _client.SendAsync(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));
+            await _client.SendAsync(Rfc2812.User(ConnectionCredentials.TwitchUsername, 0, ConnectionCredentials.TwitchUsername));
 
             if (ConnectionCredentials.Capabilities.Membership)
-                _client.Send("CAP REQ twitch.tv/membership");
+                await _client.SendAsync("CAP REQ twitch.tv/membership");
             if (ConnectionCredentials.Capabilities.Commands)
-                _client.Send("CAP REQ twitch.tv/commands");
+                await _client.SendAsync("CAP REQ twitch.tv/commands");
             if (ConnectionCredentials.Capabilities.Tags)
-                _client.Send("CAP REQ twitch.tv/tags");
+                await _client.SendAsync("CAP REQ twitch.tv/tags");
 
             if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
             {
-                QueueingJoinCheck();
+                await QueueingJoinCheckAsync();
             }
         }
-
+        
         #endregion
 
         #region Joining Stuff
@@ -979,15 +1057,15 @@ namespace TwitchLib.Client
         /// <summary>
         /// Queueings the join check.
         /// </summary>
-        private void QueueingJoinCheck()
+        private async Task QueueingJoinCheckAsync()
         {
             if (_joinChannelQueue.Count > 0)
             {
                 _currentlyJoiningChannels = true;
-                JoinedChannel channelToJoin = _joinChannelQueue.Dequeue();
+                var channelToJoin = _joinChannelQueue.Dequeue();
                 Log($"Joining channel: {channelToJoin.Channel}", level: LogLevel.Information);
                 // important we set channel to lower case when sending join message
-                _client.Send(Rfc2812.Join($"#{channelToJoin.Channel.ToLower()}"));
+                await _client.SendAsync(Rfc2812.Join($"#{channelToJoin.Channel.ToLower()}"));
                 _joinedChannelManager.AddJoinedChannel(new JoinedChannel(channelToJoin.Channel));
                 StartJoinedChannelTimer(channelToJoin.Channel);
             }
@@ -1009,6 +1087,7 @@ namespace TwitchLib.Client
                 _joinTimer.Elapsed += JoinChannelTimeout;
                 _awaitingJoins = new List<KeyValuePair<string, DateTime>>();
             }
+            
             // channel is ToLower()'d because ROOMSTATE (which is the event the client uses to remove
             // this channel from _awaitingJoins list) contains the username as always lowercase. This means
             // if we don't ToLower(), the channel never gets removed, and FailureToReceiveJoinConfirmation
@@ -1042,7 +1121,7 @@ namespace TwitchLib.Client
             {
                 _joinTimer.Stop();
                 _currentlyJoiningChannels = false;
-                QueueingJoinCheck();
+                QueueingJoinCheckAsync().GetAwaiter().GetResult();
             }
         }
 
@@ -1054,20 +1133,21 @@ namespace TwitchLib.Client
         /// Handles the irc message.
         /// </summary>
         /// <param name="ircMessage">The irc message.</param>
-        private void HandleIrcMessage(IrcMessage ircMessage)
+        private async Task HandleIrcMessageAsync(IrcMessage ircMessage)
         {
             if (ircMessage.ToString().StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed"))
             {
                 OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
                 return;
             }
+            
             switch (ircMessage.Command)
             {
                 case IrcCommand.PrivMsg:
                     HandlePrivMsg(ircMessage);
                     return;
                 case IrcCommand.Notice:
-                    HandleNotice(ircMessage);
+                    await HandleNoticeAsync(ircMessage);
                     break;
                 case IrcCommand.Ping:
                     if (!DisableAutoPong)
@@ -1105,7 +1185,7 @@ namespace TwitchLib.Client
                     Handle353(ircMessage);
                     break;
                 case IrcCommand.RPL_366:
-                    Handle366();
+                    await Handle366Async();
                     break;
                 case IrcCommand.RPL_372:
                     break;
@@ -1173,7 +1253,7 @@ namespace TwitchLib.Client
         /// Handles the notice.
         /// </summary>
         /// <param name="ircMessage">The irc message.</param>
-        private void HandleNotice(IrcMessage ircMessage)
+        private async Task HandleNoticeAsync(IrcMessage ircMessage)
         {
             if (ircMessage.Message.Contains("Improperly formatted auth"))
             {
@@ -1214,7 +1294,7 @@ namespace TwitchLib.Client
                 case MsgIds.MsgChannelSuspended:
                     _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
                     _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
-                    QueueingJoinCheck();
+                    await QueueingJoinCheckAsync();
                     OnFailureToReceiveJoinConfirmation?.Invoke(this, new OnFailureToReceiveJoinConfirmationArgs
                     {
                         Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
@@ -1333,7 +1413,7 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private void HandleUserState(IrcMessage ircMessage)
         {
-            UserState userState = new UserState(ircMessage);
+            var userState = new UserState(ircMessage);
             if (!_hasSeenJoinedChannels.Contains(userState.Channel.ToLowerInvariant()))
             {
                 _hasSeenJoinedChannels.Add(userState.Channel.ToLowerInvariant());
@@ -1363,10 +1443,10 @@ namespace TwitchLib.Client
         /// <summary>
         /// Handle366s this instance.
         /// </summary>
-        private void Handle366()
+        private async Task Handle366Async()
         {
             _currentlyJoiningChannels = false;
-            QueueingJoinCheck();
+            await QueueingJoinCheckAsync();
         }
 
         /// <summary>
@@ -1379,13 +1459,16 @@ namespace TwitchLib.Client
             PreviousWhisper = whisperMessage;
             OnWhisperReceived?.Invoke(this, new OnWhisperReceivedArgs { WhisperMessage = whisperMessage });
 
-            if (_whisperCommandIdentifiers != null && _whisperCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(whisperMessage.Message))
+            if (_whisperCommandIdentifiers != null && _whisperCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(whisperMessage.Message)) 
+            {
                 if (_whisperCommandIdentifiers.Contains(whisperMessage.Message[0]))
                 {
                     WhisperCommand whisperCommand = new WhisperCommand(whisperMessage);
                     OnWhisperCommandReceived?.Invoke(this, new OnWhisperCommandReceivedArgs { Command = whisperCommand });
                     return;
                 }
+            }
+            
             OnUnaccountedFor?.Invoke(this, new OnUnaccountedForArgs { BotUsername = TwitchUsername, Channel = ircMessage.Channel, Location = "WhispergHandling", RawIRC = ircMessage.ToString() });
             UnaccountedFor(ircMessage.ToString());
         }
@@ -1488,7 +1571,6 @@ namespace TwitchLib.Client
         private void HandleCap(IrcMessage ircMessage)
         {
             // do nothing
-            return;
         }
 
         #endregion
@@ -1555,8 +1637,16 @@ namespace TwitchLib.Client
         /// <param name="message">The message.</param>
         public void SendQueuedItem(string message)
         {
-            if (!IsInitialized) HandleNotInitialized();
-            _client.Send(message);
+            SendQueuedItemAsync(message).GetAwaiter().GetResult();
+        }
+        
+        /// <inheritdoc />
+        public async Task SendQueuedItemAsync(string message)
+        {
+            if (!IsInitialized) 
+                HandleNotInitialized();
+            
+            await _client.SendAsync(message);
         }
 
         /// <summary>

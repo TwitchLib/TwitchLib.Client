@@ -3,7 +3,6 @@ using Xunit;
 using TwitchLib.Client.Events;
 using TwitchLib.Communication.Events;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace TwitchLib.Client.Test
 {
@@ -162,7 +161,7 @@ namespace TwitchLib.Client.Test
             var pauseConnected = new ManualResetEvent(false);
             var pauseReconnected = new ManualResetEvent(false);
 
-            Assert.Raises<OnReconnectedEventArgs>(
+            Assert.Raises<OnConnectedEventArgs>(
                 h => client.OnReconnected += h,
                 h => client.OnReconnected -= h,
                 () =>

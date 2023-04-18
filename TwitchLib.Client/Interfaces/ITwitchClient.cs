@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;
@@ -184,11 +185,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Occurs when [on message throttled].
         /// </summary>
-        event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
-        /// <summary>
-        /// Occurs when [on whisper throttled].
-        /// </summary>
-        event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
+        event EventHandler<OnMessageThrottledArgs> OnMessageThrottled;
         /// <summary>
         /// Occurs when [on error].
         /// </summary>
@@ -196,7 +193,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Occurs when [on reconnected].
         /// </summary>
-        event EventHandler<OnReconnectedEventArgs> OnReconnected;
+        event EventHandler<OnConnectedEventArgs> OnReconnected;
         /// <summary>
         /// Occurs when [on vip received].
         /// </summary>
@@ -287,14 +284,32 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         /// <returns>bool representing Connect() result</returns>
         bool Connect();
+
+        /// <summary>
+        /// Connects this instance.
+        /// </summary>
+        /// <returns>bool representing Connect() result</returns>
+        Task<bool> ConnectAsync();
+        
         /// <summary>
         /// Disconnects this instance.
         /// </summary>
         void Disconnect();
+        
+        /// <summary>
+        /// Disconnects this instance.
+        /// </summary>
+        Task DisconnectAsync();
+        
         /// <summary>
         /// Reconnects this instance.
         /// </summary>
         void Reconnect();
+        
+        /// <summary>
+        /// Reconnects this instance.
+        /// </summary>
+        Task ReconnectAsync();
 
         /// <summary>
         /// Gets the joined channel.
@@ -309,22 +324,49 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">The channel.</param>
         /// <param name="overrideCheck">if set to <c>true</c> [override check].</param>
         void JoinChannel(string channel, bool overrideCheck = false);
+        
+        /// <summary>
+        /// Joins the channel.
+        /// </summary>
+        /// <param name="channel">The channel.</param>
+        /// <param name="overrideCheck">if set to <c>true</c> [override check].</param>
+        Task JoinChannelAsync(string channel, bool overrideCheck = false);
+        
         /// <summary>
         /// Leaves the channel.
         /// </summary>
         /// <param name="channel">The channel.</param>
         void LeaveChannel(JoinedChannel channel);
+        
+        /// <summary>
+        /// Leaves the channel.
+        /// </summary>
+        /// <param name="channel">The channel.</param>
+        Task LeaveChannelAsync(JoinedChannel channel);
+        
         /// <summary>
         /// Leaves the channel.
         /// </summary>
         /// <param name="channel">The channel.</param>
         void LeaveChannel(string channel);
+        
+        /// <summary>
+        /// Leaves the channel.
+        /// </summary>
+        /// <param name="channel">The channel.</param>
+        Task LeaveChannelAsync(string channel);
 
         /// <summary>
         /// Called when [read line test].
         /// </summary>
         /// <param name="rawIrc">The raw irc.</param>
         void OnReadLineTest(string rawIrc);
+        
+        /// <summary>
+        /// Called when [read line test].
+        /// </summary>
+        /// <param name="rawIrc">The raw irc.</param>
+        Task OnReadLineTestAsync(string rawIrc);
 
         /// <summary>
         /// Sends the message.
@@ -333,6 +375,15 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="message">The message.</param>
         /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
         void SendMessage(JoinedChannel channel, string message, bool dryRun = false);
+        
+        /// <summary>
+        /// Sends the message.
+        /// </summary>
+        /// <param name="channel">The channel.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
+        Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false);
+        
         /// <summary>
         /// Sends the message.
         /// </summary>
@@ -340,6 +391,15 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="message">The message.</param>
         /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
         void SendMessage(string channel, string message, bool dryRun = false);
+        
+        /// <summary>
+        /// Sends the message.
+        /// </summary>
+        /// <param name="channel">The channel.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
+        Task SendMessageAsync(string channel, string message, bool dryRun = false);
+        
         /// <summary>
         /// Sends a formatted Twitch chat message reply.
         /// </summary>
@@ -348,6 +408,16 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="message">Reply contents</param>
         /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
         void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false);
+        
+        /// <summary>
+        /// Sends a formatted Twitch chat message reply.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        Task SendReplyAsync(JoinedChannel channel, string replyToId, string message, bool dryRun = false);
+        
         /// <summary>
         /// SendReply wrapper that accepts channel in string form.
         /// </summary>
@@ -356,22 +426,38 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="message">Reply contents</param>
         /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
         void SendReply(string channel, string replyToId, string message, bool dryRun = false);
+        
+        /// <summary>
+        /// SendReply wrapper that accepts channel in string form.
+        /// </summary>
+        /// <param name="channel">Channel to send Twitch chat reply to</param>
+        /// <param name="replyToId">The message id that is being replied to</param>
+        /// <param name="message">Reply contents</param>
+        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        Task SendReplyAsync(string channel, string replyToId, string message, bool dryRun = false);
+        
         /// <summary>
         /// Sends the queued item.
         /// </summary>
         /// <param name="message">The message.</param>
         void SendQueuedItem(string message);
+        
+        /// <summary>
+        /// Sends the queued item.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        Task SendQueuedItemAsync(string message);
+        
         /// <summary>
         /// Sends the raw.
         /// </summary>
         /// <param name="message">The message.</param>
         void SendRaw(string message);
+        
         /// <summary>
-        /// Sends the whisper.
+        /// Sends the raw.
         /// </summary>
-        /// <param name="receiver">The receiver.</param>
         /// <param name="message">The message.</param>
-        /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
-        void SendWhisper(string receiver, string message, bool dryRun = false);
+        Task SendRawAsync(string message);
     }
 }
