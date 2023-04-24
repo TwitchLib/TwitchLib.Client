@@ -14,7 +14,9 @@ using TwitchLib.Client.Internal;
 using TwitchLib.Client.Internal.Parsing;
 using TwitchLib.Client.Manager;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
+using TwitchLib.Client.Throttling;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
@@ -33,6 +35,9 @@ namespace TwitchLib.Client
         /// The client
         /// </summary>
         private IClient _client;
+
+        private ThrottlingService _throttling;
+        
         /// <summary>
         /// The channel emotes
         /// </summary>
@@ -348,7 +353,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Occurs when a reconnection occurs.
         /// </summary>
-        public event EventHandler<OnConnectedEventArgs> OnReconnected;
+        public event EventHandler<OnConnectedArgs> OnReconnected;
 
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
@@ -449,13 +454,19 @@ namespace TwitchLib.Client
         /// <param name="client">Protocol Client to use for connection from TwitchLib.Communication. Possible Options Are the TcpClient client or WebSocket client.</param>
         /// <param name="protocol">The protocol.</param>
         /// <param name="logger">Optional ILogger instance to enable logging</param>
-        public TwitchClient(IClient client = null, ClientProtocol protocol = ClientProtocol.WebSocket, ILogger<TwitchClient> logger = null)
+        /// <param name="sendOptions">Send options with throttling settings.</param>
+        public TwitchClient(
+            IClient client = null, 
+            ClientProtocol protocol = ClientProtocol.WebSocket,
+            ISendOptions sendOptions = null,
+            ILogger<TwitchClient> logger = null)
         {
             _logger = logger;
             _client = client;
             _protocol = protocol;
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
+            _throttling = new ThrottlingService(this, sendOptions, logger);
         }
 
         /// <summary>
@@ -565,12 +576,7 @@ namespace TwitchLib.Client
         /// <param name="args">The arguments.</param>
         internal void RaiseEvent(string eventName, object args = null)
         {
-            var fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic) as FieldInfo;
-            var multi = fInfo.GetValue(this) as MulticastDelegate;
-            foreach (var del in multi.GetInvocationList())
-            {
-                del.Method.Invoke(del.Target, args == null ? new object[] { this, new EventArgs() } : new[] { this, args });
-            }
+            EventHelper.RaiseEvent(this, eventName, args);
         }
 
         /// <summary>
@@ -596,7 +602,7 @@ namespace TwitchLib.Client
 
         #region SendMessage
 
-        private async Task SendTwitchMessageAsync(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
+        private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
             if (!IsInitialized) 
                 HandleNotInitialized();
@@ -617,14 +623,14 @@ namespace TwitchLib.Client
                 Message = message
             };
             
-            if(replyToId != null)
+            if (replyToId != null)
             {
                 twitchMessage.ReplyToId = replyToId;
             }
 
             _lastMessageSent = message;
 
-            await _client.SendAsync(twitchMessage.ToString());
+            _throttling.Enqueue(twitchMessage);
         }
 
         /// <summary>
@@ -639,9 +645,10 @@ namespace TwitchLib.Client
         }
         
         /// <inheritdoc />
-        public async Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false)
+        public Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false)
         {
-            await SendTwitchMessageAsync(channel, message, null, dryRun);
+            SendTwitchMessage(channel, message, null, dryRun);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -674,9 +681,10 @@ namespace TwitchLib.Client
         }
         
         /// <inheritdoc />
-        public async Task SendReplyAsync(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
+        public Task SendReplyAsync(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
         {
-            await SendTwitchMessageAsync(channel, message, replyToId, dryRun);
+            SendTwitchMessage(channel, message, replyToId, dryRun);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -1003,7 +1011,7 @@ namespace TwitchLib.Client
             }
             
             _joinedChannelManager.Clear();
-            OnReconnected?.Invoke(sender, e);
+            OnReconnected?.Invoke(sender, new OnConnectedArgs());
         }
 
         /// <summary>

@@ -30,4 +30,10 @@
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
     <ProjectReference Include="..\TwitchLib.Client.Models\TwitchLib.Client.Models.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <!-- Make internal classes visible to test project -->
+      <_Parameter1>TwitchLib.Client.Test</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>
