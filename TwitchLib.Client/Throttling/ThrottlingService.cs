@@ -4,17 +4,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Client.Events;
-using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Communication.Events;
+using TwitchLib.Communication.Interfaces;
 
 namespace TwitchLib.Client.Throttling
 {
     internal class ThrottlingService
     {
-        private readonly ITwitchClient _client;
+        private readonly IClient _client;
         private readonly ISendOptions _sendOptions;
         private readonly ILogger _logger;
         private readonly ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>> _queue = new ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>>();
@@ -22,21 +22,18 @@ namespace TwitchLib.Client.Throttling
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private Task _sendTask;
         
+        internal event EventHandler<OnMessageThrottledArgs> OnThrottled;
+        
         internal ThrottlingService(
-            ITwitchClient twitchClient,
+            IClient client,
             ISendOptions messageSendOptions,
             ILogger logger = null)
         {
             _logger = logger;
-            _client = twitchClient;
+            _client = client;
             _sendOptions = messageSendOptions ?? new SendOptions();
             _throttler = new Throttler(_sendOptions);
 
-            SubscribeEvents();
-        }
-
-        private void SubscribeEvents()
-        {
             _client.OnConnected -= StartThrottler;
             _client.OnConnected += StartThrottler;
             
@@ -46,7 +43,7 @@ namespace TwitchLib.Client.Throttling
             _client.OnDisconnected -= StopThrottler;
             _client.OnDisconnected += StopThrottler;
         }
-        
+
         /// <summary>
         ///     enqueues the given <paramref name="message"/>
         /// </summary>
@@ -71,7 +68,7 @@ namespace TwitchLib.Client.Throttling
             return true;
         }
         
-        private void StartThrottler(object sender, OnConnectedArgs args)
+        private void StartThrottler(object sender, OnConnectedEventArgs args)
         {
             // Cancel old token first
             _tokenSource.Cancel();
@@ -121,7 +118,7 @@ namespace TwitchLib.Client.Throttling
                 }
                 
                 var messageToSend = message.Item2.ToString();
-                await _client.SendRawAsync(messageToSend);
+                await _client.SendAsync(messageToSend);
             }
             catch (TaskCanceledException)
             {
@@ -150,7 +147,7 @@ namespace TwitchLib.Client.Throttling
                 _sendOptions.ThrottlingPeriod,
                 _sendOptions.SendsAllowedInPeriod);
 
-            _client.RaiseEvent(nameof(_client.OnMessageThrottled), args);
+            OnThrottled?.Invoke(null, args);
         }
     }
 }

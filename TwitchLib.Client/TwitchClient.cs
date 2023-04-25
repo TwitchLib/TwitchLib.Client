@@ -36,6 +36,7 @@ namespace TwitchLib.Client
         /// </summary>
         private IClient _client;
 
+        private ISendOptions _sendOptions;
         private ThrottlingService _throttling;
         
         /// <summary>
@@ -464,9 +465,9 @@ namespace TwitchLib.Client
             _logger = logger;
             _client = client;
             _protocol = protocol;
+            _sendOptions = sendOptions ?? new SendOptions();
             _joinedChannelManager = new JoinedChannelManager();
             _ircParser = new IrcParser();
-            _throttling = new ThrottlingService(this, sendOptions, logger);
         }
 
         /// <summary>
@@ -560,13 +561,15 @@ namespace TwitchLib.Client
 
             Debug.Assert(_client != null, nameof(_client) + " != null");
 
+            _throttling = new ThrottlingService(_client, _sendOptions, _logger);
+            _throttling.OnThrottled += OnThrottled;
+
             _client.OnConnected += _client_OnConnectedAsync;
             _client.OnMessage += _client_OnMessage;
             _client.OnDisconnected += _client_OnDisconnected;
             _client.OnFatality += _client_OnFatality;
             _client.OnReconnected += _client_OnReconnected;
         }
-
         #endregion
 
         /// <summary>
@@ -579,6 +582,11 @@ namespace TwitchLib.Client
             EventHelper.RaiseEvent(this, eventName, args);
         }
 
+        private void OnThrottled(object sender, OnMessageThrottledArgs e)
+        {
+            RaiseEvent(nameof(OnMessageThrottled), e);
+        }
+        
         /// <summary>
         /// Sends a RAW IRC message.
         /// </summary>
@@ -963,18 +971,6 @@ namespace TwitchLib.Client
         }
 
         #region Client Events
-
-        /// <summary>
-        /// Handles the OnMessageThrottled event of the _client control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="OnMessageThrottledArgs" /> instance containing the event data.</param>
-        private void _client_OnMessageThrottled(object sender, OnMessageThrottledArgs e)
-        {
-            // TODO: Reimplement throttling
-            OnMessageThrottled?.Invoke(sender, e);
-        }
-
         /// <summary>
         /// Handles the OnFatality event of the _client control.
         /// </summary>

@@ -2,6 +2,7 @@
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Throttling;
+using TwitchLib.Communication.Interfaces;
 using Xunit;
 
 namespace TwitchLib.Client.Test
@@ -17,11 +18,11 @@ namespace TwitchLib.Client.Test
         public void EnqueueMessageTests(bool isConnected, uint queueCapacity, bool withMessage, bool expected)
         {
             var sendOptions = new SendOptions(20, queueCapacity);
-            var twitchClientMock = new Mock<ITwitchClient>();
-            twitchClientMock.Setup(c => c.IsConnected)
+            var clientMock = new Mock<IClient>();
+            clientMock.Setup(c => c.IsConnected)
                 .Returns(isConnected);
-            var twitchClient = twitchClientMock.Object;
-            var throttlerService = new ThrottlingService(twitchClient, sendOptions);
+            var client = clientMock.Object;
+            var throttlerService = new ThrottlingService(client, sendOptions);
             OutboundChatMessage message = null;
             
             if (withMessage)
