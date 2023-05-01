@@ -73,11 +73,11 @@ namespace TwitchLib.Client
         /// <summary>
         /// The irc parser
         /// </summary>
-        private readonly IrcParser _ircParser;
+        private readonly IrcParser _ircParser = new();
         /// <summary>
         /// The joined channel manager
         /// </summary>
-        private readonly JoinedChannelManager _joinedChannelManager;
+        private readonly JoinedChannelManager _joinedChannelManager = new();
 
         // variables used for constructing OnMessageSent properties
         /// <summary>
@@ -454,8 +454,6 @@ namespace TwitchLib.Client
             _logger = logger;
             _client = client;
             _protocol = protocol;
-            _joinedChannelManager = new JoinedChannelManager();
-            _ircParser = new IrcParser();
         }
 
         /// <summary>
@@ -606,7 +604,7 @@ namespace TwitchLib.Client
             
             if (message.Length > 500)
             {
-                LogError("Message length has exceeded the maximum character count. (500)");
+                Log("Message length has exceeded the maximum character count. (500)", level: LogLevel.Error);
                 return;
             }
 
@@ -1006,6 +1004,8 @@ namespace TwitchLib.Client
             OnReconnected?.Invoke(sender, e);
         }
 
+        static readonly string[] NewLineSeparator = new[] { "\r\n" }; // dont modify!!!
+
         /// <summary>
         /// Handles the OnMessage event of the _client control.
         /// </summary>
@@ -1013,8 +1013,7 @@ namespace TwitchLib.Client
         /// <param name="e">The <see cref="OnMessageEventArgs" /> instance containing the event data.</param>
         private async void _client_OnMessage(object sender, OnMessageEventArgs e)
         {
-            var stringSeparators = new[] { "\r\n" };
-            var lines = e.Message.Split(stringSeparators, StringSplitOptions.None);
+            var lines = e.Message.Split(NewLineSeparator, StringSplitOptions.None);
             foreach (var line in lines)
             {
                 if (line.Length <= 1)
@@ -1591,42 +1590,19 @@ namespace TwitchLib.Client
         /// <param name="level">The log level of the message.</param>
         private void Log(string message, bool includeDate = false, bool includeTime = false, LogLevel level = LogLevel.Debug)
         {
-            string dateTimeStr;
-            if (includeDate && includeTime)
-                dateTimeStr = $"{DateTime.UtcNow}";
-            else if (includeDate)
-                dateTimeStr = $"{DateTime.UtcNow.ToShortDateString()}";
-            else
-                dateTimeStr = $"{DateTime.UtcNow.ToShortTimeString()}";
-
             if (includeDate || includeTime)
+            {
+                string dateTimeStr;
+                if (includeDate && includeTime)
+                    dateTimeStr = DateTime.UtcNow.ToString();
+                else if (includeDate)
+                    dateTimeStr = DateTime.UtcNow.ToShortDateString();
+                else
+                    dateTimeStr = DateTime.UtcNow.ToShortTimeString();
                 _logger?.Log(level, $"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
+            }
             else
                 _logger?.Log(level, $"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
-
-            OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
-        }
-
-        /// <summary>
-        /// Logs the error.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="includeDate">if set to <c>true</c> [include date].</param>
-        /// <param name="includeTime">if set to <c>true</c> [include time].</param>
-        private void LogError(string message, bool includeDate = false, bool includeTime = false)
-        {
-            string dateTimeStr;
-            if (includeDate && includeTime)
-                dateTimeStr = $"{DateTime.UtcNow}";
-            else if (includeDate)
-                dateTimeStr = $"{DateTime.UtcNow.ToShortDateString()}";
-            else
-                dateTimeStr = $"{DateTime.UtcNow.ToShortTimeString()}";
-
-            if (includeDate || includeTime)
-                _logger?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
-            else
-                _logger?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
 
             OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }

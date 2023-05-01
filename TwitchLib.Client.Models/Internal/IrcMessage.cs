@@ -10,7 +10,8 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// The channel the message was sent in
         /// </summary>
-        public string Channel => Params.StartsWith("#") ? Params.Remove(0, 1) : Params;
+        public string Channel => _channel ??= Params.StartsWith("#") ? Params.Remove(0, 1)  : Params;
+        private string _channel;
 
         public string Params => _parameters != null && _parameters.Length > 0 ? _parameters[0] : "";
 
@@ -44,7 +45,9 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// IRCv3 tags
         /// </summary>
-        public readonly Dictionary<string, string> Tags;
+        public readonly IReadOnlyDictionary<string, string> Tags;
+
+        private string _rawString;
 
         /// <summary>
         /// Create an INCOMPLETE IrcMessage only carrying username
@@ -66,11 +69,12 @@ namespace TwitchLib.Client.Models.Internal
         /// <param name="parameters">Command params</param>
         /// <param name="hostmask">User</param>
         /// <param name="tags">IRCv3 tags</param>
+        /// <param name="rawIrc"></param>
         public IrcMessage(
             IrcCommand command,
             string[] parameters,
             string hostmask,
-            Dictionary<string, string> tags = null)
+            Dictionary<string, string> tags = null, string rawIrc = null)
         {
             var idx = hostmask.IndexOf('!');
             User = idx != -1 ? hostmask.Substring(0, idx) : hostmask;
@@ -78,6 +82,7 @@ namespace TwitchLib.Client.Models.Internal
             _parameters = parameters;
             Command = command;
             Tags = tags;
+            _rawString = rawIrc;
 
             if (command == IrcCommand.RPL_353)
             {
@@ -88,23 +93,19 @@ namespace TwitchLib.Client.Models.Internal
             }
         }
 
-        public new string ToString()
+        public override string ToString() => _rawString ??= GenerateNewToString();
+
+        public string GenerateNewToString()
         {
             var raw = new StringBuilder(32);
-            if (Tags != null)
+            if (Tags?.Count > 0)
             {
-                var tags = new string[Tags.Count];
-                var i = 0;
+                raw.Append("@");
                 foreach (var tag in Tags)
                 {
-                    tags[i] = tag.Key + "=" + tag.Value;
-                    ++i;
+                    raw.Append(tag.Key).Append('=').Append(tag.Value).Append(';');
                 }
-
-                if (tags.Length > 0)
-                {
-                    raw.Append("@").Append(string.Join(";", tags)).Append(" ");
-                }
+                raw[raw.Length - 1] = ' ';
             }
 
             if (!string.IsNullOrEmpty(Hostmask))
@@ -113,7 +114,7 @@ namespace TwitchLib.Client.Models.Internal
             }
 
             raw.Append(Command.ToString().ToUpper().Replace("RPL_", ""));
-            if (_parameters.Length <= 0)
+            if (_parameters.Length == 0)
                 return raw.ToString();
 
             if (_parameters[0] != null && _parameters[0].Length > 0)
@@ -126,7 +127,7 @@ namespace TwitchLib.Client.Models.Internal
                 raw.Append(" :").Append(_parameters[1]);
             }
 
-            return raw.ToString();
+            return _rawString = raw.ToString();
         }
     }
 }

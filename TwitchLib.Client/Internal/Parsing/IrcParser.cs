@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Models.Internal;
 
@@ -9,7 +10,6 @@ namespace TwitchLib.Client.Internal.Parsing
     /// </summary>
     internal class IrcParser
     {
-
         /// <summary>
         /// Builds an IrcMessage from a raw string
         /// </summary>
@@ -20,8 +20,8 @@ namespace TwitchLib.Client.Internal.Parsing
             Dictionary<string, string> tagDict = new Dictionary<string, string>();
 
             ParserState state = ParserState.STATE_NONE;
-            int[] starts = new[] { 0, 0, 0, 0, 0, 0 };
-            int[] lens = new[] { 0, 0, 0, 0, 0, 0 };
+            Span<int> starts = stackalloc int[] { 0, 0, 0, 0, 0, 0 };
+            Span<int> lens = stackalloc int[] { 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < raw.Length; ++i)
             {
                 lens[(int)state] = i - starts[(int)state] - 1;
@@ -90,7 +90,7 @@ namespace TwitchLib.Client.Internal.Parsing
             }
 
             lens[(int)state] = raw.Length - starts[(int)state];
-            string cmd = raw.Substring(starts[(int)ParserState.STATE_COMMAND],
+            var cmd = raw.AsSpan(starts[(int)ParserState.STATE_COMMAND],
                 lens[(int)ParserState.STATE_COMMAND]);
 
             IrcCommand command = IrcCommand.Unknown;
@@ -188,7 +188,7 @@ namespace TwitchLib.Client.Internal.Parsing
                 lens[(int)ParserState.STATE_TRAILING]);
             string hostmask = raw.Substring(starts[(int)ParserState.STATE_PREFIX],
                 lens[(int)ParserState.STATE_PREFIX]);
-            return new IrcMessage(command, new[] { parameters, message }, hostmask, tagDict);
+            return new IrcMessage(command, new[] { parameters, message }, hostmask, tagDict, raw);
         }
 
         /// <summary>
