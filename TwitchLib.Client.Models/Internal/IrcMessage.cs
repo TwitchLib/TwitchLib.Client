@@ -10,7 +10,7 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// The channel the message was sent in
         /// </summary>
-        public string Channel => _channel ??= Params.StartsWith("#") ? Params.Remove(0, 1)  : Params;
+        public string Channel => _channel ??= Params.StartsWith("#") ? Params.Remove(0, 1) : Params;
         private string _channel;
 
         public string Params => _parameters != null && _parameters.Length > 0 ? _parameters[0] : "";
@@ -74,7 +74,8 @@ namespace TwitchLib.Client.Models.Internal
             IrcCommand command,
             string[] parameters,
             string hostmask,
-            Dictionary<string, string> tags = null, string rawIrc = null)
+            Dictionary<string, string> tags = null,
+            string rawIrc = null)
         {
             var idx = hostmask.IndexOf('!');
             User = idx != -1 ? hostmask.Substring(0, idx) : hostmask;

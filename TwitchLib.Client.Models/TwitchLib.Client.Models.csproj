@@ -28,6 +28,4 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
 </Project>
