@@ -188,7 +188,7 @@ namespace TwitchLib.Client.Internal.Parsing
                 lens[(int)ParserState.STATE_TRAILING]);
             string hostmask = raw.Substring(starts[(int)ParserState.STATE_PREFIX],
                 lens[(int)ParserState.STATE_PREFIX]);
-            return new IrcMessage(command, new[] { parameters, message }, hostmask, tagDict, raw);
+            return new IrcMessage(command, new[] { parameters, message }, hostmask, tagDict);
         }
 
         /// <summary>

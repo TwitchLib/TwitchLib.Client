@@ -69,13 +69,11 @@ namespace TwitchLib.Client.Models.Internal
         /// <param name="parameters">Command params</param>
         /// <param name="hostmask">User</param>
         /// <param name="tags">IRCv3 tags</param>
-        /// <param name="rawIrc"></param>
         public IrcMessage(
             IrcCommand command,
             string[] parameters,
             string hostmask,
-            Dictionary<string, string> tags = null,
-            string rawIrc = null)
+            Dictionary<string, string> tags = null)
         {
             var idx = hostmask.IndexOf('!');
             User = idx != -1 ? hostmask.Substring(0, idx) : hostmask;
@@ -83,7 +81,6 @@ namespace TwitchLib.Client.Models.Internal
             _parameters = parameters;
             Command = command;
             Tags = tags;
-            _rawString = rawIrc;
 
             if (command == IrcCommand.RPL_353)
             {
@@ -94,11 +91,11 @@ namespace TwitchLib.Client.Models.Internal
             }
         }
 
-        public override string ToString() => _rawString ??= GenerateNewToString();
+        public override string ToString() => _rawString ??= GenerateToString();
 
-        public string GenerateNewToString()
+        public string GenerateToString()
         {
-            var raw = new StringBuilder(32);
+            var raw = new StringBuilder(64);
             if (Tags?.Count > 0)
             {
                 raw.Append("@");
@@ -115,7 +112,7 @@ namespace TwitchLib.Client.Models.Internal
             }
 
             raw.Append(Command.ToString().ToUpper().Replace("RPL_", ""));
-            if (_parameters.Length == 0)
+            if (_parameters == null || _parameters.Length == 0)
                 return raw.ToString();
 
             if (_parameters[0] != null && _parameters[0].Length > 0)
@@ -128,7 +125,7 @@ namespace TwitchLib.Client.Models.Internal
                 raw.Append(" :").Append(_parameters[1]);
             }
 
-            return _rawString = raw.ToString();
+            return raw.ToString();
         }
     }
 }
