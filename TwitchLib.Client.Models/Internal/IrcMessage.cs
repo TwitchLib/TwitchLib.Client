@@ -93,7 +93,7 @@ namespace TwitchLib.Client.Models.Internal
 
         public override string ToString() => _rawString ??= GenerateToString();
 
-        public string GenerateToString()
+        private string GenerateToString()
         {
             var raw = new StringBuilder(64);
             if (Tags?.Count > 0)
