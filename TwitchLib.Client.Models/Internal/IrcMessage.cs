@@ -10,7 +10,8 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// The channel the message was sent in
         /// </summary>
-        public string Channel => Params.StartsWith("#") ? Params.Remove(0, 1) : Params;
+        public string Channel => _channel ??= Params.StartsWith("#") ? Params.Remove(0, 1) : Params;
+        private string _channel;
 
         public string Params => _parameters != null && _parameters.Length > 0 ? _parameters[0] : "";
 
@@ -44,7 +45,9 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// IRCv3 tags
         /// </summary>
-        public readonly Dictionary<string, string> Tags;
+        public readonly IReadOnlyDictionary<string, string> Tags;
+
+        private string _rawString;
 
         /// <summary>
         /// Create an INCOMPLETE IrcMessage only carrying username
@@ -88,23 +91,20 @@ namespace TwitchLib.Client.Models.Internal
             }
         }
 
-        public new string ToString()
+        /// <inheritdoc/>
+        public override string ToString() => _rawString ??= GenerateToString();
+
+        private string GenerateToString()
         {
-            var raw = new StringBuilder(32);
-            if (Tags != null)
+            var raw = new StringBuilder(64);
+            if (Tags?.Count > 0)
             {
-                var tags = new string[Tags.Count];
-                var i = 0;
+                raw.Append("@");
                 foreach (var tag in Tags)
                 {
-                    tags[i] = tag.Key + "=" + tag.Value;
-                    ++i;
+                    raw.Append(tag.Key).Append('=').Append(tag.Value).Append(';');
                 }
-
-                if (tags.Length > 0)
-                {
-                    raw.Append("@").Append(string.Join(";", tags)).Append(" ");
-                }
+                raw[raw.Length - 1] = ' ';
             }
 
             if (!string.IsNullOrEmpty(Hostmask))
@@ -113,7 +113,7 @@ namespace TwitchLib.Client.Models.Internal
             }
 
             raw.Append(Command.ToString().ToUpper().Replace("RPL_", ""));
-            if (_parameters.Length <= 0)
+            if (_parameters == null || _parameters.Length == 0)
                 return raw.ToString();
 
             if (_parameters[0] != null && _parameters[0].Length > 0)

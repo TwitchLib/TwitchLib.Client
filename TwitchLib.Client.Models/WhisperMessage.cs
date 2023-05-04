@@ -72,10 +72,18 @@ namespace TwitchLib.Client.Models
                         if (tagValue.Contains('/'))
                         {
                             if (!tagValue.Contains(","))
-                                Badges.Add(new KeyValuePair<string, string>(tagValue.Split('/')[0], tagValue.Split('/')[1]));
+                            {
+                                var splitData = tagValue.Split('/');
+                                Badges.Add(new KeyValuePair<string, string>(splitData[0], splitData[1]));
+                            }
                             else
+                            {
                                 foreach (var badge in tagValue.Split(','))
-                                    Badges.Add(new KeyValuePair<string, string>(badge.Split('/')[0], badge.Split('/')[1]));
+                                {
+                                    var splitData = badge.Split('/');
+                                    Badges.Add(new KeyValuePair<string, string>(splitData[0], splitData[1]));
+                                }
+                            }
                         }
                         break;
                     case Tags.Color:

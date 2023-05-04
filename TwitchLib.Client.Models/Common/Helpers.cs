@@ -18,7 +18,7 @@ namespace TwitchLib.Client.Models.Common
 
             // Return if empty string
             if (message == "")
-                return new List<string>();
+                return args;
 
             var previousQuoted = message[0] != '"';
             // Parse quoted text as a single argument
@@ -63,15 +63,24 @@ namespace TwitchLib.Client.Models.Common
             if (badgesStr.Contains('/'))
             {
                 if (!badgesStr.Contains(","))
-                    badges.Add(new KeyValuePair<string, string>(badgesStr.Split('/')[0], badgesStr.Split('/')[1]));
+                {
+                    var splitData = badgesStr.Split('/');
+                    badges.Add(new KeyValuePair<string, string>(splitData[0], splitData[1]));
+                }
                 else
+                {
                     foreach (var badge in badgesStr.Split(','))
-                        badges.Add(new KeyValuePair<string, string>(badge.Split('/')[0], badge.Split('/')[1]));
+                    {
+                        var splitData = badge.Split('/');
+                        badges.Add(new KeyValuePair<string, string>(splitData[0], splitData[1]));
+                    }
+                }
             }
 
             return badges;
         }
 
+        //not used anywhere
         public static string ParseToken(string token, string message)
         {
             var tokenValue = string.Empty;
