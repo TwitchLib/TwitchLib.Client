@@ -148,6 +148,14 @@ namespace TwitchLib.Client
         /// <value><c>true</c> if [will replace emotes]; otherwise, <c>false</c>.</value>
         public bool WillReplaceEmotes { get; set; } = false;
         /// <summary>
+        /// Adds to replaced Emotes their prefix. Defaults to empty string.
+        /// </summary>
+        public string ReplacedEmotesPrefix { get; set; } = "";
+        /// <summary>
+        /// Adds to replaced Emotes their suffix. Defaults to empty string.
+        /// </summary>
+        public string ReplacedEmotesSuffix { get; set; } = "";
+        /// <summary>
         /// Provides access to connection credentials object.
         /// </summary>
         /// <value>The connection credentials.</value>
@@ -1232,7 +1240,7 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private void HandlePrivMsg(IrcMessage ircMessage)
         {
-            ChatMessage chatMessage = new ChatMessage(TwitchUsername, ircMessage, ref _channelEmotes, WillReplaceEmotes);
+            ChatMessage chatMessage = new ChatMessage(TwitchUsername, ircMessage, ref _channelEmotes, WillReplaceEmotes,ReplacedEmotesPrefix,ReplacedEmotesSuffix);
             foreach (JoinedChannel joinedChannel in JoinedChannels.Where(x => string.Equals(x.Channel, ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
                 joinedChannel.HandleMessage(chatMessage);
 

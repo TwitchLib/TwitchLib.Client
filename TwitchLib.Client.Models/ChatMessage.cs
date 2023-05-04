@@ -91,11 +91,15 @@ namespace TwitchLib.Client.Models
         /// <param name="ircMessage">The IRC message from Twitch to be processed.</param>
         /// <param name="emoteCollection">The <see cref="MessageEmoteCollection"/> to register new emotes on and, if desired, use for emote replacement.</param>
         /// <param name="replaceEmotes">Whether to replace emotes for this chat message. Defaults to false.</param>
+        /// <param name="prefix">Adds prefix to replaced emotes. Defaults to empty string.</param>
+        /// <param name="suffix">Adds prefix to replaced emotes. Defaults to empty string.</param>
         public ChatMessage(
             string botUsername,
             IrcMessage ircMessage,
             ref MessageEmoteCollection emoteCollection,
-            bool replaceEmotes = false)
+            bool replaceEmotes = false,
+            string prefix = "",
+            string suffix = "")
         {
             BotUsername = botUsername;
             RawIrcMessage = ircMessage.ToString();
@@ -298,7 +302,7 @@ namespace TwitchLib.Client.Models
                 }
                 if (replaceEmotes)
                 {
-                    EmoteReplacedMessage = _emoteCollection.ReplaceEmotes(Message);
+                    EmoteReplacedMessage = _emoteCollection.ReplaceEmotes(originalMessage: Message,suffix: suffix,prefix: prefix);
                 }
             }
 

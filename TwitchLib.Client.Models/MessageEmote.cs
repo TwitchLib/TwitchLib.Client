@@ -372,16 +372,44 @@ namespace TwitchLib.Client.Models
         ///     received <see cref="MessageEmote"/> is to be replaced.
         ///     Defaults to <see cref="CurrentEmoteFilter"/>.
         /// </param>
+        /// <param name="prefix">
+        ///     String providing additional detection capabilities for further processing
+        /// </param>
+        /// <param name="suffix">
+        ///     String providing additional detection capabilities for further processing
+        /// </param>
         /// <returns>
         ///     A string where all of the original emote text has been replaced with
         ///     its designated <see cref="MessageEmote.ReplacementString"/>s
         /// </returns>
-        public string ReplaceEmotes(string originalMessage, EmoteFilterDelegate del = null)
+        public string ReplaceEmotes(string originalMessage, EmoteFilterDelegate del = null, string prefix = "",string suffix = "")
         {
-            if (CurrentRegex == null) return originalMessage;
-            if (del != null && del != CurrentEmoteFilter) CurrentEmoteFilter = del;
-            var newMessage = CurrentRegex.Replace(originalMessage, GetReplacementString);
+            if (CurrentRegex == null) 
+            {
+
+                return originalMessage;
+            }
+
+            if (del != null && del != CurrentEmoteFilter) 
+            {  
+                CurrentEmoteFilter = del; 
+            }
+
+            var newMessage = CurrentRegex.Replace(originalMessage, match =>
+            {
+                if (!_emoteList.ContainsKey(match.Value)) 
+                {
+
+                    return match.Value;
+                } 
+                var emote = _emoteList[match.Value];
+
+
+                return CurrentEmoteFilter(emote) ? prefix + emote.ReplacementString + suffix: match.Value;
+            });
             CurrentEmoteFilter = _preferredFilter;
+
+
             return newMessage;
         }
 
@@ -414,15 +442,6 @@ namespace TwitchLib.Client.Models
         public static bool TwitchOnlyEmoteFilter(MessageEmote emote)
         {
             return emote.Source == MessageEmote.EmoteSource.Twitch;
-        }
-
-        private string GetReplacementString(Match m)
-        {
-            if (!_emoteList.ContainsKey(m.Value)) return m.Value;
-
-            var emote = _emoteList[m.Value];
-            return CurrentEmoteFilter(emote) ? emote.ReplacementString : m.Value;
-            //If the match doesn't exist in the list ("shouldn't happen") or the filter excludes it, don't replace.
         }
     }
 }
