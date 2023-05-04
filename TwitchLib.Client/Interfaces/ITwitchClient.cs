@@ -193,7 +193,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Occurs when [on reconnected].
         /// </summary>
-        event EventHandler<OnConnectedEventArgs> OnReconnected;
+        event EventHandler<OnConnectedArgs> OnReconnected;
         /// <summary>
         /// Occurs when [on vip received].
         /// </summary>
