@@ -68,7 +68,7 @@ namespace TwitchLib.Client.Test
 
         public void ReceiveMessage(string message)
         {
-            OnMessage?.Invoke(this, new OnMessageEventArgs { Message = message });
+            OnMessage?.Invoke(this, new OnMessageEventArgs(message));
         }
 
         public bool SendWhisper(string data)

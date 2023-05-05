@@ -131,10 +131,7 @@ namespace TwitchLib.Client.Throttling
             catch (Exception ex)
             {
                 _logger?.LogError(ex.ToString());
-                _client.RaiseEvent(nameof(_client.OnError), new OnErrorEventArgs
-                {
-                    Exception = ex
-                });
+                _client.RaiseEvent(nameof(_client.OnError), new OnErrorEventArgs(ex));
             }
         }
 
