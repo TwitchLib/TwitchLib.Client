@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="TwitchLib.Communication" Version="2.0.0-preview-6cc076d87969e75c536fb86616f9cab9debfb44c" />
   </ItemGroup>
   <ItemGroup>
