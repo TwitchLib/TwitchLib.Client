@@ -12,16 +12,17 @@
 
         public override string ToString()
         {
-            var user = Username.ToLower();
             var channel = Channel.ToLower();
-            if(ReplyToId == null)
+            if (ReplyToId == null)
             {
+                var user = Username.ToLower();
                 return $":{user}!{user}@{user}.tmi.twitch.tv PRIVMSG #{channel} :{Message}";
-            } else
+            }
+            else
             {
                 return $"@reply-parent-msg-id={ReplyToId} PRIVMSG #{channel} :{Message}";
             }
-            
+
         }
     }
 }
