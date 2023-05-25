@@ -320,9 +320,10 @@ namespace TwitchLib.Client.Models
                 IsBroadcaster = true;
             }
 
-            if (Channel.Split(':').Length == 3)
+            var splitData = Channel.Split(':');
+            if (splitData.Length == 3)
             {
-                if (string.Equals(Channel.Split(':')[1], UserId, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(splitData[1], UserId, StringComparison.InvariantCultureIgnoreCase))
                 {
                     UserType = UserType.Broadcaster;
                     IsBroadcaster = true;

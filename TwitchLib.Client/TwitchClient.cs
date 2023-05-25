@@ -79,11 +79,11 @@ namespace TwitchLib.Client
         /// <summary>
         /// The irc parser
         /// </summary>
-        private readonly IrcParser _ircParser;
+        private readonly IrcParser _ircParser = new();
         /// <summary>
         /// The joined channel manager
         /// </summary>
-        private readonly JoinedChannelManager _joinedChannelManager;
+        private readonly JoinedChannelManager _joinedChannelManager = new();
 
         // variables used for constructing OnMessageSent properties
         /// <summary>
@@ -474,8 +474,6 @@ namespace TwitchLib.Client
             _client = client;
             _protocol = protocol;
             _sendOptions = sendOptions ?? new SendOptions();
-            _joinedChannelManager = new JoinedChannelManager();
-            _ircParser = new IrcParser();
         }
 
         /// <summary>
@@ -628,7 +626,9 @@ namespace TwitchLib.Client
 
             if (message.Length > 500)
             {
-                await LogError("Message length has exceeded the maximum character count. (500)");
+
+                await Log("Message length has exceeded the maximum character count. (500)", level: LogLevel.Error);
+                
                 return;
             }
 
@@ -1016,6 +1016,8 @@ namespace TwitchLib.Client
             if (OnReconnected != null) await OnReconnected?.Invoke(sender, new OnConnectedArgs());
         }
 
+        static readonly string[] NewLineSeparator = new[] { "\r\n" }; // dont modify!!!
+
         /// <summary>
         /// Handles the OnMessage event of the _client control.
         /// </summary>
@@ -1023,8 +1025,7 @@ namespace TwitchLib.Client
         /// <param name="e">The <see cref="OnMessageEventArgs" /> instance containing the event data.</param>
         private async Task _client_OnMessage(object sender, OnMessageEventArgs e)
         {
-            var stringSeparators = new[] { "\r\n" };
-            var lines = e.Message.Split(stringSeparators, StringSplitOptions.None);
+            var lines = e.Message.Split(NewLineSeparator, StringSplitOptions.None);
             foreach (var line in lines)
             {
                 if (line.Length <= 1)
@@ -1601,16 +1602,17 @@ namespace TwitchLib.Client
         /// <param name="level">The log level of the message.</param>
         private async Task Log(string message, bool includeDate = false, bool includeTime = false, LogLevel level = LogLevel.Debug)
         {
-            string dateTimeStr;
             if (includeDate && includeTime)
-                dateTimeStr = $"{DateTime.UtcNow}";
-            else if (includeDate)
-                dateTimeStr = $"{DateTime.UtcNow.ToShortDateString()}";
-            else
-                dateTimeStr = $"{DateTime.UtcNow.ToShortTimeString()}";
-
-            if (includeDate || includeTime)
+            {
+                string dateTimeStr;
+                if (includeDate && includeTime)
+                    dateTimeStr = DateTime.UtcNow.ToString();
+                else if (includeDate)
+                    dateTimeStr = DateTime.UtcNow.ToShortDateString();
+                else
+                    dateTimeStr = DateTime.UtcNow.ToShortTimeString();
                 _logger?.Log(level, $"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
+            }
             else
                 _logger?.Log(level, $"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
 

@@ -22,16 +22,15 @@ namespace TwitchLib.Client.Models
         {
             // this should be removed and used outside of object
             RawEmoteSetString = rawEmoteSetString;
-            EmoteExtractor emoteExtractor = new EmoteExtractor();
-            Emotes = emoteExtractor.Extract(rawEmoteSetString, message).ToList();
+            Emotes = EmoteExtractor.Extract(rawEmoteSetString, message).ToList();
         }
 
         /// <summary>Constructor for ChatEmoteSet object.</summary>
         /// <param name="emotes">Collection of Emote instances</param>
         /// <param name="rawEmoteSetString">Original string from which emotes were created</param>
-        public EmoteSet(IEnumerable<Emote> emotes, string emoteSetData)
+        public EmoteSet(IEnumerable<Emote> emotes, string rawEmoteSetString)
         {
-            RawEmoteSetString = emoteSetData;
+            RawEmoteSetString = rawEmoteSetString;
             Emotes = emotes.ToList();
         }
     }
