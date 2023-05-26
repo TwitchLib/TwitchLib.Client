@@ -9,6 +9,7 @@ using TwitchLib.Client.Enums;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Exceptions;
+using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Internal.Parsing;
@@ -36,7 +37,7 @@ namespace TwitchLib.Client
         /// </summary>
         private IClient _client;
 
-        private ISendOptions _sendOptions;
+        private readonly ISendOptions _sendOptions;
         private ThrottlingService _throttling;
         
         /// <summary>
@@ -59,6 +60,7 @@ namespace TwitchLib.Client
         /// The logger
         /// </summary>
         private readonly ILogger<TwitchClient> _logger;
+        private readonly ILoggerFactory _loggerFactory;
         /// <summary>
         /// The protocol
         /// </summary>
@@ -170,11 +172,6 @@ namespace TwitchLib.Client
         /// Fires when VIPs are received from chat
         /// </summary>
         public event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
-
-        /// <summary>
-        /// Fires whenever a log write happens.
-        /// </summary>
-        public event EventHandler<OnLogArgs> OnLog;
 
         /// <summary>
         /// Fires when client connects to Twitch.
@@ -454,15 +451,16 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="client">Protocol Client to use for connection from TwitchLib.Communication. Possible Options Are the TcpClient client or WebSocket client.</param>
         /// <param name="protocol">The protocol.</param>
-        /// <param name="logger">Optional ILogger instance to enable logging</param>
         /// <param name="sendOptions">Send options with throttling settings.</param>
+        /// <param name="loggerFactory">Optional ILoggerFactory instance to enable logging</param>
         public TwitchClient(
             IClient client = null, 
             ClientProtocol protocol = ClientProtocol.WebSocket,
             ISendOptions sendOptions = null,
-            ILogger<TwitchClient> logger = null)
+            ILoggerFactory loggerFactory = null)
         {
-            _logger = logger;
+            _loggerFactory = loggerFactory;
+            _logger = loggerFactory?.CreateLogger<TwitchClient>();
             _client = client;
             _protocol = protocol;
             _sendOptions = sendOptions ?? new SendOptions();
@@ -511,7 +509,7 @@ namespace TwitchLib.Client
             char whisperCommandIdentifier = '!', 
             bool autoReListenOnExceptions = true)
         {
-            Log($"TwitchLib-TwitchClient initialized, assembly version: {Assembly.GetExecutingAssembly().GetName().Version}", level: LogLevel.Information);
+            _logger?.LogInitialized(Assembly.GetExecutingAssembly().GetName().Version);
             ConnectionCredentials = credentials;
             TwitchUsername = ConnectionCredentials.TwitchUsername;
             if (chatCommandIdentifier != '\0')
@@ -549,10 +547,10 @@ namespace TwitchLib.Client
                 switch (_protocol)
                 {
                     case ClientProtocol.TCP:
-                        _client = new TcpClient();
+                        _client = new TcpClient(null, _loggerFactory?.CreateLogger<TcpClient>());
                         break;
                     case ClientProtocol.WebSocket:
-                        _client = new WebSocketClient();
+                        _client = new WebSocketClient(null, _loggerFactory?.CreateLogger<WebSocketClient>());
                         break;
                 }
             }
@@ -600,7 +598,7 @@ namespace TwitchLib.Client
             if (!IsInitialized) 
                 HandleNotInitialized();
 
-            Log($"Writing: {message}");
+            _logger?.LogWriting(message);
             await _client.SendAsync(message);
             
             OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Sent, Data = message });
@@ -618,7 +616,7 @@ namespace TwitchLib.Client
             
             if (message.Length > 500)
             {
-                Log("Message length has exceeded the maximum character count. (500)", level: LogLevel.Error);
+                _logger?.LogMessageTooLong();
                 return;
             }
 
@@ -729,15 +727,15 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) 
                 HandleNotInitialized();
-            
-            Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}", level: LogLevel.Information);
+
+            _logger?.LogConnecting();
 
 			// Clear instance data
             _joinedChannelManager.Clear();
 
             if(await _client.OpenAsync())
             {
-                Log("Should be connected!");
+                _logger?.LogShouldBeConnected();
                 return true;
             }
             
@@ -755,7 +753,7 @@ namespace TwitchLib.Client
         /// <inheritdoc />
         public async Task DisconnectAsync()
         {
-            Log("Disconnecting Twitch Chat Client...", level: LogLevel.Information);
+            _logger?.LogDisconnecting();
 
             if (!IsInitialized) 
                 HandleNotInitialized();
@@ -780,8 +778,8 @@ namespace TwitchLib.Client
         {
             if (!IsInitialized) 
                 HandleNotInitialized();
-            
-            Log("Reconnecting to Twitch", level: LogLevel.Information);
+
+            _logger?.LogReconnecting();
             await _client.ReconnectAsync();
         }
         #endregion
@@ -921,8 +919,8 @@ namespace TwitchLib.Client
             channel = channel.ToLower();
             if (channel[0] == '#') 
                 channel = channel.Substring(1);
-            
-            Log($"Leaving channel: {channel}", level: LogLevel.Information);
+
+            _logger?.LogLeavingChannel(channel);
             var joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
             
             if (joinedChannel != null)
@@ -1023,7 +1021,7 @@ namespace TwitchLib.Client
                 if (line.Length <= 1)
                     continue;
 
-                Log($"Received: {line}", level: LogLevel.Trace);
+                _logger?.LogReceived(line);
                 OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = SendReceiveDirection.Received, Data = line });
                 await HandleIrcMessageAsync(_ircParser.ParseIrcMessage(line));
             }
@@ -1066,7 +1064,7 @@ namespace TwitchLib.Client
             {
                 _currentlyJoiningChannels = true;
                 var channelToJoin = _joinChannelQueue.Dequeue();
-                Log($"Joining channel: {channelToJoin.Channel}", level: LogLevel.Information);
+                _logger?.LogJoiningChannel(channelToJoin.Channel);
                 // important we set channel to lower case when sending join message
                 await _client.SendAsync(Rfc2812.Join($"#{channelToJoin.Channel.ToLower()}"));
                 _joinedChannelManager.AddJoinedChannel(new JoinedChannel(channelToJoin.Channel));
@@ -1074,7 +1072,7 @@ namespace TwitchLib.Client
             }
             else
             {
-                Log("Finished channel joining queue.");
+                _logger?.LogChannelJoiningFinished();
             }
         }
 
@@ -1582,57 +1580,7 @@ namespace TwitchLib.Client
 
         private void UnaccountedFor(string ircString)
         {
-            Log($"Unaccounted for: {ircString} (please create a TwitchLib GitHub issue :P)", level: LogLevel.Warning);
-        }
-
-        /// <summary>
-        /// Logs the specified message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="includeDate">if set to <c>true</c> [include date].</param>
-        /// <param name="includeTime">if set to <c>true</c> [include time].</param>
-        /// <param name="level">The log level of the message.</param>
-        private void Log(string message, bool includeDate = false, bool includeTime = false, LogLevel level = LogLevel.Debug)
-        {
-            if (includeDate && includeTime)
-            {
-                string dateTimeStr;
-                if (includeDate && includeTime)
-                    dateTimeStr = DateTime.UtcNow.ToString();
-                else if (includeDate)
-                    dateTimeStr = DateTime.UtcNow.ToShortDateString();
-                else
-                    dateTimeStr = DateTime.UtcNow.ToShortTimeString();
-                _logger?.Log(level, $"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
-            }
-            else
-                _logger?.Log(level, $"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
-
-            OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
-        }
-
-        /// <summary>
-        /// Logs the error.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="includeDate">if set to <c>true</c> [include date].</param>
-        /// <param name="includeTime">if set to <c>true</c> [include time].</param>
-        private void LogError(string message, bool includeDate = false, bool includeTime = false)
-        {
-            string dateTimeStr;
-            if (includeDate && includeTime)
-                dateTimeStr = $"{DateTime.UtcNow}";
-            else if (includeDate)
-                dateTimeStr = $"{DateTime.UtcNow.ToShortDateString()}";
-            else
-                dateTimeStr = $"{DateTime.UtcNow.ToShortTimeString()}";
-
-            if (includeDate || includeTime)
-                _logger?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
-            else
-                _logger?.LogError($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
-
-            OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
+            _logger?.LogUnaccountedFor(ircString);
         }
 
         /// <summary>

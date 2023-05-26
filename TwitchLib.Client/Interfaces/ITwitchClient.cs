@@ -111,10 +111,6 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event EventHandler<OnLeftChannelArgs> OnLeftChannel;
         /// <summary>
-        /// Occurs when [on log].
-        /// </summary>
-        event EventHandler<OnLogArgs> OnLog;
-        /// <summary>
         /// Occurs when [on message received].
         /// </summary>
         event EventHandler<OnMessageReceivedArgs> OnMessageReceived;
