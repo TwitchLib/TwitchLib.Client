@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Internal;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Interfaces;
@@ -130,7 +131,7 @@ namespace TwitchLib.Client.Throttling
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex.ToString());
+                _logger?.LogException(ex.Message, ex);
                 _client.RaiseEvent(nameof(_client.OnError), new OnErrorEventArgs(ex));
             }
         }

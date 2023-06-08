@@ -6,11 +6,6 @@ namespace TwitchLib.Client.Models
     /// <summary>Class used to store credentials used to connect to Twitch chat/whisper.</summary>
     public class ConnectionCredentials
     {
-        public const string DefaultWebSocketUri = "wss://irc-ws.chat.twitch.tv:443";
-
-        /// <summary>Property representing URI used to connect to Twitch websocket service.</summary>
-        public string TwitchWebsocketURI { get; }
-
         /// <summary>Property representing bot's oauth.</summary>
         public string TwitchOAuth { get; }
 
@@ -24,7 +19,6 @@ namespace TwitchLib.Client.Models
         public ConnectionCredentials(
             string twitchUsername,
             string twitchOAuth,
-            string twitchWebsocketURI = DefaultWebSocketUri,
             bool disableUsernameCheck = false,
             Capabilities capabilities = null)
         {
@@ -39,8 +33,6 @@ namespace TwitchLib.Client.Models
             {
                 TwitchOAuth = $"oauth:{twitchOAuth.Replace("oauth", "")}";
             }
-
-            TwitchWebsocketURI = twitchWebsocketURI;
 
             if (capabilities == null)
                 capabilities = new Capabilities();
