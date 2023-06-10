@@ -998,10 +998,7 @@ namespace TwitchLib.Client
 
             foreach (var channel in _joinedChannelManager.GetJoinedChannels())
             {
-                if (!string.Equals(channel.Channel, TwitchUsername, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    _joinChannelQueue.Enqueue(channel);
-                }
+                _joinChannelQueue.Enqueue(channel);
             }
 
             if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
