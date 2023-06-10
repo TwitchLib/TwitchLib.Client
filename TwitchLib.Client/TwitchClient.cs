@@ -992,14 +992,21 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="OnConnectedEventArgs" /> instance containing the event data.</param>
-        private void _client_OnReconnected(object sender, OnConnectedEventArgs e)
+        private async void _client_OnReconnected(object sender, OnConnectedEventArgs e)
         {
+            await SendHandshake();
+
             foreach (var channel in _joinedChannelManager.GetJoinedChannels())
             {
                 if (!string.Equals(channel.Channel, TwitchUsername, StringComparison.CurrentCultureIgnoreCase))
                 {
                     _joinChannelQueue.Enqueue(channel);
                 }
+            }
+
+            if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
+            {
+                await QueueingJoinCheckAsync();
             }
             
             _joinedChannelManager.Clear();
@@ -1034,6 +1041,19 @@ namespace TwitchLib.Client
         /// <param name="e">The e.</param>
         private async void _client_OnConnectedAsync(object sender, object e)
         {
+            await SendHandshake();
+
+            if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
+            {
+                await QueueingJoinCheckAsync();
+            }
+        }
+
+        /// <summary>
+        /// Send the handshake for the connection.
+        /// </summary>
+        private async Task SendHandshake()
+        {
             await _client.SendAsync(Rfc2812.Pass(ConnectionCredentials.TwitchOAuth));
             await _client.SendAsync(Rfc2812.Nick(ConnectionCredentials.TwitchUsername));
             await _client.SendAsync(Rfc2812.User(ConnectionCredentials.TwitchUsername, 0, ConnectionCredentials.TwitchUsername));
@@ -1044,11 +1064,6 @@ namespace TwitchLib.Client
                 await _client.SendAsync("CAP REQ twitch.tv/commands");
             if (ConnectionCredentials.Capabilities.Tags)
                 await _client.SendAsync("CAP REQ twitch.tv/tags");
-
-            if(_joinChannelQueue != null && _joinChannelQueue.Count > 0)
-            {
-                await QueueingJoinCheckAsync();
-            }
         }
         
         #endregion
