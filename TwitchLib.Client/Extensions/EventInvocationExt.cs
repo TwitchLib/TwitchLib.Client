@@ -254,24 +254,6 @@ namespace TwitchLib.Client.Extensions
         }
 
         /// <summary>
-        /// Invokes the log.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="botUsername">The bot username.</param>
-        /// <param name="data">The data.</param>
-        /// <param name="dateTime">The date time.</param>
-        public static void InvokeLog(this TwitchClient client, string botUsername, string data, DateTime dateTime)
-        {
-            OnLogArgs model = new OnLogArgs()
-            {
-                BotUsername = botUsername,
-                Data = data,
-                DateTime = dateTime
-            };
-            client.RaiseEvent("OnLog", model);
-        }
-
-        /// <summary>
         /// Invokes the message received.
         /// </summary>
         /// <param name="client">The client.</param>
@@ -521,14 +503,13 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">The client.</param>
         /// <param name="channel">The channel.</param>
         /// <param name="username">The username.</param>
-        /// <param name="banReason">The ban reason.</param>
         /// <param name="roomId">The channel id.</param>
         /// <param name="targetUserId">The user id.</param>
-        public static void InvokeUserBanned(this TwitchClient client, string channel, string username, string banReason, string roomId, string targetUserId)
+        public static void InvokeUserBanned(this TwitchClient client, string channel, string username, string roomId, string targetUserId)
         {
             OnUserBannedArgs model = new OnUserBannedArgs()
             {
-                UserBan = new UserBan(channel, username, banReason, roomId, targetUserId)
+                UserBan = new UserBan(channel, username, roomId, targetUserId)
             };
             client.RaiseEvent("OnUserBanned", model);
         }
@@ -663,24 +644,6 @@ namespace TwitchLib.Client.Extensions
                 WhisperMessage = new WhisperMessage(badges, colorHex, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType)
             };
             client.RaiseEvent("OnWhisperReceived", model);
-        }
-
-        /// <summary>
-        /// Invokes the whisper sent.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="username">The username.</param>
-        /// <param name="receiver">The receiver.</param>
-        /// <param name="message">The message.</param>
-        public static void InvokeWhisperSent(this TwitchClient client, string username, string receiver, string message)
-        {
-            OnWhisperSentArgs model = new OnWhisperSentArgs()
-            {
-                Message = message,
-                Receiver = receiver,
-                Username = username
-            };
-            client.RaiseEvent("OnWhisperSent", model);
         }
     }
 }

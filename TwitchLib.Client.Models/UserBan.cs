@@ -4,9 +4,6 @@ namespace TwitchLib.Client.Models
 {
     public class UserBan
     {
-        /// <summary>Reason for ban, if it was provided.</summary>
-        public string BanReason;
-
         /// <summary>Channel that had ban event.</summary>
         public string Channel;
 
@@ -24,12 +21,6 @@ namespace TwitchLib.Client.Models
             Channel = ircMessage.Channel;
             Username = ircMessage.Message;
 
-            var successBanReason = ircMessage.Tags.TryGetValue(Tags.BanReason, out var banReason);
-            if (successBanReason)
-            {
-                BanReason = banReason;
-            }
-
             if (ircMessage.Tags.TryGetValue(Tags.RoomId, out var roomId))
             {
                 RoomId = roomId;
@@ -44,13 +35,11 @@ namespace TwitchLib.Client.Models
         public UserBan(
             string channel,
             string username,
-            string banReason,
             string roomId,
             string targetUserId)
         {
             Channel = channel;
             Username = username;
-            BanReason = banReason;
             RoomId = roomId;
             TargetUserId = targetUserId;
         }
