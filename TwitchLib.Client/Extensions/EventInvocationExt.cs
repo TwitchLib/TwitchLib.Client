@@ -577,12 +577,11 @@ namespace TwitchLib.Client.Extensions
         /// <param name="username">The username.</param>
         /// <param name="targetUserId">The user Id.</param>
         /// <param name="timeoutDuration">Duration of the timeout.</param>
-        /// <param name="timeoutReason">The timeout reason.</param>
-        public static void InvokeUserTimedout(this TwitchClient client, string channel, string username, string targetUserId, int timeoutDuration, string timeoutReason)
+        public static void InvokeUserTimedout(this TwitchClient client, string channel, string username, string targetUserId, int timeoutDuration)
         {
             OnUserTimedoutArgs model = new OnUserTimedoutArgs()
             {
-                UserTimeout = new UserTimeout(channel, username, targetUserId, timeoutDuration, timeoutReason)
+                UserTimeout = new UserTimeout(channel, username, targetUserId, timeoutDuration)
             };
             client.RaiseEvent("OnUserTimedout", model);
         }
