@@ -154,11 +154,6 @@ namespace TwitchLib.Client
         /// </summary>
         /// <value>The connection credentials.</value>
         public ConnectionCredentials ConnectionCredentials { get; private set; }
-        /// <summary>
-        /// Provides access to autorelistiononexception on off boolean.
-        /// </summary>
-        /// <value><c>true</c> if [automatic re listen on exception]; otherwise, <c>false</c>.</value>
-        public bool AutoReListenOnException { get; set; }
 
         #endregion
 
@@ -212,11 +207,6 @@ namespace TwitchLib.Client
         /// Fires when a chat message is sent, returns username, channel and message.
         /// </summary>
         public event EventHandler<OnMessageSentArgs> OnMessageSent;
-
-        /// <summary>
-        /// Fires when a whisper message is sent, returns username and message.
-        /// </summary>
-        public event EventHandler<OnWhisperSentArgs> OnWhisperSent;
 
         /// <summary>
         /// Fires when command (uses custom chat command identifier) is received, returns channel, command, ChatMessage, arguments as string, arguments as list.
@@ -473,11 +463,10 @@ namespace TwitchLib.Client
         /// <param name="channel">The channel to connect to.</param>
         /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
-        public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
+        public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
         {
             if (channel != null && channel[0] == '#') channel = channel.Substring(1);
-            InitializationHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
+            InitializationHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, whisperCommandIdentifier);
         }
 
         /// <summary>
@@ -487,11 +476,10 @@ namespace TwitchLib.Client
         /// <param name="channels">List of channels to join when connected</param>
         /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
-        public void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
+        public void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
         {
             channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
-            InitializationHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier, autoReListenOnExceptions);
+            InitializationHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier);
         }
 
         /// <summary>
@@ -501,13 +489,11 @@ namespace TwitchLib.Client
         /// <param name="channels">List of channels to join when connected</param>
         /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
         private void InitializationHelper(
             ConnectionCredentials credentials, 
             List<string> channels, 
             char chatCommandIdentifier = '!', 
-            char whisperCommandIdentifier = '!', 
-            bool autoReListenOnExceptions = true)
+            char whisperCommandIdentifier = '!')
         {
             _logger?.LogInitialized(Assembly.GetExecutingAssembly().GetName().Version);
             ConnectionCredentials = credentials;
@@ -516,8 +502,6 @@ namespace TwitchLib.Client
                 _chatCommandIdentifiers.Add(chatCommandIdentifier);
             if (whisperCommandIdentifier != '\0')
                 _whisperCommandIdentifiers.Add(whisperCommandIdentifier);
-
-            AutoReListenOnException = autoReListenOnExceptions;
 
             if (channels != null && channels.Count > 0)
             {

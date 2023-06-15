@@ -4,7 +4,6 @@
     {
         private string _channelName;
         private string _userName;
-        private string _banReason;
         private string _roomId;
         private string _targetUserId;
 
@@ -29,12 +28,6 @@
             return this;
         }
 
-        public UserBanBuilder WithBanReason(string banReason)
-        {
-            _banReason = banReason;
-            return this;
-        }
-
         public UserBanBuilder WithRoomId(string roomId)
         {
             _roomId = roomId;
@@ -54,7 +47,7 @@
 
         public UserBan Build()
         {
-            return new UserBan(_channelName, _userName, _banReason, _roomId, _targetUserId);
+            return new UserBan(_channelName, _userName, _roomId, _targetUserId);
         }
     }
 }
