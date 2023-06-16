@@ -13,11 +13,6 @@ namespace TwitchLib.Client.Interfaces
     public interface ITwitchClient
     {
         /// <summary>
-        /// Gets or sets a value indicating whether [automatic re listen on exception].
-        /// </summary>
-        /// <value><c>true</c> if [automatic re listen on exception]; otherwise, <c>false</c>.</value>
-        bool AutoReListenOnException { get; set; }
-        /// <summary>
         /// Gets the channel emotes.
         /// </summary>
         /// <value>The channel emotes.</value>
@@ -111,10 +106,6 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event AsyncEventHandler<OnLeftChannelArgs> OnLeftChannel;
         /// <summary>
-        /// Occurs when [on log].
-        /// </summary>
-        event AsyncEventHandler<OnLogArgs> OnLog;
-        /// <summary>
         /// Occurs when [on message received].
         /// </summary>
         event AsyncEventHandler<OnMessageReceivedArgs> OnMessageReceived;
@@ -179,10 +170,6 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event AsyncEventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
         /// <summary>
-        /// Occurs when [on whisper sent].
-        /// </summary>
-        event AsyncEventHandler<OnWhisperSentArgs> OnWhisperSent;
-        /// <summary>
         /// Occurs when [on message throttled].
         /// </summary>
         event AsyncEventHandler<OnMessageThrottledArgs> OnMessageThrottled;
@@ -239,8 +226,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">The channel.</param>
         /// <param name="chatCommandIdentifier">The chat command identifier.</param>
         /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
-        /// <param name="autoReListenOnExceptions">if set to <c>true</c> [automatic re listen on exceptions].</param>
-        Task Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
+        Task Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
 
         /// <summary>
         /// Initializes the specified credentials.
@@ -249,8 +235,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channels">The channels to join once connected.</param>
         /// <param name="chatCommandIdentifier">The chat command identifier.</param>
         /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
-        /// <param name="autoReListenOnExceptions">if set to <c>true</c> [automatic re listen on exceptions].</param>
-        Task Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true);
+        Task Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
 
         /// <summary>
         /// Sets the connection credentials.
