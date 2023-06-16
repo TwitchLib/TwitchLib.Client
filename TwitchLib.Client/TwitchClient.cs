@@ -114,7 +114,7 @@ namespace TwitchLib.Client
         /// Assembly version of TwitchLib.Client.
         /// </summary>
         /// <value>The version.</value>
-        public Version Version => Assembly.GetEntryAssembly().GetName().Version;
+        public Version Version => Assembly.GetEntryAssembly()?.GetName().Version;
 
         /// <summary>
         /// Checks if underlying client has been initialized.
@@ -622,28 +622,28 @@ namespace TwitchLib.Client
             await _client.SendAsync(message);
 
             if (OnSendReceiveData != null)
-                await OnSendReceiveData?.Invoke(this,
-                    new OnSendReceiveDataArgs
-                    {
-                        Direction = SendReceiveDirection.Sent,
-                        Data = message
-                    });
+                await OnSendReceiveData.Invoke(this,
+                     new OnSendReceiveDataArgs
+                     {
+                         Direction = SendReceiveDirection.Sent,
+                         Data = message
+                     });
         }
 
         #region SendMessage
 
-        private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
+        private Task SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
             if (!IsInitialized)
                 HandleNotInitialized();
 
             if (channel == null || message == null || dryRun)
-                return;
+                return Task.CompletedTask;
 
             if (message.Length > 500)
             {
                 _logger?.LogMessageTooLong();
-                return;
+                return Task.CompletedTask;
             }
 
             var twitchMessage = new OutboundChatMessage
@@ -661,6 +661,7 @@ namespace TwitchLib.Client
             _lastMessageSent = message;
 
             _throttling.Enqueue(twitchMessage);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -677,7 +678,7 @@ namespace TwitchLib.Client
         /// <inheritdoc />
         public async Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false)
         {
-            SendTwitchMessage(channel, message, null, dryRun);
+          await SendTwitchMessage(channel, message, null, dryRun);
         }
 
         /// <summary>
@@ -713,8 +714,8 @@ namespace TwitchLib.Client
         //TODO: Rework Throttling service. Access to its is always sync
         public Task SendReplyAsync(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
         {
-             SendTwitchMessage(channel, message, replyToId, dryRun);
-             return Task.CompletedTask;
+            SendTwitchMessage(channel, message, replyToId, dryRun);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -1001,7 +1002,7 @@ namespace TwitchLib.Client
         private async Task _client_OnFatality(object sender, OnFatalErrorEventArgs e)
         {
             if (OnConnectionError != null)
-                await OnConnectionError?.Invoke(this,
+                await OnConnectionError.Invoke(this,
                     new OnConnectionErrorArgs
                     {
                         BotUsername = TwitchUsername,
@@ -1019,7 +1020,7 @@ namespace TwitchLib.Client
         /// <param name="e">The <see cref="OnDisconnectedEventArgs" /> instance containing the event data.</param>
         private async Task _client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
-            if (OnDisconnected != null) await OnDisconnected?.Invoke(sender, e);
+            if (OnDisconnected != null) await OnDisconnected.Invoke(sender, e);
         }
 
         /// <summary>
@@ -1042,7 +1043,7 @@ namespace TwitchLib.Client
             }
 
             _joinedChannelManager.Clear();
-            if (OnReconnected != null) await OnReconnected?.Invoke(sender, new OnConnectedArgs());
+            if (OnReconnected != null) await OnReconnected.Invoke(sender, new OnConnectedArgs());
         }
 
         static readonly string[] NewLineSeparator = new[]
@@ -1065,7 +1066,7 @@ namespace TwitchLib.Client
 
                 _logger?.LogReceived(line);
                 if (OnSendReceiveData != null)
-                    await OnSendReceiveData?.Invoke(this,
+                    await OnSendReceiveData.Invoke(this,
                         new OnSendReceiveDataArgs
                         {
                             Direction = SendReceiveDirection.Received,
@@ -1198,7 +1199,7 @@ namespace TwitchLib.Client
             if (ircMessage.ToString().StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed"))
             {
                 if (OnIncorrectLogin != null)
-                    await OnIncorrectLogin?.Invoke(this,
+                    await OnIncorrectLogin.Invoke(this,
                         new OnIncorrectLoginArgs
                         {
                             Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername)
@@ -1218,7 +1219,7 @@ namespace TwitchLib.Client
 
                 case IrcCommand.Ping:
                     if (!DisableAutoPong)
-                       SendRaw("PONG");
+                        SendRaw("PONG");
                     return;
 
                 case IrcCommand.Pong:
@@ -1305,7 +1306,7 @@ namespace TwitchLib.Client
                 // fall through
                 default:
                     if (OnUnaccountedFor != null)
-                        await OnUnaccountedFor?.Invoke(this,
+                        await OnUnaccountedFor.Invoke(this,
                             new OnUnaccountedForArgs
                             {
                                 BotUsername = TwitchUsername,
@@ -1331,34 +1332,31 @@ namespace TwitchLib.Client
                 joinedChannel.HandleMessage(chatMessage);
 
             if (OnMessageReceived != null)
-                await OnMessageReceived?.Invoke(this,
+                await OnMessageReceived.Invoke(this,
                     new OnMessageReceivedArgs
                     {
                         ChatMessage = chatMessage
                     });
 
-            if (ircMessage.Tags.TryGetValue(Tags.MsgId, out var msgId))
-                if (msgId == MsgIds.UserIntro)
-                    if (OnUserIntro != null)
-                        await OnUserIntro?.Invoke(this,
+            if (ircMessage.Tags.TryGetValue(Tags.MsgId, out var msgId) && msgId == MsgIds.UserIntro && OnUserIntro != null)
+                await OnUserIntro.Invoke(this,
                             new OnUserIntroArgs
                             {
                                 ChatMessage = chatMessage
                             });
 
-            if (_chatCommandIdentifiers != null && _chatCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(chatMessage.Message))
+            if (_chatCommandIdentifiers != null && _chatCommandIdentifiers.Count != 0 &&
+                !string.IsNullOrEmpty(chatMessage.Message) && _chatCommandIdentifiers.Contains(chatMessage.Message[0]))
             {
-                if (_chatCommandIdentifiers.Contains(chatMessage.Message[0]))
-                {
-                    ChatCommand chatCommand = new ChatCommand(chatMessage);
-                    if (OnChatCommandReceived != null)
-                        await OnChatCommandReceived?.Invoke(this,
-                            new OnChatCommandReceivedArgs
-                            {
-                                Command = chatCommand
-                            });
-                    return;
-                }
+                ChatCommand chatCommand = new ChatCommand(chatMessage);
+                if (OnChatCommandReceived != null)
+                    await OnChatCommandReceived.Invoke(this,
+                        new OnChatCommandReceivedArgs
+                        {
+                            Command = chatCommand
+                        });
+                return;
+
             }
         }
 
@@ -1371,7 +1369,7 @@ namespace TwitchLib.Client
             if (ircMessage.Message.Contains("Improperly formatted auth"))
             {
                 if (OnIncorrectLogin != null)
-                    await OnIncorrectLogin?.Invoke(this,
+                    await OnIncorrectLogin.Invoke(this,
                         new OnIncorrectLoginArgs
                         {
                             Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername)
@@ -1383,7 +1381,7 @@ namespace TwitchLib.Client
             if (!success)
             {
                 if (OnUnaccountedFor != null)
-                    await OnUnaccountedFor?.Invoke(this,
+                    await OnUnaccountedFor.Invoke(this,
                         new OnUnaccountedForArgs
                         {
                             BotUsername = TwitchUsername,
@@ -1391,6 +1389,7 @@ namespace TwitchLib.Client
                             Location = "NoticeHandling",
                             RawIRC = ircMessage.ToString()
                         });
+
                 await UnaccountedFor(ircMessage.ToString());
             }
 
@@ -1398,7 +1397,7 @@ namespace TwitchLib.Client
             {
                 case MsgIds.ColorChanged:
                     if (OnChatColorChanged != null)
-                        await OnChatColorChanged?.Invoke(this,
+                        await OnChatColorChanged.Invoke(this,
                             new OnChatColorChangedArgs
                             {
                                 Channel = ircMessage.Channel
@@ -1407,7 +1406,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.ModeratorsReceived:
                     if (OnModeratorsReceived != null)
-                        await OnModeratorsReceived?.Invoke(this,
+                        await OnModeratorsReceived.Invoke(this,
                             new OnModeratorsReceivedArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1417,7 +1416,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.NoMods:
                     if (OnModeratorsReceived != null)
-                        await OnModeratorsReceived?.Invoke(this,
+                        await OnModeratorsReceived.Invoke(this,
                             new OnModeratorsReceivedArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1426,20 +1425,20 @@ namespace TwitchLib.Client
                     break;
 
                 case MsgIds.NoPermission:
-                    if (OnNoPermissionError != null) OnNoPermissionError?.Invoke(this, null);
+                    OnNoPermissionError?.Invoke(this, null);
                     break;
 
                 case MsgIds.RaidErrorSelf:
-                    if (OnSelfRaidError != null) OnSelfRaidError?.Invoke(this, null);
+                   OnSelfRaidError?.Invoke(this, null);
                     break;
 
                 case MsgIds.RaidNoticeMature:
-                    if (OnRaidedChannelIsMatureAudience != null) OnRaidedChannelIsMatureAudience?.Invoke(this, null);
+                    OnRaidedChannelIsMatureAudience?.Invoke(this, null);
                     break;
 
                 case MsgIds.MsgBannedEmailAlias:
                     if (OnBannedEmailAlias != null)
-                        await OnBannedEmailAlias?.Invoke(this,
+                        await OnBannedEmailAlias.Invoke(this,
                             new OnBannedEmailAliasArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1452,7 +1451,7 @@ namespace TwitchLib.Client
                     _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
                     await QueueingJoinCheckAsync();
                     if (OnFailureToReceiveJoinConfirmation != null)
-                        await OnFailureToReceiveJoinConfirmation?.Invoke(this,
+                        await OnFailureToReceiveJoinConfirmation.Invoke(this,
                             new OnFailureToReceiveJoinConfirmationArgs
                             {
                                 Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
@@ -1461,7 +1460,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgRequiresVerifiedPhoneNumber:
                     if (OnRequiresVerifiedPhoneNumber != null)
-                        await OnRequiresVerifiedPhoneNumber?.Invoke(this,
+                        await OnRequiresVerifiedPhoneNumber.Invoke(this,
                             new OnRequiresVerifiedPhoneNumberArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1471,7 +1470,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgVerifiedEmail:
                     if (OnRequiresVerifiedEmail != null)
-                        await OnRequiresVerifiedEmail?.Invoke(this,
+                        await OnRequiresVerifiedEmail.Invoke(this,
                             new OnRequiresVerifiedEmailArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1481,7 +1480,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.NoVIPs:
                     if (OnVIPsReceived != null)
-                        await OnVIPsReceived?.Invoke(this,
+                        await OnVIPsReceived.Invoke(this,
                             new OnVIPsReceivedArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1491,7 +1490,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.VIPsSuccess:
                     if (OnVIPsReceived != null)
-                        await OnVIPsReceived?.Invoke(this,
+                        await OnVIPsReceived.Invoke(this,
                             new OnVIPsReceivedArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1501,7 +1500,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgRateLimit:
                     if (OnRateLimit != null)
-                        await OnRateLimit?.Invoke(this,
+                        await OnRateLimit.Invoke(this,
                             new OnRateLimitArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1511,7 +1510,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgDuplicate:
                     if (OnDuplicate != null)
-                        await OnDuplicate?.Invoke(this,
+                        await OnDuplicate.Invoke(this,
                             new OnDuplicateArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1521,7 +1520,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgFollowersOnly:
                     if (OnFollowersOnly != null)
-                        await OnFollowersOnly?.Invoke(this,
+                        await OnFollowersOnly.Invoke(this,
                             new OnFollowersOnlyArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1531,7 +1530,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgSubsOnly:
                     if (OnSubsOnly != null)
-                        await OnSubsOnly?.Invoke(this,
+                        await OnSubsOnly.Invoke(this,
                             new OnSubsOnlyArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1541,7 +1540,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgEmoteOnly:
                     if (OnEmoteOnly != null)
-                        await OnEmoteOnly?.Invoke(this,
+                        await OnEmoteOnly.Invoke(this,
                             new OnEmoteOnlyArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1551,7 +1550,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgSuspended:
                     if (OnSuspended != null)
-                        await OnSuspended?.Invoke(this,
+                        await OnSuspended.Invoke(this,
                             new OnSuspendedArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1561,7 +1560,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgBanned:
                     if (OnBanned != null)
-                        await OnBanned?.Invoke(this,
+                        await OnBanned.Invoke(this,
                             new OnBannedArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1571,7 +1570,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgSlowMode:
                     if (OnSlowMode != null)
-                        await OnSlowMode?.Invoke(this,
+                        await OnSlowMode.Invoke(this,
                             new OnSlowModeArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1581,7 +1580,7 @@ namespace TwitchLib.Client
 
                 case MsgIds.MsgR9k:
                     if (OnR9kMode != null)
-                        await OnR9kMode?.Invoke(this,
+                        await OnR9kMode.Invoke(this,
                             new OnR9kModeArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1591,7 +1590,7 @@ namespace TwitchLib.Client
 
                 default:
                     if (OnUnaccountedFor != null)
-                        await OnUnaccountedFor?.Invoke(this,
+                        await OnUnaccountedFor.Invoke(this,
                             new OnUnaccountedForArgs
                             {
                                 BotUsername = TwitchUsername,
@@ -1611,7 +1610,7 @@ namespace TwitchLib.Client
         private async Task HandleJoin(IrcMessage ircMessage)
         {
             if (OnUserJoined != null)
-                await OnUserJoined?.Invoke(this,
+                await OnUserJoined.Invoke(this,
                     new OnUserJoinedArgs
                     {
                         Channel = ircMessage.Channel,
@@ -1630,7 +1629,7 @@ namespace TwitchLib.Client
                 _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
                 _hasSeenJoinedChannels.Remove(ircMessage.Channel);
                 if (OnLeftChannel != null)
-                    await OnLeftChannel?.Invoke(this,
+                    await OnLeftChannel.Invoke(this,
                         new OnLeftChannelArgs
                         {
                             BotUsername = TwitchUsername,
@@ -1640,7 +1639,7 @@ namespace TwitchLib.Client
             else
             {
                 if (OnLeftChannel != null)
-                    await OnUserLeft?.Invoke(this,
+                    await OnUserLeft.Invoke(this,
                         new OnUserLeftArgs
                         {
                             Channel = ircMessage.Channel,
@@ -1658,7 +1657,7 @@ namespace TwitchLib.Client
             if (string.IsNullOrWhiteSpace(ircMessage.Message))
             {
                 if (OnChatCleared != null)
-                    await OnChatCleared?.Invoke(this,
+                    await OnChatCleared.Invoke(this,
                         new OnChatClearedArgs
                         {
                             Channel = ircMessage.Channel
@@ -1671,7 +1670,7 @@ namespace TwitchLib.Client
             {
                 UserTimeout userTimeout = new UserTimeout(ircMessage);
                 if (OnUserTimedout != null)
-                    await OnUserTimedout?.Invoke(this,
+                    await OnUserTimedout.Invoke(this,
                         new OnUserTimedoutArgs
                         {
                             UserTimeout = userTimeout
@@ -1681,7 +1680,7 @@ namespace TwitchLib.Client
 
             UserBan userBan = new UserBan(ircMessage);
             if (OnUserBanned != null)
-                await OnUserBanned?.Invoke(this,
+                await OnUserBanned.Invoke(this,
                     new OnUserBannedArgs
                     {
                         UserBan = userBan
@@ -1695,7 +1694,7 @@ namespace TwitchLib.Client
         private async Task HandleClearMsg(IrcMessage ircMessage)
         {
             if (OnMessageCleared != null)
-                await OnMessageCleared?.Invoke(this,
+                await OnMessageCleared.Invoke(this,
                     new OnMessageClearedArgs
                     {
                         Channel = ircMessage.Channel,
@@ -1716,14 +1715,14 @@ namespace TwitchLib.Client
             {
                 _hasSeenJoinedChannels.Add(userState.Channel.ToLowerInvariant());
                 if (OnUserStateChanged != null)
-                    await OnUserStateChanged?.Invoke(this,
+                    await OnUserStateChanged.Invoke(this,
                         new OnUserStateChangedArgs
                         {
                             UserState = userState
                         });
             }
             else if (OnMessageSent != null)
-                await OnMessageSent?.Invoke(this,
+                await OnMessageSent.Invoke(this,
                     new OnMessageSentArgs
                     {
                         SentMessage = new SentMessage(userState, _lastMessageSent)
@@ -1736,7 +1735,7 @@ namespace TwitchLib.Client
         private async Task Handle004()
         {
             if (OnConnected != null)
-                await OnConnected?.Invoke(this,
+                await OnConnected.Invoke(this,
                     new OnConnectedArgs
                     {
                         BotUsername = TwitchUsername
@@ -1750,7 +1749,7 @@ namespace TwitchLib.Client
         private async Task Handle353(IrcMessage ircMessage)
         {
             if (OnExistingUsersDetected != null)
-                await OnExistingUsersDetected?.Invoke(this,
+                await OnExistingUsersDetected.Invoke(this,
                     new OnExistingUsersDetectedArgs
                     {
                         Channel = ircMessage.Channel,
@@ -1776,7 +1775,7 @@ namespace TwitchLib.Client
             WhisperMessage whisperMessage = new WhisperMessage(ircMessage, TwitchUsername);
             PreviousWhisper = whisperMessage;
             if (OnWhisperReceived != null)
-                await OnWhisperReceived?.Invoke(this,
+                await OnWhisperReceived.Invoke(this,
                     new OnWhisperReceivedArgs
                     {
                         WhisperMessage = whisperMessage
@@ -1788,7 +1787,7 @@ namespace TwitchLib.Client
                 {
                     WhisperCommand whisperCommand = new WhisperCommand(whisperMessage);
                     if (OnWhisperCommandReceived != null)
-                        await OnWhisperCommandReceived?.Invoke(this,
+                        await OnWhisperCommandReceived.Invoke(this,
                             new OnWhisperCommandReceivedArgs
                             {
                                 Command = whisperCommand
@@ -1798,7 +1797,7 @@ namespace TwitchLib.Client
             }
 
             if (OnUnaccountedFor != null)
-                await OnUnaccountedFor?.Invoke(this,
+                await OnUnaccountedFor.Invoke(this,
                     new OnUnaccountedForArgs
                     {
                         BotUsername = TwitchUsername,
@@ -1822,7 +1821,7 @@ namespace TwitchLib.Client
                 KeyValuePair<string, DateTime> channel = _awaitingJoins.FirstOrDefault(x => x.Key == ircMessage.Channel);
                 _awaitingJoins.Remove(channel);
                 if (OnJoinedChannel != null)
-                    await OnJoinedChannel?.Invoke(this,
+                    await OnJoinedChannel.Invoke(this,
                         new OnJoinedChannelArgs
                         {
                             BotUsername = TwitchUsername,
@@ -1831,7 +1830,7 @@ namespace TwitchLib.Client
             }
 
             if (OnChannelStateChanged != null)
-                await OnChannelStateChanged?.Invoke(this,
+                await OnChannelStateChanged.Invoke(this,
                     new OnChannelStateChangedArgs
                     {
                         ChannelState = new ChannelState(ircMessage),
@@ -1849,7 +1848,7 @@ namespace TwitchLib.Client
             if (!successMsgId)
             {
                 if (OnUnaccountedFor != null)
-                    await OnUnaccountedFor?.Invoke(this,
+                    await OnUnaccountedFor.Invoke(this,
                         new OnUnaccountedForArgs
                         {
                             BotUsername = TwitchUsername,
@@ -1866,7 +1865,7 @@ namespace TwitchLib.Client
                 case MsgIds.Announcement:
                     Announcement announcement = new Announcement(ircMessage);
                     if (OnAnnouncement != null)
-                        await OnAnnouncement?.Invoke(this,
+                        await OnAnnouncement.Invoke(this,
                             new OnAnnouncementArgs
                             {
                                 Announcement = announcement,
@@ -1877,7 +1876,7 @@ namespace TwitchLib.Client
                 case MsgIds.Raid:
                     RaidNotification raidNotification = new RaidNotification(ircMessage);
                     if (OnRaidNotification != null)
-                        await OnRaidNotification?.Invoke(this,
+                        await OnRaidNotification.Invoke(this,
                             new OnRaidNotificationArgs
                             {
                                 Channel = ircMessage.Channel,
@@ -1888,7 +1887,7 @@ namespace TwitchLib.Client
                 case MsgIds.ReSubscription:
                     ReSubscriber resubscriber = new ReSubscriber(ircMessage);
                     if (OnReSubscriber != null)
-                        await OnReSubscriber?.Invoke(this,
+                        await OnReSubscriber.Invoke(this,
                             new OnReSubscriberArgs
                             {
                                 ReSubscriber = resubscriber,
@@ -1899,7 +1898,7 @@ namespace TwitchLib.Client
                 case MsgIds.SubGift:
                     GiftedSubscription giftedSubscription = new GiftedSubscription(ircMessage);
                     if (OnGiftedSubscription != null)
-                        await OnGiftedSubscription?.Invoke(this,
+                        await OnGiftedSubscription.Invoke(this,
                             new OnGiftedSubscriptionArgs
                             {
                                 GiftedSubscription = giftedSubscription,
@@ -1910,7 +1909,7 @@ namespace TwitchLib.Client
                 case MsgIds.CommunitySubscription:
                     CommunitySubscription communitySubscription = new CommunitySubscription(ircMessage);
                     if (OnCommunitySubscription != null)
-                        await OnCommunitySubscription?.Invoke(this,
+                        await OnCommunitySubscription.Invoke(this,
                             new OnCommunitySubscriptionArgs
                             {
                                 GiftedSubscription = communitySubscription,
@@ -1921,7 +1920,7 @@ namespace TwitchLib.Client
                 case MsgIds.ContinuedGiftedSubscription:
                     ContinuedGiftedSubscription continuedGiftedSubscription = new ContinuedGiftedSubscription(ircMessage);
                     if (OnContinuedGiftedSubscription != null)
-                        await OnContinuedGiftedSubscription?.Invoke(this,
+                        await OnContinuedGiftedSubscription.Invoke(this,
                             new OnContinuedGiftedSubscriptionArgs
                             {
                                 ContinuedGiftedSubscription = continuedGiftedSubscription,
@@ -1932,7 +1931,7 @@ namespace TwitchLib.Client
                 case MsgIds.Subscription:
                     Subscriber subscriber = new Subscriber(ircMessage);
                     if (OnNewSubscriber != null)
-                        await OnNewSubscriber?.Invoke(this,
+                        await OnNewSubscriber.Invoke(this,
                             new OnNewSubscriberArgs
                             {
                                 Subscriber = subscriber,
@@ -1943,7 +1942,7 @@ namespace TwitchLib.Client
                 case MsgIds.PrimePaidUprade:
                     PrimePaidSubscriber primePaidSubscriber = new PrimePaidSubscriber(ircMessage);
                     if (OnPrimePaidSubscriber != null)
-                        await OnPrimePaidSubscriber?.Invoke(this,
+                        await OnPrimePaidSubscriber.Invoke(this,
                             new OnPrimePaidSubscriberArgs
                             {
                                 PrimePaidSubscriber = primePaidSubscriber,
@@ -1953,7 +1952,7 @@ namespace TwitchLib.Client
 
                 default:
                     if (OnUnaccountedFor != null)
-                        await OnUnaccountedFor?.Invoke(this,
+                        await OnUnaccountedFor.Invoke(this,
                             new OnUnaccountedForArgs
                             {
                                 BotUsername = TwitchUsername,
@@ -1975,7 +1974,7 @@ namespace TwitchLib.Client
             if (ircMessage.Message.StartsWith("+o"))
             {
                 if (OnModeratorJoined != null)
-                    await OnModeratorJoined?.Invoke(this,
+                    await OnModeratorJoined.Invoke(this,
                         new OnModeratorJoinedArgs
                         {
                             Channel = ircMessage.Channel,
@@ -1987,7 +1986,7 @@ namespace TwitchLib.Client
             if (ircMessage.Message.StartsWith("-o"))
             {
                 if (OnModeratorLeft != null)
-                    await OnModeratorLeft?.Invoke(this,
+                    await OnModeratorLeft.Invoke(this,
                         new OnModeratorLeftArgs
                         {
                             Channel = ircMessage.Channel,
@@ -2000,7 +1999,7 @@ namespace TwitchLib.Client
         /// Handles the Cap
         /// </summary>
         /// <param name="ircMessage">The irc message</param>
-        private void HandleCap(IrcMessage ircMessage)
+        private static void HandleCap(IrcMessage ircMessage)
         {
             // do nothing
         }
