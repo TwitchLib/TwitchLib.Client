@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -226,7 +225,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">The channel.</param>
         /// <param name="chatCommandIdentifier">The chat command identifier.</param>
         /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
-        Task Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
+        void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
 
         /// <summary>
         /// Initializes the specified credentials.
@@ -235,7 +234,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channels">The channels to join once connected.</param>
         /// <param name="chatCommandIdentifier">The chat command identifier.</param>
         /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
-        Task Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
+        void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
 
         /// <summary>
         /// Sets the connection credentials.

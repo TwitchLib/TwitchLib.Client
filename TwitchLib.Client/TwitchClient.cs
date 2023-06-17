@@ -491,10 +491,10 @@ namespace TwitchLib.Client
         /// <param name="channel">The channel to connect to.</param>
         /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        public async Task Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
+        public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
         {
             if (channel != null && channel[0] == '#') channel = channel.Substring(1);
-            await InitializationHelper(credentials,
+             InitializationHelper(credentials,
                 new List<string>()
                 {
                     channel
@@ -510,10 +510,10 @@ namespace TwitchLib.Client
         /// <param name="channels">List of channels to join when connected</param>
         /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        public async Task Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
+        public void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
         {
             channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
-            await InitializationHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier);
+            InitializationHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier);
         }
 
         /// <summary>
@@ -632,18 +632,18 @@ namespace TwitchLib.Client
 
         #region SendMessage
 
-        private Task SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
+        private void SendTwitchMessage(JoinedChannel channel, string message, string replyToId = null, bool dryRun = false)
         {
             if (!IsInitialized)
                 HandleNotInitialized();
 
             if (channel == null || message == null || dryRun)
-                return Task.CompletedTask;
+                return;
 
             if (message.Length > 500)
             {
                 _logger?.LogMessageTooLong();
-                return Task.CompletedTask;
+                return;
             }
 
             var twitchMessage = new OutboundChatMessage
@@ -661,7 +661,7 @@ namespace TwitchLib.Client
             _lastMessageSent = message;
 
             _throttling.Enqueue(twitchMessage);
-            return Task.CompletedTask;
+            return;
         }
 
         /// <summary>
@@ -672,13 +672,14 @@ namespace TwitchLib.Client
         /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
         public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
         {
-            SendMessageAsync(channel, message, dryRun).GetAwaiter().GetResult();
+            SendTwitchMessage(channel, message,null, dryRun);
         }
 
         /// <inheritdoc />
+        //TODO: This function does not serve performance improvement and should be deprecated
         public async Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false)
         {
-          await SendTwitchMessage(channel, message, null, dryRun);
+            await Task.Run(() => { SendTwitchMessage(channel, message, null, dryRun); });
         }
 
         /// <summary>
