@@ -30,7 +30,7 @@ namespace TwitchLib.Client.Test
                     h => client.OnSendReceiveData -= h,
                     async () =>
                     {
-                        await client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                        client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
                         client.Connect();
                         await _mockClient.ReceiveMessage($":tmi.twitch.tv 001 {TWITCH_BOT_USERNAME} :Welcome, GLHF!");
                     });
@@ -51,7 +51,7 @@ namespace TwitchLib.Client.Test
                    h => client.OnJoinedChannel -= h,
                    async () =>
                    {
-                       await client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                       client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
                        client.Connect();
                        await ReceivedTwitchConnected();
                    });
@@ -65,9 +65,9 @@ namespace TwitchLib.Client.Test
             var client = new TwitchClient(_mockClient);
             var emoteCount = 0;
             client.OnConnected += (sender, e) => ReceivedTestMessage();
-            client.OnMessageReceived += async (sender, e) => emoteCount = e.ChatMessage.EmoteSet.Emotes.Count;
+            client.OnMessageReceived += async (sender, e) =>  emoteCount = e.ChatMessage.EmoteSet.Emotes.Count;
 
-            await client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
             client.Connect();
             await ReceivedTwitchConnected();
 
@@ -87,7 +87,7 @@ namespace TwitchLib.Client.Test
                     h => client.OnConnected -= h,
                     async () =>
                     {
-                        await client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                        client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
                         client.Connect();
                         await ReceivedTwitchConnected();
                     });
@@ -103,7 +103,7 @@ namespace TwitchLib.Client.Test
                   h => client.OnMessageReceived -= h,
                   async () =>
                   {
-                      await client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                      client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
                       client.Connect();
                       await ReceivedTestMessage();
                   });
@@ -119,7 +119,7 @@ namespace TwitchLib.Client.Test
                   h => client.OnJoinedChannel -= h,
                   async () =>
                   {
-                      await client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                      client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
                       client.Connect();
                       await ReceivedTwitchConnected();
                       client.JoinChannel(TWITCH_CHANNEL);
@@ -131,7 +131,7 @@ namespace TwitchLib.Client.Test
         public async Task ClientChannelAddedToJoinedChannels()
         {
             var client = new TwitchClient(_mockClient);
-            await client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
             client.Connect();
             await ReceivedTwitchConnected();
             client.JoinChannel(TWITCH_CHANNEL);
@@ -149,7 +149,7 @@ namespace TwitchLib.Client.Test
                   h => client.OnDisconnected -= h,
                   async () =>
                   {
-                      await client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                      client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
                       client.Connect();
                       await ReceivedTwitchConnected();
                       client.JoinChannel(TWITCH_CHANNEL);
@@ -179,7 +179,7 @@ namespace TwitchLib.Client.Test
                     client.OnDisconnected += async (s, e) => { client.Reconnect(); };
                     client.OnReconnected += async (s, e) => { pauseReconnected.Set(); };
 
-                    await client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+                    client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
                     client.Connect();
                     await ReceivedTwitchConnected();
 

@@ -675,13 +675,6 @@ namespace TwitchLib.Client
             SendTwitchMessage(channel, message,null, dryRun);
         }
 
-        /// <inheritdoc />
-        //TODO: This function does not serve performance improvement and should be deprecated
-        public async Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false)
-        {
-            await Task.Run(() => { SendTwitchMessage(channel, message, null, dryRun); });
-        }
-
         /// <summary>
         /// SendMessage wrapper that accepts channel in string form.
         /// </summary>
@@ -691,12 +684,6 @@ namespace TwitchLib.Client
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
             SendMessage(GetJoinedChannel(channel), message, dryRun);
-        }
-
-        /// <inheritdoc />
-        public async Task SendMessageAsync(string channel, string message, bool dryRun = false)
-        {
-            await SendMessageAsync(GetJoinedChannel(channel), message, dryRun);
         }
 
         /// <summary>
@@ -712,7 +699,6 @@ namespace TwitchLib.Client
         }
 
         /// <inheritdoc />
-        //TODO: Rework Throttling service. Access to its is always sync
         public Task SendReplyAsync(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
         {
             SendTwitchMessage(channel, message, replyToId, dryRun);
