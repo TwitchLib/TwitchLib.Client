@@ -39,19 +39,11 @@ namespace TwitchLib.Client
 
         private readonly ISendOptions _sendOptions;
         private ThrottlingService _throttling;
-        
+
         /// <summary>
         /// The channel emotes
         /// </summary>
         private MessageEmoteCollection _channelEmotes = new MessageEmoteCollection();
-        /// <summary>
-        /// The chat command identifiers
-        /// </summary>
-        private readonly ICollection<char> _chatCommandIdentifiers = new HashSet<char>();
-        /// <summary>
-        /// The whisper command identifiers
-        /// </summary>
-        private readonly ICollection<char> _whisperCommandIdentifiers = new HashSet<char>();
         /// <summary>
         /// The join channel queue
         /// </summary>
@@ -99,6 +91,10 @@ namespace TwitchLib.Client
         #endregion
 
         #region Public Variables
+        /// <inheritdoc/>
+        public ICollection<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
+        /// <inheritdoc/>
+        public ICollection<char> WhisperCommandIdentifiers { get; } = new HashSet<char>();
         /// <summary>
         /// Assembly version of TwitchLib.Client.
         /// </summary>
@@ -461,12 +457,10 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="credentials">The credentials to use to log in.</param>
         /// <param name="channel">The channel to connect to.</param>
-        /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
-        /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
+        public void Initialize(ConnectionCredentials credentials, string channel = null)
         {
             if (channel != null && channel[0] == '#') channel = channel.Substring(1);
-            InitializationHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, whisperCommandIdentifier);
+            InitializationHelper(credentials, new List<string>() { channel });
         }
 
         /// <summary>
@@ -474,12 +468,10 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="credentials">The credentials to use to log in.</param>
         /// <param name="channels">List of channels to join when connected</param>
-        /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
-        /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        public void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
+        public void Initialize(ConnectionCredentials credentials, List<string> channels)
         {
             channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
-            InitializationHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier);
+            InitializationHelper(credentials, channels);
         }
 
         /// <summary>
@@ -487,21 +479,13 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="credentials">The credentials to use to log in.</param>
         /// <param name="channels">List of channels to join when connected</param>
-        /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
-        /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
         private void InitializationHelper(
             ConnectionCredentials credentials, 
-            List<string> channels, 
-            char chatCommandIdentifier = '!', 
-            char whisperCommandIdentifier = '!')
+            List<string> channels)
         {
             _logger?.LogInitialized(Assembly.GetExecutingAssembly().GetName().Version);
             ConnectionCredentials = credentials;
             TwitchUsername = ConnectionCredentials.TwitchUsername;
-            if (chatCommandIdentifier != '\0')
-                _chatCommandIdentifiers.Add(chatCommandIdentifier);
-            if (whisperCommandIdentifier != '\0')
-                _whisperCommandIdentifiers.Add(whisperCommandIdentifier);
 
             if (channels != null && channels.Count > 0)
             {
@@ -768,48 +752,6 @@ namespace TwitchLib.Client
         }
         #endregion
 
-        #region Command Identifiers
-        /// <summary>
-        /// Adds a character to a list of characters that if found at the start of a message, fires command received event.
-        /// </summary>
-        /// <param name="identifier">Character, that if found at start of message, fires command received event.</param>
-        public void AddChatCommandIdentifier(char identifier)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            _chatCommandIdentifiers.Add(identifier);
-        }
-
-        /// <summary>
-        /// Removes a character from a list of characters that if found at the start of a message, fires command received event.
-        /// </summary>
-        /// <param name="identifier">Command identifier to removed from identifier list.</param>
-        public void RemoveChatCommandIdentifier(char identifier)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            _chatCommandIdentifiers.Remove(identifier);
-        }
-
-        /// <summary>
-        /// Adds a character to a list of characters that if found at the start of a whisper, fires command received event.
-        /// </summary>
-        /// <param name="identifier">Character, that if found at start of message, fires command received event.</param>
-        public void AddWhisperCommandIdentifier(char identifier)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            _whisperCommandIdentifiers.Add(identifier);
-        }
-
-        /// <summary>
-        /// Removes a character to a list of characters that if found at the start of a whisper, fires command received event.
-        /// </summary>
-        /// <param name="identifier">Command identifier to removed from identifier list.</param>
-        public void RemoveWhisperCommandIdentifier(char identifier)
-        {
-            if (!IsInitialized) HandleNotInitialized();
-            _whisperCommandIdentifiers.Remove(identifier);
-        }
-        #endregion
-
         #region ConnectionCredentials
 
         /// <summary>
@@ -892,23 +834,26 @@ namespace TwitchLib.Client
         {
             LeaveChannelAsync(channel).GetAwaiter().GetResult();
         }
-        
+
         /// <inheritdoc />
         public async Task LeaveChannelAsync(string channel)
         {
-            if (!IsInitialized) 
+            if (!IsInitialized)
                 HandleNotInitialized();
-            
+
             // Channel MUST be lower case
             channel = channel.ToLower();
-            if (channel[0] == '#') 
+            if (channel[0] == '#')
                 channel = channel.Substring(1);
 
             _logger?.LogLeavingChannel(channel);
             var joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
-            
+
             if (joinedChannel != null)
+            {
                 await _client.SendAsync(Rfc2812.Part($"#{channel}"));
+                _joinedChannelManager.RemoveJoinedChannel(channel);
+            }
         }
 
         /// <summary>
@@ -1235,9 +1180,9 @@ namespace TwitchLib.Client
                 if (msgId == MsgIds.UserIntro)
                     OnUserIntro?.Invoke(this, new OnUserIntroArgs { ChatMessage = chatMessage });
 
-            if (_chatCommandIdentifiers != null && _chatCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(chatMessage.Message))
+            if (ChatCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(chatMessage.Message))
             {
-                if (_chatCommandIdentifiers.Contains(chatMessage.Message[0]))
+                if (ChatCommandIdentifiers.Contains(chatMessage.Message[0]))
                 {
                     ChatCommand chatCommand = new ChatCommand(chatMessage);
                     OnChatCommandReceived?.Invoke(this, new OnChatCommandReceivedArgs { Command = chatCommand });
@@ -1456,9 +1401,9 @@ namespace TwitchLib.Client
             PreviousWhisper = whisperMessage;
             OnWhisperReceived?.Invoke(this, new OnWhisperReceivedArgs { WhisperMessage = whisperMessage });
 
-            if (_whisperCommandIdentifiers != null && _whisperCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(whisperMessage.Message)) 
+            if (WhisperCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(whisperMessage.Message)) 
             {
-                if (_whisperCommandIdentifiers.Contains(whisperMessage.Message[0]))
+                if (WhisperCommandIdentifiers.Contains(whisperMessage.Message[0]))
                 {
                     WhisperCommand whisperCommand = new WhisperCommand(whisperMessage);
                     OnWhisperCommandReceived?.Invoke(this, new OnWhisperCommandReceivedArgs { Command = whisperCommand });

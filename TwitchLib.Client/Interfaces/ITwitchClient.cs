@@ -58,6 +58,15 @@ namespace TwitchLib.Client.Interfaces
         /// <value><c>true</c> if [will replace emotes]; otherwise, <c>false</c>.</value>
         bool WillReplaceEmotes { get; set; }
         /// <summary>
+        /// The chat command identifiers
+        /// </summary>
+        ICollection<char> ChatCommandIdentifiers { get; }
+        /// <summary>
+        /// The whisper command identifiers
+        /// </summary>
+        ICollection<char> WhisperCommandIdentifiers { get; }
+
+        /// <summary>
         /// Occurs when [on channel state changed].
         /// </summary>
         event EventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
@@ -224,45 +233,20 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         /// <param name="credentials">The credentials.</param>
         /// <param name="channel">The channel.</param>
-        /// <param name="chatCommandIdentifier">The chat command identifier.</param>
-        /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
-        void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
+        void Initialize(ConnectionCredentials credentials, string channel = null);
 
         /// <summary>
         /// Initializes the specified credentials.
         /// </summary>
         /// <param name="credentials">The credentials.</param>
         /// <param name="channels">The channels to join once connected.</param>
-        /// <param name="chatCommandIdentifier">The chat command identifier.</param>
-        /// <param name="whisperCommandIdentifier">The whisper command identifier.</param>
-        void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!');
+        void Initialize(ConnectionCredentials credentials, List<string> channels);
 
         /// <summary>
         /// Sets the connection credentials.
         /// </summary>
         /// <param name="credentials">The credentials.</param>
         void SetConnectionCredentials(ConnectionCredentials credentials);
-
-        /// <summary>
-        /// Adds the chat command identifier.
-        /// </summary>
-        /// <param name="identifier">The identifier.</param>
-        void AddChatCommandIdentifier(char identifier);
-        /// <summary>
-        /// Adds the whisper command identifier.
-        /// </summary>
-        /// <param name="identifier">The identifier.</param>
-        void AddWhisperCommandIdentifier(char identifier);
-        /// <summary>
-        /// Removes the chat command identifier.
-        /// </summary>
-        /// <param name="identifier">The identifier.</param>
-        void RemoveChatCommandIdentifier(char identifier);
-        /// <summary>
-        /// Removes the whisper command identifier.
-        /// </summary>
-        /// <param name="identifier">The identifier.</param>
-        void RemoveWhisperCommandIdentifier(char identifier);
 
         /// <summary>
         /// Connects this instance.
