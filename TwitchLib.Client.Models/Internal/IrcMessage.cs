@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using TwitchLib.Client.Enums.Internal;
@@ -13,14 +14,14 @@ namespace TwitchLib.Client.Models.Internal
         public string Channel => _channel ??= Params.StartsWith("#") ? Params.Remove(0, 1) : Params;
         private string _channel;
 
-        public string Params => _parameters != null && _parameters.Length > 0 ? _parameters[0] : "";
+        public string Params => _parameters?.Length > 0 ? _parameters[0] : "";
 
         /// <summary>
         /// Message itself
         /// </summary>
         public string Message => Trailing;
 
-        public string Trailing => _parameters != null && _parameters.Length > 1 ? _parameters[_parameters.Length - 1] : "";
+        public string Trailing => _parameters?.Length > 1 ? _parameters[_parameters.Length - 1] : "";
 
         /// <summary>
         /// Command parameters
@@ -76,18 +77,51 @@ namespace TwitchLib.Client.Models.Internal
             Dictionary<string, string> tags = null)
         {
             var idx = hostmask.IndexOf('!');
-            User = idx != -1 ? hostmask.Substring(0, idx) : hostmask;
+            User = idx >= 0 ? hostmask.Substring(0, idx) : hostmask;
             Hostmask = hostmask;
             _parameters = parameters;
             Command = command;
             Tags = tags;
 
-            if (command == IrcCommand.RPL_353)
+            if (command == IrcCommand.RPL_353
+                && Params.Length > 0
+                && Params.Contains("#"))
             {
-                if(Params.Length > 0 && Params.Contains("#"))
-                {
-                    _parameters[0] = $"#{_parameters[0].Split('#')[1]}";
-                }
+                _parameters[0] = $"#{_parameters[0].Split('#')[1]}";
+            }
+        }
+
+        /// <summary>
+        /// Create an IrcMessage, settings its raw string.
+        /// IrcParser *must* use this constructor, otherwise the raw string
+        /// will be re-generated on each PRIVMSG (90% of all messages)
+        /// </summary>
+        /// <param name="raw">Raw IRC message</param>
+        /// <param name="command">IRC Command</param>
+        /// <param name="parameters">Command params</param>
+        /// <param name="user">User</param>
+        /// <param name="hostmask">Hostmask</param>
+        /// <param name="tags">IRCv3 tags</param>
+        internal IrcMessage(
+            string raw,
+            IrcCommand command,
+            string[] parameters,
+            string user,
+            string hostmask,
+            Dictionary<string, string> tags = null)
+        {
+            User = user;
+            Hostmask = hostmask;
+            Command = command;
+            Tags = tags;
+
+            _rawString = raw;
+            _parameters = parameters;
+            if (command == IrcCommand.RPL_353
+                && Params.Length > 0
+                && Params.Contains("#"))
+            {
+                _parameters[0] = $"#{_parameters[0].Split('#')[1]}";
             }
         }
 
@@ -116,12 +150,12 @@ namespace TwitchLib.Client.Models.Internal
             if (_parameters == null || _parameters.Length == 0)
                 return raw.ToString();
 
-            if (_parameters[0] != null && _parameters[0].Length > 0)
+            if (!string.IsNullOrEmpty(_parameters[0]))
             {
                 raw.Append(" ").Append(_parameters[0]);
             }
 
-            if (_parameters.Length > 1 && _parameters[1] != null && _parameters[1].Length > 0)
+            if (_parameters.Length > 1 && _parameters[1]?.Length > 0)
             {
                 raw.Append(" :").Append(_parameters[1]);
             }

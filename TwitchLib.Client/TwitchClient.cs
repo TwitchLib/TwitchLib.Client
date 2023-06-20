@@ -79,10 +79,6 @@ namespace TwitchLib.Client
         private List<KeyValuePair<string, DateTime>> _awaitingJoins;
 
         /// <summary>
-        /// The irc parser
-        /// </summary>
-        private readonly IrcParser _ircParser = new();
-        /// <summary>
         /// The joined channel manager
         /// </summary>
         private readonly JoinedChannelManager _joinedChannelManager = new();
@@ -465,7 +461,7 @@ namespace TwitchLib.Client
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
         public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
         {
-            if (channel != null && channel[0] == '#') channel = channel.Substring(1);
+            if (channel?[0] == '#') channel = channel.Substring(1);
             InitializationHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, whisperCommandIdentifier);
         }
 
@@ -478,7 +474,7 @@ namespace TwitchLib.Client
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
         public void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
         {
-            channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
+            channels = channels.ConvertAll(x => x[0] == '#' ? x.Substring(1) : x);
             InitializationHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier);
         }
 
@@ -503,15 +499,15 @@ namespace TwitchLib.Client
             if (whisperCommandIdentifier != '\0')
                 _whisperCommandIdentifiers.Add(whisperCommandIdentifier);
 
-            if (channels != null && channels.Count > 0)
+            if (channels?.Count > 0)
             {
-                for(var i = 0; i < channels.Count; i++)
+                for (var i = 0; i < channels.Count; i++)
                 {
                     if (string.IsNullOrEmpty(channels[i]))
                         continue;
 
                     // Check to see if client is already in channel
-                    if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channels[i]) != null)
+                    if (JoinedChannels.Any(x => x.Channel.Equals(channels[i], StringComparison.OrdinalIgnoreCase)))
                         return;
                     
                     _joinChannelQueue.Enqueue(new JoinedChannel(channels[i]));
@@ -940,14 +936,14 @@ namespace TwitchLib.Client
         {
             OnReadLineTestAsync(rawIrc).GetAwaiter().GetResult();
         }
-        
+
         /// <inheritdoc />
         public async Task OnReadLineTestAsync(string rawIrc)
         {
-            if (!IsInitialized) 
+            if (!IsInitialized)
                 HandleNotInitialized();
-            
-            await HandleIrcMessageAsync(_ircParser.ParseIrcMessage(rawIrc));
+
+            await HandleIrcMessageAsync(IrcParser.ParseMessage(rawIrc));
         }
 
         #region Client Events
@@ -1011,7 +1007,7 @@ namespace TwitchLib.Client
 
                 _logger?.LogReceived(line);
                 OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = SendReceiveDirection.Received, Data = line });
-                await HandleIrcMessageAsync(_ircParser.ParseIrcMessage(line));
+                await HandleIrcMessageAsync(IrcParser.ParseMessage(line));
             }
         }
 

@@ -25,4 +25,10 @@
   <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <!-- This is a punishment for worshiping wrong gods of abstraction -->
+    <_Parameter1>TwitchLib.Client</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

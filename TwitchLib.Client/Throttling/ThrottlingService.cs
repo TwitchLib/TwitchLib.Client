@@ -18,7 +18,7 @@ namespace TwitchLib.Client.Throttling
         private readonly IClient _client;
         private readonly ISendOptions _sendOptions;
         private readonly ILogger _logger;
-        private readonly ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>> _queue = new ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>>();
+        private readonly ConcurrentQueue<(DateTime, OutboundChatMessage)> _queue = new ConcurrentQueue<(DateTime, OutboundChatMessage)>();
         private readonly Throttler _throttler;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private Task _sendTask;
@@ -58,14 +58,14 @@ namespace TwitchLib.Client.Throttling
         /// </returns>
         internal bool Enqueue(OutboundChatMessage message)
         {
-            if (!_client.IsConnected || 
-                _queue.Count >= _sendOptions.QueueCapacity || 
+            if (!_client.IsConnected ||
+                _queue.Count >= _sendOptions.QueueCapacity ||
                 message == null)
             {
                 return false;
             }
             
-            _queue.Enqueue(new Tuple<DateTime, OutboundChatMessage>(DateTime.UtcNow, message));
+            _queue.Enqueue((DateTime.UtcNow, message));
             return true;
         }
         
@@ -96,7 +96,7 @@ namespace TwitchLib.Client.Throttling
             try
             {
                 var taken = _queue.TryDequeue(out var message);
-                if (!taken || message == null)
+                if (!taken || message == default) // OutBoundChatMessage is null as an indicator of default
                 {
                     return;
                 }
@@ -138,7 +138,8 @@ namespace TwitchLib.Client.Throttling
 
         private void ThrottleMessage(OutboundChatMessage itemNotSent)
         {
-            var msg = "Message Throttle Occured. Too Many Messages within the period specified in WebsocketClientOptions.";
+            const string msg = "Message Throttle Occured. Too Many Messages within the period specified in WebsocketClientOptions.";
+
             var args = new OnMessageThrottledArgs(
                 msg,
                 itemNotSent,

@@ -92,7 +92,7 @@ namespace TwitchLib.Client.Test
         [Fact]
         public void ClientRaisesOnMessageReceived()
         {
-            var client = new TwitchClient( _mockClient);
+            var client = new TwitchClient(_mockClient);
 
             Assert.Raises<OnMessageReceivedArgs>(
                   h => client.OnMessageReceived += h,

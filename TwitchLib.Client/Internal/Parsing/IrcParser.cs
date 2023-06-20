@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TwitchLib.Client.Enums.Internal;
+using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Internal.Parsing
@@ -8,219 +9,120 @@ namespace TwitchLib.Client.Internal.Parsing
     /// <summary>
     /// Class IrcParser.
     /// </summary>
-    internal class IrcParser
+    internal static class IrcParser
     {
-
         /// <summary>
-        /// Builds an IrcMessage from a raw string
+        /// Builds an IrcMessage from a string.
         /// </summary>
         /// <param name="raw">Raw IRC message</param>
         /// <returns>IrcMessage object</returns>
-        public IrcMessage ParseIrcMessage(string raw)
+        public static IrcMessage ParseMessage(string raw)
         {
-            Dictionary<string, string> tagDict = new Dictionary<string, string>();
+            // Sequentially parse each msg segment, advancing the span as we go
+            var source = raw.AsSpan();
+            var tags = ParseTags(ref source);
+            var (user, hostmask) = ParsePrefix(ref source);
+            var command = ParseCommand(ref source);
 
-            ParserState state = ParserState.STATE_NONE;
-            Span<int> starts = stackalloc int[] { 0, 0, 0, 0, 0, 0 };
-            Span<int> lens = stackalloc int[] { 0, 0, 0, 0, 0, 0 };
-            for (int i = 0; i < raw.Length; ++i)
+            string parameters, message;
+            var messageOffset = source.IndexOf(" :".AsSpan());
+            if (messageOffset >= 0)
             {
-                lens[(int)state] = i - starts[(int)state] - 1;
-                if (state == ParserState.STATE_NONE && raw[i] == '@')
-                {
-                    state = ParserState.STATE_V3;
-                    starts[(int)state] = ++i;
-
-                    int start = i;
-                    string key = null;
-                    for (; i < raw.Length; ++i)
-                    {
-                        if (raw[i] == '=')
-                        {
-                            key = raw.Substring(start, i - start);
-                            start = i + 1;
-                        }
-                        else if (raw[i] == ';')
-                        {
-                            if (key == null)
-                                tagDict[raw.Substring(start, i - start)] = "1";
-                            else
-                                tagDict[key] = raw.Substring(start, i - start);
-                            start = i + 1;
-                        }
-                        else if (raw[i] == ' ')
-                        {
-                            if (key == null)
-                                tagDict[raw.Substring(start, i - start)] = "1";
-                            else
-                                tagDict[key] = raw.Substring(start, i - start);
-                            break;
-                        }
-                    }
-                }
-                else if (state < ParserState.STATE_PREFIX && raw[i] == ':')
-                {
-                    state = ParserState.STATE_PREFIX;
-                    starts[(int)state] = ++i;
-                }
-                else if (state < ParserState.STATE_COMMAND)
-                {
-                    state = ParserState.STATE_COMMAND;
-                    starts[(int)state] = i;
-                }
-                else if (state < ParserState.STATE_TRAILING && raw[i] == ':')
-                {
-                    state = ParserState.STATE_TRAILING;
-                    starts[(int)state] = ++i;
-                    break;
-                }
-                else if (state < ParserState.STATE_TRAILING && raw[i] == '+' || state < ParserState.STATE_TRAILING && raw[i] == '-')
-                {
-                    state = ParserState.STATE_TRAILING;
-                    starts[(int)state] = i;
-                    break;
-                }
-                else if (state == ParserState.STATE_COMMAND)
-                {
-                    state = ParserState.STATE_PARAM;
-                    starts[(int)state] = i;
-                }
-
-                while (i < raw.Length && raw[i] != ' ')
-                    ++i;
+                parameters = source.Slice(0, messageOffset).ToString();
+                message = source.Slice(messageOffset + 2).ToString();
+            }
+            else
+            {
+                parameters = source.ToString();
+                message = "";
             }
 
-            lens[(int)state] = raw.Length - starts[(int)state];
-            var cmd = raw.AsSpan(starts[(int)ParserState.STATE_COMMAND],
-                lens[(int)ParserState.STATE_COMMAND]);
-
-            IrcCommand command = IrcCommand.Unknown;
-            switch (cmd)
-            {
-                case "PRIVMSG":
-                    command = IrcCommand.PrivMsg;
-                    break;
-                case "NOTICE":
-                    command = IrcCommand.Notice;
-                    break;
-                case "PING":
-                    command = IrcCommand.Ping;
-                    break;
-                case "PONG":
-                    command = IrcCommand.Pong;
-                    break;
-                case "CLEARCHAT":
-                    command = IrcCommand.ClearChat;
-                    break;
-                case "CLEARMSG":
-                    command = IrcCommand.ClearMsg;
-                    break;
-                case "USERSTATE":
-                    command = IrcCommand.UserState;
-                    break;
-                case "GLOBALUSERSTATE":
-                    command = IrcCommand.GlobalUserState;
-                    break;
-                case "NICK":
-                    command = IrcCommand.Nick;
-                    break;
-                case "JOIN":
-                    command = IrcCommand.Join;
-                    break;
-                case "PART":
-                    command = IrcCommand.Part;
-                    break;
-                case "PASS":
-                    command = IrcCommand.Pass;
-                    break;
-                case "CAP":
-                    command = IrcCommand.Cap;
-                    break;
-                case "001":
-                    command = IrcCommand.RPL_001;
-                    break;
-                case "002":
-                    command = IrcCommand.RPL_002;
-                    break;
-                case "003":
-                    command = IrcCommand.RPL_003;
-                    break;
-                case "004":
-                    command = IrcCommand.RPL_004;
-                    break;
-                case "353":
-                    command = IrcCommand.RPL_353;
-                    break;
-                case "366":
-                    command = IrcCommand.RPL_366;
-                    break;
-                case "372":
-                    command = IrcCommand.RPL_372;
-                    break;
-                case "375":
-                    command = IrcCommand.RPL_375;
-                    break;
-                case "376":
-                    command = IrcCommand.RPL_376;
-                    break;
-                case "WHISPER":
-                    command = IrcCommand.Whisper;
-                    break;
-                case "SERVERCHANGE":
-                    command = IrcCommand.ServerChange;
-                    break;
-                case "RECONNECT":
-                    command = IrcCommand.Reconnect;
-                    break;
-                case "ROOMSTATE":
-                    command = IrcCommand.RoomState;
-                    break;
-                case "USERNOTICE":
-                    command = IrcCommand.UserNotice;
-                    break;
-                case "MODE":
-                    command = IrcCommand.Mode;
-                    break;
-            }
-
-            string parameters = raw.Substring(starts[(int)ParserState.STATE_PARAM],
-                lens[(int)ParserState.STATE_PARAM]);
-            string message = raw.Substring(starts[(int)ParserState.STATE_TRAILING],
-                lens[(int)ParserState.STATE_TRAILING]);
-            string hostmask = raw.Substring(starts[(int)ParserState.STATE_PREFIX],
-                lens[(int)ParserState.STATE_PREFIX]);
-            return new IrcMessage(command, new[] { parameters, message }, hostmask, tagDict);
+            return new IrcMessage(raw, command, new[] { parameters, message }, user, hostmask, tags);
         }
 
-        /// <summary>
-        /// Enum ParserState
-        /// </summary>
-        private enum ParserState
+        private static Dictionary<string, string> ParseTags(ref ReadOnlySpan<char> source)
         {
-            /// <summary>
-            /// The state none
-            /// </summary>
-            STATE_NONE,
-            /// <summary>
-            /// The state v3
-            /// </summary>
-            STATE_V3,
-            /// <summary>
-            /// The state prefix
-            /// </summary>
-            STATE_PREFIX,
-            /// <summary>
-            /// The state command
-            /// </summary>
-            STATE_COMMAND,
-            /// <summary>
-            /// The state parameter
-            /// </summary>
-            STATE_PARAM,
-            /// <summary>
-            /// The state trailing
-            /// </summary>
-            STATE_TRAILING
-        };
+            var local = source;
+            if (local[0] != '@')
+            {
+                return null;
+            }
+
+            var tags = new Dictionary<string, string>();
+
+            while (true)
+            {
+                var delimiter = local.IndexOfAny(';', ' ');
+                var (key, value) = local.Slice(0, delimiter).SplitFirst('=');
+                tags[key.ToString()] = value.ToString();
+
+                if (local[delimiter] is ' ')
+                {
+                    source = local.Slice(delimiter + 1);
+                    break;
+                }
+
+                local = local.Slice(delimiter + 1);
+            }
+
+            return tags;
+        }
+
+        private static (string User, string Hostmask) ParsePrefix(ref ReadOnlySpan<char> source)
+        {
+            var local = source;
+            if (local[0] != ':')
+            {
+                return default;
+            }
+
+            var delimiter = local.IndexOf(' ');
+            var (user, hostmask) = local.Slice(1, delimiter - 1).SplitFirst('!');
+            if (hostmask.IsEmpty)
+            {
+                hostmask = user;
+            }
+
+            source = local.Slice(delimiter + 1);
+            return (user.ToString(), hostmask.ToString());
+        }
+
+        private static IrcCommand ParseCommand(ref ReadOnlySpan<char> source)
+        {
+            (var command, source) = source.SplitFirst(' ');
+
+            return command switch
+            {
+                "PRIVMSG" => IrcCommand.PrivMsg,
+                "NOTICE" => IrcCommand.Notice,
+                "PING" => IrcCommand.Ping,
+                "PONG" => IrcCommand.Pong,
+                "CLEARCHAT" => IrcCommand.ClearChat,
+                "CLEARMSG" => IrcCommand.ClearMsg,
+                "USERSTATE" => IrcCommand.UserState,
+                "GLOBALUSERSTATE" => IrcCommand.GlobalUserState,
+                "NICK" => IrcCommand.Nick,
+                "JOIN" => IrcCommand.Join,
+                "PART" => IrcCommand.Part,
+                "PASS" => IrcCommand.Pass,
+                "CAP" => IrcCommand.Cap,
+                "001" => IrcCommand.RPL_001,
+                "002" => IrcCommand.RPL_002,
+                "003" => IrcCommand.RPL_003,
+                "004" => IrcCommand.RPL_004,
+                "353" => IrcCommand.RPL_353,
+                "366" => IrcCommand.RPL_366,
+                "372" => IrcCommand.RPL_372,
+                "375" => IrcCommand.RPL_375,
+                "376" => IrcCommand.RPL_376,
+                "WHISPER" => IrcCommand.Whisper,
+                "SERVERCHANGE" => IrcCommand.ServerChange,
+                "RECONNECT" => IrcCommand.Reconnect,
+                "ROOMSTATE" => IrcCommand.RoomState,
+                "USERNOTICE" => IrcCommand.UserNotice,
+                "MODE" => IrcCommand.Mode,
+                _ => IrcCommand.Unknown,
+            };
+        }
     }
 }
