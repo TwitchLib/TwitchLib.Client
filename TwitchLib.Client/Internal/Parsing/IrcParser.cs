@@ -18,7 +18,8 @@ namespace TwitchLib.Client.Internal.Parsing
         /// <returns>IrcMessage object</returns>
         public static IrcMessage ParseMessage(string raw)
         {
-            // Sequentially parse each msg segment, advancing the span as we go
+            // Sequentially parse each segment, advancing the span as we go.
+            // Adapted from https://github.com/neon-sunset/feetlicker
             var source = raw.AsSpan();
             var tags = ParseTags(ref source);
             var (user, hostmask) = ParsePrefix(ref source);

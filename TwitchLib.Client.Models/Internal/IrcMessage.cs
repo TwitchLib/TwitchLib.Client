@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 using TwitchLib.Client.Enums.Internal;
@@ -130,10 +129,10 @@ namespace TwitchLib.Client.Models.Internal
 
         private string GenerateToString()
         {
-            var raw = new StringBuilder(64);
+            var raw = new StringBuilder(128);
             if (Tags?.Count > 0)
             {
-                raw.Append("@");
+                raw.Append('@');
                 foreach (var tag in Tags)
                 {
                     raw.Append(tag.Key).Append('=').Append(tag.Value).Append(';');
@@ -143,10 +142,13 @@ namespace TwitchLib.Client.Models.Internal
 
             if (!string.IsNullOrEmpty(Hostmask))
             {
-                raw.Append(":").Append(Hostmask).Append(" ");
+                raw.Append(':').Append(Hostmask).Append(' ');
             }
 
-            raw.Append(Command.ToString().ToUpper().Replace("RPL_", ""));
+            // The "RPL_" replace is required because TwitchLib.Client.Enums.Internal.IrcCommand
+            // has the RPL_ prefix on all RPL commands, but the Twitch IRCv3 spec does not.
+            // Thus, if the message has not been constructed with _rawString from incoming data, remove the prefix.
+            raw.Append(Command.ToString().ToUpperInvariant().Replace("RPL_", ""));
             if (_parameters == null || _parameters.Length == 0)
                 return raw.ToString();
 
