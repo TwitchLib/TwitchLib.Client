@@ -96,7 +96,9 @@ namespace TwitchLib.Client.Throttling
             try
             {
                 var taken = _queue.TryDequeue(out var message);
-                if (!taken || message == default) // OutBoundChatMessage is null as an indicator of default
+                // 'message == default' should never happen, but if it does, the check will
+                // work correctly due to default state of DateTime and OutboundChatMessage being null.
+                if (!taken || message == default)
                 {
                     return;
                 }
