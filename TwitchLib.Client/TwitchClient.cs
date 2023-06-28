@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -87,12 +87,6 @@ namespace TwitchLib.Client
         /// </summary>
         private List<KeyValuePair<string, DateTime>> _awaitingJoins;
 
-        /// <summary>
-        /// The irc parser
-        /// </summary>
-        private readonly IrcParser _ircParser = new();
-
-        /// <summary>
         /// The joined channel manager
         /// </summary>
         private readonly JoinedChannelManager _joinedChannelManager = new();
@@ -493,14 +487,8 @@ namespace TwitchLib.Client
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
         public void Initialize(ConnectionCredentials credentials, string channel = null, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
         {
-            if (channel != null && channel[0] == '#') channel = channel.Substring(1);
-             InitializationHelper(credentials,
-                new List<string>()
-                {
-                    channel
-                },
-                chatCommandIdentifier,
-                whisperCommandIdentifier);
+            if (channel?[0] == '#') channel = channel.Substring(1);
+            InitializationHelper(credentials, new List<string>() { channel }, chatCommandIdentifier, whisperCommandIdentifier);
         }
 
         /// <summary>
@@ -512,7 +500,7 @@ namespace TwitchLib.Client
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
         public void Initialize(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!')
         {
-            channels = channels.Select(x => x[0] == '#' ? x.Substring(1) : x).ToList();
+            channels = channels.ConvertAll(x => x[0] == '#' ? x.Substring(1) : x);
             InitializationHelper(credentials, channels, chatCommandIdentifier, whisperCommandIdentifier);
         }
 
@@ -523,7 +511,7 @@ namespace TwitchLib.Client
         /// <param name="channels">List of channels to join when connected</param>
         /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        private Task InitializationHelper(
+        private void InitializationHelper(
             ConnectionCredentials credentials,
             List<string> channels,
             char chatCommandIdentifier = '!',
@@ -537,7 +525,7 @@ namespace TwitchLib.Client
             if (whisperCommandIdentifier != '\0')
                 _whisperCommandIdentifiers.Add(whisperCommandIdentifier);
 
-            if (channels != null && channels.Count > 0)
+            if (channels?.Count > 0)
             {
                 for (var i = 0; i < channels.Count; i++)
                 {
@@ -545,15 +533,15 @@ namespace TwitchLib.Client
                         continue;
 
                     // Check to see if client is already in channel
-                    if (JoinedChannels.FirstOrDefault(x => x.Channel.ToLower() == channels[i]) != null)
-                        return Task.CompletedTask;
+                    if (JoinedChannels.Any(x => x.Channel.Equals(channels[i], StringComparison.OrdinalIgnoreCase)))
+                        return;                   
 
                     _joinChannelQueue.Enqueue(new JoinedChannel(channels[i]));
                 }
             }
 
             InitializeClient();
-            return Task.CompletedTask;
+            return;
         }
 
         /// <summary>
@@ -977,7 +965,7 @@ namespace TwitchLib.Client
             if (!IsInitialized)
                 HandleNotInitialized();
 
-            await HandleIrcMessageAsync(_ircParser.ParseIrcMessage(rawIrc));
+            await HandleIrcMessageAsync(IrcParser.ParseMessage(rawIrc));
         }
 
         #region Client Events
@@ -1052,14 +1040,9 @@ namespace TwitchLib.Client
                     continue;
 
                 _logger?.LogReceived(line);
-                if (OnSendReceiveData != null)
-                    await OnSendReceiveData.Invoke(this,
-                        new OnSendReceiveDataArgs
-                        {
-                            Direction = SendReceiveDirection.Received,
-                            Data = line
-                        });
-                await HandleIrcMessageAsync(_ircParser.ParseIrcMessage(line));
+
+                OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = SendReceiveDirection.Received, Data = line });
+                await HandleIrcMessageAsync(IrcParser.ParseMessage(line));
             }
         }
 
