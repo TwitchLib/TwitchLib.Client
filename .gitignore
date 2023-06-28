@@ -188,6 +188,9 @@ UpgradeLog*.htm
 # Microsoft Fakes
 FakesAssemblies/
 
+# BenchmarkDotNet artifacts
+BenchmarkDotNet.Artifacts/
+
 # =========================
 # Operating System Files
 # =========================

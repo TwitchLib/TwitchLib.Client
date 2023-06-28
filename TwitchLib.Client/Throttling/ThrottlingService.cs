@@ -18,12 +18,12 @@ namespace TwitchLib.Client.Throttling
         private readonly IClient _client;
         private readonly ISendOptions _sendOptions;
         private readonly ILogger _logger;
-        private readonly ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>> _queue = new ConcurrentQueue<Tuple<DateTime, OutboundChatMessage>>();
+        private readonly ConcurrentQueue<(DateTime, OutboundChatMessage)> _queue = new ConcurrentQueue<(DateTime, OutboundChatMessage)>();
         private readonly Throttler _throttler;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private Task _sendTask;
         
-        internal event EventHandler<OnMessageThrottledArgs> OnThrottled;
+        internal event AsyncEventHandler<OnMessageThrottledArgs> OnThrottled;
         
         internal ThrottlingService(
             IClient client,
@@ -58,28 +58,30 @@ namespace TwitchLib.Client.Throttling
         /// </returns>
         internal bool Enqueue(OutboundChatMessage message)
         {
-            if (!_client.IsConnected || 
-                _queue.Count >= _sendOptions.QueueCapacity || 
+            if (!_client.IsConnected ||
+                _queue.Count >= _sendOptions.QueueCapacity ||
                 message == null)
             {
                 return false;
             }
             
-            _queue.Enqueue(new Tuple<DateTime, OutboundChatMessage>(DateTime.UtcNow, message));
+            _queue.Enqueue((DateTime.UtcNow, message));
             return true;
         }
         
-        private void StartThrottler(object sender, OnConnectedEventArgs args)
+        private Task StartThrottler(object sender, OnConnectedEventArgs args)
         {
             // Cancel old token first
             _tokenSource.Cancel();
             _tokenSource = new CancellationTokenSource();
-            _sendTask = Task.Run(SendTaskActionAsync, _tokenSource.Token);
+            _sendTask= Task.Run(async() => await SendTaskActionAsync(), _tokenSource.Token);
+            return Task.CompletedTask;
         }
 
-        private void StopThrottler(object sender, OnDisconnectedEventArgs args)
+        private Task StopThrottler(object sender, OnDisconnectedEventArgs args)
         {
             _tokenSource.Cancel();
+            return Task.CompletedTask;
         }
 
         private async Task SendTaskActionAsync()
@@ -96,7 +98,9 @@ namespace TwitchLib.Client.Throttling
             try
             {
                 var taken = _queue.TryDequeue(out var message);
-                if (!taken || message == null)
+                // 'message == default' should never happen, but if it does, the check will
+                // work correctly due to default state of DateTime and OutboundChatMessage being null.
+                if (!taken || message == default)
                 {
                     return;
                 }
@@ -114,7 +118,7 @@ namespace TwitchLib.Client.Throttling
                 //    cause Throttle raises the corresponding Event with the needed information.
                 if (_throttler.ShouldThrottle())
                 {
-                    ThrottleMessage(message.Item2);
+                    await ThrottleMessage(message.Item2);
                     return;
                 }
                 
@@ -132,20 +136,21 @@ namespace TwitchLib.Client.Throttling
             catch (Exception ex)
             {
                 _logger?.LogException(ex.Message, ex);
-                _client.RaiseEvent(nameof(_client.OnError), new OnErrorEventArgs(ex));
+                await _client.RaiseEvent(nameof(_client.OnError), new OnErrorEventArgs(ex));
             }
         }
 
-        private void ThrottleMessage(OutboundChatMessage itemNotSent)
+        private async Task ThrottleMessage(OutboundChatMessage itemNotSent)
         {
-            var msg = "Message Throttle Occured. Too Many Messages within the period specified in WebsocketClientOptions.";
+            const string msg = "Message Throttle Occured. Too Many Messages within the period specified in WebsocketClientOptions.";
+
             var args = new OnMessageThrottledArgs(
                 msg,
                 itemNotSent,
                 _sendOptions.ThrottlingPeriod,
                 _sendOptions.SendsAllowedInPeriod);
 
-            OnThrottled?.Invoke(null, args);
+           if (OnThrottled != null) await OnThrottled?.Invoke(null, args);
         }
     }
 }

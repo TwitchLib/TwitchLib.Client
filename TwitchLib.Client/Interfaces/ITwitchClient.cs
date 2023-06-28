@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -69,164 +68,164 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Occurs when [on channel state changed].
         /// </summary>
-        event EventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
+        event AsyncEventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
         /// <summary>
         /// Occurs when [on chat cleared].
         /// </summary>
-        event EventHandler<OnChatClearedArgs> OnChatCleared;
+        event AsyncEventHandler<OnChatClearedArgs> OnChatCleared;
         /// <summary>
         /// Occurs when [on chat color changed].
         /// </summary>
-        event EventHandler<OnChatColorChangedArgs> OnChatColorChanged;
+        event AsyncEventHandler<OnChatColorChangedArgs> OnChatColorChanged;
         /// <summary>
         /// Occurs when [on chat command received].
         /// </summary>
-        event EventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
+        event AsyncEventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
         /// <summary>
         /// Occurs when [on connected].
         /// </summary>
-        event EventHandler<OnConnectedArgs> OnConnected;
+        event AsyncEventHandler<OnConnectedArgs> OnConnected;
         /// <summary>
         /// Occurs when [on connection error].
         /// </summary>
-        event EventHandler<OnConnectionErrorArgs> OnConnectionError;
+        event AsyncEventHandler<OnConnectionErrorArgs> OnConnectionError;
         /// <summary>
         /// Occurs when [on disconnected].
         /// </summary>
-        event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
+        event AsyncEventHandler<OnDisconnectedEventArgs> OnDisconnected;
         /// <summary>
         /// Occurs when [on existing users detected].
         /// </summary>
-        event EventHandler<OnExistingUsersDetectedArgs> OnExistingUsersDetected;
+        event AsyncEventHandler<OnExistingUsersDetectedArgs> OnExistingUsersDetected;
         /// <summary>
         /// Occurs when [on gifted subscription].
         /// </summary>
-        event EventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
+        event AsyncEventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
         /// <summary>
         /// Occurs when [on incorrect login].
         /// </summary>
-        event EventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
+        event AsyncEventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
         /// <summary>
         /// Occurs when [on joined channel].
         /// </summary>
-        event EventHandler<OnJoinedChannelArgs> OnJoinedChannel;
+        event AsyncEventHandler<OnJoinedChannelArgs> OnJoinedChannel;
         /// <summary>
         /// Occurs when [on left channel].
         /// </summary>
-        event EventHandler<OnLeftChannelArgs> OnLeftChannel;
+        event AsyncEventHandler<OnLeftChannelArgs> OnLeftChannel;
         /// <summary>
         /// Occurs when [on message received].
         /// </summary>
-        event EventHandler<OnMessageReceivedArgs> OnMessageReceived;
+        event AsyncEventHandler<OnMessageReceivedArgs> OnMessageReceived;
         /// <summary>
         /// Occurs when [on message sent].
         /// </summary>
-        event EventHandler<OnMessageSentArgs> OnMessageSent;
+        event AsyncEventHandler<OnMessageSentArgs> OnMessageSent;
         /// <summary>
         /// Occurs when [on moderator joined].
         /// </summary>
-        event EventHandler<OnModeratorJoinedArgs> OnModeratorJoined;
+        event AsyncEventHandler<OnModeratorJoinedArgs> OnModeratorJoined;
         /// <summary>
         /// Occurs when [on moderator left].
         /// </summary>
-        event EventHandler<OnModeratorLeftArgs> OnModeratorLeft;
+        event AsyncEventHandler<OnModeratorLeftArgs> OnModeratorLeft;
         /// <summary>
         /// Occurs when [on moderators received].
         /// </summary>
-        event EventHandler<OnModeratorsReceivedArgs> OnModeratorsReceived;
+        event AsyncEventHandler<OnModeratorsReceivedArgs> OnModeratorsReceived;
         /// <summary>
         /// Occurs when [on new subscriber].
         /// </summary>
-        event EventHandler<OnNewSubscriberArgs> OnNewSubscriber;
+        event AsyncEventHandler<OnNewSubscriberArgs> OnNewSubscriber;
         /// <summary>
         /// Occurs when [on raid notification].
         /// </summary>
-        event EventHandler<OnRaidNotificationArgs> OnRaidNotification;
+        event AsyncEventHandler<OnRaidNotificationArgs> OnRaidNotification;
         /// <summary>
         /// Occurs when [on re subscriber].
         /// </summary>
-        event EventHandler<OnReSubscriberArgs> OnReSubscriber;
+        event AsyncEventHandler<OnReSubscriberArgs> OnReSubscriber;
         /// <summary>
         /// Occurs when [on send receive data].
         /// </summary>
-        event EventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
+        event AsyncEventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
         /// <summary>
         /// Occurs when [on user banned].
         /// </summary>
-        event EventHandler<OnUserBannedArgs> OnUserBanned;
+        event AsyncEventHandler<OnUserBannedArgs> OnUserBanned;
         /// <summary>
         /// Occurs when [on user joined].
         /// </summary>
-        event EventHandler<OnUserJoinedArgs> OnUserJoined;
+        event AsyncEventHandler<OnUserJoinedArgs> OnUserJoined;
         /// <summary>
         /// Occurs when [on user left].
         /// </summary>
-        event EventHandler<OnUserLeftArgs> OnUserLeft;
+        event AsyncEventHandler<OnUserLeftArgs> OnUserLeft;
         /// <summary>
         /// Occurs when [on user state changed].
         /// </summary>
-        event EventHandler<OnUserStateChangedArgs> OnUserStateChanged;
+        event AsyncEventHandler<OnUserStateChangedArgs> OnUserStateChanged;
         /// <summary>
         /// Occurs when [on user timedout].
         /// </summary>
-        event EventHandler<OnUserTimedoutArgs> OnUserTimedout;
+        event AsyncEventHandler<OnUserTimedoutArgs> OnUserTimedout;
         /// <summary>
         /// Occurs when [on whisper command received].
         /// </summary>
-        event EventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
+        event AsyncEventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
         /// <summary>
         /// Occurs when [on whisper received].
         /// </summary>
-        event EventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
+        event AsyncEventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
         /// <summary>
         /// Occurs when [on message throttled].
         /// </summary>
-        event EventHandler<OnMessageThrottledArgs> OnMessageThrottled;
+        event AsyncEventHandler<OnMessageThrottledArgs> OnMessageThrottled;
         /// <summary>
         /// Occurs when [on error].
         /// </summary>
-        event EventHandler<OnErrorEventArgs> OnError;
+        event AsyncEventHandler<OnErrorEventArgs> OnError;
         /// <summary>
         /// Occurs when [on reconnected].
         /// </summary>
-        event EventHandler<OnConnectedArgs> OnReconnected;
+        event AsyncEventHandler<OnConnectedArgs> OnReconnected;
         /// <summary>
         /// Occurs when [on vip received].
         /// </summary>
-        event EventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
+        event AsyncEventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
         /// <summary>
         /// Occurs when [on community subscription announcement received].
         /// </summary>
-        event EventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
+        event AsyncEventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
         /// <summary>
         /// Occurs when [on message deleted].
         /// </summary>
-        event EventHandler<OnMessageClearedArgs> OnMessageCleared;
+        event AsyncEventHandler<OnMessageClearedArgs> OnMessageCleared;
 
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
         /// </summary>
-        event EventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
+        event AsyncEventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
 
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified phone number without a verified phone number attached to the account.
         /// </summary>
-        event EventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
+        event AsyncEventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
 
         /// <summary>
         /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
         /// </summary>
-        event EventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+        event AsyncEventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
 
         /// <summary>
         /// Fires when the client receives a PRIVMSG tagged as an user-intro
         /// </summary>
-        event EventHandler<OnUserIntroArgs> OnUserIntro;
+        event AsyncEventHandler<OnUserIntroArgs> OnUserIntro;
 
         /// <summary>
         /// Fires when the client receives a USERNOTICE tagged as an announcement
         /// </summary>
-        event EventHandler<OnAnnouncementArgs> OnAnnouncement;
+        event AsyncEventHandler<OnAnnouncementArgs> OnAnnouncement;
 
         /// <summary>
         /// Initializes the specified credentials.
@@ -351,23 +350,8 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">The channel.</param>
         /// <param name="message">The message.</param>
         /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
-        Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false);
-        
-        /// <summary>
-        /// Sends the message.
-        /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
         void SendMessage(string channel, string message, bool dryRun = false);
         
-        /// <summary>
-        /// Sends the message.
-        /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
-        Task SendMessageAsync(string channel, string message, bool dryRun = false);
         
         /// <summary>
         /// Sends a formatted Twitch chat message reply.
