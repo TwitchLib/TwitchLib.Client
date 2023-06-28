@@ -475,6 +475,9 @@ namespace TwitchLib.Client
         /// <summary>
         /// Initializes the TwitchChatClient class.
         /// </summary>
+        /// <remarks>
+        /// If <see cref="ChatCommandIdentifiers"/> or <see cref="WhisperCommandIdentifiers"/> dont have any command identifier the '!' is added.
+        /// </remarks>
         /// <param name="credentials">The credentials to use to log in.</param>
         /// <param name="channel">The channel to connect to.</param>
         public void Initialize(ConnectionCredentials credentials, string channel = null)
@@ -486,6 +489,9 @@ namespace TwitchLib.Client
         /// <summary>
         /// Initializes the TwitchChatClient class (with multiple channels).
         /// </summary>
+        /// <remarks>
+        /// If <see cref="ChatCommandIdentifiers"/> or <see cref="WhisperCommandIdentifiers"/> dont have any command identifier the '!' is added.
+        /// </remarks>
         /// <param name="credentials">The credentials to use to log in.</param>
         /// <param name="channels">List of channels to join when connected</param>
         public void Initialize(ConnectionCredentials credentials, List<string> channels)
@@ -497,6 +503,9 @@ namespace TwitchLib.Client
         /// <summary>
         /// Runs initialization logic that is shared by the overriden Initialize methods.
         /// </summary>
+        /// <remarks>
+        /// If <see cref="ChatCommandIdentifiers"/> or <see cref="WhisperCommandIdentifiers"/> dont have any command identifier the '!' is added.
+        /// </remarks>
         /// <param name="credentials">The credentials to use to log in.</param>
         /// <param name="channels">List of channels to join when connected</param>
         private void InitializationHelper(
@@ -506,6 +515,11 @@ namespace TwitchLib.Client
             _logger?.LogInitialized(Assembly.GetExecutingAssembly().GetName().Version);
             ConnectionCredentials = credentials;
             TwitchUsername = ConnectionCredentials.TwitchUsername;
+
+            if (ChatCommandIdentifiers.Count == 0)
+                ChatCommandIdentifiers.Add('!');
+            if (WhisperCommandIdentifiers.Count == 0)
+                WhisperCommandIdentifiers.Add('!');
 
             if (channels?.Count > 0)
             {
