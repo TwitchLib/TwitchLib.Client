@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace TwitchLib.Client.Internal
 {
@@ -11,17 +12,17 @@ namespace TwitchLib.Client.Internal
         /// <param name="eventProvider">Event provider.</param>
         /// <param name="eventName">Name of the event.</param>
         /// <param name="args">The arguments.</param>
-        internal static void RaiseEvent(this object eventProvider, string eventName, object args = null)
+        internal static Task RaiseEvent(this object eventProvider, string eventName, object args = null)
         {
             if (eventProvider == null)
             {
-                return;
+                return Task.CompletedTask;
             }
             
             var fieldInfo = eventProvider.GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic);
             if (!(fieldInfo?.GetValue(eventProvider) is MulticastDelegate multicastDelegate))
             {
-                return;
+                return Task.CompletedTask;
             }
             
             var arguments = args == null
@@ -32,6 +33,7 @@ namespace TwitchLib.Client.Internal
             {
                 del.Method.Invoke(del.Target, arguments);
             }
+            return Task.CompletedTask;
         }
     }
 }
