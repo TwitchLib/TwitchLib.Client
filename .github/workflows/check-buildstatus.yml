@@ -1,4 +1,4 @@
-name: Check TwitchLib.Api PR Build Status
+name: Check TwitchLib.Client PR Build Status
 
 on:
   pull_request:
@@ -17,5 +17,5 @@ jobs:
         dotnet-version: 7.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build TwitchLib.Api
+    - name: Build TwitchLib.Client
       run: dotnet build --no-restore
