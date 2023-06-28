@@ -1121,129 +1121,57 @@ namespace TwitchLib.Client
         /// Handles the irc message.
         /// </summary>
         /// <param name="ircMessage">The irc message.</param>
-        private async Task HandleIrcMessageAsync(IrcMessage ircMessage)
+        private Task HandleIrcMessageAsync(IrcMessage ircMessage)
         {
-            if (ircMessage.ToString().StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed"))
+            var rawMessage = ircMessage.ToString();
+            if (rawMessage.StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed")
+                && OnIncorrectLogin != null)
             {
-                if (OnIncorrectLogin != null)
-                    await OnIncorrectLogin.Invoke(this,
-                        new OnIncorrectLoginArgs
+                return OnIncorrectLogin.Invoke(this, new()
+                {
+                    Exception = new ErrorLoggingInException(rawMessage, TwitchUsername)
+                });
+            }
+
+            return ircMessage.Command switch
+            {
+                IrcCommand.PrivMsg => HandlePrivMsg(ircMessage),
+                IrcCommand.Join => HandleJoin(ircMessage),
+                IrcCommand.Part => HandlePart(ircMessage),
+                IrcCommand.Ping => !DisableAutoPong ? SendRawAsync("PONG") : Task.CompletedTask,
+                IrcCommand.Notice => HandleNotice(ircMessage),
+                IrcCommand.Whisper => HandleWhisper(ircMessage),
+                IrcCommand.ClearChat => HandleClearChat(ircMessage),
+                IrcCommand.ClearMsg => HandleClearMsg(ircMessage),
+                IrcCommand.UserState => HandleUserState(ircMessage),
+                IrcCommand.UserNotice => HandleUserNotice(ircMessage),
+                IrcCommand.RoomState => HandleRoomState(ircMessage),
+                IrcCommand.Reconnect => ReconnectAsync(),
+                IrcCommand.Mode => HandleMode(ircMessage),
+                IrcCommand.Cap => HandleCap(ircMessage),
+                IrcCommand.RPL_004 => Handle004(),
+                IrcCommand.RPL_353 => Handle353(ircMessage),
+                IrcCommand.RPL_366 => Handle366(),
+
+                IrcCommand.Pong or
+                IrcCommand.RPL_001 or
+                IrcCommand.RPL_002 or
+                IrcCommand.RPL_003 or
+                IrcCommand.RPL_372 or
+                IrcCommand.RPL_375 or
+                IrcCommand.RPL_376 or
+                IrcCommand.GlobalUserState => Task.CompletedTask,
+                IrcCommand.Unknown or _ => OnUnaccountedFor != null
+                    ? OnUnaccountedFor.Invoke(this,
+                        new OnUnaccountedForArgs
                         {
-                            Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername)
-                        });
-                return;
-            }
-
-            switch (ircMessage.Command)
-            {
-                case IrcCommand.PrivMsg:
-                    await HandlePrivMsg(ircMessage);
-                    return;
-
-                case IrcCommand.Notice:
-                    await HandleNoticeAsync(ircMessage);
-                    break;
-
-                case IrcCommand.Ping:
-                    if (!DisableAutoPong)
-                        SendRaw("PONG");
-                    return;
-
-                case IrcCommand.Pong:
-                    return;
-
-                case IrcCommand.Join:
-                    await HandleJoin(ircMessage);
-                    break;
-
-                case IrcCommand.Part:
-                    await HandlePart(ircMessage);
-                    break;
-
-                case IrcCommand.ClearChat:
-                    await HandleClearChat(ircMessage);
-                    break;
-
-                case IrcCommand.ClearMsg:
-                    await HandleClearMsg(ircMessage);
-                    break;
-
-                case IrcCommand.UserState:
-                    await HandleUserState(ircMessage);
-                    break;
-
-                case IrcCommand.GlobalUserState:
-                    break;
-
-                case IrcCommand.RPL_001:
-                    break;
-
-                case IrcCommand.RPL_002:
-                    break;
-
-                case IrcCommand.RPL_003:
-                    break;
-
-                case IrcCommand.RPL_004:
-                    await Handle004();
-                    break;
-
-                case IrcCommand.RPL_353:
-                    await Handle353(ircMessage);
-                    break;
-
-                case IrcCommand.RPL_366:
-                    await Handle366Async();
-                    break;
-
-                case IrcCommand.RPL_372:
-                    break;
-
-                case IrcCommand.RPL_375:
-                    break;
-
-                case IrcCommand.RPL_376:
-                    break;
-
-                case IrcCommand.Whisper:
-                    await HandleWhisper(ircMessage);
-                    break;
-
-                case IrcCommand.RoomState:
-                    await HandleRoomState(ircMessage);
-                    break;
-
-                case IrcCommand.Reconnect:
-                    Reconnect();
-                    break;
-
-                case IrcCommand.UserNotice:
-                    await HandleUserNotice(ircMessage);
-                    break;
-
-                case IrcCommand.Mode:
-                    await HandleMode(ircMessage);
-                    break;
-
-                case IrcCommand.Cap:
-                    HandleCap(ircMessage);
-                    break;
-
-                case IrcCommand.Unknown:
-                // fall through
-                default:
-                    if (OnUnaccountedFor != null)
-                        await OnUnaccountedFor.Invoke(this,
-                            new OnUnaccountedForArgs
-                            {
-                                BotUsername = TwitchUsername,
-                                Channel = null,
-                                Location = "HandleIrcMessage",
-                                RawIRC = ircMessage.ToString()
-                            });
-                    await UnaccountedFor(ircMessage.ToString());
-                    break;
-            }
+                            BotUsername = TwitchUsername,
+                            Channel = null,
+                            Location = "HandleIrcMessage",
+                            RawIRC = rawMessage
+                        })
+                    : UnaccountedFor(ircMessage.ToString())
+            };
         }
 
         #region IrcCommand Handling
@@ -1254,37 +1182,38 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private async Task HandlePrivMsg(IrcMessage ircMessage)
         {
-            ChatMessage chatMessage = new ChatMessage(TwitchUsername, ircMessage, ref _channelEmotes, WillReplaceEmotes, ReplacedEmotesPrefix, ReplacedEmotesSuffix);
-            foreach (JoinedChannel joinedChannel in JoinedChannels.Where(x => string.Equals(x.Channel, ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
+            var chatMessage = new ChatMessage(
+                TwitchUsername,
+                ircMessage,
+                _channelEmotes,
+                WillReplaceEmotes,
+                ReplacedEmotesPrefix,
+                ReplacedEmotesSuffix);
+
+            foreach (JoinedChannel joinedChannel in JoinedChannels
+                .Where(x => x.Channel.Equals(ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
+            {
                 joinedChannel.HandleMessage(chatMessage);
+            }
 
             if (OnMessageReceived != null)
-                await OnMessageReceived.Invoke(this,
-                    new OnMessageReceivedArgs
-                    {
-                        ChatMessage = chatMessage
-                    });
-
-            if (ircMessage.Tags.TryGetValue(Tags.MsgId, out var msgId) && msgId == MsgIds.UserIntro && OnUserIntro != null)
-                await OnUserIntro.Invoke(this,
-                            new OnUserIntroArgs
-                            {
-                                ChatMessage = chatMessage
-                            });
-
-            if (ChatCommandIdentifiers.Count != 0 && !string.IsNullOrEmpty(chatMessage.Message))
             {
-                if (ChatCommandIdentifiers.Contains(chatMessage.Message[0]))
-                {
-                    ChatCommand chatCommand = new ChatCommand(chatMessage);
-                    if (OnChatCommandReceived != null)
-                        await OnChatCommandReceived.Invoke(this,
-                            new OnChatCommandReceivedArgs
-                            {
-                                Command = chatCommand
-                            });
-                    return;
-                }
+                await OnMessageReceived.Invoke(this, new() { ChatMessage = chatMessage });
+            }
+
+            if (ircMessage.Tags.TryGetValue(Tags.MsgId, out var msgId)
+                && msgId == MsgIds.UserIntro
+                && OnUserIntro != null)
+            {
+                await OnUserIntro.Invoke(this, new() { ChatMessage = chatMessage });
+            }
+
+            if (ChatCommandIdentifiers.Count != 0
+                && !string.IsNullOrEmpty(chatMessage.Message)
+                && ChatCommandIdentifiers.Contains(chatMessage.Message[0])
+                && OnChatCommandReceived != null)
+            {
+                await OnChatCommandReceived.Invoke(this, new() { Command = new ChatCommand(chatMessage) });
             }
         }
 
@@ -1292,243 +1221,85 @@ namespace TwitchLib.Client
         /// Handles the notice.
         /// </summary>
         /// <param name="ircMessage">The irc message.</param>
-        private async Task HandleNoticeAsync(IrcMessage ircMessage)
+        private Task HandleNotice(IrcMessage ircMessage)
         {
-            if (ircMessage.Message.Contains("Improperly formatted auth"))
+            var channel = ircMessage.Channel;
+            var message = ircMessage.Message;
+            var rawIrcMessage = ircMessage.ToString();
+
+            // This check might be too fragile and catch false positives
+            if (message.Contains("Improperly formatted auth"))
             {
-                if (OnIncorrectLogin != null)
-                    await OnIncorrectLogin.Invoke(this,
-                        new OnIncorrectLoginArgs
-                        {
-                            Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername)
-                        });
-                return;
+                return OnIncorrectLogin?
+                    .Invoke(this, new() { Exception = new(rawIrcMessage, TwitchUsername) })
+                        ?? Task.CompletedTask;
             }
 
-            bool success = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
+            var success = ircMessage.Tags.TryGetValue(Tags.MsgId, out string msgId);
             if (!success)
             {
-                if (OnUnaccountedFor != null)
-                    await OnUnaccountedFor.Invoke(this,
-                        new OnUnaccountedForArgs
-                        {
-                            BotUsername = TwitchUsername,
-                            Channel = ircMessage.Channel,
-                            Location = "NoticeHandling",
-                            RawIRC = ircMessage.ToString()
-                        });
-
-                await UnaccountedFor(ircMessage.ToString());
+                return OnUnaccountedFor?.Invoke(this, new()
+                {
+                    BotUsername = TwitchUsername,
+                    Channel = channel,
+                    Location = "NoticeHandling",
+                    RawIRC = rawIrcMessage
+                }) ?? UnaccountedFor(rawIrcMessage);
             }
 
-            switch (msgId)
+            var result = msgId switch
             {
-                case MsgIds.ColorChanged:
-                    if (OnChatColorChanged != null)
-                        await OnChatColorChanged.Invoke(this,
-                            new OnChatColorChangedArgs
-                            {
-                                Channel = ircMessage.Channel
-                            });
-                    break;
+                MsgIds.ColorChanged => OnChatColorChanged?.Invoke(this, new() { Channel = channel }),
+                MsgIds.ModeratorsReceived => OnModeratorsReceived?.Invoke(this, new() { Channel = channel }),
+                MsgIds.NoMods => OnModeratorsReceived?.Invoke(this, new() { Channel = channel, Moderators = new() }),
+                MsgIds.NoPermission => Task.Run(() => OnNoPermissionError?.Invoke(this, null)), // TODO: Make event handler async
+                MsgIds.RaidErrorSelf => Task.Run(() => OnSelfRaidError?.Invoke(this, null)), // TODO: Make event handler async
+                MsgIds.RaidNoticeMature => Task.Run(() => OnRaidedChannelIsMatureAudience?.Invoke(this, null)), // TODO: Make event handler async
+                MsgIds.MsgBannedEmailAlias => OnBannedEmailAlias?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgChannelSuspended => HandleChannelSuspended(ircMessage),
+                MsgIds.MsgRequiresVerifiedPhoneNumber => OnRequiresVerifiedPhoneNumber?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgVerifiedEmail => OnRequiresVerifiedEmail?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.NoVIPs => OnVIPsReceived?.Invoke(this, new() { Channel = channel, VIPs = Array.Empty<string>() }),
+                MsgIds.VIPsSuccess => OnVIPsReceived?.Invoke(this, new()
+                {
+                    Channel = channel,
+                    // TODO: Make it less allocatey
+                    VIPs = message.AsSpan().SplitFirst(':').Remainder.ToString().Replace(" ", "").Replace(".", "").Split(',')
+                }),
+                MsgIds.MsgRateLimit => OnRateLimit?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgDuplicate => OnDuplicate?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgFollowersOnly => OnFollowersOnly?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgSubsOnly => OnSubsOnly?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgEmoteOnly => OnEmoteOnly?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgSuspended => OnSuspended?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgBanned => OnBanned?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgSlowMode => OnSlowMode?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgR9k => OnR9kMode?.Invoke(this, new() { Channel = channel, Message = message }),
+                _ => null
+            };
 
-                case MsgIds.ModeratorsReceived:
-                    if (OnModeratorsReceived != null)
-                        await OnModeratorsReceived.Invoke(this,
-                            new OnModeratorsReceivedArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Moderators = ircMessage.Message.Replace(" ", "").Split(':')[1].Split(',').ToList()
-                            });
-                    break;
+            return result ?? OnUnaccountedFor?.Invoke(this, new()
+            {
+                BotUsername = TwitchUsername,
+                Channel = channel,
+                Location = "NoticeHandling",
+                RawIRC = rawIrcMessage
+            }) ?? UnaccountedFor(rawIrcMessage);
+        }
 
-                case MsgIds.NoMods:
-                    if (OnModeratorsReceived != null)
-                        await OnModeratorsReceived.Invoke(this,
-                            new OnModeratorsReceivedArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Moderators = new List<string>()
-                            });
-                    break;
+        /// <summary>
+        /// Handles the channel suspended message
+        /// </summary>
+        /// <param name="ircMessage">The irc message.</param>
+        private async Task HandleChannelSuspended(IrcMessage ircMessage)
+        {
+            _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
+            _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
 
-                case MsgIds.NoPermission:
-                    OnNoPermissionError?.Invoke(this, null);
-                    break;
-
-                case MsgIds.RaidErrorSelf:
-                   OnSelfRaidError?.Invoke(this, null);
-                    break;
-
-                case MsgIds.RaidNoticeMature:
-                    OnRaidedChannelIsMatureAudience?.Invoke(this, null);
-                    break;
-
-                case MsgIds.MsgBannedEmailAlias:
-                    if (OnBannedEmailAlias != null)
-                        await OnBannedEmailAlias.Invoke(this,
-                            new OnBannedEmailAliasArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgChannelSuspended:
-                    _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
-                    _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
-                    await QueueingJoinCheckAsync();
-                    if (OnFailureToReceiveJoinConfirmation != null)
-                        await OnFailureToReceiveJoinConfirmation.Invoke(this,
-                            new OnFailureToReceiveJoinConfirmationArgs
-                            {
-                                Exception = new FailureToReceiveJoinConfirmationException(ircMessage.Channel, ircMessage.Message)
-                            });
-                    break;
-
-                case MsgIds.MsgRequiresVerifiedPhoneNumber:
-                    if (OnRequiresVerifiedPhoneNumber != null)
-                        await OnRequiresVerifiedPhoneNumber.Invoke(this,
-                            new OnRequiresVerifiedPhoneNumberArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgVerifiedEmail:
-                    if (OnRequiresVerifiedEmail != null)
-                        await OnRequiresVerifiedEmail.Invoke(this,
-                            new OnRequiresVerifiedEmailArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.NoVIPs:
-                    if (OnVIPsReceived != null)
-                        await OnVIPsReceived.Invoke(this,
-                            new OnVIPsReceivedArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                VIPs = new List<string>()
-                            });
-                    break;
-
-                case MsgIds.VIPsSuccess:
-                    if (OnVIPsReceived != null)
-                        await OnVIPsReceived.Invoke(this,
-                            new OnVIPsReceivedArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                VIPs = ircMessage.Message.Replace(" ", "").Replace(".", "").Split(':')[1].Split(',').ToList()
-                            });
-                    break;
-
-                case MsgIds.MsgRateLimit:
-                    if (OnRateLimit != null)
-                        await OnRateLimit.Invoke(this,
-                            new OnRateLimitArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgDuplicate:
-                    if (OnDuplicate != null)
-                        await OnDuplicate.Invoke(this,
-                            new OnDuplicateArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgFollowersOnly:
-                    if (OnFollowersOnly != null)
-                        await OnFollowersOnly.Invoke(this,
-                            new OnFollowersOnlyArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgSubsOnly:
-                    if (OnSubsOnly != null)
-                        await OnSubsOnly.Invoke(this,
-                            new OnSubsOnlyArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgEmoteOnly:
-                    if (OnEmoteOnly != null)
-                        await OnEmoteOnly.Invoke(this,
-                            new OnEmoteOnlyArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgSuspended:
-                    if (OnSuspended != null)
-                        await OnSuspended.Invoke(this,
-                            new OnSuspendedArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgBanned:
-                    if (OnBanned != null)
-                        await OnBanned.Invoke(this,
-                            new OnBannedArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgSlowMode:
-                    if (OnSlowMode != null)
-                        await OnSlowMode.Invoke(this,
-                            new OnSlowModeArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                case MsgIds.MsgR9k:
-                    if (OnR9kMode != null)
-                        await OnR9kMode.Invoke(this,
-                            new OnR9kModeArgs
-                            {
-                                Channel = ircMessage.Channel,
-                                Message = ircMessage.Message
-                            });
-                    break;
-
-                default:
-                    if (OnUnaccountedFor != null)
-                        await OnUnaccountedFor.Invoke(this,
-                            new OnUnaccountedForArgs
-                            {
-                                BotUsername = TwitchUsername,
-                                Channel = ircMessage.Channel,
-                                Location = "NoticeHandling",
-                                RawIRC = ircMessage.ToString()
-                            });
-                    await UnaccountedFor(ircMessage.ToString());
-                    break;
-            }
+            await QueueingJoinCheckAsync();
+            await (OnFailureToReceiveJoinConfirmation?
+                .Invoke(this, new() { Exception = new(ircMessage.Channel, ircMessage.Message) })
+                    ?? Task.CompletedTask);
         }
 
         /// <summary>
@@ -1688,7 +1459,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Handle366s this instance.
         /// </summary>
-        private async Task Handle366Async()
+        private async Task Handle366()
         {
             _currentlyJoiningChannels = false;
             await QueueingJoinCheckAsync();
@@ -1927,9 +1698,10 @@ namespace TwitchLib.Client
         /// Handles the Cap
         /// </summary>
         /// <param name="ircMessage">The irc message</param>
-        private static void HandleCap(IrcMessage ircMessage)
+        private static Task HandleCap(IrcMessage ircMessage)
         {
-            // do nothing
+            // do nothing, actually cap frfr
+            return Task.CompletedTask;
         }
 
         #endregion

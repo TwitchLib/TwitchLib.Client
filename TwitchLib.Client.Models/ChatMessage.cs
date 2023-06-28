@@ -96,7 +96,7 @@ namespace TwitchLib.Client.Models
         public ChatMessage(
             string botUsername,
             IrcMessage ircMessage,
-            ref MessageEmoteCollection emoteCollection,
+            MessageEmoteCollection emoteCollection,
             bool replaceEmotes = false,
             string prefix = "",
             string suffix = "")

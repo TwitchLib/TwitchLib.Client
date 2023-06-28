@@ -18,6 +18,6 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing the list of VIPs.
         /// </summary>
-        public List<string> VIPs;
+        public string[] VIPs;
     }
 }
