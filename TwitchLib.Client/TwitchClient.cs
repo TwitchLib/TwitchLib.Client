@@ -534,7 +534,7 @@ namespace TwitchLib.Client
 
                     // Check to see if client is already in channel
                     if (JoinedChannels.Any(x => x.Channel.Equals(channels[i], StringComparison.OrdinalIgnoreCase)))
-                        return;                   
+                        return Task.CompletedTask;                   
 
                     _joinChannelQueue.Enqueue(new JoinedChannel(channels[i]));
                 }
