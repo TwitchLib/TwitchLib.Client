@@ -16,13 +16,13 @@ namespace TwitchLib.Client.Test
 
         public int WhisperQueueLength => throw new NotImplementedException();
 
-        public event EventHandler<OnConnectedEventArgs> OnConnected;
-        public event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
-        public event EventHandler<OnErrorEventArgs> OnError;
-        public event EventHandler<OnFatalErrorEventArgs> OnFatality;
-        public event EventHandler<OnMessageEventArgs> OnMessage;
-        public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
-        public event EventHandler<OnConnectedEventArgs> OnReconnected;
+        public event AsyncEventHandler<OnConnectedEventArgs> OnConnected;
+        public event AsyncEventHandler<OnDisconnectedEventArgs> OnDisconnected;
+        public event AsyncEventHandler<OnErrorEventArgs> OnError;
+        public event AsyncEventHandler<OnFatalErrorEventArgs> OnFatality;
+        public event AsyncEventHandler<OnMessageEventArgs> OnMessage;
+        public event AsyncEventHandler<OnSendFailedEventArgs> OnSendFailed;
+        public event AsyncEventHandler<OnConnectedEventArgs> OnReconnected;
 
         public Task CloseAsync()
         {
@@ -37,18 +37,18 @@ namespace TwitchLib.Client.Test
         public void Dispose(bool waitForSendsToComplete)
         { }
 
-        public Task<bool> OpenAsync()
+        public async Task<bool> OpenAsync()
         {
             IsConnected = true;
-            OnConnected?.Invoke(this, new OnConnectedEventArgs());
-            return Task.FromResult(true);
+            await OnConnected?.Invoke(this, new OnConnectedEventArgs());
+            return true;
         }
 
-        public Task<bool> ReconnectAsync()
+        public async Task<bool> ReconnectAsync()
         {
             IsConnected = true;
-            OnReconnected?.Invoke(this, new OnConnectedEventArgs());
-            return Task.FromResult(true);
+            await OnReconnected?.Invoke(this, new OnConnectedEventArgs());
+            return true;
         }
 
         public void SendFailed(OnSendFailedEventArgs eventArgs)
@@ -66,9 +66,11 @@ namespace TwitchLib.Client.Test
             return Task.FromResult(true);
         }
 
-        public void ReceiveMessage(string message)
+        public async Task ReceiveMessage(string message)
         {
-            OnMessage?.Invoke(this, new OnMessageEventArgs(message));
+
+           await OnMessage?.Invoke(this, new OnMessageEventArgs(message));
+
         }
 
         public bool SendWhisper(string data)
