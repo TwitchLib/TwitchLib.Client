@@ -511,7 +511,7 @@ namespace TwitchLib.Client
         /// <param name="channels">List of channels to join when connected</param>
         /// <param name="chatCommandIdentifier">The identifier to be used for reading and writing commands from chat.</param>
         /// <param name="whisperCommandIdentifier">The identifier to be used for reading and writing commands from whispers.</param>
-        private Task InitializationHelper(
+        private void InitializationHelper(
             ConnectionCredentials credentials,
             List<string> channels,
             char chatCommandIdentifier = '!',
@@ -534,14 +534,14 @@ namespace TwitchLib.Client
 
                     // Check to see if client is already in channel
                     if (JoinedChannels.Any(x => x.Channel.Equals(channels[i], StringComparison.OrdinalIgnoreCase)))
-                        return Task.CompletedTask;                   
+                        return;                   
 
                     _joinChannelQueue.Enqueue(new JoinedChannel(channels[i]));
                 }
             }
 
             InitializeClient();
-            return Task.CompletedTask;
+            return;
         }
 
         /// <summary>
