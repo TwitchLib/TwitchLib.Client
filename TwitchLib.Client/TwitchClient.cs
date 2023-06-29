@@ -1124,13 +1124,13 @@ namespace TwitchLib.Client
         private Task HandleIrcMessageAsync(IrcMessage ircMessage)
         {
             var rawMessage = ircMessage.ToString();
-            if (rawMessage.StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed")
-                && OnIncorrectLogin != null)
-            {
-                return OnIncorrectLogin.Invoke(this, new()
+            if (rawMessage.StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed"))
+            { 
+                // Does this need to fallback to UnaccountedFor?
+                return OnIncorrectLogin?.Invoke(this, new()
                 {
                     Exception = new ErrorLoggingInException(rawMessage, TwitchUsername)
-                });
+                }) ?? Task.CompletedTask;
             }
 
             return ircMessage.Command switch
