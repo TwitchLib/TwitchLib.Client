@@ -1276,16 +1276,16 @@ namespace TwitchLib.Client
                 MsgIds.MsgBanned => OnBanned?.Invoke(this, new() { Channel = channel, Message = message }),
                 MsgIds.MsgSlowMode => OnSlowMode?.Invoke(this, new() { Channel = channel, Message = message }),
                 MsgIds.MsgR9k => OnR9kMode?.Invoke(this, new() { Channel = channel, Message = message }),
-                _ => null
+                _ => OnUnaccountedFor?.Invoke(this, new()
+                {
+                    BotUsername = TwitchUsername,
+                    Channel = channel,
+                    Location = "NoticeHandling",
+                    RawIRC = rawIrcMessage
+                }) ?? UnaccountedFor(rawIrcMessage)
             };
 
-            return result ?? OnUnaccountedFor?.Invoke(this, new()
-            {
-                BotUsername = TwitchUsername,
-                Channel = channel,
-                Location = "NoticeHandling",
-                RawIRC = rawIrcMessage
-            }) ?? UnaccountedFor(rawIrcMessage);
+            return result ?? Task.CompletedTask;
         }
 
         /// <summary>
@@ -1294,7 +1294,7 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private async Task HandleChannelSuspended(IrcMessage ircMessage)
         {
-            _awaitingJoins.RemoveAll(x => x.Key.ToLower() == ircMessage.Channel);
+            _awaitingJoins.RemoveAll(x => x.Key.Equals(ircMessage.Channel, StringComparison.OrdinalIgnoreCase));
             _joinedChannelManager.RemoveJoinedChannel(ircMessage.Channel);
 
             await QueueingJoinCheckAsync();
