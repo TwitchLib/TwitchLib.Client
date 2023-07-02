@@ -1125,12 +1125,16 @@ namespace TwitchLib.Client
         {
             var rawMessage = ircMessage.ToString();
             if (rawMessage.StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed"))
-            { 
-                // Does this need to fallback to UnaccountedFor?
-                return OnIncorrectLogin?.Invoke(this, new()
-                {
-                    Exception = new ErrorLoggingInException(rawMessage, TwitchUsername)
-                }) ?? Task.CompletedTask;
+            {
+                return OnIncorrectLogin?.Invoke(this, new() { Exception = new(rawMessage, TwitchUsername) })
+                    ?? OnUnaccountedFor?.Invoke(this, new()
+                    {
+                        BotUsername = TwitchUsername,
+                        Channel = null,
+                        Location = "HandleIrcMessage",
+                        RawIRC = rawMessage
+                    })
+                    ?? UnaccountedFor(ircMessage.ToString());
             }
 
             return ircMessage.Command switch
@@ -1161,16 +1165,13 @@ namespace TwitchLib.Client
                 IrcCommand.RPL_375 or
                 IrcCommand.RPL_376 or
                 IrcCommand.GlobalUserState => Task.CompletedTask,
-                IrcCommand.Unknown or _ => OnUnaccountedFor != null
-                    ? OnUnaccountedFor.Invoke(this,
-                        new OnUnaccountedForArgs
-                        {
-                            BotUsername = TwitchUsername,
-                            Channel = null,
-                            Location = "HandleIrcMessage",
-                            RawIRC = rawMessage
-                        })
-                    : UnaccountedFor(ircMessage.ToString())
+                IrcCommand.Unknown or _ => OnUnaccountedFor?.Invoke(this, new()
+                {
+                    BotUsername = TwitchUsername,
+                    Channel = null,
+                    Location = "HandleIrcMessage",
+                    RawIRC = rawMessage
+                }) ?? UnaccountedFor(rawMessage)
             };
         }
 
