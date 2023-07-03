@@ -41,11 +41,6 @@ namespace TwitchLib.Client
         private ThrottlingService _throttling;
 
         /// <summary>
-        /// The channel emotes
-        /// </summary>
-        private MessageEmoteCollection _channelEmotes = new MessageEmoteCollection();
-
-        /// <summary>
         /// The join channel queue
         /// </summary>
         private readonly Queue<JoinedChannel> _joinChannelQueue = new Queue<JoinedChannel>();
@@ -77,6 +72,7 @@ namespace TwitchLib.Client
         /// </summary>
         private List<KeyValuePair<string, DateTime>> _awaitingJoins;
 
+        /// <summary>
         /// The joined channel manager
         /// </summary>
         private readonly JoinedChannelManager _joinedChannelManager = new();
@@ -132,7 +128,7 @@ namespace TwitchLib.Client
         /// The current connection status of the client.
         /// </summary>
         /// <value><c>true</c> if this instance is connected; otherwise, <c>false</c>.</value>
-        public bool IsConnected => IsInitialized && _client != null ? _client.IsConnected : false;
+        public bool IsConnected => IsInitialized && _client?.IsConnected == true;
 
         /// <summary>
         /// The emotes this channel replaces.
@@ -141,7 +137,7 @@ namespace TwitchLib.Client
         /// <remarks>Twitch-handled emotes are automatically added to this collection (which also accounts for
         /// managing user emote permissions such as sub-only emotes). Third-party emotes will have to be manually
         /// added according to the availability rules defined by the third-party.</remarks>
-        public MessageEmoteCollection ChannelEmotes => _channelEmotes;
+        public MessageEmoteCollection ChannelEmotes { get; } = new MessageEmoteCollection();
 
         /// <summary>
         /// Will disable the client from sending automatic PONG responses to PING
@@ -509,7 +505,7 @@ namespace TwitchLib.Client
         /// <param name="credentials">The credentials to use to log in.</param>
         /// <param name="channels">List of channels to join when connected</param>
         private void InitializationHelper(
-            ConnectionCredentials credentials, 
+            ConnectionCredentials credentials,
             List<string> channels)
         {
             _logger?.LogInitialized(Assembly.GetExecutingAssembly().GetName().Version);
@@ -537,7 +533,6 @@ namespace TwitchLib.Client
             }
 
             InitializeClient();
-            return;
         }
 
         /// <summary>
@@ -545,19 +540,12 @@ namespace TwitchLib.Client
         /// </summary>
         private void InitializeClient()
         {
-            if (_client == null)
+            _client ??= _protocol switch
             {
-                switch (_protocol)
-                {
-                    case ClientProtocol.TCP:
-                        _client = new TcpClient(null, _loggerFactory?.CreateLogger<TcpClient>());
-                        break;
-
-                    case ClientProtocol.WebSocket:
-                        _client = new WebSocketClient(null, _loggerFactory?.CreateLogger<WebSocketClient>());
-                        break;
-                }
-            }
+                ClientProtocol.TCP => new TcpClient(null, _loggerFactory?.CreateLogger<TcpClient>()),
+                ClientProtocol.WebSocket => new WebSocketClient(null, _loggerFactory?.CreateLogger<WebSocketClient>()),
+                _ => throw new ArgumentOutOfRangeException(nameof(_protocol), _protocol, null)
+            };
 
             Debug.Assert(_client != null, nameof(_client) + " != null");
 
@@ -1003,7 +991,7 @@ namespace TwitchLib.Client
         {
             await SendHandshake();
 
-            if (_joinChannelQueue != null && _joinChannelQueue.Count > 0)
+            if (_joinChannelQueue?.Count > 0)
             {
                 await QueueingJoinCheckAsync();
             }
@@ -1116,7 +1104,7 @@ namespace TwitchLib.Client
             var rawMessage = ircMessage.ToString();
             if (rawMessage.StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed"))
             {
-                return OnIncorrectLogin.TryInvoke(this, new() { Exception = new(rawMessage, TwitchUsername) });;
+                return OnIncorrectLogin.TryInvoke(this, new() { Exception = new(rawMessage, TwitchUsername) });
             }
 
             return ircMessage.Command switch
@@ -1168,7 +1156,7 @@ namespace TwitchLib.Client
             var chatMessage = new ChatMessage(
                 TwitchUsername,
                 ircMessage,
-                _channelEmotes,
+                ChannelEmotes,
                 WillReplaceEmotes,
                 ReplacedEmotesPrefix,
                 ReplacedEmotesSuffix);
@@ -1390,7 +1378,7 @@ namespace TwitchLib.Client
             return OnExistingUsersDetected.TryInvoke(this, new()
             {
                 Channel = ircMessage.Channel,
-                Users = ircMessage.Message.Split(' ')
+                Users = ircMessage.Message.Split(' ').ToList()
             });
         }
 
@@ -1561,8 +1549,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Handles the Cap
         /// </summary>
-        /// <param name="ircMessage">The irc message</param>
-        private static Task HandleCap(IrcMessage ircMessage)
+        private static Task HandleCap(IrcMessage _)
         {
             // do nothing, actually cap frfr
             return Task.CompletedTask;
@@ -1615,4 +1602,3 @@ namespace TwitchLib.Client
         }
     }
 }
-
