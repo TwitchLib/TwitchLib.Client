@@ -1317,8 +1317,7 @@ namespace TwitchLib.Client
         {
             if (string.IsNullOrWhiteSpace(ircMessage.Message))
             {
-                return OnChatCleared?.Invoke(this, new() { Channel = ircMessage.Channel })
-                    ?? Task.CompletedTask;
+                return OnChatCleared.TryInvoke(this, new() { Channel = ircMessage.Channel });
             }
 
             var successBanDuration = ircMessage.Tags.TryGetValue(Tags.BanDuration, out _);
@@ -1536,7 +1535,7 @@ namespace TwitchLib.Client
 
             if (ircMessage.Message.StartsWith("-o"))
             {
-                return OnModeratorLeft.Invoke(this, new()
+                return OnModeratorLeft.TryInvoke(this, new()
                 {
                     Channel = ircMessage.Channel,
                     Username = ircMessage.Message.SplitFirst(' ').Remainder.ToString()
