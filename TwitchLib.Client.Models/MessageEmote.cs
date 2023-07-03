@@ -85,16 +85,13 @@ namespace TwitchLib.Client.Models
         public static string SourceMatchingReplacementText(MessageEmote caller)
         {
             var sizeIndex = (int)caller.Size;
-            switch (caller.Source)
+            return caller.Source switch
             {
-                case EmoteSource.BetterTwitchTv:
-                    return string.Format(BetterTwitchTvEmoteUrls[sizeIndex], caller.Id);
-                case EmoteSource.FrankerFaceZ:
-                    return string.Format(FrankerFaceZEmoteUrls[sizeIndex], caller.Id);
-                case EmoteSource.Twitch:
-                    return string.Format(TwitchEmoteUrls[sizeIndex], caller.Id);
-            }
-            return caller.Text;
+                EmoteSource.BetterTwitchTv => string.Format(BetterTwitchTvEmoteUrls[sizeIndex], caller.Id),
+                EmoteSource.FrankerFaceZ => string.Format(FrankerFaceZEmoteUrls[sizeIndex], caller.Id),
+                EmoteSource.Twitch => string.Format(TwitchEmoteUrls[sizeIndex], caller.Id),
+                _ => caller.Text,
+            };
         }
 
         /// <summary> Enum supplying the supported sites which provide Emote images.</summary>
@@ -132,30 +129,26 @@ namespace TwitchLib.Client.Models
             Large = 2
         }
 
-        private readonly string _id, _text, _escapedText;
-        private readonly EmoteSource _source;
-        private readonly EmoteSize _size;
-
         /// <summary>
         ///     Emote ID as used by the emote source. Will be provided as {0}
         ///     to be substituted into the indicated URL if needed.
         /// </summary>
-        public string Id => _id;
+        public string Id { get; }
 
         /// <summary>
         ///     Emote text which appears in a message and is meant to be replaced by the emote image.
         /// </summary>
-        public string Text => _text;
+        public string Text { get; }
 
         /// <summary>
         ///     The specified <see cref="EmoteSource"/> for this emote.
         /// </summary>
-        public EmoteSource Source => _source;
+        public EmoteSource Source { get; }
 
         /// <summary>
         ///     The specified <see cref="EmoteSize"/> for this emote.
         /// </summary>
-        public EmoteSize Size => _size;
+        public EmoteSize Size { get; }
 
         /// <summary>
         ///    The string to substitute emote text for.
@@ -172,7 +165,7 @@ namespace TwitchLib.Client.Models
         ///     The emote text <see cref="Regex.Escape(string)">regex-escaped</see>
         ///     so that it can be embedded into a regex pattern.
         /// </summary>
-        public string EscapedText => _escapedText;
+        public string EscapedText { get; }
 
         /// <summary>
         ///     Constructor for a new MessageEmote instance.
@@ -203,11 +196,11 @@ namespace TwitchLib.Client.Models
             EmoteSize size = EmoteSize.Small,
             ReplaceEmoteDelegate replacementDelegate = null)
         {
-            _id = id;
-            _text = text;
-            _escapedText = Regex.Escape(text);
-            _source = source;
-            _size = size;
+            Id = id;
+            Text = text;
+            EscapedText = Regex.Escape(text);
+            Source = source;
+            Size = size;
             if (replacementDelegate != null)
             {
                 ReplacementDelegate = replacementDelegate;
@@ -220,7 +213,7 @@ namespace TwitchLib.Client.Models
     /// </summary>
     public class MessageEmoteCollection
     {
-        private readonly SortedList<string, MessageEmote> _emoteList;
+        private readonly Dictionary<string, MessageEmote> _emotes;
         private const string BasePattern = @"(\b{0}\b)";
 
         /// <summary> Do not access directly! Backing field for <see cref="CurrentPattern"/> </summary>
@@ -237,7 +230,9 @@ namespace TwitchLib.Client.Models
             get => _currentPattern;
             set
             {
-                if (_currentPattern != null && _currentPattern.Equals(value)) return;
+                if (_currentPattern?.Equals(value) is true)
+                    return;
+
                 _currentPattern = value;
                 PatternChanged = true;
             }
@@ -273,7 +268,7 @@ namespace TwitchLib.Client.Models
         /// </summary>
         public MessageEmoteCollection()
         {
-            _emoteList = new SortedList<string, MessageEmote>();
+            _emotes = new();
             _preferredFilter = AllInclusiveEmoteFilter;
         }
 
@@ -294,11 +289,10 @@ namespace TwitchLib.Client.Models
         /// <param name="emote">The <see cref="MessageEmote"/> to add to the collection.</param>
         public void Add(MessageEmote emote)
         {
-            if (!_emoteList.TryGetValue(emote.Text, out var _))
-            {
-                _emoteList.Add(emote.Text, emote);
-            }
+            if (_emotes.ContainsKey(emote.Text))
+                return;
 
+            _emotes.Add(emote.Text, emote);
             if (CurrentPattern == null)
             {
                 //string i = String.Format(_basePattern, "(" + emote.EscapedText + "){0}");
@@ -333,9 +327,8 @@ namespace TwitchLib.Client.Models
         /// <param name="emote">The <see cref="MessageEmote"/> to remove.</param>
         public void Remove(MessageEmote emote)
         {
-            if (!_emoteList.ContainsKey(emote.Text)) return;
-
-            _emoteList.Remove(emote.Text);
+            if (!_emotes.Remove(emote.Text))
+                return;
 
             // These patterns look a lot scarier than they are because we have to look for
             // a lot of regex characters, which means we do a lot of escaping!
@@ -355,7 +348,7 @@ namespace TwitchLib.Client.Models
         /// </summary>
         public void RemoveAll()
         {
-            _emoteList.Clear();
+            _emotes.Clear();
             CurrentPattern = null;
         }
 
@@ -382,33 +375,29 @@ namespace TwitchLib.Client.Models
         ///     A string where all of the original emote text has been replaced with
         ///     its designated <see cref="MessageEmote.ReplacementString"/>s
         /// </returns>
-        public string ReplaceEmotes(string originalMessage, EmoteFilterDelegate del = null, string prefix = "",string suffix = "")
+        public string ReplaceEmotes(string originalMessage, EmoteFilterDelegate del = null, string prefix = "", string suffix = "")
         {
-            if (CurrentRegex == null) 
+            if (CurrentRegex == null)
             {
-
                 return originalMessage;
             }
 
-            if (del != null && del != CurrentEmoteFilter) 
-            {  
-                CurrentEmoteFilter = del; 
+            if (del != null && del != CurrentEmoteFilter)
+            {
+                CurrentEmoteFilter = del;
             }
 
             var newMessage = CurrentRegex.Replace(originalMessage, match =>
             {
-                if (!_emoteList.ContainsKey(match.Value)) 
+                if (!_emotes.ContainsKey(match.Value))
                 {
-
                     return match.Value;
-                } 
-                var emote = _emoteList[match.Value];
+                }
+                var emote = _emotes[match.Value];
 
-
-                return CurrentEmoteFilter(emote) ? prefix + emote.ReplacementString + suffix: match.Value;
+                return CurrentEmoteFilter(emote) ? prefix + emote.ReplacementString + suffix : match.Value;
             });
             CurrentEmoteFilter = _preferredFilter;
-
 
             return newMessage;
         }

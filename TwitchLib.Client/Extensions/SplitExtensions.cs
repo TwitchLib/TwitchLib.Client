@@ -7,6 +7,19 @@ namespace TwitchLib.Client.Extensions
     internal static class SplitExtensions
     {
         /// <summary>
+        /// Splits the string into two parts at the first occurrence of a separator.
+        /// If the separator is not found, Segment will be the entire span and Remainder will be empty.
+        /// </summary>
+        /// <param name="source">Source span to split</param>
+        /// <param name="separator">Separator value</param>
+        /// <returns>A split pair of Segment and Remainder, deconstructible with tuple pattern.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static ReadOnlySplitPair<char> SplitFirst(this string source, char separator)
+        {
+            return SplitFirst(source.AsSpan(), separator);
+        }
+
+        /// <summary>
         /// Splits the span into two parts at the first occurrence of a separator.
         /// If the separator is not found, Segment will be the entire span and Remainder will be empty.
         /// </summary>
@@ -26,7 +39,20 @@ namespace TwitchLib.Client.Extensions
         }
 
         /// <summary>
-        /// Splits the span into two parts at the first occurrence of a separator.
+        /// Splits the string into two parts at the last occurrence of a separator.
+        /// If the separator is not found, Segment will be the entire span and Remainder will be empty.
+        /// </summary>
+        /// <param name="source">Source span to split</param>
+        /// <param name="separator">Separator value</param>
+        /// <returns>A split pair of Segment and Remainder, deconstructible with tuple pattern.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static ReadOnlySplitPair<char> SplitLast(this string source, char separator)
+        {
+            return SplitLast(source.AsSpan(), separator);
+        }
+
+        /// <summary>
+        /// Splits the span into two parts at the last occurrence of a separator.
         /// If the separator is not found, Segment will be the entire span and Remainder will be empty.
         /// </summary>
         /// <typeparam name="T">Span element type</typeparam>

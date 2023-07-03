@@ -96,7 +96,7 @@ namespace TwitchLib.Client.Models
         public ChatMessage(
             string botUsername,
             IrcMessage ircMessage,
-            ref MessageEmoteCollection emoteCollection,
+            MessageEmoteCollection emoteCollection = null,
             bool replaceEmotes = false,
             string prefix = "",
             string suffix = "")
@@ -123,11 +123,10 @@ namespace TwitchLib.Client.Models
             Username = ircMessage.User;
             Channel = ircMessage.Channel;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
+                var (tagKey, tagValue) = (tag.Key, tag.Value);
+                switch (tagKey)
                 {
                     case Tags.Badges:
                         Badges = Common.Helpers.ParseBadges(tagValue);
@@ -141,7 +140,7 @@ namespace TwitchLib.Client.Models
                                     break;
                                 case "subscriber":
                                     // Prioritize BadgeInfo subscribe count, as its more accurate
-                                    if(SubscribedMonthCount == 0)
+                                    if (SubscribedMonthCount == 0)
                                     {
                                         SubscribedMonthCount = int.Parse(badge.Value);
                                     }
@@ -150,15 +149,12 @@ namespace TwitchLib.Client.Models
                                     IsVip = true;
                                     break;
                                 case "admin":
-                                    IsStaff = true;
-                                    break;
                                 case "staff":
                                     IsStaff = true;
                                     break;
                                 case "partner":
                                     IsPartner = true;
                                     break;
-
                             }
                         }
                         break;
@@ -166,11 +162,12 @@ namespace TwitchLib.Client.Models
                         BadgeInfo = Common.Helpers.ParseBadges(tagValue);
                         // check if founder is one of them, and get months from that
                         var founderBadge = BadgeInfo.Find(b => b.Key == "founder");
-                        if(!founderBadge.Equals(default(KeyValuePair<string, string>)))
+                        if (!founderBadge.Equals(default(KeyValuePair<string, string>)))
                         {
                             IsSubscriber = true;
                             SubscribedMonthCount = int.Parse(founderBadge.Value);
-                        } else
+                        }
+                        else
                         {
                             var subBadge = BadgeInfo.Find(b => b.Key == "subscriber");
                             // BadgeInfo has better accuracy than Badges subscriber value
@@ -205,7 +202,7 @@ namespace TwitchLib.Client.Models
                         Id = tagValue;
                         break;
                     case Tags.MsgId:
-                        handleMsgId(tagValue);
+                        HandleMsgId(tagValue);
                         break;
                     case Tags.Mod:
                         IsModerator = Common.Helpers.ConvertToBool(tagValue);
@@ -214,23 +211,23 @@ namespace TwitchLib.Client.Models
                         Noisy = Common.Helpers.ConvertToBool(tagValue) ? Noisy.True : Noisy.False;
                         break;
                     case Tags.ReplyParentDisplayName:
-                        if (ChatReply == null) { ChatReply = new ChatReply(); } // ChatReply is null if not reply
+                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
                         ChatReply.ParentDisplayName = tagValue;
                         break;
                     case Tags.ReplyParentMsgBody:
-                        if (ChatReply == null) { ChatReply = new ChatReply(); } // ChatReply is null if not reply
+                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
                         ChatReply.ParentMsgBody = tagValue;
                         break;
                     case Tags.ReplyParentMsgId:
-                        if (ChatReply == null) { ChatReply = new ChatReply(); } // ChatReply is null if not reply
+                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
                         ChatReply.ParentMsgId = tagValue;
                         break;
                     case Tags.ReplyParentUserId:
-                        if (ChatReply == null) { ChatReply = new ChatReply(); } // ChatReply is null if not reply
+                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
                         ChatReply.ParentUserId = tagValue;
                         break;
                     case Tags.ReplyParentUserLogin:
-                        if (ChatReply == null) { ChatReply = new ChatReply(); } // ChatReply is null if not reply
+                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
                         ChatReply.ParentUserLogin = tagValue;
                         break;
                     case Tags.RoomId:
@@ -238,7 +235,7 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Subscriber:
                         // this check because when founder is set, the subscriber value is actually 0, which is problematic
-                        IsSubscriber = IsSubscriber == false ? Common.Helpers.ConvertToBool(tagValue) : true;
+                        IsSubscriber = IsSubscriber || Common.Helpers.ConvertToBool(tagValue);
                         break;
                     case Tags.TmiSentTs:
                         TmiSentTs = tagValue;
@@ -275,7 +272,7 @@ namespace TwitchLib.Client.Models
             }
 
             //Parse the emoteSet
-            if (EmoteSet != null && Message != null && EmoteSet.Emotes.Count > 0)
+            if (_emoteCollection != null && Message != null && EmoteSet?.Emotes.Count > 0)
             {
                 var uniqueEmotes = EmoteSet.RawEmoteSetString.Split('/');
                 foreach (var emote in uniqueEmotes)
@@ -302,12 +299,11 @@ namespace TwitchLib.Client.Models
                 }
                 if (replaceEmotes)
                 {
-                    EmoteReplacedMessage = _emoteCollection.ReplaceEmotes(originalMessage: Message,suffix: suffix,prefix: prefix);
+                    EmoteReplacedMessage = _emoteCollection?.ReplaceEmotes(Message, prefix: prefix, suffix: suffix);
                 }
             }
 
-            if (EmoteSet == null)
-                EmoteSet = new EmoteSet(default(string), Message);
+            EmoteSet ??= new EmoteSet(default(string), Message);
 
             // Check if display name was set, and if it wasn't, set it to username
             if (string.IsNullOrEmpty(DisplayName))
@@ -321,13 +317,11 @@ namespace TwitchLib.Client.Models
             }
 
             var splitData = Channel.Split(':');
-            if (splitData.Length == 3)
+            if (splitData.Length == 3 &&
+                string.Equals(splitData[1], UserId, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (string.Equals(splitData[1], UserId, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    UserType = UserType.Broadcaster;
-                    IsBroadcaster = true;
-                }
+                UserType = UserType.Broadcaster;
+                IsBroadcaster = true;
             }
         }
 
@@ -380,7 +374,7 @@ namespace TwitchLib.Client.Models
             IsBroadcaster = isBroadcaster;
             IsVip = isVip;
             IsPartner = isPartner;
-            IsStaff = isStaff; 
+            IsStaff = isStaff;
             Noisy = noisy;
             RawIrcMessage = rawIrcMessage;
             EmoteReplacedMessage = emoteReplacedMessage;
@@ -391,15 +385,15 @@ namespace TwitchLib.Client.Models
             Username = userName;
         }
 
-        private void handleMsgId(string val)
+        private void HandleMsgId(string val)
         {
-            switch(val) {
-                case MsgIds.HighlightedMessage:
-                    IsHighlighted = true;
-                    break;
-                case MsgIds.SkipSubsModeMessage:
-                    IsSkippingSubMode = true;
-                    break;
+            if (val == MsgIds.HighlightedMessage)
+            {
+                IsHighlighted = true;
+            }
+            else if (val == MsgIds.SkipSubsModeMessage)
+            {
+                IsSkippingSubMode = true;
             }
         }
 
@@ -414,23 +408,14 @@ namespace TwitchLib.Client.Models
             10000 bits = $126.00 (10%)
             25000 bits = $308.00 (12%)
             */
-            if (bits < 1500)
+            return bits switch
             {
-                return (double)bits / 100 * 1.4;
-            }
-            if (bits < 5000)
-            {
-                return (double)bits / 1500 * 19.95;
-            }
-            if (bits < 10000)
-            {
-                return (double)bits / 5000 * 64.40;
-            }
-            if (bits < 25000)
-            {
-                return (double)bits / 10000 * 126;
-            }
-            return (double)bits / 25000 * 308;
+                < 1500 => (double)bits / 100 * 1.4,
+                < 5000 => (double)bits / 1500 * 19.95,
+                < 10000 => (double)bits / 5000 * 64.40,
+                < 25000 => (double)bits / 10000 * 126,
+                _ => (double)bits / 25000 * 308
+            };
         }
     }
 }

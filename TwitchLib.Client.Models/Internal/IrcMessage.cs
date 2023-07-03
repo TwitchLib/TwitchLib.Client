@@ -93,7 +93,7 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// Create an IrcMessage, settings its raw string.
         /// IrcParser *must* use this constructor, otherwise the raw string
-        /// will be re-generated on each PRIVMSG (90% of all messages)
+        /// will be re-generated each time it is parsed and then passed to handlers.
         /// </summary>
         /// <param name="raw">Raw IRC message</param>
         /// <param name="command">IRC Command</param>

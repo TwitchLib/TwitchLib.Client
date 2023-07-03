@@ -48,6 +48,7 @@ namespace TwitchLib.Client.Internal.Parsing
             {
                 return null;
             }
+            local = local.Slice(1);
 
             var tags = new Dictionary<string, string>();
 
