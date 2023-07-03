@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,7 +13,7 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing string list of existing users.
         /// </summary>
-        public List<string> Users;
+        public string[] Users;
         /// <summary>
         /// Property representing channel bot is connected to.
         /// </summary>

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
+using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Client.Extensions
 {
@@ -12,7 +14,6 @@ namespace TwitchLib.Client.Extensions
     /// </summary>
     public static class EventInvocationExt
     {
-
         /// <summary>
         /// Invokes the channel state changed.
         /// </summary>
@@ -643,6 +644,14 @@ namespace TwitchLib.Client.Extensions
                 WhisperMessage = new WhisperMessage(badges, colorHex, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType)
             };
             client.RaiseEvent("OnWhisperReceived", model);
+        }
+
+        /// <summary>
+        /// Invokes the event handler when it is not null. Returns a completed task otherwise.
+        /// </summary>
+        internal static Task TryInvoke<TEventArgs>(this AsyncEventHandler<TEventArgs> eventHandler, object sender, TEventArgs eventArgs)
+        {
+            return eventHandler?.Invoke(sender, eventArgs) ?? Task.CompletedTask;
         }
     }
 }
