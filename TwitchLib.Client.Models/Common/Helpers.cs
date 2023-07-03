@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TwitchLib.Client.Models.Extensions;
 
 namespace TwitchLib.Client.Models.Common
 {
@@ -62,21 +63,14 @@ namespace TwitchLib.Client.Models.Common
 
             if (badgesStr.Contains('/'))
             {
-                if (!badgesStr.Contains(","))
+                foreach (var badge in new SpanSliceEnumerator(badgesStr, ','))
                 {
-                    var splitData = badgesStr.Split('/');
-                    badges.Add(new KeyValuePair<string, string>(splitData[0], splitData[1]));
-                }
-                else
-                {
-                    foreach (var badge in badgesStr.Split(','))
-                    {
-                        var splitData = badge.Split('/');
-                        badges.Add(new KeyValuePair<string, string>(splitData[0], splitData[1]));
-                    }
+                    var index = badge.IndexOf('/');
+                    var key = badge.Slice(0, index).ToString();
+                    var value = badge.Slice(index + 1).ToString();
+                    badges.Add(new KeyValuePair<string, string>(key, value));
                 }
             }
-
             return badges;
         }
 

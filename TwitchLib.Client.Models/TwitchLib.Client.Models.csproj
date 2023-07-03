@@ -31,4 +31,7 @@
     <_Parameter1>TwitchLib.Client</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+  </ItemGroup>
 </Project>
