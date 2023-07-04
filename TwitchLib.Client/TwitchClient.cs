@@ -1217,8 +1217,12 @@ namespace TwitchLib.Client
             var result = msgId switch
             {
                 MsgIds.ColorChanged => OnChatColorChanged?.Invoke(this, new() { Channel = channel }),
-                MsgIds.ModeratorsReceived => OnModeratorsReceived?.Invoke(this, new() { Channel = channel }),
-                MsgIds.NoMods => OnModeratorsReceived?.Invoke(this, new() { Channel = channel, Moderators = new() }),
+                MsgIds.ModeratorsReceived => OnModeratorsReceived?.Invoke(this, new()
+                {
+                    Channel = channel,
+                    Moderators = message.SplitFirst(':').Remainder.ToString().Replace(" ", "").Split(',')
+                }),
+                MsgIds.NoMods => OnModeratorsReceived?.Invoke(this, new() { Channel = channel, Moderators = Array.Empty<string>() }),
                 MsgIds.NoPermission => OnNoPermissionError?.Invoke(this, new() { Channel = channel, Message = message }),
                 MsgIds.RaidErrorSelf => OnSelfRaidError?.Invoke(this, new() { Channel = channel, Message = message }),
                 MsgIds.RaidNoticeMature => OnRaidedChannelIsMatureAudience?.Invoke(this, new() { Channel = channel, Message = message }),
