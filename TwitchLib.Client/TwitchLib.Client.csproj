@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net7.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
     <PackageId>TwitchLib.Client</PackageId>
@@ -27,7 +28,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="TwitchLib.Communication" Version="2.0.0-preview-b5bf10f12e8d7c9d0a82f7f5026dccdf97a97c41" />
+    <PackageReference Include="TwitchLib.Communication" Version="2.0.0-preview-d9bdf98197f77d62ae5d8774a3fef0c97ba71849" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />

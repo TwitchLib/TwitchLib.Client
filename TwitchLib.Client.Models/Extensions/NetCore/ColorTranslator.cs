@@ -3,6 +3,7 @@ using System.Globalization;
 
 namespace TwitchLib.Client.Models.Extensions.NetCore
 {
+#if NETSTANDARD2_0_OR_GREATER
     public static class ColorTranslator
     {
         public static Color FromHtml(string hexColor)
@@ -11,4 +12,5 @@ namespace TwitchLib.Client.Models.Extensions.NetCore
             return Color.FromArgb(argb);
         }
     }
+#endif
 }
