@@ -1,5 +1,4 @@
-﻿using TwitchLib.Client.Models.Common;
-using TwitchLib.Client.Models.Internal;
+﻿using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {

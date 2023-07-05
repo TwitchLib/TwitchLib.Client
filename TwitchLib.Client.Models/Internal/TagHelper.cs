@@ -3,7 +3,7 @@ using System.Globalization;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Extensions;
 
-namespace TwitchLib.Client.Models.Common;
+namespace TwitchLib.Client.Models.Internal;
 
 internal static class TagHelper
 {
