@@ -551,6 +551,7 @@ namespace TwitchLib.Client
 
             _throttling = new ThrottlingService(_client, _sendOptions, _logger);
             _throttling.OnThrottled += OnThrottled;
+            _throttling.OnError += ThrottlerOnError;
 
             _client.OnConnected += _client_OnConnectedAsync;
             _client.OnMessage += _client_OnMessage;
@@ -559,21 +560,6 @@ namespace TwitchLib.Client
             _client.OnReconnected += _client_OnReconnected;
         }
         #endregion
-
-        /// <summary>
-        /// Raises the event.
-        /// </summary>
-        /// <param name="eventName">Name of the event.</param>
-        /// <param name="args">The arguments.</param>
-        internal async Task RaiseEvent(string eventName, object args = null)
-        {
-            await EventHelper.RaiseEvent(this, eventName, args);
-        }
-
-        private Task OnThrottled(object sender, OnMessageThrottledArgs e)
-        {
-            return RaiseEvent(nameof(OnMessageThrottled), e);
-        }
 
         /// <summary>
         /// Sends a RAW IRC message.
@@ -908,6 +894,16 @@ namespace TwitchLib.Client
         }
 
         #region Client Events
+        private Task OnThrottled(object sender, OnMessageThrottledArgs e)
+        {
+            return OnMessageThrottled.TryInvoke(sender, e);
+        }
+        
+        private Task ThrottlerOnError(object sender, OnErrorEventArgs e)
+        {
+            return OnError.TryInvoke(sender, e);
+        }
+        
         /// <summary>
         /// Handles the OnFatality event of the _client control.
         /// </summary>
