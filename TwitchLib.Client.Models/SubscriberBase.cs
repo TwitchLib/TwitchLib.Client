@@ -93,10 +93,11 @@ namespace TwitchLib.Client.Models
 
             foreach (var tag in ircMessage.Tags)
             {
-                switch (tag.Value)
+                var tagValue = tag.Value;
+                switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = TagHelper.ToBadges(tag.Value);
+                        Badges = TagHelper.ToBadges(tagValue);
                         // iterate through badges for special circumstances
                         foreach (var badge in Badges)
                         {
@@ -105,62 +106,62 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = TagHelper.ToBadges(tag.Value);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tag.Value);
+                        Color = TagHelper.ToColor(tagValue);
                         break;
                     case Tags.DisplayName:
-                        DisplayName = tag.Value;
+                        DisplayName = tagValue;
                         break;
                     case Tags.Emotes:
-                        EmoteSet = tag.Value;
+                        EmoteSet = tagValue;
                         break;
                     case Tags.Id:
-                        Id = tag.Value;
+                        Id = tagValue;
                         break;
                     case Tags.Login:
-                        Login = tag.Value;
+                        Login = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = TagHelper.ToBool(tag.Value);
+                        IsModerator = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.MsgId:
-                        MsgId = tag.Value;
+                        MsgId = tagValue;
                         break;
                     case Tags.MsgParamCumulativeMonths:
-                        MsgParamCumulativeMonths = tag.Value;
+                        MsgParamCumulativeMonths = tagValue;
                         break;
                     case Tags.MsgParamStreakMonths:
-                        MsgParamStreakMonths = tag.Value;
+                        MsgParamStreakMonths = tagValue;
                         break;
                     case Tags.MsgParamShouldShareStreak:
-                        MsgParamShouldShareStreak = TagHelper.ToBool(tag.Value);
+                        MsgParamShouldShareStreak = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.MsgParamSubPlan:
                         SubscriptionPlan = TagHelper.ToSubscriptionPlan(tag.Value);
                         break;
                     case Tags.MsgParamSubPlanName:
-                        SubscriptionPlanName = tag.Value.Replace("\\s", " ");
+                        SubscriptionPlanName = tagValue.Replace("\\s", " ");
                         break;
                     case Tags.RoomId:
-                        RoomId = tag.Value;
+                        RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = TagHelper.ToBool(tag.Value);
+                        IsSubscriber = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.SystemMsg:
-                        SystemMessage = tag.Value;
-                        SystemMessageParsed = tag.Value.Replace("\\s", " ");
+                        SystemMessage = tagValue;
+                        SystemMessageParsed = tagValue.Replace("\\s", " ");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tag.Value;
+                        TmiSentTs = tagValue;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = TagHelper.ToBool(tag.Value);
+                        IsTurbo = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.UserId:
-                        UserId = tag.Value;
+                        UserId = tagValue;
                         break;
                     case Tags.UserType:
                         UserType = TagHelper.ToUserType(tag.Value);

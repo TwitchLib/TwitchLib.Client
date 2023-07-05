@@ -48,31 +48,32 @@ namespace TwitchLib.Client.Models
 
             foreach (var tag in ircMessage.Tags)
             {
+                var tagValue = tag.Value;
                 switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = TagHelper.ToBadges(tag.Value);
+                        Badges = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = TagHelper.ToBadges(tag.Value);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tag.Value);
+                        Color = TagHelper.ToColor(tagValue);
                         break;
                     case Tags.DisplayName:
-                        DisplayName = tag.Value;
+                        DisplayName = tagValue;
                         break;
                     case Tags.EmotesSets:
-                        EmoteSet = tag.Value;
+                        EmoteSet = tagValue;
                         break;
                     case Tags.Id:
-                        Id = tag.Value;
+                        Id = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = TagHelper.ToBool(tag.Value);
+                        IsModerator = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = TagHelper.ToBool(tag.Value);
+                        IsSubscriber = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.UserType:
                         UserType = TagHelper.ToUserType(tag.Value);

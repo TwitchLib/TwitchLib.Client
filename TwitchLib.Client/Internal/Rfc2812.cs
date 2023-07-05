@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 
 namespace TwitchLib.Client.Internal
@@ -22,7 +21,7 @@ namespace TwitchLib.Client.Internal
         private static partial Regex GetNicknameRegex();
 #else
         private static Regex GetNicknameRegex() => NicknameRegex;
-        private static readonly Regex NicknameRegex = new Regex(@"^[A-Za-z\[\]\\`_^{|}][A-Za-z0-9\[\]\\`_\-^{|}]+$", RegexOptions.Compiled);
+        private static readonly Regex NicknameRegex = new(@"^[A-Za-z\[\]\\`_^{|}][A-Za-z0-9\[\]\\`_\-^{|}]+$", RegexOptions.Compiled);
 #endif
 
 

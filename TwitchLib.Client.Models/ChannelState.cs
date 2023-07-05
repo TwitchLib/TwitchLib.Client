@@ -42,26 +42,27 @@ namespace TwitchLib.Client.Models
             //@broadcaster-lang=;emote-only=0;r9k=0;slow=0;subs-only=1 :tmi.twitch.tv ROOMSTATE #burkeblack
             foreach (var tag in ircMessage.Tags)
             {
+                var tagValue = tag.Value;
                 switch (tag.Key)
                 {
                     case Tags.BroadcasterLang:
-                        BroadcasterLanguage = tag.Value;
+                        BroadcasterLanguage = tagValue;
                         break;
                     case Tags.EmoteOnly:
-                        EmoteOnly = TagHelper.ToBool(tag.Value);
+                        EmoteOnly = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.R9K:
-                        R9K = TagHelper.ToBool(tag.Value);
+                        R9K = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.Rituals:
-                        Rituals = TagHelper.ToBool(tag.Value);
+                        Rituals = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.Slow:
                         var success = int.TryParse(tag.Value, out var slowDuration);
                         SlowMode = success ? slowDuration : (int?)null;
                         break;
                     case Tags.SubsOnly:
-                        SubOnly = TagHelper.ToBool(tag.Value);
+                        SubOnly = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.FollowersOnly:
                         if(int.TryParse(tag.Value, out int minutes) && minutes > -1)
@@ -70,10 +71,10 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.RoomId:
-                        RoomId = tag.Value;
+                        RoomId = tagValue;
                         break;
                     case Tags.Mercury:
-                        Mercury = TagHelper.ToBool(tag.Value);
+                        Mercury = TagHelper.ToBool(tagValue);
                         break;
                     default:
                         Console.WriteLine("[TwitchLib][ChannelState] Unaccounted for: " + tag);

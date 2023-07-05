@@ -81,13 +81,13 @@ namespace TwitchLib.Client.Models
         {
             RawIrc = ircMessage.ToString();
             Message = ircMessage.Message;
-
             foreach (var tag in ircMessage.Tags)
             {
+                var tagValue = tag.Value;
                 switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = TagHelper.ToBadges(tag.Value);
+                        Badges = TagHelper.ToBadges(tagValue);
                         foreach (var badge in Badges)
                         {
                             switch (badge.Key)
@@ -117,38 +117,38 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = TagHelper.ToBadges(tag.Value);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tag.Value);
+                        Color = TagHelper.ToColor(tagValue);
                         break;
                     case Tags.MsgParamColor:
-                        MsgParamColor = tag.Value;
+                        MsgParamColor = tagValue;
                         break;
                     case Tags.Emotes:
-                        EmoteSet = tag.Value;
+                        EmoteSet = tagValue;
                         break;
                     case Tags.Id:
-                        Id = tag.Value;
+                        Id = tagValue;
                         break;
                     case Tags.Login:
-                        Login = tag.Value;
+                        Login = tagValue;
                         break;
                     case Tags.MsgId:
-                        MsgId = tag.Value;
+                        MsgId = tagValue;
                         break;
                     case Tags.RoomId:
-                        RoomId = tag.Value;
+                        RoomId = tagValue;
                         break;
                     case Tags.SystemMsg:
-                        SystemMessage = tag.Value;
-                        SystemMessageParsed = tag.Value.Replace("\\s", " ");
+                        SystemMessage = tagValue;
+                        SystemMessageParsed = tagValue.Replace("\\s", " ");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tag.Value;
+                        TmiSentTs = tagValue;
                         break;
                     case Tags.UserId:
-                        UserId = tag.Value;
+                        UserId = tagValue;
                         break;
                     case Tags.UserType:
                         UserType = TagHelper.ToUserType(tag.Value);

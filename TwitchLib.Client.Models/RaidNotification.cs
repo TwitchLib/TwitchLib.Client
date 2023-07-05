@@ -52,59 +52,60 @@ namespace TwitchLib.Client.Models
         {
             foreach (var tag in ircMessage.Tags)
             {
+                var tagValue = tag.Value;
                 switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = TagHelper.ToBadges(tag.Value);
+                        Badges = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = TagHelper.ToBadges(tag.Value);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tag.Value);
+                        Color = TagHelper.ToColor(tagValue);
                         break;
                     case Tags.DisplayName:
-                        DisplayName = tag.Value;
+                        DisplayName = tagValue;
                         break;
                     case Tags.Emotes:
-                        Emotes = tag.Value;
+                        Emotes = tagValue;
                         break;
                     case Tags.Login:
-                        Login = tag.Value;
+                        Login = tagValue;
                         break;
                     case Tags.Mod:
-                        Moderator = TagHelper.ToBool(tag.Value);
+                        Moderator = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.MsgId:
-                        MsgId = tag.Value;
+                        MsgId = tagValue;
                         break;
                     case Tags.MsgParamDisplayname:
-                        MsgParamDisplayName = tag.Value;
+                        MsgParamDisplayName = tagValue;
                         break;
                     case Tags.MsgParamLogin:
-                        MsgParamLogin = tag.Value;
+                        MsgParamLogin = tagValue;
                         break;
                     case Tags.MsgParamViewerCount:
-                        MsgParamViewerCount = tag.Value;
+                        MsgParamViewerCount = tagValue;
                         break;
                     case Tags.RoomId:
-                        RoomId = tag.Value;
+                        RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        Subscriber = TagHelper.ToBool(tag.Value);
+                        Subscriber = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.SystemMsg:
-                        SystemMsg = tag.Value;
-                        SystemMsgParsed = tag.Value.Replace("\\s", " ").Replace("\\n", "");
+                        SystemMsg = tagValue;
+                        SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tag.Value;
+                        TmiSentTs = tagValue;
                         break;
                     case Tags.Turbo:
-                        Turbo = TagHelper.ToBool(tag.Value);
+                        Turbo = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.UserId:
-                        UserId = tag.Value;
+                        UserId = tagValue;
                         break;
                     case Tags.UserType:
                         UserType = TagHelper.ToUserType(tag.Value);

@@ -63,71 +63,72 @@ namespace TwitchLib.Client.Models
         {
             foreach (var tag in ircMessage.Tags)
             {
+                var tagValue = tag.Value;
                 switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = TagHelper.ToBadges(tag.Value);
+                        Badges = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = TagHelper.ToBadges(tag.Value);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tag.Value);
+                        Color = TagHelper.ToColor(tagValue);
                         break;
                     case Tags.DisplayName:
-                        DisplayName = tag.Value;
+                        DisplayName = tagValue;
                         break;
                     case Tags.Emotes:
-                        Emotes = tag.Value;
+                        Emotes = tagValue;
                         break;
                     case Tags.Id:
-                        Id = tag.Value;
+                        Id = tagValue;
                         break;
                     case Tags.Login:
-                        Login = tag.Value;
+                        Login = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = TagHelper.ToBool(tag.Value);
+                        IsModerator = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.MsgId:
-                        MsgId = tag.Value;
+                        MsgId = tagValue;
                         break;
                     case Tags.MsgParamMonths:
-                        MsgParamMonths = tag.Value;
+                        MsgParamMonths = tagValue;
                         break;
                     case Tags.MsgParamRecipientDisplayname:
-                        MsgParamRecipientDisplayName = tag.Value;
+                        MsgParamRecipientDisplayName = tagValue;
                         break;
                     case Tags.MsgParamRecipientId:
-                        MsgParamRecipientId = tag.Value;
+                        MsgParamRecipientId = tagValue;
                         break;
                     case Tags.MsgParamRecipientUsername:
-                        MsgParamRecipientUserName = tag.Value;
+                        MsgParamRecipientUserName = tagValue;
                         break;
                     case Tags.MsgParamSubPlanName:
-                        MsgParamSubPlanName = tag.Value;
+                        MsgParamSubPlanName = tagValue;
                         break;
                     case Tags.MsgParamSubPlan:
                         MsgParamSubPlan = TagHelper.ToSubscriptionPlan(tag.Value);
                         break;
                     case Tags.RoomId:
-                        RoomId = tag.Value;
+                        RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = TagHelper.ToBool(tag.Value);
+                        IsSubscriber = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.SystemMsg:
-                        SystemMsg = tag.Value;
-                        SystemMsgParsed = tag.Value.Replace("\\s", " ").Replace("\\n", "");
+                        SystemMsg = tagValue;
+                        SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tag.Value;
+                        TmiSentTs = tagValue;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = TagHelper.ToBool(tag.Value);
+                        IsTurbo = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.UserId:
-                        UserId = tag.Value;
+                        UserId = tagValue;
                         if (UserId == AnonymousGifterUserId)
                         {
                             IsAnonymous = true;
@@ -137,7 +138,7 @@ namespace TwitchLib.Client.Models
                         UserType = TagHelper.ToUserType(tag.Value);
                         break;
                     case Tags.MsgParamMultiMonthGiftDuration:
-                        MsgParamMultiMonthGiftDuration = tag.Value;
+                        MsgParamMultiMonthGiftDuration = tagValue;
                         break;
                 }
             }
