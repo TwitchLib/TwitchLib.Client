@@ -1,18 +1,17 @@
 ﻿using TwitchLib.Communication.Events;
 
-namespace TwitchLib.Client.Extensions
+namespace TwitchLib.Client.Extensions;
+
+/// <summary>
+/// Extends logic for handling events.
+/// </summary>
+public static class EventInvocationExtensions
 {
     /// <summary>
-    /// Extends logic for handling events.
+    /// Invokes the event handler when it is not null. Returns a completed task otherwise.
     /// </summary>
-    public static class EventInvocationExtensions
+    internal static Task TryInvoke<TEventArgs>(this AsyncEventHandler<TEventArgs> eventHandler, object sender, TEventArgs eventArgs)
     {
-        /// <summary>
-        /// Invokes the event handler when it is not null. Returns a completed task otherwise.
-        /// </summary>
-        internal static Task TryInvoke<TEventArgs>(this AsyncEventHandler<TEventArgs> eventHandler, object sender, TEventArgs eventArgs)
-        {
-            return eventHandler?.Invoke(sender, eventArgs) ?? Task.CompletedTask;
-        }
+        return eventHandler?.Invoke(sender, eventArgs) ?? Task.CompletedTask;
     }
 }
