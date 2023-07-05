@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
-
+using System.Drawing;
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Common;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -19,7 +18,7 @@ namespace TwitchLib.Client.Models
         public string Channel { get; }
 
         /// <summary>Properrty representing HEX user's name.</summary>
-        public string ColorHex { get; }
+        public Color Color { get; }
 
         /// <summary>Property representing user's display name.</summary>
         public string DisplayName { get; }
@@ -47,54 +46,36 @@ namespace TwitchLib.Client.Models
         {
             Channel = ircMessage.Channel;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-                switch (tag)
+                switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tag.Value);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tag.Value);
                         break;
                     case Tags.Color:
-                        ColorHex = tagValue;
+                        Color = TagHelper.ToColor(tag.Value);
                         break;
                     case Tags.DisplayName:
-                        DisplayName = tagValue;
+                        DisplayName = tag.Value;
                         break;
                     case Tags.EmotesSets:
-                        EmoteSet = tagValue;
+                        EmoteSet = tag.Value;
                         break;
                     case Tags.Id:
-                        Id = tagValue;
+                        Id = tag.Value;
                         break;
                     case Tags.Mod:
-                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
+                        IsModerator = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                     default:
                         // This should never happen, unless Twitch changes their shit
@@ -110,7 +91,7 @@ namespace TwitchLib.Client.Models
         public UserState(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            string colorHex,
+            Color color,
             string displayName,
             string emoteSet,
             string channel,
@@ -121,7 +102,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
-            ColorHex = colorHex;
+            Color = color;
             DisplayName = displayName;
             EmoteSet = emoteSet;
             Channel = channel;

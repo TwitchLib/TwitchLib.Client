@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Extensions.NetCore;
+using TwitchLib.Client.Models.Common;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -69,9 +68,6 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing the color value of the announcement.</summary>
         public string MsgParamColor { get; }
 
-        /// <summary>Property representing the colorhex of the announcer.</summary>
-        public string ColorHex { get; }
-
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
         public Color Color { get; }
 
@@ -86,14 +82,12 @@ namespace TwitchLib.Client.Models
             RawIrc = ircMessage.ToString();
             Message = ircMessage.Message;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
+                switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tag.Value);
                         foreach (var badge in Badges)
                         {
                             switch (badge.Key)
@@ -123,60 +117,41 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tag.Value);
                         break;
                     case Tags.Color:
-                        ColorHex = tagValue;
-                        if (!string.IsNullOrEmpty(ColorHex))
-                            Color = ColorTranslator.FromHtml(ColorHex);
+                        Color = TagHelper.ToColor(tag.Value);
                         break;
                     case Tags.MsgParamColor:
-                        MsgParamColor = tagValue;
+                        MsgParamColor = tag.Value;
                         break;
                     case Tags.Emotes:
-                        EmoteSet = tagValue;
+                        EmoteSet = tag.Value;
                         break;
                     case Tags.Id:
-                        Id = tagValue;
+                        Id = tag.Value;
                         break;
                     case Tags.Login:
-                        Login = tagValue;
+                        Login = tag.Value;
                         break;
                     case Tags.MsgId:
-                        MsgId = tagValue;
+                        MsgId = tag.Value;
                         break;
                     case Tags.RoomId:
-                        RoomId = tagValue;
+                        RoomId = tag.Value;
                         break;
                     case Tags.SystemMsg:
-                        SystemMessage = tagValue;
-                        SystemMessageParsed = tagValue.Replace("\\s", " ");
+                        SystemMessage = tag.Value;
+                        SystemMessageParsed = tag.Value.Replace("\\s", " ");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSentTs = tag.Value;
                         break;
                     case Tags.UserId:
-                        UserId = tagValue;
+                        UserId = tag.Value;
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                 }
             }

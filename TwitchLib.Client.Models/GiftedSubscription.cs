@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using System.Drawing;
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Common;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -14,7 +13,7 @@ namespace TwitchLib.Client.Models
 
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
 
-        public string Color { get; }
+        public Color Color { get; }
 
         public string DisplayName { get; }
 
@@ -62,118 +61,83 @@ namespace TwitchLib.Client.Models
 
         public GiftedSubscription(IrcMessage ircMessage)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
+                switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tag.Value);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tag.Value);
                         break;
                     case Tags.Color:
-                        Color = tagValue;
+                        Color = TagHelper.ToColor(tag.Value);
                         break;
                     case Tags.DisplayName:
-                        DisplayName = tagValue;
+                        DisplayName = tag.Value;
                         break;
                     case Tags.Emotes:
-                        Emotes = tagValue;
+                        Emotes = tag.Value;
                         break;
                     case Tags.Id:
-                        Id = tagValue;
+                        Id = tag.Value;
                         break;
                     case Tags.Login:
-                        Login = tagValue;
+                        Login = tag.Value;
                         break;
                     case Tags.Mod:
-                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
+                        IsModerator = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.MsgId:
-                        MsgId = tagValue;
+                        MsgId = tag.Value;
                         break;
                     case Tags.MsgParamMonths:
-                        MsgParamMonths = tagValue;
+                        MsgParamMonths = tag.Value;
                         break;
                     case Tags.MsgParamRecipientDisplayname:
-                        MsgParamRecipientDisplayName = tagValue;
+                        MsgParamRecipientDisplayName = tag.Value;
                         break;
                     case Tags.MsgParamRecipientId:
-                        MsgParamRecipientId = tagValue;
+                        MsgParamRecipientId = tag.Value;
                         break;
                     case Tags.MsgParamRecipientUsername:
-                        MsgParamRecipientUserName = tagValue;
+                        MsgParamRecipientUserName = tag.Value;
                         break;
                     case Tags.MsgParamSubPlanName:
-                        MsgParamSubPlanName = tagValue;
+                        MsgParamSubPlanName = tag.Value;
                         break;
                     case Tags.MsgParamSubPlan:
-                        switch (tagValue)
-                        {
-                            case "prime":
-                                MsgParamSubPlan = SubscriptionPlan.Prime;
-                                break;
-                            case "1000":
-                                MsgParamSubPlan = SubscriptionPlan.Tier1;
-                                break;
-                            case "2000":
-                                MsgParamSubPlan = SubscriptionPlan.Tier2;
-                                break;
-                            case "3000":
-                                MsgParamSubPlan = SubscriptionPlan.Tier3;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
-                        }
+                        MsgParamSubPlan = TagHelper.ToSubscriptionPlan(tag.Value);
                         break;
                     case Tags.RoomId:
-                        RoomId = tagValue;
+                        RoomId = tag.Value;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.SystemMsg:
-                        SystemMsg = tagValue;
-                        SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
+                        SystemMsg = tag.Value;
+                        SystemMsgParsed = tag.Value.Replace("\\s", " ").Replace("\\n", "");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSentTs = tag.Value;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = Common.Helpers.ConvertToBool(tagValue);
+                        IsTurbo = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.UserId:
-                        UserId = tagValue;
+                        UserId = tag.Value;
                         if (UserId == AnonymousGifterUserId)
                         {
                             IsAnonymous = true;
                         }
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                     case Tags.MsgParamMultiMonthGiftDuration:
-                        MsgParamMultiMonthGiftDuration = tagValue;
+                        MsgParamMultiMonthGiftDuration = tag.Value;
                         break;
                 }
             }
@@ -182,7 +146,7 @@ namespace TwitchLib.Client.Models
         public GiftedSubscription(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            string color,
+            Color color,
             string displayName,
             string emotes,
             string id,

@@ -62,7 +62,6 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userId">The user identifier.</param>
         /// <param name="userName">Name of the user.</param>
         /// <param name="displayName">The display name.</param>
-        /// <param name="colorHex">The color hexadecimal.</param>
         /// <param name="color">The color.</param>
         /// <param name="emoteSet">The emote set.</param>
         /// <param name="message">The message.</param>
@@ -91,12 +90,12 @@ namespace TwitchLib.Client.Extensions
         /// <param name="argumentsAsList">The arguments as list.</param>
         /// <param name="commandIdentifier">The command identifier.</param>
         public static void InvokeChatCommandsReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName,
-            string colorHex, Color color, EmoteSet emoteSet, string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount,
+            Color color, EmoteSet emoteSet, string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount,
             string roomId, bool isTurbo, bool isModerator, bool isMe, bool isBroadcaster, bool isVip, bool isPartner, bool isStaff, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage,
             List<KeyValuePair<string, string>> badges, CheerBadge cheerBadge, int bits, double bitsInDollars, string commandText, string argumentsAsString,
             List<string> argumentsAsList, char commandIdentifier)
         {
-            ChatMessage msg = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, id,
+            ChatMessage msg = new ChatMessage(botUsername, userId, userName, displayName, color, emoteSet, message, userType, channel, id,
                 isSubscriber, subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, isVip, isPartner, isStaff, noisy, rawIrcMessage, emoteReplacedMessage,
                 badges, cheerBadge, bits, bitsInDollars);
             OnChatCommandReceivedArgs model = new OnChatCommandReceivedArgs()
@@ -194,7 +193,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
         /// <param name="userType">Type of the user.</param>
         /// <param name="userId">Id of the user.</param>
-        public static void InvokeGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool isModerator,
+        public static void InvokeGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, Color color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, string msgMultiMonthGiftDuration, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
             string tmiSentTs, bool isTurbo, UserType userType, string userId)
@@ -262,7 +261,6 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userId">The user identifier.</param>
         /// <param name="userName">Name of the user.</param>
         /// <param name="displayName">The display name.</param>
-        /// <param name="colorHex">The color hexadecimal.</param>
         /// <param name="color">The color.</param>
         /// <param name="emoteSet">The emote set.</param>
         /// <param name="message">The message.</param>
@@ -283,14 +281,14 @@ namespace TwitchLib.Client.Extensions
         /// <param name="cheerBadge">The cheer badge.</param>
         /// <param name="bits">The bits.</param>
         /// <param name="bitsInDollars">The bits in dollars.</param>
-        public static void InvokeMessageReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName, string colorHex,
+        public static void InvokeMessageReceived(this TwitchClient client, string botUsername, string userId, string userName, string displayName,
             Color color, EmoteSet emoteSet, string message, UserType userType, string channel, string id, bool isSubscriber, int subscribedMonthCount, string roomId, bool isTurbo,
             bool isModerator, bool isMe, bool isBroadcaster, bool isVip, bool isPartner, bool isStaff, Noisy noisy, string rawIrcMessage, string emoteReplacedMessage, List<KeyValuePair<string, string>> badges,
             CheerBadge cheerBadge, int bits, double bitsInDollars)
         {
             OnMessageReceivedArgs model = new OnMessageReceivedArgs()
             {
-                ChatMessage = new ChatMessage(botUsername, userId, userName, displayName, colorHex, color, emoteSet, message, userType, channel, id, isSubscriber,
+                ChatMessage = new ChatMessage(botUsername, userId, userName, displayName, color, emoteSet, message, userType, channel, id, isSubscriber,
                 subscribedMonthCount, roomId, isTurbo, isModerator, isMe, isBroadcaster, isVip, isPartner, isStaff, noisy, rawIrcMessage, emoteReplacedMessage, badges, cheerBadge, bits,
                 bitsInDollars)
             };
@@ -303,19 +301,19 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">The client.</param>
         /// <param name="badges">The badges.</param>
         /// <param name="channel">The channel.</param>
-        /// <param name="colorHex">The color hexadecimal.</param>
+        /// <param name="colorx">The color hexadecimal.</param>
         /// <param name="displayName">The display name.</param>
         /// <param name="emoteSet">The emote set.</param>
         /// <param name="isModerator">if set to <c>true</c> [is moderator].</param>
         /// <param name="isSubscriber">if set to <c>true</c> [is subscriber].</param>
         /// <param name="userType">Type of the user.</param>
         /// <param name="message">The message.</param>
-        public static void InvokeMessageSent(this TwitchClient client, List<KeyValuePair<string, string>> badges, string channel, string colorHex,
+        public static void InvokeMessageSent(this TwitchClient client, List<KeyValuePair<string, string>> badges, string channel, Color color,
             string displayName, string emoteSet, bool isModerator, bool isSubscriber, UserType userType, string message)
         {
             OnMessageSentArgs model = new OnMessageSentArgs()
             {
-                SentMessage = new SentMessage(badges, channel, colorHex, displayName, emoteSet, isModerator, isSubscriber, userType, message)
+                SentMessage = new SentMessage(badges, channel, color, displayName, emoteSet, isModerator, isSubscriber, userType, message)
             };
             client.RaiseEvent("OnMessageSent", model);
         }
@@ -373,7 +371,6 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">The client.</param>
         /// <param name="badges">The badges.</param>
-        /// <param name="colorHex">The color hexadecimal.</param>
         /// <param name="color">The color.</param>
         /// <param name="displayName">The display name.</param>
         /// <param name="emoteSet">The emote set.</param>
@@ -394,14 +391,14 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userType">Type of the user.</param>
         /// <param name="rawIrc">The raw irc.</param>
         /// <param name="channel">The channel.</param>
-        public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, Color color, string displayName,
+        public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, Color color, string displayName,
             string emoteSet, string id, string login, string systemMessage, string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
             string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs,
             UserType userType, string rawIrc, string channel)
         {
             OnNewSubscriberArgs model = new OnNewSubscriberArgs()
             {
-                Subscriber = new Subscriber(badges, badgeInfo, colorHex, color, displayName, emoteSet, id, login, systemMessage, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, systemMessageParsed, resubMessage,
+                Subscriber = new Subscriber(badges, badgeInfo, color, displayName, emoteSet, id, login, systemMessage, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, systemMessageParsed, resubMessage,
                 subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
             };
             client.RaiseEvent("OnNewSubscriber", model);
@@ -431,7 +428,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="turbo">if set to <c>true</c> [turbo].</param>
         /// <param name="userType">Type of the user.</param>
         /// <param name="userType">Id of user.</param>
-        public static void InvokeRaidNotification(this TwitchClient client, string channel, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
+        public static void InvokeRaidNotification(this TwitchClient client, string channel, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, Color color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
             string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType, string userId)
         {
             OnRaidNotificationArgs model = new OnRaidNotificationArgs()
@@ -448,7 +445,6 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">The client.</param>
         /// <param name="badges">The badges.</param>
-        /// <param name="colorHex">The color hexadecimal.</param>
         /// <param name="color">The color.</param>
         /// <param name="displayName">The display name.</param>
         /// <param name="emoteSet">The emote set.</param>
@@ -469,14 +465,14 @@ namespace TwitchLib.Client.Extensions
         /// <param name="userType">Type of the user.</param>
         /// <param name="rawIrc">The raw irc.</param>
         /// <param name="channel">The channel.</param>
-        public static void InvokeReSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, Color color, string displayName,
+        public static void InvokeReSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, Color color, string displayName,
             string emoteSet, string id, string login, string systemMessage, string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
             string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs,
             UserType userType, string rawIrc, string channel)
         {
             OnReSubscriberArgs model = new OnReSubscriberArgs()
             {
-                ReSubscriber = new ReSubscriber(badges, badgeInfo, colorHex, color, displayName, emoteSet, id, login, systemMessage, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, systemMessageParsed, resubMessage,
+                ReSubscriber = new ReSubscriber(badges, badgeInfo, color, displayName, emoteSet, id, login, systemMessage, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, systemMessageParsed, resubMessage,
                 subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
             };
             client.RaiseEvent("OnReSubscriber", model);
@@ -560,7 +556,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="isSubscriber">if set to <c>true</c> [is subscriber].</param>
         /// <param name="isModerator">if set to <c>true</c> [is moderator].</param>
         /// <param name="userType">Type of the user.</param>
-        public static void InvokeUserStateChanged(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, string colorHex, string displayName,
+        public static void InvokeUserStateChanged(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, Color colorHex, string displayName,
             string emoteSet, string channel, string id, bool isSubscriber, bool isModerator, UserType userType)
         {
             OnUserStateChangedArgs model = new OnUserStateChangedArgs()
@@ -578,7 +574,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="username">The username.</param>
         /// <param name="targetUserId">The user Id.</param>
         /// <param name="timeoutDuration">Duration of the timeout.</param>
-        public static void InvokeUserTimedout(this TwitchClient client, string channel, string username, string targetUserId, int timeoutDuration)
+        public static void InvokeUserTimedout(this TwitchClient client, string channel, string username, string targetUserId, TimeSpan timeoutDuration)
         {
             OnUserTimedoutArgs model = new OnUserTimedoutArgs()
             {
@@ -608,10 +604,10 @@ namespace TwitchLib.Client.Extensions
         /// <param name="argumentsAsString">The arguments as string.</param>
         /// <param name="argumentsAsList">The arguments as list.</param>
         /// <param name="commandIdentifier">The command identifier.</param>
-        public static void InvokeWhisperCommandReceived(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
+        public static void InvokeWhisperCommandReceived(this TwitchClient client, List<KeyValuePair<string, string>> badges, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
             string userId, bool isTurbo, string botUsername, string message, UserType userType, string commandText, string argumentsAsString, List<string> argumentsAsList, char commandIdentifier)
         {
-            WhisperMessage whisperMsg = new WhisperMessage(badges, colorHex, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType);
+            WhisperMessage whisperMsg = new WhisperMessage(badges, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType);
             OnWhisperCommandReceivedArgs model = new OnWhisperCommandReceivedArgs()
             {
                 Command = new WhisperCommand(whisperMsg, commandText, argumentsAsString, argumentsAsList, commandIdentifier)
@@ -624,7 +620,6 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">The client.</param>
         /// <param name="badges">The badges.</param>
-        /// <param name="colorHex">The color hexadecimal.</param>
         /// <param name="color">The color.</param>
         /// <param name="username">The username.</param>
         /// <param name="displayName">The display name.</param>
@@ -636,12 +631,12 @@ namespace TwitchLib.Client.Extensions
         /// <param name="botUsername">The bot username.</param>
         /// <param name="message">The message.</param>
         /// <param name="userType">Type of the user.</param>
-        public static void InvokeWhisperReceived(this TwitchClient client, List<KeyValuePair<string, string>> badges, string colorHex, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
+        public static void InvokeWhisperReceived(this TwitchClient client, List<KeyValuePair<string, string>> badges, Color color, string username, string displayName, EmoteSet emoteSet, string threadId, string messageId,
             string userId, bool isTurbo, string botUsername, string message, UserType userType)
         {
             OnWhisperReceivedArgs model = new OnWhisperReceivedArgs()
             {
-                WhisperMessage = new WhisperMessage(badges, colorHex, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType)
+                WhisperMessage = new WhisperMessage(badges, color, username, displayName, emoteSet, threadId, messageId, userId, isTurbo, botUsername, message, userType)
             };
             client.RaiseEvent("OnWhisperReceived", model);
         }

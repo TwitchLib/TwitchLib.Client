@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Drawing;
 
 namespace TwitchLib.Client.Models
 {
@@ -12,7 +12,7 @@ namespace TwitchLib.Client.Models
         public string Channel { get; }
 
         /// <summary>Sender's name color.</summary>
-        public string ColorHex { get; }
+        public Color Color { get; }
 
         /// <summary>Display name of the sender.</summary>
         public string DisplayName { get; }
@@ -39,7 +39,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = state.Badges;
             Channel = state.Channel;
-            ColorHex = state.ColorHex;
+            Color = state.Color;
             DisplayName = state.DisplayName;
             EmoteSet = state.EmoteSet;
             IsModerator = state.IsModerator;
@@ -51,7 +51,7 @@ namespace TwitchLib.Client.Models
         public SentMessage(
             List<KeyValuePair<string, string>> badges,
             string channel,
-            string colorHex,
+            Color color,
             string displayName,
             string emoteSet,
             bool isModerator,
@@ -61,7 +61,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = badges;
             Channel = channel;
-            ColorHex = colorHex;
+            Color = color;
             DisplayName = displayName;
             EmoteSet = emoteSet;
             IsModerator = isModerator;

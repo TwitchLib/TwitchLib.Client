@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-
+﻿using System.Drawing;
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Common;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -11,7 +11,7 @@ namespace TwitchLib.Client.Models
 
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
 
-        public string Color { get; }
+        public Color Color { get; }
 
         public string DisplayName { get; }
 
@@ -50,83 +50,64 @@ namespace TwitchLib.Client.Models
         // @badges=;color=#FF0000;display-name=Heinki;emotes=;id=4fb7ab2d-aa2c-4886-a286-46e20443f3d6;login=heinki;mod=0;msg-id=raid;msg-param-displayName=Heinki;msg-param-login=heinki;msg-param-viewerCount=4;room-id=27229958;subscriber=0;system-msg=4\sraiders\sfrom\sHeinki\shave\sjoined\n!;tmi-sent-ts=1510249711023;turbo=0;user-id=44110799;user-type= :tmi.twitch.tv USERNOTICE #pandablack
         public RaidNotification(IrcMessage ircMessage)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
+                switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tag.Value);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tag.Value);
                         break;
                     case Tags.Color:
-                        Color = tagValue;
+                        Color = TagHelper.ToColor(tag.Value);
                         break;
                     case Tags.DisplayName:
-                        DisplayName = tagValue;
+                        DisplayName = tag.Value;
                         break;
                     case Tags.Emotes:
-                        Emotes = tagValue;
+                        Emotes = tag.Value;
                         break;
                     case Tags.Login:
-                        Login = tagValue;
+                        Login = tag.Value;
                         break;
                     case Tags.Mod:
-                        Moderator = Common.Helpers.ConvertToBool(tagValue);
+                        Moderator = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.MsgId:
-                        MsgId = tagValue;
+                        MsgId = tag.Value;
                         break;
                     case Tags.MsgParamDisplayname:
-                        MsgParamDisplayName = tagValue;
+                        MsgParamDisplayName = tag.Value;
                         break;
                     case Tags.MsgParamLogin:
-                        MsgParamLogin = tagValue;
+                        MsgParamLogin = tag.Value;
                         break;
                     case Tags.MsgParamViewerCount:
-                        MsgParamViewerCount = tagValue;
+                        MsgParamViewerCount = tag.Value;
                         break;
                     case Tags.RoomId:
-                        RoomId = tagValue;
+                        RoomId = tag.Value;
                         break;
                     case Tags.Subscriber:
-                        Subscriber = Common.Helpers.ConvertToBool(tagValue);
+                        Subscriber = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.SystemMsg:
-                        SystemMsg = tagValue;
-                        SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
+                        SystemMsg = tag.Value;
+                        SystemMsgParsed = tag.Value.Replace("\\s", " ").Replace("\\n", "");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSentTs = tag.Value;
                         break;
                     case Tags.Turbo:
-                        Turbo = Common.Helpers.ConvertToBool(tagValue);
+                        Turbo = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.UserId:
-                        UserId = tagValue;
+                        UserId = tag.Value;
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                 }
             }
@@ -135,7 +116,7 @@ namespace TwitchLib.Client.Models
         public RaidNotification(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            string color,
+            Color color,
             string displayName,
             string emotes,
             string id,
@@ -177,4 +158,3 @@ namespace TwitchLib.Client.Models
         }
     }
 }
-

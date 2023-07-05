@@ -11,8 +11,6 @@ namespace TwitchLib.Client.Models.Builders
 
         public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
 
-        protected string ColorHex { get; set; }
-
         protected Color Color { get; set; }
 
         protected string DisplayName { get; set; }
@@ -81,12 +79,6 @@ namespace TwitchLib.Client.Models.Builders
         public SubscriberBaseBuilder WithBadgeInfos(params KeyValuePair<string, string>[] badgeInfos)
         {
             BadgeInfo.AddRange(badgeInfos);
-            return this;
-        }
-
-        public SubscriberBaseBuilder WithColorHex(string colorHex)
-        {
-            ColorHex = colorHex;
             return this;
         }
 
@@ -245,7 +237,6 @@ namespace TwitchLib.Client.Models.Builders
             return new SubscriberBase(
                 Badges,
                 BadgeInfo,
-                ColorHex,
                 Color,
                 DisplayName,
                 EmoteSet,

@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿using TwitchLib.Client.Models.Common;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -41,42 +40,40 @@ namespace TwitchLib.Client.Models
         public ChannelState(IrcMessage ircMessage)
         {
             //@broadcaster-lang=;emote-only=0;r9k=0;slow=0;subs-only=1 :tmi.twitch.tv ROOMSTATE #burkeblack
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
+                switch (tag.Key)
                 {
                     case Tags.BroadcasterLang:
-                        BroadcasterLanguage = tagValue;
+                        BroadcasterLanguage = tag.Value;
                         break;
                     case Tags.EmoteOnly:
-                        EmoteOnly = Common.Helpers.ConvertToBool(tagValue);
+                        EmoteOnly = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.R9K:
-                        R9K = Common.Helpers.ConvertToBool(tagValue);
+                        R9K = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.Rituals:
-                        Rituals = Common.Helpers.ConvertToBool(tagValue);
+                        Rituals = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.Slow:
-                        var success = int.TryParse(tagValue, out var slowDuration);
+                        var success = int.TryParse(tag.Value, out var slowDuration);
                         SlowMode = success ? slowDuration : (int?)null;
                         break;
                     case Tags.SubsOnly:
-                        SubOnly = Common.Helpers.ConvertToBool(tagValue);
+                        SubOnly = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.FollowersOnly:
-                        if(int.TryParse(tagValue, out int minutes) && minutes > -1)
+                        if(int.TryParse(tag.Value, out int minutes) && minutes > -1)
                         {
                             FollowersOnly = TimeSpan.FromMinutes(minutes);
                         }
                         break;
                     case Tags.RoomId:
-                        RoomId = tagValue;
+                        RoomId = tag.Value;
                         break;
                     case Tags.Mercury:
-                        Mercury = Common.Helpers.ConvertToBool(tagValue);
+                        Mercury = TagHelper.ToBool(tag.Value);
                         break;
                     default:
                         Console.WriteLine("[TwitchLib][ChannelState] Unaccounted for: " + tag);

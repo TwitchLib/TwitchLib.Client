@@ -26,7 +26,6 @@
             return new Subscriber(
                 Badges,
                 BadgeInfo,
-                ColorHex,
                 Color,
                 DisplayName,
                 EmoteSet,

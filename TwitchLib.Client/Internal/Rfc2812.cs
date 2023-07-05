@@ -7,7 +7,7 @@ namespace TwitchLib.Client.Internal
     /// <summary>
     /// Class detailing Rfc2812 specifications
     /// </summary>
-    public sealed class Rfc2812
+    public static partial class Rfc2812
     {
         // nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
         // letter     =  %x41-5A / %x61-7A       ; A-Z / a-z
@@ -17,14 +17,14 @@ namespace TwitchLib.Client.Internal
         /// <summary>
         /// The nickname regex
         /// </summary>
+#if NET7_0_OR_GREATER
+        [GeneratedRegex(@"^[A-Za-z\[\]\\`_^{|}][A-Za-z0-9\[\]\\`_\-^{|}]+$")]
+        private static partial Regex GetNicknameRegex();
+#else
+        private static Regex GetNicknameRegex() => NicknameRegex;
         private static readonly Regex NicknameRegex = new Regex(@"^[A-Za-z\[\]\\`_^{|}][A-Za-z0-9\[\]\\`_\-^{|}]+$", RegexOptions.Compiled);
+#endif
 
-        /// <summary>
-        /// Prevents a default instance of the <see cref="Rfc2812" /> class from being created.
-        /// </summary>
-        private Rfc2812()
-        {
-        }
 
         /// <summary>
         /// Checks if the passed nickname is valid according to the RFC
@@ -35,7 +35,7 @@ namespace TwitchLib.Client.Internal
         public static bool IsValidNickname(string nickname)
         {
             return !string.IsNullOrEmpty(nickname) &&
-                   NicknameRegex.Match(nickname).Success;
+                   GetNicknameRegex().Match(nickname).Success;
         }
 
         /// <summary>

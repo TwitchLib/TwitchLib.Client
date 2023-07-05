@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿using System.Drawing;
 using TwitchLib.Client.Enums;
 
 namespace TwitchLib.Client.Models.Builders
@@ -8,7 +7,7 @@ namespace TwitchLib.Client.Models.Builders
     {
         private readonly List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
         private string _channel;
-        private string _colorHex;
+        private Color _color;
         private string _displayName;
         private string _emoteSet;
         private bool _isModerator;
@@ -32,9 +31,9 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public SentMessageBuilder WithColorHex(string colorHex)
+        public SentMessageBuilder WithColor(Color color)
         {
-            _colorHex = colorHex;
+            _color = color;
             return this;
         }
 
@@ -89,7 +88,7 @@ namespace TwitchLib.Client.Models.Builders
             return new SentMessage(
                 _badges,
                 _channel,
-                _colorHex,
+                _color,
                 _displayName,
                 _emoteSet,
                 _isModerator,

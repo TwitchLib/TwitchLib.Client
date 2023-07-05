@@ -51,7 +51,6 @@
         {
             return new WhisperMessage(
                 _twitchLibMessage.Badges,
-                _twitchLibMessage.ColorHex,
                 _twitchLibMessage.Color,
                 _twitchLibMessage.Username,
                 _twitchLibMessage.DisplayName,

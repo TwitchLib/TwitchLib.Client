@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
 
 namespace TwitchLib.Client.Models.Builders
 {
@@ -161,7 +159,6 @@ namespace TwitchLib.Client.Models.Builders
                 _twitchLibMessage.UserId,
                 _twitchLibMessage.Username,
                 _twitchLibMessage.DisplayName,
-                _twitchLibMessage.ColorHex,
                 _twitchLibMessage.Color,
                 _twitchLibMessage.EmoteSet,
                 _message,

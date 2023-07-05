@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-
+﻿using System.Drawing;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -17,7 +15,6 @@ namespace TwitchLib.Client.Models
         public ReSubscriber(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            string colorHex,
             Color color,
             string displayName,
             string emoteSet,
@@ -45,7 +42,6 @@ namespace TwitchLib.Client.Models
             int months = 0)
             : base(badges,
                   badgeInfo,
-                  colorHex,
                   color,
                   displayName,
                   emoteSet,

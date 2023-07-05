@@ -26,7 +26,6 @@
             return new ReSubscriber(
                 Badges,
                 BadgeInfo,
-                ColorHex,
                 Color,
                 DisplayName,
                 EmoteSet,

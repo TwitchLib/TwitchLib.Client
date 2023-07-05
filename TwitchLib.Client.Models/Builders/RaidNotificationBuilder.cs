@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Drawing;
 
 using TwitchLib.Client.Enums;
 
@@ -8,7 +8,7 @@ namespace TwitchLib.Client.Models.Builders
     {
         private readonly List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
         private readonly List<KeyValuePair<string, string>> _badgeInfo = new List<KeyValuePair<string, string>>();
-        private string _color;
+        private Color _color;
         private string _displayName;
         private string _emotes;
         private string _id;
@@ -39,7 +39,7 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public RaidNotificationBuilder WithColor(string color)
+        public RaidNotificationBuilder WithColor(Color color)
         {
             _color = color;
             return this;

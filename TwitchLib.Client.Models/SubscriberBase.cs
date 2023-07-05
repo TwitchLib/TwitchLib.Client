@@ -1,10 +1,6 @@
-
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-
 using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Extensions.NetCore;
+using TwitchLib.Client.Models.Common;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -17,9 +13,6 @@ namespace TwitchLib.Client.Models
 
         /// <summary>Metadata associated with each badge</summary>
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
-
-        /// <summary>Property representing the colorhex of the resubscriber.</summary>
-        public string ColorHex { get; }
 
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
         public Color Color { get; }
@@ -98,13 +91,12 @@ namespace TwitchLib.Client.Models
             RawIrc = ircMessage.ToString();
             ResubMessage = ircMessage.Message;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-                switch (tag)
+                switch (tag.Value)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tag.Value);
                         // iterate through badges for special circumstances
                         foreach (var badge in Badges)
                         {
@@ -113,100 +105,65 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tag.Value);
                         break;
                     case Tags.Color:
-                        ColorHex = tagValue;
-                        if (!string.IsNullOrEmpty(ColorHex))
-                            Color = ColorTranslator.FromHtml(ColorHex);
+                        Color = TagHelper.ToColor(tag.Value);
                         break;
                     case Tags.DisplayName:
-                        DisplayName = tagValue;
+                        DisplayName = tag.Value;
                         break;
                     case Tags.Emotes:
-                        EmoteSet = tagValue;
+                        EmoteSet = tag.Value;
                         break;
                     case Tags.Id:
-                        Id = tagValue;
+                        Id = tag.Value;
                         break;
                     case Tags.Login:
-                        Login = tagValue;
+                        Login = tag.Value;
                         break;
                     case Tags.Mod:
-                        IsModerator = ConvertToBool(tagValue);
+                        IsModerator = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.MsgId:
-                        MsgId = tagValue;
+                        MsgId = tag.Value;
                         break;
                     case Tags.MsgParamCumulativeMonths:
-                        MsgParamCumulativeMonths = tagValue;
+                        MsgParamCumulativeMonths = tag.Value;
                         break;
                     case Tags.MsgParamStreakMonths:
-                        MsgParamStreakMonths = tagValue;
+                        MsgParamStreakMonths = tag.Value;
                         break;
                     case Tags.MsgParamShouldShareStreak:
-                        MsgParamShouldShareStreak = Common.Helpers.ConvertToBool(tagValue);
+                        MsgParamShouldShareStreak = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.MsgParamSubPlan:
-                        switch (tagValue.ToLower())
-                        {
-                            case "prime":
-                                SubscriptionPlan = SubscriptionPlan.Prime;
-                                break;
-                            case "1000":
-                                SubscriptionPlan = SubscriptionPlan.Tier1;
-                                break;
-                            case "2000":
-                                SubscriptionPlan = SubscriptionPlan.Tier2;
-                                break;
-                            case "3000":
-                                SubscriptionPlan = SubscriptionPlan.Tier3;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
-                        }
+                        SubscriptionPlan = TagHelper.ToSubscriptionPlan(tag.Value);
                         break;
                     case Tags.MsgParamSubPlanName:
-                        SubscriptionPlanName = tagValue.Replace("\\s", " ");
+                        SubscriptionPlanName = tag.Value.Replace("\\s", " ");
                         break;
                     case Tags.RoomId:
-                        RoomId = tagValue;
+                        RoomId = tag.Value;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = ConvertToBool(tagValue);
+                        IsSubscriber = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.SystemMsg:
-                        SystemMessage = tagValue;
-                        SystemMessageParsed = tagValue.Replace("\\s", " ");
+                        SystemMessage = tag.Value;
+                        SystemMessageParsed = tag.Value.Replace("\\s", " ");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSentTs = tag.Value;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = ConvertToBool(tagValue);
+                        IsTurbo = TagHelper.ToBool(tag.Value);
                         break;
                     case Tags.UserId:
-                        UserId = tagValue;
+                        UserId = tag.Value;
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                 }
             }
@@ -215,7 +172,6 @@ namespace TwitchLib.Client.Models
         internal SubscriberBase(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            string colorHex,
             Color color,
             string displayName,
             string emoteSet,
@@ -244,7 +200,6 @@ namespace TwitchLib.Client.Models
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
-            ColorHex = colorHex;
             Color = color;
             DisplayName = displayName;
             EmoteSet = emoteSet;
@@ -273,15 +228,10 @@ namespace TwitchLib.Client.Models
             Channel = channel;
         }
 
-        private static bool ConvertToBool(string data)
-        {
-            return data == "1";
-        }
-
         /// <summary>Overriden ToString method, prints out all properties related to resub.</summary>
         public override string ToString()
         {
-            return $"Badges: {Badges.Count}, color hex: {ColorHex}, display name: {DisplayName}, emote set: {EmoteSet}, login: {Login}, system message: {SystemMessage}, msgId: {MsgId}, msgParamCumulativeMonths: {MsgParamCumulativeMonths}" +
+            return $"Badges: {Badges.Count}, color: {Color}, display name: {DisplayName}, emote set: {EmoteSet}, login: {Login}, system message: {SystemMessage}, msgId: {MsgId}, msgParamCumulativeMonths: {MsgParamCumulativeMonths}" +
                 $"msgParamStreakMonths: {MsgParamStreakMonths}, msgParamShouldShareStreak: {MsgParamShouldShareStreak}, resub message: {ResubMessage}, months: {monthsInternal}, room id: {RoomId}, user id: {UserId}, mod: {IsModerator}, turbo: {IsTurbo}, sub: {IsSubscriber}, user type: {UserType}, raw irc: {RawIrc}";
         }
     }

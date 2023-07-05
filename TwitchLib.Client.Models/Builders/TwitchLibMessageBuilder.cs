@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-
+﻿using System.Drawing;
 using TwitchLib.Client.Enums;
 
 namespace TwitchLib.Client.Models.Builders
@@ -14,12 +12,6 @@ namespace TwitchLib.Client.Models.Builders
         public TwitchLibMessageBuilder WithBadges(List<KeyValuePair<string, string>> badges)
         {
             Badges = badges;
-            return this;
-        }
-
-        public TwitchLibMessageBuilder WithColorHex(string colorHex)
-        {
-            ColorHex = colorHex;
             return this;
         }
 

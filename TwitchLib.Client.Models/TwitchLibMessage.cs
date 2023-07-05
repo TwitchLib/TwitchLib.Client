@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 
 using TwitchLib.Client.Enums;
 
@@ -16,9 +15,6 @@ namespace TwitchLib.Client.Models
 
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
         public Color Color { get; protected set; }
-
-        /// <summary>Hex representation of username color in chat (THIS CAN BE NULL IF VIEWER HASN'T SET COLOR).</summary>
-        public string ColorHex { get; protected set; }
 
         /// <summary>Case-sensitive username of sender of chat message.</summary>
         public string DisplayName { get; protected set; }

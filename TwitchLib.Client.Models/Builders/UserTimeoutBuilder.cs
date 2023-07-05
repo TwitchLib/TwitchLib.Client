@@ -3,7 +3,7 @@
     public sealed class UserTimeoutBuilder : IBuilder<UserTimeout>, IFromIrcMessageBuilder<UserTimeout>
     {
         private string _channel;
-        private int _timeoutDuration;
+        private TimeSpan _timeoutDuration;
         private string _username;
         private string _targetUserId;
 
@@ -17,7 +17,7 @@
             return this;
         }
 
-        public UserTimeoutBuilder WithTimeoutDuration(int timeoutDuration)
+        public UserTimeoutBuilder WithTimeoutDuration(TimeSpan timeoutDuration)
         {
             _timeoutDuration = timeoutDuration;
             return this;

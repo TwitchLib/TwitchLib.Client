@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-
+﻿using System.Drawing;
 using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Extensions.NetCore;
+using TwitchLib.Client.Models.Common;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -129,7 +126,7 @@ namespace TwitchLib.Client.Models
                 switch (tagKey)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tagValue);
                         // Iterate through saved badges for special circumstances
                         foreach (var badge in Badges)
                         {
@@ -159,7 +156,7 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         // check if founder is one of them, and get months from that
                         var founderBadge = BadgeInfo.Find(b => b.Key == "founder");
                         if (!founderBadge.Equals(default(KeyValuePair<string, string>)))
@@ -182,9 +179,7 @@ namespace TwitchLib.Client.Models
                         BitsInDollars = ConvertBitsToUsd(Bits);
                         break;
                     case Tags.Color:
-                        ColorHex = tagValue;
-                        if (!string.IsNullOrWhiteSpace(ColorHex))
-                            Color = ColorTranslator.FromHtml(ColorHex);
+                        Color = TagHelper.ToColor(tagValue);
                         break;
                     case Tags.CustomRewardId:
                         CustomRewardId = tagValue;
@@ -205,10 +200,10 @@ namespace TwitchLib.Client.Models
                         HandleMsgId(tagValue);
                         break;
                     case Tags.Mod:
-                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
+                        IsModerator = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.Noisy:
-                        Noisy = Common.Helpers.ConvertToBool(tagValue) ? Noisy.True : Noisy.False;
+                        Noisy = TagHelper.ToBool(tagValue) ? Noisy.True : Noisy.False;
                         break;
                     case Tags.ReplyParentDisplayName:
                         ChatReply ??= new ChatReply(); // ChatReply is null if not reply
@@ -235,38 +230,19 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.Subscriber:
                         // this check because when founder is set, the subscriber value is actually 0, which is problematic
-                        IsSubscriber = IsSubscriber || Common.Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = IsSubscriber || TagHelper.ToBool(tagValue);
                         break;
                     case Tags.TmiSentTs:
                         TmiSentTs = tagValue;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = Common.Helpers.ConvertToBool(tagValue);
+                        IsTurbo = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                IsStaff = true;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                IsStaff = true;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tagValue);
                         break;
                 }
             }
@@ -283,8 +259,15 @@ namespace TwitchLib.Client.Models
                     var firstDash = emote.IndexOf('-');
                     if (firstColon > 0 && firstDash > firstColon && firstComma > firstDash)
                     {
-                        if (int.TryParse(emote.Substring(firstColon + 1, firstDash - firstColon - 1), out var low) &&
-                            int.TryParse(emote.Substring(firstDash + 1, firstComma - firstDash - 1), out var high))
+#if NETSTANDARD2_0
+                        var lowStr =  emote.Substring(firstColon + 1, firstDash - firstColon - 1);
+                        var highStr = emote.Substring(firstDash + 1, firstComma - firstDash - 1);
+#else
+                        var lowStr =  emote.AsSpan(firstColon + 1, firstDash - firstColon - 1);
+                        var highStr = emote.AsSpan(firstDash + 1, firstComma - firstDash - 1);
+#endif
+                        if (int.TryParse(lowStr, out var low) &&
+                            int.TryParse(highStr, out var high))
                         {
                             if (low >= 0 && low < high && high < Message.Length)
                             {
@@ -330,7 +313,6 @@ namespace TwitchLib.Client.Models
             string userId,
             string userName,
             string displayName,
-            string colorHex,
             Color color,
             EmoteSet emoteSet,
             string message,
@@ -358,7 +340,6 @@ namespace TwitchLib.Client.Models
             BotUsername = botUsername;
             UserId = userId;
             DisplayName = displayName;
-            ColorHex = colorHex;
             Color = color;
             EmoteSet = emoteSet;
             Message = message;
