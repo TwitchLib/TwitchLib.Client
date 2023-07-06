@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-
+﻿using System.Drawing;
 using TwitchLib.Client.Enums;
 
 namespace TwitchLib.Client.Models.Builders
@@ -43,7 +41,7 @@ namespace TwitchLib.Client.Models.Builders
 
         protected string ParsedSystemMessage { get; set; }
 
-        protected string TmiSentTs { get; set; }
+        protected DateTimeOffset TmiSent { get; set; }
 
         protected string UserId { get; set; }
 
@@ -178,9 +176,9 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public SubscriberBaseBuilder WithTmiSentTs(string tmiSentTs)
+        public SubscriberBaseBuilder WithTmiSent(DateTimeOffset tmiSent)
         {
-            TmiSentTs = tmiSentTs;
+            TmiSent = tmiSent;
             return this;
         }
 
@@ -257,7 +255,7 @@ namespace TwitchLib.Client.Models.Builders
                 IsTurbo,
                 IsSubscriber,
                 IsPartner,
-                TmiSentTs,
+                TmiSent,
                 UserType,
                 RawIrc,
                 Channel,

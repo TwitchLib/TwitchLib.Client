@@ -189,19 +189,19 @@ namespace TwitchLib.Client.Extensions
         /// <param name="isSubscriber">if set to <c>true</c> [is subscriber].</param>
         /// <param name="systemMsg">The system MSG.</param>
         /// <param name="systemMsgParsed">The system MSG parsed.</param>
-        /// <param name="tmiSentTs">The tmi sent ts.</param>
+        /// <param name="tmiSent">The tmi sent ts.</param>
         /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
         /// <param name="userType">Type of the user.</param>
         /// <param name="userId">Id of the user.</param>
         public static void InvokeGiftedSubscription(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, Color color, string displayName, string emotes, string id, string login, bool isModerator,
             string msgId, string msgParamMonths, string msgParamRecipientDisplayName, string msgParamRecipientId, string msgParamRecipientUserName,
             string msgParamSubPlanName, string msgMultiMonthGiftDuration, SubscriptionPlan msgParamSubPlan, string roomId, bool isSubscriber, string systemMsg, string systemMsgParsed,
-            string tmiSentTs, bool isTurbo, UserType userType, string userId)
+            DateTimeOffset tmiSent, bool isTurbo, UserType userType, string userId)
         {
             OnGiftedSubscriptionArgs model = new OnGiftedSubscriptionArgs()
             {
                 GiftedSubscription = new GiftedSubscription(badges, badgeInfo, color, displayName, emotes, id, login, isModerator, msgId, msgParamMonths, msgParamRecipientDisplayName,
-                msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgMultiMonthGiftDuration, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSentTs, isTurbo,
+                msgParamRecipientId, msgParamRecipientUserName, msgParamSubPlanName, msgMultiMonthGiftDuration, msgParamSubPlan, roomId, isSubscriber, systemMsg, systemMsgParsed, tmiSent, isTurbo,
                 userType, userId)
             };
             client.RaiseEvent("OnGiftedSubscription", model);
@@ -387,19 +387,19 @@ namespace TwitchLib.Client.Extensions
         /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
         /// <param name="isSubscriber">if set to <c>true</c> [is subscriber].</param>
         /// <param name="isPartner">if set to <c>true</c> [is partner].</param>
-        /// <param name="tmiSentTs">The tmi sent ts.</param>
+        /// <param name="tmiSent">The tmi sent ts.</param>
         /// <param name="userType">Type of the user.</param>
         /// <param name="rawIrc">The raw irc.</param>
         /// <param name="channel">The channel.</param>
         public static void InvokeNewSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, Color color, string displayName,
             string emoteSet, string id, string login, string systemMessage, string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
-            string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs,
+            string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, DateTimeOffset tmiSent,
             UserType userType, string rawIrc, string channel)
         {
             OnNewSubscriberArgs model = new OnNewSubscriberArgs()
             {
                 Subscriber = new Subscriber(badges, badgeInfo, color, displayName, emoteSet, id, login, systemMessage, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, systemMessageParsed, resubMessage,
-                subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
+                subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSent, userType, rawIrc, channel)
             };
             client.RaiseEvent("OnNewSubscriber", model);
         }
@@ -424,18 +424,18 @@ namespace TwitchLib.Client.Extensions
         /// <param name="subscriber">if set to <c>true</c> [subscriber].</param>
         /// <param name="systemMsg">The system MSG.</param>
         /// <param name="systemMsgParsed">The system MSG parsed.</param>
-        /// <param name="tmiSentTs">The tmi sent ts.</param>
+        /// <param name="tmiSent">The tmi sent ts.</param>
         /// <param name="turbo">if set to <c>true</c> [turbo].</param>
         /// <param name="userType">Type of the user.</param>
-        /// <param name="userType">Id of user.</param>
+        /// <param name="userId">Id of user.</param>
         public static void InvokeRaidNotification(this TwitchClient client, string channel, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, Color color, string displayName, string emotes, string id, string login, bool moderator, string msgId, string msgParamDisplayName,
-            string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, string tmiSentTs, bool turbo, UserType userType, string userId)
+            string msgParamLogin, string msgParamViewerCount, string roomId, bool subscriber, string systemMsg, string systemMsgParsed, DateTimeOffset tmiSent, bool turbo, UserType userType, string userId)
         {
             OnRaidNotificationArgs model = new OnRaidNotificationArgs()
             {
                 Channel = channel,
                 RaidNotification = new RaidNotification(badges, badgeInfo, color, displayName, emotes, id, login, moderator, msgId, msgParamDisplayName, msgParamLogin, msgParamViewerCount,
-                roomId, subscriber, systemMsg, systemMsgParsed, tmiSentTs, turbo, userType, userId)
+                roomId, subscriber, systemMsg, systemMsgParsed, tmiSent, turbo, userType, userId)
             };
             client.RaiseEvent("OnRaidNotification", model);
         }
@@ -461,19 +461,19 @@ namespace TwitchLib.Client.Extensions
         /// <param name="isTurbo">if set to <c>true</c> [is turbo].</param>
         /// <param name="isSubscriber">if set to <c>true</c> [is subscriber].</param>
         /// <param name="isPartner">if set to <c>true</c> [is partner].</param>
-        /// <param name="tmiSentTs">The tmi sent ts.</param>
+        /// <param name="tmiSent">The tmi sent ts.</param>
         /// <param name="userType">Type of the user.</param>
         /// <param name="rawIrc">The raw irc.</param>
         /// <param name="channel">The channel.</param>
         public static void InvokeReSubscriber(this TwitchClient client, List<KeyValuePair<string, string>> badges, List<KeyValuePair<string, string>> badgeInfo, Color color, string displayName,
             string emoteSet, string id, string login, string systemMessage, string msgId, string msgParamCumulativeMonths, string msgParamStreakMonths, bool msgParamShouldShareStreak, string systemMessageParsed, string resubMessage, SubscriptionPlan subscriptionPlan,
-            string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, string tmiSentTs,
+            string subscriptionPlanName, string roomId, string userId, bool isModerator, bool isTurbo, bool isSubscriber, bool isPartner, DateTimeOffset tmiSent,
             UserType userType, string rawIrc, string channel)
         {
             OnReSubscriberArgs model = new OnReSubscriberArgs()
             {
                 ReSubscriber = new ReSubscriber(badges, badgeInfo, color, displayName, emoteSet, id, login, systemMessage, msgId, msgParamCumulativeMonths, msgParamStreakMonths, msgParamShouldShareStreak, systemMessageParsed, resubMessage,
-                subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSentTs, userType, rawIrc, channel)
+                subscriptionPlan, subscriptionPlanName, roomId, userId, isModerator, isTurbo, isSubscriber, isPartner, tmiSent, userType, rawIrc, channel)
             };
             client.RaiseEvent("OnReSubscriber", model);
         }

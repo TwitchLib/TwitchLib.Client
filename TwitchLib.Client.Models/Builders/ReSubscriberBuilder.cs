@@ -46,7 +46,7 @@
                 IsTurbo,
                 IsSubscriber,
                 IsPartner,
-                TmiSentTs,
+                TmiSent,
                 UserType,
                 RawIrc,
                 Channel,

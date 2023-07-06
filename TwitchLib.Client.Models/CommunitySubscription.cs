@@ -25,7 +25,7 @@ namespace TwitchLib.Client.Models
         public bool IsSubscriber;
         public string SystemMsg;
         public string SystemMsgParsed;
-        public string TmiSentTs;
+        public DateTimeOffset TmiSent;
         public bool IsTurbo;
         public string UserId;
         public UserType UserType;
@@ -85,7 +85,7 @@ namespace TwitchLib.Client.Models
                         SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
                         break;
                     case Tags.Turbo:
                         IsTurbo = TagHelper.ToBool(tagValue);

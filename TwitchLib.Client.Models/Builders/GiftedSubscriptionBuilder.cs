@@ -26,7 +26,7 @@ namespace TwitchLib.Client.Models.Builders
         private string _roomId;
         private string _systemMsg;
         private string _systemMsgParsed;
-        private string _tmiSentTs;
+        private DateTimeOffset _tmiSent;
         private string _userId;
         private UserType _userType;
 
@@ -160,9 +160,9 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public GiftedSubscriptionBuilder WithTmiSentTs(string tmiSentTs)
+        public GiftedSubscriptionBuilder WithTmiSent(DateTimeOffset tmiSent)
         {
-            _tmiSentTs = tmiSentTs;
+            _tmiSent = tmiSent;
             return this;
         }
 
@@ -206,7 +206,7 @@ namespace TwitchLib.Client.Models.Builders
                 _isSubscriber,
                 _systemMsg,
                 _systemMsgParsed,
-                _tmiSentTs,
+                _tmiSent,
                 _isTurbo,
                 _userType,
                 _userId);

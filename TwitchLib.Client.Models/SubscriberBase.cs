@@ -70,7 +70,7 @@ namespace TwitchLib.Client.Models
         public string SystemMessageParsed { get; }
 
         /// <summary>Property representing the tmi-sent-ts value.</summary>
-        public string TmiSentTs { get; }
+        public DateTimeOffset TmiSent { get; }
 
         /// <summary>Property representing the user's id.</summary>
         public string UserId { get; }
@@ -154,7 +154,7 @@ namespace TwitchLib.Client.Models
                         SystemMessageParsed = tagValue.Replace("\\s", " ");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
                         break;
                     case Tags.Turbo:
                         IsTurbo = TagHelper.ToBool(tagValue);
@@ -192,7 +192,7 @@ namespace TwitchLib.Client.Models
             bool isTurbo,
             bool isSubscriber,
             bool isPartner,
-            string tmiSentTs,
+            DateTimeOffset tmiSent,
             UserType userType,
             string rawIrc,
             string channel,
@@ -220,7 +220,7 @@ namespace TwitchLib.Client.Models
             IsTurbo = isTurbo;
             IsSubscriber = isSubscriber;
             IsPartner = isPartner;
-            TmiSentTs = tmiSentTs;
+            TmiSent = tmiSent;
             UserType = userType;
             RawIrc = rawIrc;
             monthsInternal = months;

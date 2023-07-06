@@ -58,15 +58,22 @@ internal static class TagHelper
     {
         return s switch
         {
-            "prime" => SubscriptionPlan.Prime,
+            "Prime" or "prime" => SubscriptionPlan.Prime,
             "1000" => SubscriptionPlan.Tier1,
             "2000" => SubscriptionPlan.Tier2,
             "3000" => SubscriptionPlan.Tier3,
+            _ => throw new ArgumentException($"Unhandled value {s} for {nameof(UserType)}", nameof(s)),
         };
     }
 
     public static bool ToBool(string s)
     {
         return s == "1";
+    }
+
+    public static DateTimeOffset ToDateTimeOffsetFromUnixMs(string s)
+    {
+        var timestamp = long.Parse(s);
+        return DateTimeOffset.FromUnixTimeMilliseconds(timestamp);
     }
 }

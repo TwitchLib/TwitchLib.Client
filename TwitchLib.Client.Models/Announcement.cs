@@ -53,7 +53,7 @@ namespace TwitchLib.Client.Models
         public UserType UserType { get; }
 
         /// <summary>Property representing the tmi-sent-ts value.</summary>
-        public string TmiSentTs { get; }
+        public DateTimeOffset TmiSent { get; }
 
         /// <summary>Property representing emote set of announcement.</summary>
         public string EmoteSet { get; }
@@ -144,7 +144,7 @@ namespace TwitchLib.Client.Models
                         SystemMessageParsed = tagValue.Replace("\\s", " ");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;

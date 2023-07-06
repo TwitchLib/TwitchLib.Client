@@ -71,7 +71,7 @@ namespace TwitchLib.Client.Models
                         DisplayName = tagValue;
                         break;
                     case Tags.Emotes:
-                        EmoteSet = new EmoteSet(tag.Value, Message);
+                        EmoteSet = new EmoteSet(tagValue, Message);
                         break;
                     case Tags.MessageId:
                         MessageId = tagValue;
