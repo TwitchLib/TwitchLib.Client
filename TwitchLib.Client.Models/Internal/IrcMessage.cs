@@ -45,7 +45,7 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// IRCv3 tags
         /// </summary>
-        public readonly IReadOnlyDictionary<string, string> Tags;
+        public readonly Dictionary<string, string> Tags;
 
         private string _rawString;
 
@@ -59,7 +59,7 @@ namespace TwitchLib.Client.Models.Internal
             User = user;
             Hostmask = null;
             Command = IrcCommand.Unknown;
-            Tags = null;
+            Tags = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -78,10 +78,10 @@ namespace TwitchLib.Client.Models.Internal
             var idx = hostmask.IndexOf('!');
             User = idx >= 0 ? hostmask.Substring(0, idx) : hostmask;
             Hostmask = hostmask;
-            _parameters = parameters;
             Command = command;
-            Tags = tags;
+            Tags = tags ?? new Dictionary<string, string>();
 
+            _parameters = parameters;
             if (command == IrcCommand.RPL_353
                 && Params.Length > 0
                 && Params.Contains("#"))
@@ -112,7 +112,7 @@ namespace TwitchLib.Client.Models.Internal
             User = user;
             Hostmask = hostmask;
             Command = command;
-            Tags = tags;
+            Tags = tags ?? new Dictionary<string, string>();
 
             _rawString = raw;
             _parameters = parameters;
