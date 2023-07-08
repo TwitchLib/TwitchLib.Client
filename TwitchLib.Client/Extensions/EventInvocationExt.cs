@@ -358,7 +358,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="client">The client.</param>
         /// <param name="channel">The channel.</param>
         /// <param name="moderators">The moderators.</param>
-        public static void InvokeModeratorsReceived(this TwitchClient client, string channel, List<string> moderators)
+        public static void InvokeModeratorsReceived(this TwitchClient client, string channel, string[] moderators)
         {
             OnModeratorsReceivedArgs model = new OnModeratorsReceivedArgs()
             {
