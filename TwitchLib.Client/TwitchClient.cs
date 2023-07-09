@@ -383,17 +383,17 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when TwitchClient attempts to host a channel it is in.
         /// </summary>
-        public event EventHandler OnSelfRaidError;
+        public event AsyncEventHandler<OnSelfRaidErrorArgs> OnSelfRaidError;
 
         /// <summary>
         /// Fires when TwitchClient receives generic no permission error from Twitch.
         /// </summary>
-        public event EventHandler OnNoPermissionError;
+        public event AsyncEventHandler<OnNoPermissionErrorArgs> OnNoPermissionError;
 
         /// <summary>
         /// Fires when newly raided channel is mature audience only.
         /// </summary>
-        public event EventHandler OnRaidedChannelIsMatureAudience;
+        public event AsyncEventHandler<OnRaidedChannelIsMatureAudienceArgs> OnRaidedChannelIsMatureAudience;
 
         /// <summary>
         /// Fires when the client was unable to join a channel.
@@ -1131,6 +1131,7 @@ namespace TwitchLib.Client
                 IrcCommand.RPL_375 or
                 IrcCommand.RPL_376 or
                 IrcCommand.GlobalUserState => Task.CompletedTask,
+
                 IrcCommand.Unknown or _ => OnUnaccountedFor?.Invoke(this, new()
                 {
                     BotUsername = TwitchUsername,
@@ -1212,11 +1213,15 @@ namespace TwitchLib.Client
             var result = msgId switch
             {
                 MsgIds.ColorChanged => OnChatColorChanged?.Invoke(this, new() { Channel = channel }),
-                MsgIds.ModeratorsReceived => OnModeratorsReceived?.Invoke(this, new() { Channel = channel }),
-                MsgIds.NoMods => OnModeratorsReceived?.Invoke(this, new() { Channel = channel, Moderators = new() }),
-                MsgIds.NoPermission => Task.Run(() => OnNoPermissionError?.Invoke(this, null)), // TODO: Make event handler async
-                MsgIds.RaidErrorSelf => Task.Run(() => OnSelfRaidError?.Invoke(this, null)), // TODO: Make event handler async
-                MsgIds.RaidNoticeMature => Task.Run(() => OnRaidedChannelIsMatureAudience?.Invoke(this, null)), // TODO: Make event handler async
+                MsgIds.ModeratorsReceived => OnModeratorsReceived?.Invoke(this, new()
+                {
+                    Channel = channel,
+                    Moderators = message.SplitFirst(':').Remainder.ToString().Replace(" ", "").Split(',')
+                }),
+                MsgIds.NoMods => OnModeratorsReceived?.Invoke(this, new() { Channel = channel, Moderators = Array.Empty<string>() }),
+                MsgIds.NoPermission => OnNoPermissionError?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.RaidErrorSelf => OnSelfRaidError?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.RaidNoticeMature => OnRaidedChannelIsMatureAudience?.Invoke(this, new() { Channel = channel, Message = message }),
                 MsgIds.MsgBannedEmailAlias => OnBannedEmailAlias?.Invoke(this, new() { Channel = channel, Message = message }),
                 MsgIds.MsgChannelSuspended => HandleChannelSuspended(ircMessage),
                 MsgIds.MsgRequiresVerifiedPhoneNumber => OnRequiresVerifiedPhoneNumber?.Invoke(this, new() { Channel = channel, Message = message }),

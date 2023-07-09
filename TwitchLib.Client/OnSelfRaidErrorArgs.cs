@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 
 namespace TwitchLib.Client.Events
 {
     /// <summary>
-    /// Args representing a list of VIPs received from chat.
+    /// Args representing a NOTICE when the client attempts to host a channel it is in.
     /// Implements the <see cref="System.EventArgs" />
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    public class OnVIPsReceivedArgs : EventArgs
+    public class OnSelfRaidErrorArgs : EventArgs
     {
         /// <summary>
-        /// Property representing the channel the VIPs array came from.
+        /// Property representing channel bot is connected to.
         /// </summary>
         public string Channel;
+
         /// <summary>
-        /// Property representing an array of VIPs.
+        /// Property representing message send with the NOTICE
         /// </summary>
-        public string[] VIPs;
+        public string Message;
     }
 }
