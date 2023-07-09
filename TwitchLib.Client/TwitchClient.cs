@@ -965,7 +965,7 @@ namespace TwitchLib.Client
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="OnMessageEventArgs" /> instance containing the event data.</param>
-        private Task _client_OnMessage(object sender, OnMessageEventArgs e)
+        private async Task _client_OnMessage(object sender, OnMessageEventArgs e)
         {
             var lines = e.Message.Split(NewLineSeparator, StringSplitOptions.None);
             foreach (var line in lines)
@@ -975,11 +975,9 @@ namespace TwitchLib.Client
 
                 _logger?.LogReceived(line);
 
-                _ = OnSendReceiveData?.TryInvoke(this, new() { Direction = SendReceiveDirection.Received, Data = line });
-                _ = HandleIrcMessageAsync(IrcParser.ParseMessage(line));
+                await OnSendReceiveData.TryInvoke(this, new() { Direction = SendReceiveDirection.Received, Data = line });
+                await HandleIrcMessageAsync(IrcParser.ParseMessage(line));
             }
-
-            return Task.CompletedTask;
         }
 
         /// <summary>
