@@ -976,7 +976,7 @@ namespace TwitchLib.Client
                 _logger?.LogReceived(line);
 
                 _ = OnSendReceiveData?.TryInvoke(this, new() { Direction = SendReceiveDirection.Received, Data = line });
-                return HandleIrcMessageAsync(IrcParser.ParseMessage(line));
+                _ = HandleIrcMessageAsync(IrcParser.ParseMessage(line));
             }
 
             return Task.CompletedTask;
