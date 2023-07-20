@@ -46,6 +46,11 @@
         public const string MsgParamSenderName = "msg-param-sender-name";                       // Sent only on giftpaidupgrade
         public const string MsgParamThreshold = "msg-param-threshold";                          // Sent only on bitsbadgetier
         public const string Noisy = "noisy";
+        public const string PinnedChatPaidAmount = "pinned-chat-paid-amount";
+        public const string PinnedChatPaidCurrency = "pinned-chat-paid-currency";
+        public const string PinnedChatPaidExponent = "pinned-chat-paid-exponent";
+        public const string PinnedChatPaidLevel = "pinned-chat-paid-level";
+        public const string PinnedChatPaidIsSystemMessage = "pinned-chat-paid-is-system-message";
         public const string ReplyParentDisplayName = "reply-parent-display-name";               // Sent only on replies
         public const string ReplyParentMsgBody = "reply-parent-msg-body";                       // Sent only on replies
         public const string ReplyParentMsgId = "reply-parent-msg-id";                           // Sent only on replies
