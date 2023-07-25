@@ -12,12 +12,12 @@ namespace TwitchLib.Client.Events
     public class OnModeratorsReceivedArgs : EventArgs
     {
         /// <summary>
-        /// Property representing the channel the moderator list came from.
+        /// Property representing the channel the moderators array came from.
         /// </summary>
         public string Channel;
         /// <summary>
-        /// Property representing the list of moderators.
+        /// Property representing an array of moderators.
         /// </summary>
-        public List<string> Moderators;
+        public string[] Moderators;
     }
 }

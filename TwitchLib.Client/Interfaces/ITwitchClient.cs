@@ -66,141 +66,189 @@ namespace TwitchLib.Client.Interfaces
         ICollection<char> WhisperCommandIdentifiers { get; }
 
         /// <summary>
-        /// Occurs when [on channel state changed].
+        /// Fires when an Announcement is received
         /// </summary>
-        event AsyncEventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
+        event AsyncEventHandler<OnAnnouncementArgs> OnAnnouncement;
+
         /// <summary>
-        /// Occurs when [on chat cleared].
-        /// </summary>
-        event AsyncEventHandler<OnChatClearedArgs> OnChatCleared;
-        /// <summary>
-        /// Occurs when [on chat color changed].
-        /// </summary>
-        event AsyncEventHandler<OnChatColorChangedArgs> OnChatColorChanged;
-        /// <summary>
-        /// Occurs when [on chat command received].
-        /// </summary>
-        event AsyncEventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
-        /// <summary>
-        /// Occurs when [on connected].
-        /// </summary>
-        event AsyncEventHandler<OnConnectedArgs> OnConnected;
-        /// <summary>
-        /// Occurs when [on connection error].
-        /// </summary>
-        event AsyncEventHandler<OnConnectionErrorArgs> OnConnectionError;
-        /// <summary>
-        /// Occurs when [on disconnected].
-        /// </summary>
-        event AsyncEventHandler<OnDisconnectedEventArgs> OnDisconnected;
-        /// <summary>
-        /// Occurs when [on existing users detected].
-        /// </summary>
-        event AsyncEventHandler<OnExistingUsersDetectedArgs> OnExistingUsersDetected;
-        /// <summary>
-        /// Occurs when [on gifted subscription].
-        /// </summary>
-        event AsyncEventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
-        /// <summary>
-        /// Occurs when [on incorrect login].
-        /// </summary>
-        event AsyncEventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
-        /// <summary>
-        /// Occurs when [on joined channel].
-        /// </summary>
-        event AsyncEventHandler<OnJoinedChannelArgs> OnJoinedChannel;
-        /// <summary>
-        /// Occurs when [on left channel].
-        /// </summary>
-        event AsyncEventHandler<OnLeftChannelArgs> OnLeftChannel;
-        /// <summary>
-        /// Occurs when [on message received].
-        /// </summary>
-        event AsyncEventHandler<OnMessageReceivedArgs> OnMessageReceived;
-        /// <summary>
-        /// Occurs when [on message sent].
-        /// </summary>
-        event AsyncEventHandler<OnMessageSentArgs> OnMessageSent;
-        /// <summary>
-        /// Occurs when [on moderator joined].
-        /// </summary>
-        event AsyncEventHandler<OnModeratorJoinedArgs> OnModeratorJoined;
-        /// <summary>
-        /// Occurs when [on moderator left].
-        /// </summary>
-        event AsyncEventHandler<OnModeratorLeftArgs> OnModeratorLeft;
-        /// <summary>
-        /// Occurs when [on moderators received].
-        /// </summary>
-        event AsyncEventHandler<OnModeratorsReceivedArgs> OnModeratorsReceived;
-        /// <summary>
-        /// Occurs when [on new subscriber].
-        /// </summary>
-        event AsyncEventHandler<OnNewSubscriberArgs> OnNewSubscriber;
-        /// <summary>
-        /// Occurs when [on raid notification].
-        /// </summary>
-        event AsyncEventHandler<OnRaidNotificationArgs> OnRaidNotification;
-        /// <summary>
-        /// Occurs when [on re subscriber].
-        /// </summary>
-        event AsyncEventHandler<OnReSubscriberArgs> OnReSubscriber;
-        /// <summary>
-        /// Occurs when [on send receive data].
-        /// </summary>
-        event AsyncEventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
-        /// <summary>
-        /// Occurs when [on user banned].
-        /// </summary>
-        event AsyncEventHandler<OnUserBannedArgs> OnUserBanned;
-        /// <summary>
-        /// Occurs when [on user joined].
-        /// </summary>
-        event AsyncEventHandler<OnUserJoinedArgs> OnUserJoined;
-        /// <summary>
-        /// Occurs when [on user left].
-        /// </summary>
-        event AsyncEventHandler<OnUserLeftArgs> OnUserLeft;
-        /// <summary>
-        /// Occurs when [on user state changed].
-        /// </summary>
-        event AsyncEventHandler<OnUserStateChangedArgs> OnUserStateChanged;
-        /// <summary>
-        /// Occurs when [on user timedout].
-        /// </summary>
-        event AsyncEventHandler<OnUserTimedoutArgs> OnUserTimedout;
-        /// <summary>
-        /// Occurs when [on whisper command received].
-        /// </summary>
-        event AsyncEventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
-        /// <summary>
-        /// Occurs when [on whisper received].
-        /// </summary>
-        event AsyncEventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
-        /// <summary>
-        /// Occurs when [on message throttled].
-        /// </summary>
-        event AsyncEventHandler<OnMessageThrottledArgs> OnMessageThrottled;
-        /// <summary>
-        /// Occurs when [on error].
-        /// </summary>
-        event AsyncEventHandler<OnErrorEventArgs> OnError;
-        /// <summary>
-        /// Occurs when [on reconnected].
-        /// </summary>
-        event AsyncEventHandler<OnConnectedArgs> OnReconnected;
-        /// <summary>
-        /// Occurs when [on vip received].
+        /// Fires when VIPs are received from chat
         /// </summary>
         event AsyncEventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
+
         /// <summary>
-        /// Occurs when [on community subscription announcement received].
+        /// Fires when client connects to Twitch.
         /// </summary>
-        event AsyncEventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
+        event AsyncEventHandler<OnConnectedArgs> OnConnected;
+
         /// <summary>
-        /// Occurs when [on message deleted].
+        /// Fires when client joins a channel.
+        /// </summary>
+        event AsyncEventHandler<OnJoinedChannelArgs> OnJoinedChannel;
+
+        /// <summary>
+        /// Fires on logging in with incorrect details, returns ErrorLoggingInException.
+        /// </summary>
+        event AsyncEventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
+
+        /// <summary>
+        /// Fires when connecting and channel state is changed, returns ChannelState.
+        /// </summary>
+        event AsyncEventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
+
+        /// <summary>
+        /// Fires when a user state is received, returns UserState.
+        /// </summary>
+        event AsyncEventHandler<OnUserStateChangedArgs> OnUserStateChanged;
+
+        /// <summary>
+        /// Fires when a new chat message arrives, returns ChatMessage.
+        /// </summary>
+        event AsyncEventHandler<OnMessageReceivedArgs> OnMessageReceived;
+
+        /// <summary>
+        /// Fires when a new whisper arrives, returns WhisperMessage.
+        /// </summary>
+        event AsyncEventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
+
+        /// <summary>
+        /// Fires when a chat message is sent, returns username, channel and message.
+        /// </summary>
+        event AsyncEventHandler<OnMessageSentArgs> OnMessageSent;
+
+        /// <summary>
+        /// Fires when command (uses custom chat command identifier) is received, returns channel, command, ChatMessage, arguments as string, arguments as list.
+        /// </summary>
+        event AsyncEventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
+
+        /// <summary>
+        /// Fires when command (uses custom whisper command identifier) is received, returns command, Whispermessage.
+        /// </summary>
+        event AsyncEventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
+
+        /// <summary>
+        /// Fires when a new viewer/chatter joined the channel's chat room, returns username and channel.
+        /// </summary>
+        event AsyncEventHandler<OnUserJoinedArgs> OnUserJoined;
+
+        /// <summary>
+        /// Fires when a moderator joined the channel's chat room, returns username and channel.
+        /// </summary>
+        event AsyncEventHandler<OnModeratorJoinedArgs> OnModeratorJoined;
+
+        /// <summary>
+        /// Fires when a moderator joins the channel's chat room, returns username and channel.
+        /// </summary>
+        event AsyncEventHandler<OnModeratorLeftArgs> OnModeratorLeft;
+
+        /// <summary>
+        /// Fires when a message gets deleted in chat.
         /// </summary>
         event AsyncEventHandler<OnMessageClearedArgs> OnMessageCleared;
+
+        /// <summary>
+        /// Fires when new subscriber is announced in chat, returns Subscriber.
+        /// </summary>
+        event AsyncEventHandler<OnNewSubscriberArgs> OnNewSubscriber;
+
+        /// <summary>
+        /// Fires when current subscriber renews subscription, returns ReSubscriber.
+        /// </summary>
+        event AsyncEventHandler<OnReSubscriberArgs> OnReSubscriber;
+
+        /// <summary>
+        /// Fires when a current Prime gaming subscriber converts to a paid subscription.
+        /// </summary>
+        event AsyncEventHandler<OnPrimePaidSubscriberArgs> OnPrimePaidSubscriber;
+
+        /// <summary>
+        /// Fires when Twitch notifies client of existing users in chat.
+        /// </summary>
+        event AsyncEventHandler<OnExistingUsersDetectedArgs> OnExistingUsersDetected;
+
+        /// <summary>
+        /// Fires when a PART message is received from Twitch regarding a particular viewer
+        /// </summary>
+        event AsyncEventHandler<OnUserLeftArgs> OnUserLeft;
+
+        /// <summary>
+        /// Fires when bot has disconnected.
+        /// </summary>
+        event AsyncEventHandler<OnDisconnectedEventArgs> OnDisconnected;
+
+        /// <summary>
+        /// Forces when bot suffers connection error.
+        /// </summary>
+        event AsyncEventHandler<OnConnectionErrorArgs> OnConnectionError;
+
+        /// <summary>
+        /// Fires when a channel's chat is cleared.
+        /// </summary>
+        event AsyncEventHandler<OnChatClearedArgs> OnChatCleared;
+
+        /// <summary>
+        /// Fires when a viewer gets timedout by any moderator.
+        /// </summary>
+        event AsyncEventHandler<OnUserTimedoutArgs> OnUserTimedout;
+
+        /// <summary>
+        /// Fires when client successfully leaves a channel.
+        /// </summary>
+        event AsyncEventHandler<OnLeftChannelArgs> OnLeftChannel;
+
+        /// <summary>
+        /// Fires when a viewer gets banned by any moderator.
+        /// </summary>
+        event AsyncEventHandler<OnUserBannedArgs> OnUserBanned;
+
+        /// <summary>
+        /// Fires when a list of moderators is received.
+        /// </summary>
+        event AsyncEventHandler<OnModeratorsReceivedArgs> OnModeratorsReceived;
+
+        /// <summary>
+        /// Fires when confirmation of a chat color change request was received.
+        /// </summary>
+        event AsyncEventHandler<OnChatColorChangedArgs> OnChatColorChanged;
+
+        /// <summary>
+        /// Fires when data is either received or sent.
+        /// </summary>
+        event AsyncEventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
+
+        /// <summary>
+        /// Fires when a raid notification is detected in chat
+        /// </summary>
+        event AsyncEventHandler<OnRaidNotificationArgs> OnRaidNotification;
+
+        /// <summary>
+        /// Fires when a subscription is gifted and announced in chat
+        /// </summary>
+        event AsyncEventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
+
+        /// <summary>
+        /// Fires when a community subscription is announced in chat
+        /// </summary>
+        event AsyncEventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
+
+        /// <summary>
+        /// Fires when a gifted subscription is continued and announced in chat
+        /// </summary>
+        event AsyncEventHandler<OnContinuedGiftedSubscriptionArgs> OnContinuedGiftedSubscription;
+
+        /// <summary>
+        /// Fires when a Message has been throttled.
+        /// </summary>
+        event AsyncEventHandler<OnMessageThrottledArgs> OnMessageThrottled;
+
+        /// <summary>
+        /// Occurs when an Error is thrown in the protocol client
+        /// </summary>
+        event AsyncEventHandler<OnErrorEventArgs> OnError;
+
+        /// <summary>
+        /// Occurs when a reconnection occurs.
+        /// </summary>
+        event AsyncEventHandler<OnConnectedArgs> OnReconnected;
 
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
@@ -213,9 +261,74 @@ namespace TwitchLib.Client.Interfaces
         event AsyncEventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
 
         /// <summary>
+        /// Occurs when send message rate limit has been applied to the client in a specific channel by Twitch
+        /// </summary>
+        event AsyncEventHandler<OnRateLimitArgs> OnRateLimit;
+
+        /// <summary>
+        /// Occurs when sending duplicate messages and user is not permitted to do so
+        /// </summary>
+        event AsyncEventHandler<OnDuplicateArgs> OnDuplicate;
+
+        /// <summary>
         /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
         /// </summary>
         event AsyncEventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+
+        /// <summary>
+        /// Fires when TwitchClient attempts to host a channel it is in.
+        /// </summary>
+        event AsyncEventHandler<OnSelfRaidErrorArgs> OnSelfRaidError;
+
+        /// <summary>
+        /// Fires when TwitchClient receives generic no permission error from Twitch.
+        /// </summary>
+        event AsyncEventHandler<OnNoPermissionErrorArgs> OnNoPermissionError;
+
+        /// <summary>
+        /// Fires when newly raided channel is mature audience only.
+        /// </summary>
+        event AsyncEventHandler<OnRaidedChannelIsMatureAudienceArgs> OnRaidedChannelIsMatureAudience;
+
+        /// <summary>
+        /// Fires when the client was unable to join a channel.
+        /// </summary>
+        event AsyncEventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel in followers only mode, as a non-follower
+        /// </summary>
+        event AsyncEventHandler<OnFollowersOnlyArgs> OnFollowersOnly;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel in subs only mode, as a non-sub
+        /// </summary>
+        event AsyncEventHandler<OnSubsOnlyArgs> OnSubsOnly;
+
+        /// <summary>
+        /// Fires when the client attempts to send a non-emote message to a channel in emotes only mode
+        /// </summary>
+        event AsyncEventHandler<OnEmoteOnlyArgs> OnEmoteOnly;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel that has been suspended
+        /// </summary>
+        event AsyncEventHandler<OnSuspendedArgs> OnSuspended;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message to a channel they're banned in
+        /// </summary>
+        event AsyncEventHandler<OnBannedArgs> OnBanned;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message in a channel with slow mode enabled, without cooldown expiring
+        /// </summary>
+        event AsyncEventHandler<OnSlowModeArgs> OnSlowMode;
+
+        /// <summary>
+        /// Fires when the client attempts to send a message in a channel with r9k mode enabled, and message was not permitted
+        /// </summary>
+        event AsyncEventHandler<OnR9kModeArgs> OnR9kMode;
 
         /// <summary>
         /// Fires when the client receives a PRIVMSG tagged as an user-intro
@@ -223,9 +336,9 @@ namespace TwitchLib.Client.Interfaces
         event AsyncEventHandler<OnUserIntroArgs> OnUserIntro;
 
         /// <summary>
-        /// Fires when the client receives a USERNOTICE tagged as an announcement
+        /// Fires when data is received from Twitch that is not able to be parsed.
         /// </summary>
-        event AsyncEventHandler<OnAnnouncementArgs> OnAnnouncement;
+        event AsyncEventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
 
         /// <summary>
         /// Initializes the specified credentials.
