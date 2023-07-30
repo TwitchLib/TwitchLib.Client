@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using TwitchLib.Client.Events;
+﻿using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;
 
@@ -354,28 +352,12 @@ namespace TwitchLib.Client.Interfaces
         /// Connects this instance.
         /// </summary>
         /// <returns>bool representing Connect() result</returns>
-        bool Connect();
-
-        /// <summary>
-        /// Connects this instance.
-        /// </summary>
-        /// <returns>bool representing Connect() result</returns>
         Task<bool> ConnectAsync();
         
         /// <summary>
         /// Disconnects this instance.
         /// </summary>
-        void Disconnect();
-        
-        /// <summary>
-        /// Disconnects this instance.
-        /// </summary>
         Task DisconnectAsync();
-        
-        /// <summary>
-        /// Reconnects this instance.
-        /// </summary>
-        void Reconnect();
         
         /// <summary>
         /// Reconnects this instance.
@@ -388,13 +370,6 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">The channel.</param>
         /// <returns>JoinedChannel.</returns>
         JoinedChannel GetJoinedChannel(string channel);
-
-        /// <summary>
-        /// Joins the channel.
-        /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <param name="overrideCheck">if set to <c>true</c> [override check].</param>
-        void JoinChannel(string channel, bool overrideCheck = false);
         
         /// <summary>
         /// Joins the channel.
@@ -407,31 +382,13 @@ namespace TwitchLib.Client.Interfaces
         /// Leaves the channel.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        void LeaveChannel(JoinedChannel channel);
-        
-        /// <summary>
-        /// Leaves the channel.
-        /// </summary>
-        /// <param name="channel">The channel.</param>
         Task LeaveChannelAsync(JoinedChannel channel);
         
         /// <summary>
         /// Leaves the channel.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        void LeaveChannel(string channel);
-        
-        /// <summary>
-        /// Leaves the channel.
-        /// </summary>
-        /// <param name="channel">The channel.</param>
         Task LeaveChannelAsync(string channel);
-
-        /// <summary>
-        /// Called when [read line test].
-        /// </summary>
-        /// <param name="rawIrc">The raw irc.</param>
-        void OnReadLineTest(string rawIrc);
         
         /// <summary>
         /// Called when [read line test].

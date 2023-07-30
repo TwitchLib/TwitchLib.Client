@@ -1,10 +1,6 @@
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Events;
@@ -670,15 +666,6 @@ namespace TwitchLib.Client
 
         #region Connection Calls
 
-        /// <summary>
-        /// Start connecting to the Twitch IRC chat.
-        /// </summary>
-        /// <returns>bool representing Connect() result</returns>
-        public bool Connect()
-        {
-            return ConnectAsync().GetAwaiter().GetResult();
-        }
-
         /// <inheritdoc />
         public async Task<bool> ConnectAsync()
         {
@@ -699,14 +686,6 @@ namespace TwitchLib.Client
             return false;
         }
 
-        /// <summary>
-        /// Start disconnecting from the Twitch IRC chat.
-        /// </summary>
-        public void Disconnect()
-        {
-            DisconnectAsync().GetAwaiter().GetResult();
-        }
-
         /// <inheritdoc />
         public async Task DisconnectAsync()
         {
@@ -720,14 +699,6 @@ namespace TwitchLib.Client
             // Clear instance data
             _joinedChannelManager.Clear();
             PreviousWhisper = null;
-        }
-
-        /// <summary>
-        /// Start reconnecting to the Twitch IRC chat.
-        /// </summary>
-        public void Reconnect()
-        {
-            ReconnectAsync().GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
@@ -761,16 +732,6 @@ namespace TwitchLib.Client
         #endregion
 
         #region Channel Calls
-
-        /// <summary>
-        /// Join the Twitch IRC chat of <paramref name="channel" />.
-        /// </summary>
-        /// <param name="channel">The channel to join.</param>
-        /// <param name="overrideCheck">Override a join check.</param>
-        public void JoinChannel(string channel, bool overrideCheck = false)
-        {
-            JoinChannelAsync(channel, overrideCheck).GetAwaiter().GetResult();
-        }
 
         /// <inheritdoc />
         public Task JoinChannelAsync(string channel, bool overrideCheck = false)
@@ -813,16 +774,6 @@ namespace TwitchLib.Client
             return _joinedChannelManager.GetJoinedChannel(channel);
         }
 
-        /// <summary>
-        /// Leaves (PART) the Twitch IRC chat of <paramref name="channel" />.
-        /// </summary>
-        /// <param name="channel">The channel to leave.</param>
-        /// <returns>True is returned if the passed channel was found, false if channel not found.</returns>
-        public void LeaveChannel(string channel)
-        {
-            LeaveChannelAsync(channel).GetAwaiter().GetResult();
-        }
-
         /// <inheritdoc />
         public async Task LeaveChannelAsync(string channel)
         {
@@ -844,16 +795,6 @@ namespace TwitchLib.Client
             }
         }
 
-        /// <summary>
-        /// Leaves (PART) the Twitch IRC chat of <paramref name="channel" />.
-        /// </summary>
-        /// <param name="channel">The JoinedChannel object to leave.</param>
-        /// <returns>True is returned if the passed channel was found, false if channel not found.</returns>
-        public void LeaveChannel(JoinedChannel channel)
-        {
-            LeaveChannelAsync(channel).GetAwaiter().GetResult();
-        }
-
         /// <inheritdoc />
         public Task LeaveChannelAsync(JoinedChannel channel)
         {
@@ -864,15 +805,6 @@ namespace TwitchLib.Client
         }
 
         #endregion
-
-        /// <summary>
-        /// This method allows firing the message parser with a custom irc string allowing for easy testing
-        /// </summary>
-        /// <param name="rawIrc">This should be a raw IRC message resembling one received from Twitch IRC.</param>
-        public void OnReadLineTest(string rawIrc)
-        {
-            OnReadLineTestAsync(rawIrc).GetAwaiter().GetResult();
-        }
 
         /// <inheritdoc />
         public Task OnReadLineTestAsync(string rawIrc)
