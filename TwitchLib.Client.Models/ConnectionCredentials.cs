@@ -6,11 +6,11 @@ namespace TwitchLib.Client.Models
     public partial class ConnectionCredentials
     {
 #if NET7_0_OR_GREATER
-        [GeneratedRegex("^([a-zA-Z0-9][a-zA-Z0-9_]{3,25})$")]
+        [GeneratedRegex("^([a-zA-Z0-9][a-zA-Z0-9_]{4,25})$")]
         private static partial Regex GetUsernameCheckRegex();
 #else
         private static Regex GetUsernameCheckRegex() => UsernameCheckRegex;
-        private static readonly Regex UsernameCheckRegex = new("^([a-zA-Z0-9][a-zA-Z0-9_]{3,25})$");
+        private static readonly Regex UsernameCheckRegex = new("^([a-zA-Z0-9][a-zA-Z0-9_]{4,25})$");
 #endif
         /// <summary>Property representing bot's oauth.</summary>
         public string TwitchOAuth { get; }
