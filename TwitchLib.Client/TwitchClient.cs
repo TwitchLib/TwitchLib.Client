@@ -183,7 +183,7 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when client connects to Twitch.
         /// </summary>
-        public event AsyncEventHandler<OnConnectedArgs> OnConnected;
+        public event AsyncEventHandler<Events.OnConnectedEventArgs> OnConnected;
 
         /// <summary>
         /// Fires when client joins a channel.
@@ -234,16 +234,6 @@ namespace TwitchLib.Client
         /// Fires when a new viewer/chatter joined the channel's chat room, returns username and channel.
         /// </summary>
         public event AsyncEventHandler<OnUserJoinedArgs> OnUserJoined;
-
-        /// <summary>
-        /// Fires when a moderator joined the channel's chat room, returns username and channel.
-        /// </summary>
-        public event AsyncEventHandler<OnModeratorJoinedArgs> OnModeratorJoined;
-
-        /// <summary>
-        /// Fires when a moderator joins the channel's chat room, returns username and channel.
-        /// </summary>
-        public event AsyncEventHandler<OnModeratorLeftArgs> OnModeratorLeft;
 
         /// <summary>
         /// Fires when a message gets deleted in chat.
@@ -353,47 +343,47 @@ namespace TwitchLib.Client
         /// <summary>
         /// Occurs when a reconnection occurs.
         /// </summary>
-        public event AsyncEventHandler<OnConnectedArgs> OnReconnected;
+        public event AsyncEventHandler<Events.OnConnectedEventArgs> OnReconnected;
 
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
         /// </summary>
-        public event AsyncEventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
+        public event AsyncEventHandler<NoticeEventArgs> OnRequiresVerifiedEmail;
 
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified phone number without a verified phone number attached to the account.
         /// </summary>
-        public event AsyncEventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
+        public event AsyncEventHandler<NoticeEventArgs> OnRequiresVerifiedPhoneNumber;
 
         /// <summary>
         /// Occurs when send message rate limit has been applied to the client in a specific channel by Twitch
         /// </summary>
-        public event AsyncEventHandler<OnRateLimitArgs> OnRateLimit;
+        public event AsyncEventHandler<NoticeEventArgs> OnRateLimit;
 
         /// <summary>
         /// Occurs when sending duplicate messages and user is not permitted to do so
         /// </summary>
-        public event AsyncEventHandler<OnDuplicateArgs> OnDuplicate;
+        public event AsyncEventHandler<NoticeEventArgs> OnDuplicate;
 
         /// <summary>
         /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
         /// </summary>
-        public event AsyncEventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+        public event AsyncEventHandler<NoticeEventArgs> OnBannedEmailAlias;
 
         /// <summary>
         /// Fires when TwitchClient attempts to host a channel it is in.
         /// </summary>
-        public event AsyncEventHandler<OnSelfRaidErrorArgs> OnSelfRaidError;
+        public event AsyncEventHandler<NoticeEventArgs> OnSelfRaidError;
 
         /// <summary>
         /// Fires when TwitchClient receives generic no permission error from Twitch.
         /// </summary>
-        public event AsyncEventHandler<OnNoPermissionErrorArgs> OnNoPermissionError;
+        public event AsyncEventHandler<NoticeEventArgs> OnNoPermissionError;
 
         /// <summary>
         /// Fires when newly raided channel is mature audience only.
         /// </summary>
-        public event AsyncEventHandler<OnRaidedChannelIsMatureAudienceArgs> OnRaidedChannelIsMatureAudience;
+        public event AsyncEventHandler<NoticeEventArgs> OnRaidedChannelIsMatureAudience;
 
         /// <summary>
         /// Fires when the client was unable to join a channel.
@@ -403,37 +393,37 @@ namespace TwitchLib.Client
         /// <summary>
         /// Fires when the client attempts to send a message to a channel in followers only mode, as a non-follower
         /// </summary>
-        public event AsyncEventHandler<OnFollowersOnlyArgs> OnFollowersOnly;
+        public event AsyncEventHandler<NoticeEventArgs> OnFollowersOnly;
 
         /// <summary>
         /// Fires when the client attempts to send a message to a channel in subs only mode, as a non-sub
         /// </summary>
-        public event AsyncEventHandler<OnSubsOnlyArgs> OnSubsOnly;
+        public event AsyncEventHandler<NoticeEventArgs> OnSubsOnly;
 
         /// <summary>
         /// Fires when the client attempts to send a non-emote message to a channel in emotes only mode
         /// </summary>
-        public event AsyncEventHandler<OnEmoteOnlyArgs> OnEmoteOnly;
+        public event AsyncEventHandler<NoticeEventArgs> OnEmoteOnly;
 
         /// <summary>
         /// Fires when the client attempts to send a message to a channel that has been suspended
         /// </summary>
-        public event AsyncEventHandler<OnSuspendedArgs> OnSuspended;
+        public event AsyncEventHandler<NoticeEventArgs> OnSuspended;
 
         /// <summary>
         /// Fires when the client attempts to send a message to a channel they're banned in
         /// </summary>
-        public event AsyncEventHandler<OnBannedArgs> OnBanned;
+        public event AsyncEventHandler<NoticeEventArgs> OnBanned;
 
         /// <summary>
         /// Fires when the client attempts to send a message in a channel with slow mode enabled, without cooldown expiring
         /// </summary>
-        public event AsyncEventHandler<OnSlowModeArgs> OnSlowMode;
+        public event AsyncEventHandler<NoticeEventArgs> OnSlowMode;
 
         /// <summary>
         /// Fires when the client attempts to send a message in a channel with r9k mode enabled, and message was not permitted
         /// </summary>
-        public event AsyncEventHandler<OnR9kModeArgs> OnR9kMode;
+        public event AsyncEventHandler<NoticeEventArgs> OnR9kMode;
 
         /// <summary>
         /// Fires when the client receives a PRIVMSG tagged as an user-intro
@@ -932,8 +922,8 @@ namespace TwitchLib.Client
         /// Handles the OnReconnected event of the _client control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="OnConnectedEventArgs" /> instance containing the event data.</param>
-        private async Task _client_OnReconnected(object sender, OnConnectedEventArgs e)
+        /// <param name="e">The <see cref="Communication.Events.OnConnectedEventArgs" /> instance containing the event data.</param>
+        private async Task _client_OnReconnected(object sender, Communication.Events.OnConnectedEventArgs e)
         {
             await SendHandshake();
 
@@ -948,7 +938,7 @@ namespace TwitchLib.Client
             }
 
             _joinedChannelManager.Clear();
-            await OnReconnected.TryInvoke(sender, new OnConnectedArgs());
+            await OnReconnected.TryInvoke(sender, new Events.OnConnectedEventArgs());
         }
 
         static readonly string[] NewLineSeparator = new[]
@@ -1115,7 +1105,6 @@ namespace TwitchLib.Client
                 IrcCommand.UserNotice => HandleUserNotice(ircMessage),
                 IrcCommand.RoomState => HandleRoomState(ircMessage),
                 IrcCommand.Reconnect => ReconnectAsync(),
-                IrcCommand.Mode => HandleMode(ircMessage),
                 IrcCommand.Cap => HandleCap(ircMessage),
                 IrcCommand.RPL_004 => Handle004(),
                 IrcCommand.RPL_353 => Handle353(ircMessage),
@@ -1217,13 +1206,13 @@ namespace TwitchLib.Client
                     Moderators = message.SplitFirst(':').Remainder.ToString().Replace(" ", "").Split(',')
                 }),
                 MsgIds.NoMods => OnModeratorsReceived?.Invoke(this, new() { Channel = channel, Moderators = Array.Empty<string>() }),
-                MsgIds.NoPermission => OnNoPermissionError?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.RaidErrorSelf => OnSelfRaidError?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.RaidNoticeMature => OnRaidedChannelIsMatureAudience?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgBannedEmailAlias => OnBannedEmailAlias?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.NoPermission => OnNoPermissionError?.Invoke(this, new(channel, message)),
+                MsgIds.RaidErrorSelf => OnSelfRaidError?.Invoke(this, new(channel, message)),
+                MsgIds.RaidNoticeMature => OnRaidedChannelIsMatureAudience?.Invoke(this, new(channel, message)),
+                MsgIds.MsgBannedEmailAlias => OnBannedEmailAlias?.Invoke(this, new(channel, message)),
                 MsgIds.MsgChannelSuspended => HandleChannelSuspended(ircMessage),
-                MsgIds.MsgRequiresVerifiedPhoneNumber => OnRequiresVerifiedPhoneNumber?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgVerifiedEmail => OnRequiresVerifiedEmail?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgRequiresVerifiedPhoneNumber => OnRequiresVerifiedPhoneNumber?.Invoke(this, new(channel, message)),
+                MsgIds.MsgVerifiedEmail => OnRequiresVerifiedEmail?.Invoke(this, new(channel, message)),
                 MsgIds.NoVIPs => OnVIPsReceived?.Invoke(this, new() { Channel = channel, VIPs = Array.Empty<string>() }),
                 MsgIds.VIPsSuccess => OnVIPsReceived?.Invoke(this, new()
                 {
@@ -1231,15 +1220,15 @@ namespace TwitchLib.Client
                     // TODO: Make it less allocatey
                     VIPs = message.SplitFirst(':').Remainder.ToString().Replace(" ", "").Replace(".", "").Split(',')
                 }),
-                MsgIds.MsgRateLimit => OnRateLimit?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgDuplicate => OnDuplicate?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgFollowersOnly => OnFollowersOnly?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgSubsOnly => OnSubsOnly?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgEmoteOnly => OnEmoteOnly?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgSuspended => OnSuspended?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgBanned => OnBanned?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgSlowMode => OnSlowMode?.Invoke(this, new() { Channel = channel, Message = message }),
-                MsgIds.MsgR9k => OnR9kMode?.Invoke(this, new() { Channel = channel, Message = message }),
+                MsgIds.MsgRateLimit => OnRateLimit?.Invoke(this, new(channel, message)),
+                MsgIds.MsgDuplicate => OnDuplicate?.Invoke(this, new(channel, message)),
+                MsgIds.MsgFollowersOnly => OnFollowersOnly?.Invoke(this, new(channel, message)),
+                MsgIds.MsgSubsOnly => OnSubsOnly?.Invoke(this, new(channel, message)),
+                MsgIds.MsgEmoteOnly => OnEmoteOnly?.Invoke(this, new(channel, message)),
+                MsgIds.MsgSuspended => OnSuspended?.Invoke(this, new(channel, message)),
+                MsgIds.MsgBanned => OnBanned?.Invoke(this, new(channel, message)),
+                MsgIds.MsgSlowMode => OnSlowMode?.Invoke(this, new(channel, message)),
+                MsgIds.MsgR9k => OnR9kMode?.Invoke(this, new(channel, message)),
                 _ => OnUnaccountedFor?.Invoke(this, new()
                 {
                     BotUsername = TwitchUsername,
@@ -1515,33 +1504,6 @@ namespace TwitchLib.Client
                     RawIRC = rawMessage
                 }) ?? UnaccountedFor(rawMessage)
             };
-        }
-
-        /// <summary>
-        /// Handles the mode.
-        /// </summary>
-        /// <param name="ircMessage">The irc message.</param>
-        private Task HandleMode(IrcMessage ircMessage)
-        {
-            if (ircMessage.Message.StartsWith("+o"))
-            {
-                return OnModeratorJoined.TryInvoke(this, new()
-                {
-                    Channel = ircMessage.Channel,
-                    Username = ircMessage.Message.SplitFirst(' ').Remainder.ToString()
-                });
-            }
-
-            if (ircMessage.Message.StartsWith("-o"))
-            {
-                return OnModeratorLeft.TryInvoke(this, new()
-                {
-                    Channel = ircMessage.Channel,
-                    Username = ircMessage.Message.SplitFirst(' ').Remainder.ToString()
-                });
-            }
-
-            return Task.CompletedTask;
         }
 
         /// <summary>

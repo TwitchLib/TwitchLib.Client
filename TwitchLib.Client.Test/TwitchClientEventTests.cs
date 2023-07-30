@@ -82,7 +82,7 @@ namespace TwitchLib.Client.Test
         {
             var client = new TwitchClient(_mockClient);
 
-            await Assert.RaisesAsync<OnConnectedArgs>(
+            await Assert.RaisesAsync<Events.OnConnectedEventArgs>(
                     h => client.OnConnected += h,
                     h => client.OnConnected -= h,
                     async () =>
@@ -165,7 +165,7 @@ namespace TwitchLib.Client.Test
             var pauseConnected = new ManualResetEvent(false);
             var pauseReconnected = new ManualResetEvent(false);
 
-            await Assert.RaisesAsync<OnConnectedArgs>(
+            await Assert.RaisesAsync<Events.OnConnectedEventArgs>(
                 h => client.OnReconnected += h,
                 h => client.OnReconnected -= h,
                 async () =>

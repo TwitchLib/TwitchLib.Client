@@ -78,7 +78,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Fires when client connects to Twitch.
         /// </summary>
-        event AsyncEventHandler<OnConnectedArgs> OnConnected;
+        event AsyncEventHandler<Events.OnConnectedEventArgs> OnConnected;
 
         /// <summary>
         /// Fires when client joins a channel.
@@ -129,16 +129,6 @@ namespace TwitchLib.Client.Interfaces
         /// Fires when a new viewer/chatter joined the channel's chat room, returns username and channel.
         /// </summary>
         event AsyncEventHandler<OnUserJoinedArgs> OnUserJoined;
-
-        /// <summary>
-        /// Fires when a moderator joined the channel's chat room, returns username and channel.
-        /// </summary>
-        event AsyncEventHandler<OnModeratorJoinedArgs> OnModeratorJoined;
-
-        /// <summary>
-        /// Fires when a moderator joins the channel's chat room, returns username and channel.
-        /// </summary>
-        event AsyncEventHandler<OnModeratorLeftArgs> OnModeratorLeft;
 
         /// <summary>
         /// Fires when a message gets deleted in chat.
@@ -248,47 +238,47 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Occurs when a reconnection occurs.
         /// </summary>
-        event AsyncEventHandler<OnConnectedArgs> OnReconnected;
+        event AsyncEventHandler<Events.OnConnectedEventArgs> OnReconnected;
 
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
         /// </summary>
-        event AsyncEventHandler<OnRequiresVerifiedEmailArgs> OnRequiresVerifiedEmail;
+        event AsyncEventHandler<NoticeEventArgs> OnRequiresVerifiedEmail;
 
         /// <summary>
         /// Occurs when chatting in a channel that requires a verified phone number without a verified phone number attached to the account.
         /// </summary>
-        event AsyncEventHandler<OnRequiresVerifiedPhoneNumberArgs> OnRequiresVerifiedPhoneNumber;
+        event AsyncEventHandler<NoticeEventArgs> OnRequiresVerifiedPhoneNumber;
 
         /// <summary>
         /// Occurs when send message rate limit has been applied to the client in a specific channel by Twitch
         /// </summary>
-        event AsyncEventHandler<OnRateLimitArgs> OnRateLimit;
+        event AsyncEventHandler<NoticeEventArgs> OnRateLimit;
 
         /// <summary>
         /// Occurs when sending duplicate messages and user is not permitted to do so
         /// </summary>
-        event AsyncEventHandler<OnDuplicateArgs> OnDuplicate;
+        event AsyncEventHandler<NoticeEventArgs> OnDuplicate;
 
         /// <summary>
         /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
         /// </summary>
-        event AsyncEventHandler<OnBannedEmailAliasArgs> OnBannedEmailAlias;
+        event AsyncEventHandler<NoticeEventArgs> OnBannedEmailAlias;
 
         /// <summary>
         /// Fires when TwitchClient attempts to host a channel it is in.
         /// </summary>
-        event AsyncEventHandler<OnSelfRaidErrorArgs> OnSelfRaidError;
+        event AsyncEventHandler<NoticeEventArgs> OnSelfRaidError;
 
         /// <summary>
         /// Fires when TwitchClient receives generic no permission error from Twitch.
         /// </summary>
-        event AsyncEventHandler<OnNoPermissionErrorArgs> OnNoPermissionError;
+        event AsyncEventHandler<NoticeEventArgs> OnNoPermissionError;
 
         /// <summary>
         /// Fires when newly raided channel is mature audience only.
         /// </summary>
-        event AsyncEventHandler<OnRaidedChannelIsMatureAudienceArgs> OnRaidedChannelIsMatureAudience;
+        event AsyncEventHandler<NoticeEventArgs> OnRaidedChannelIsMatureAudience;
 
         /// <summary>
         /// Fires when the client was unable to join a channel.
@@ -298,37 +288,37 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Fires when the client attempts to send a message to a channel in followers only mode, as a non-follower
         /// </summary>
-        event AsyncEventHandler<OnFollowersOnlyArgs> OnFollowersOnly;
+        event AsyncEventHandler<NoticeEventArgs> OnFollowersOnly;
 
         /// <summary>
         /// Fires when the client attempts to send a message to a channel in subs only mode, as a non-sub
         /// </summary>
-        event AsyncEventHandler<OnSubsOnlyArgs> OnSubsOnly;
+        event AsyncEventHandler<NoticeEventArgs> OnSubsOnly;
 
         /// <summary>
         /// Fires when the client attempts to send a non-emote message to a channel in emotes only mode
         /// </summary>
-        event AsyncEventHandler<OnEmoteOnlyArgs> OnEmoteOnly;
+        event AsyncEventHandler<NoticeEventArgs> OnEmoteOnly;
 
         /// <summary>
         /// Fires when the client attempts to send a message to a channel that has been suspended
         /// </summary>
-        event AsyncEventHandler<OnSuspendedArgs> OnSuspended;
+        event AsyncEventHandler<NoticeEventArgs> OnSuspended;
 
         /// <summary>
         /// Fires when the client attempts to send a message to a channel they're banned in
         /// </summary>
-        event AsyncEventHandler<OnBannedArgs> OnBanned;
+        event AsyncEventHandler<NoticeEventArgs> OnBanned;
 
         /// <summary>
         /// Fires when the client attempts to send a message in a channel with slow mode enabled, without cooldown expiring
         /// </summary>
-        event AsyncEventHandler<OnSlowModeArgs> OnSlowMode;
+        event AsyncEventHandler<NoticeEventArgs> OnSlowMode;
 
         /// <summary>
         /// Fires when the client attempts to send a message in a channel with r9k mode enabled, and message was not permitted
         /// </summary>
-        event AsyncEventHandler<OnR9kModeArgs> OnR9kMode;
+        event AsyncEventHandler<NoticeEventArgs> OnR9kMode;
 
         /// <summary>
         /// Fires when the client receives a PRIVMSG tagged as an user-intro
