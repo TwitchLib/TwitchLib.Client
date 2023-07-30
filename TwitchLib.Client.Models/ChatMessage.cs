@@ -222,7 +222,7 @@ namespace TwitchLib.Client.Models
                             : throw new ArgumentException($"Requested value '{tagValue}' was not found.");
                         break;
                     case Tags.PinnedChatPaidIsSystemMessage:
-                        (HypeChat ??= new()).IsSystemMessage = tagh.ToBool(tagValue);
+                        (HypeChat ??= new()).IsSystemMessage = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.ReplyParentDisplayName:
                         ChatReply ??= new ChatReply(); // ChatReply is null if not reply
