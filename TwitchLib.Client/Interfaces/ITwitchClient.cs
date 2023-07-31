@@ -465,12 +465,6 @@ namespace TwitchLib.Client.Interfaces
         /// Sends the raw.
         /// </summary>
         /// <param name="message">The message.</param>
-        void SendRaw(string message);
-        
-        /// <summary>
-        /// Sends the raw.
-        /// </summary>
-        /// <param name="message">The message.</param>
         Task SendRawAsync(string message);
     }
 }

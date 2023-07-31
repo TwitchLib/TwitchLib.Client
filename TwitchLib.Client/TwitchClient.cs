@@ -88,63 +88,37 @@ namespace TwitchLib.Client
         #region Public Variables
         /// <inheritdoc/>
         public ICollection<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
+
         /// <inheritdoc/>
         public ICollection<char> WhisperCommandIdentifiers { get; } = new HashSet<char>();
-        /// <summary>
-        /// Assembly version of TwitchLib.Client.
-        /// </summary>
-        /// <value>The version.</value>
-        public Version Version => Assembly.GetEntryAssembly()?.GetName().Version;
 
-        /// <summary>
-        /// Checks if underlying client has been initialized.
-        /// </summary>
-        /// <value><c>true</c> if this instance is initialized; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsInitialized => _client != null;
 
-        /// <summary>
-        /// A list of all channels the client is currently in.
-        /// </summary>
-        /// <value>The joined channels.</value>
+        /// <inheritdoc/>
         public IReadOnlyList<JoinedChannel> JoinedChannels => _joinedChannelManager.GetJoinedChannels();
 
-        /// <summary>
-        /// Username of the user connected via this library.
-        /// </summary>
-        /// <value>The twitch username.</value>
+        /// <inheritdoc/>
         public string TwitchUsername { get; private set; }
 
-        /// <summary>
-        /// The most recent whisper received.
-        /// </summary>
-        /// <value>The previous whisper.</value>
+        /// <inheritdoc/>
         public WhisperMessage PreviousWhisper { get; private set; }
 
-        /// <summary>
-        /// The current connection status of the client.
-        /// </summary>
-        /// <value><c>true</c> if this instance is connected; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsConnected => IsInitialized && _client?.IsConnected == true;
 
-        /// <summary>
-        /// The emotes this channel replaces.
-        /// </summary>
-        /// <value>The channel emotes.</value>
-        /// <remarks>Twitch-handled emotes are automatically added to this collection (which also accounts for
+        /// <inheritdoc/>
+        /// <remarks>
+        /// Twitch-handled emotes are automatically added to this collection (which also accounts for
         /// managing user emote permissions such as sub-only emotes). Third-party emotes will have to be manually
-        /// added according to the availability rules defined by the third-party.</remarks>
+        /// added according to the availability rules defined by the third-party.
+        /// </remarks>
         public MessageEmoteCollection ChannelEmotes { get; } = new MessageEmoteCollection();
 
-        /// <summary>
-        /// Will disable the client from sending automatic PONG responses to PING
-        /// </summary>
-        /// <value><c>true</c> if [disable automatic pong]; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool DisableAutoPong { get; set; } = false;
 
-        /// <summary>
-        /// Determines whether Emotes will be replaced in messages.
-        /// </summary>
-        /// <value><c>true</c> if [will replace emotes]; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool WillReplaceEmotes { get; set; } = false;
 
         /// <summary>
@@ -157,278 +131,168 @@ namespace TwitchLib.Client
         /// </summary>
         public string ReplacedEmotesSuffix { get; set; } = "";
 
-        /// <summary>
-        /// Provides access to connection credentials object.
-        /// </summary>
-        /// <value>The connection credentials.</value>
+        /// <inheritdoc/>
         public ConnectionCredentials ConnectionCredentials { get; private set; }
-
         #endregion
 
         #region Events
-        /// <summary>
-        /// Fires when an Announcement is received
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnAnnouncementArgs> OnAnnouncement;
 
-        /// <summary>
-        /// Fires when VIPs are received from chat
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnVIPsReceivedArgs> OnVIPsReceived;
 
-        /// <summary>
-        /// Fires when client connects to Twitch.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<Events.OnConnectedEventArgs> OnConnected;
 
-        /// <summary>
-        /// Fires when client joins a channel.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnJoinedChannelArgs> OnJoinedChannel;
 
-        /// <summary>
-        /// Fires on logging in with incorrect details, returns ErrorLoggingInException.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnIncorrectLoginArgs> OnIncorrectLogin;
 
-        /// <summary>
-        /// Fires when connecting and channel state is changed, returns ChannelState.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnChannelStateChangedArgs> OnChannelStateChanged;
 
-        /// <summary>
-        /// Fires when a user state is received, returns UserState.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnUserStateChangedArgs> OnUserStateChanged;
 
-        /// <summary>
-        /// Fires when a new chat message arrives, returns ChatMessage.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnMessageReceivedArgs> OnMessageReceived;
 
-        /// <summary>
-        /// Fires when a new whisper arrives, returns WhisperMessage.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
 
-        /// <summary>
-        /// Fires when a chat message is sent, returns username, channel and message.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnMessageSentArgs> OnMessageSent;
 
-        /// <summary>
-        /// Fires when command (uses custom chat command identifier) is received, returns channel, command, ChatMessage, arguments as string, arguments as list.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
 
-        /// <summary>
-        /// Fires when command (uses custom whisper command identifier) is received, returns command, Whispermessage.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
 
-        /// <summary>
-        /// Fires when a new viewer/chatter joined the channel's chat room, returns username and channel.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnUserJoinedArgs> OnUserJoined;
 
-        /// <summary>
-        /// Fires when a message gets deleted in chat.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnMessageClearedArgs> OnMessageCleared;
 
-        /// <summary>
-        /// Fires when new subscriber is announced in chat, returns Subscriber.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnNewSubscriberArgs> OnNewSubscriber;
 
-        /// <summary>
-        /// Fires when current subscriber renews subscription, returns ReSubscriber.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnReSubscriberArgs> OnReSubscriber;
 
-        /// <summary>
-        /// Fires when a current Prime gaming subscriber converts to a paid subscription.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnPrimePaidSubscriberArgs> OnPrimePaidSubscriber;
 
-        /// <summary>
-        /// Fires when Twitch notifies client of existing users in chat.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnExistingUsersDetectedArgs> OnExistingUsersDetected;
 
-        /// <summary>
-        /// Fires when a PART message is received from Twitch regarding a particular viewer
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnUserLeftArgs> OnUserLeft;
 
-        /// <summary>
-        /// Fires when bot has disconnected.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnDisconnectedEventArgs> OnDisconnected;
 
-        /// <summary>
-        /// Forces when bot suffers connection error.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnConnectionErrorArgs> OnConnectionError;
 
-        /// <summary>
-        /// Fires when a channel's chat is cleared.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnChatClearedArgs> OnChatCleared;
 
-        /// <summary>
-        /// Fires when a viewer gets timedout by any moderator.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnUserTimedoutArgs> OnUserTimedout;
 
-        /// <summary>
-        /// Fires when client successfully leaves a channel.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnLeftChannelArgs> OnLeftChannel;
 
-        /// <summary>
-        /// Fires when a viewer gets banned by any moderator.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnUserBannedArgs> OnUserBanned;
 
-        /// <summary>
-        /// Fires when a list of moderators is received.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnModeratorsReceivedArgs> OnModeratorsReceived;
 
-        /// <summary>
-        /// Fires when confirmation of a chat color change request was received.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnChatColorChangedArgs> OnChatColorChanged;
 
-        /// <summary>
-        /// Fires when data is either received or sent.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnSendReceiveDataArgs> OnSendReceiveData;
 
-        /// <summary>
-        /// Fires when a raid notification is detected in chat
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnRaidNotificationArgs> OnRaidNotification;
 
-        /// <summary>
-        /// Fires when a subscription is gifted and announced in chat
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnGiftedSubscriptionArgs> OnGiftedSubscription;
 
-        /// <summary>
-        /// Fires when a community subscription is announced in chat
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnCommunitySubscriptionArgs> OnCommunitySubscription;
 
-        /// <summary>
-        /// Fires when a gifted subscription is continued and announced in chat
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnContinuedGiftedSubscriptionArgs> OnContinuedGiftedSubscription;
 
-        /// <summary>
-        /// Fires when a Message has been throttled.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnMessageThrottledArgs> OnMessageThrottled;
 
-        /// <summary>
-        /// Occurs when an Error is thrown in the protocol client
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnErrorEventArgs> OnError;
 
-        /// <summary>
-        /// Occurs when a reconnection occurs.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<Events.OnConnectedEventArgs> OnReconnected;
 
-        /// <summary>
-        /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnRequiresVerifiedEmail;
 
-        /// <summary>
-        /// Occurs when chatting in a channel that requires a verified phone number without a verified phone number attached to the account.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnRequiresVerifiedPhoneNumber;
 
-        /// <summary>
-        /// Occurs when send message rate limit has been applied to the client in a specific channel by Twitch
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnRateLimit;
 
-        /// <summary>
-        /// Occurs when sending duplicate messages and user is not permitted to do so
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnDuplicate;
 
-        /// <summary>
-        /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnBannedEmailAlias;
 
-        /// <summary>
-        /// Fires when TwitchClient attempts to host a channel it is in.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnSelfRaidError;
 
-        /// <summary>
-        /// Fires when TwitchClient receives generic no permission error from Twitch.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnNoPermissionError;
 
-        /// <summary>
-        /// Fires when newly raided channel is mature audience only.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnRaidedChannelIsMatureAudience;
 
-        /// <summary>
-        /// Fires when the client was unable to join a channel.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnFailureToReceiveJoinConfirmationArgs> OnFailureToReceiveJoinConfirmation;
 
-        /// <summary>
-        /// Fires when the client attempts to send a message to a channel in followers only mode, as a non-follower
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnFollowersOnly;
 
-        /// <summary>
-        /// Fires when the client attempts to send a message to a channel in subs only mode, as a non-sub
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnSubsOnly;
 
-        /// <summary>
-        /// Fires when the client attempts to send a non-emote message to a channel in emotes only mode
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnEmoteOnly;
 
-        /// <summary>
-        /// Fires when the client attempts to send a message to a channel that has been suspended
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnSuspended;
 
-        /// <summary>
-        /// Fires when the client attempts to send a message to a channel they're banned in
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnBanned;
 
-        /// <summary>
-        /// Fires when the client attempts to send a message in a channel with slow mode enabled, without cooldown expiring
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnSlowMode;
 
-        /// <summary>
-        /// Fires when the client attempts to send a message in a channel with r9k mode enabled, and message was not permitted
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs> OnR9kMode;
 
-        /// <summary>
-        /// Fires when the client receives a PRIVMSG tagged as an user-intro
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnUserIntroArgs> OnUserIntro;
 
-        /// <summary>
-        /// Fires when data is received from Twitch that is not able to be parsed.
-        /// </summary>
+        /// <inheritdoc/>
         public event AsyncEventHandler<OnUnaccountedForArgs> OnUnaccountedFor;
         #endregion
 
@@ -454,28 +318,20 @@ namespace TwitchLib.Client
             _sendOptions = sendOptions ?? new SendOptions();
         }
 
-        /// <summary>
-        /// Initializes the TwitchChatClient class.
-        /// </summary>
+        /// <inheritdoc/>
         /// <remarks>
         /// If <see cref="ChatCommandIdentifiers"/> or <see cref="WhisperCommandIdentifiers"/> dont have any command identifier the '!' is added.
         /// </remarks>
-        /// <param name="credentials">The credentials to use to log in.</param>
-        /// <param name="channel">The channel to connect to.</param>
         public void Initialize(ConnectionCredentials credentials, string channel = null)
         {
             if (channel?[0] == '#') channel = channel.Substring(1);
             InitializationHelper(credentials, new List<string>() { channel });
         }
 
-        /// <summary>
-        /// Initializes the TwitchChatClient class (with multiple channels).
-        /// </summary>
+        /// <inheritdoc/>
         /// <remarks>
         /// If <see cref="ChatCommandIdentifiers"/> or <see cref="WhisperCommandIdentifiers"/> dont have any command identifier the '!' is added.
         /// </remarks>
-        /// <param name="credentials">The credentials to use to log in.</param>
-        /// <param name="channels">List of channels to join when connected</param>
         public void Initialize(ConnectionCredentials credentials, List<string> channels)
         {
             channels = channels.ConvertAll(x => x[0] == '#' ? x.Substring(1) : x);
@@ -547,15 +403,6 @@ namespace TwitchLib.Client
         }
         #endregion
 
-        /// <summary>
-        /// Sends a RAW IRC message.
-        /// </summary>
-        /// <param name="message">The RAW message to be sent.</param>
-        public void SendRaw(string message)
-        {
-            SendRawAsync(message).GetAwaiter().GetResult();
-        }
-
         /// <inheritdoc />
         public async Task SendRawAsync(string message)
         {
@@ -603,35 +450,19 @@ namespace TwitchLib.Client
             _throttling.Enqueue(twitchMessage);
         }
 
-        /// <summary>
-        /// Sends a formatted Twitch channel chat message.
-        /// </summary>
-        /// <param name="channel">Channel to send message to.</param>
-        /// <param name="message">The message to be sent.</param>
-        /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
+        /// <inheritdoc />
         public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
         {
             SendTwitchMessage(channel, message,null, dryRun);
         }
 
-        /// <summary>
-        /// SendMessage wrapper that accepts channel in string form.
-        /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
+        /// <inheritdoc />
         public void SendMessage(string channel, string message, bool dryRun = false)
         {
             SendMessage(GetJoinedChannel(channel), message, dryRun);
         }
 
-        /// <summary>
-        /// Sends a formatted Twitch chat message reply.
-        /// </summary>
-        /// <param name="channel">Channel to send Twitch chat reply to</param>
-        /// <param name="replyToId">The message id that is being replied to</param>
-        /// <param name="message">Reply contents</param>
-        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        /// <inheritdoc />
         public void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
         {
             SendReplyAsync(channel, replyToId, message, dryRun).GetAwaiter().GetResult();
@@ -644,13 +475,7 @@ namespace TwitchLib.Client
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// SendReply wrapper that accepts channel in string form.
-        /// </summary>
-        /// <param name="channel">Channel to send Twitch chat reply to</param>
-        /// <param name="replyToId">The message id that is being replied to</param>
-        /// <param name="message">Reply contents</param>
-        /// <param name="dryRun">if set to <c>true</c> [dry run]</param>
+        /// <inheritdoc />
         public void SendReply(string channel, string replyToId, string message, bool dryRun = false)
         {
             SendReplyAsync(channel, replyToId, message, dryRun).GetAwaiter().GetResult();
@@ -713,11 +538,7 @@ namespace TwitchLib.Client
         #endregion
 
         #region ConnectionCredentials
-
-        /// <summary>
-        /// Sets the connection credentials.
-        /// </summary>
-        /// <param name="credentials">The credentials.</param>
+        /// <inheritdoc/>
         /// <exception cref="TwitchLib.Client.Exceptions.IllegalAssignmentException">While the client is connected, you are unable to change the connection credentials. Please disconnect first and then change them.</exception>
         public void SetConnectionCredentials(ConnectionCredentials credentials)
         {
@@ -754,11 +575,7 @@ namespace TwitchLib.Client
             return !_currentlyJoiningChannels ? QueueingJoinCheckAsync() : Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Returns a JoinedChannel object using a passed string/&gt;.
-        /// </summary>
-        /// <param name="channel">String channel to search for.</param>
-        /// <returns>JoinedChannel.</returns>
+        /// <inheritdoc/>
         /// <exception cref="TwitchLib.Client.Exceptions.BadStateException">Must be connected to at least one channel.</exception>
         public JoinedChannel GetJoinedChannel(string channel)
         {
@@ -1457,10 +1274,7 @@ namespace TwitchLib.Client
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Sends the queued item.
-        /// </summary>
-        /// <param name="message">The message.</param>
+        /// <inheritdoc/>
         public void SendQueuedItem(string message)
         {
             SendQueuedItemAsync(message).GetAwaiter().GetResult();
@@ -1494,3 +1308,4 @@ namespace TwitchLib.Client
         }
     }
 }
+//1487
