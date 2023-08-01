@@ -114,16 +114,6 @@ namespace TwitchLib.Client.Interfaces
         event AsyncEventHandler<OnMessageSentArgs> OnMessageSent;
 
         /// <summary>
-        /// Fires when command (uses custom chat command identifier) is received, returns channel, command, ChatMessage, arguments as string, arguments as list.
-        /// </summary>
-        event AsyncEventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
-
-        /// <summary>
-        /// Fires when command (uses custom whisper command identifier) is received, returns command, Whispermessage.
-        /// </summary>
-        event AsyncEventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
-
-        /// <summary>
         /// Fires when a new viewer/chatter joined the channel's chat room, returns username and channel.
         /// </summary>
         event AsyncEventHandler<OnUserJoinedArgs> OnUserJoined;

@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,6 +13,16 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing received chat message.
         /// </summary>
-        public ChatMessage ChatMessage;
+        public ChatMessage ChatMessage { get; }
+
+        public bool IsCommand => CommandInfo is not null;
+
+        public CommandInfo CommandInfo  { get; }
+
+        public OnMessageReceivedArgs(ChatMessage message, CommandInfo commandInfo = null)
+        {
+            ChatMessage = message;
+            CommandInfo = commandInfo;
+        }
     }
 }

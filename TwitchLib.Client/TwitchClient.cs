@@ -167,12 +167,6 @@ namespace TwitchLib.Client
         public event AsyncEventHandler<OnMessageSentArgs> OnMessageSent;
 
         /// <inheritdoc/>
-        public event AsyncEventHandler<OnChatCommandReceivedArgs> OnChatCommandReceived;
-
-        /// <inheritdoc/>
-        public event AsyncEventHandler<OnWhisperCommandReceivedArgs> OnWhisperCommandReceived;
-
-        /// <inheritdoc/>
         public event AsyncEventHandler<OnUserJoinedArgs> OnUserJoined;
 
         /// <inheritdoc/>
@@ -893,6 +887,7 @@ namespace TwitchLib.Client
                 WillReplaceEmotes,
                 ReplacedEmotesPrefix,
                 ReplacedEmotesSuffix);
+            CommandInfo commandInfo = null;
 
             foreach (JoinedChannel joinedChannel in JoinedChannels
                 .Where(x => x.Channel.Equals(ircMessage.Channel, StringComparison.InvariantCultureIgnoreCase)))
@@ -900,7 +895,6 @@ namespace TwitchLib.Client
                 joinedChannel.HandleMessage(chatMessage);
             }
 
-            await OnMessageReceived.TryInvoke(this, new() { ChatMessage = chatMessage });
 
             if (ircMessage.Tags.TryGetValue(Tags.MsgId, out var msgId)
                 && msgId == MsgIds.UserIntro
@@ -909,13 +903,12 @@ namespace TwitchLib.Client
                 await OnUserIntro.Invoke(this, new() { ChatMessage = chatMessage });
             }
 
-            if (ChatCommandIdentifiers.Count != 0
-                && !string.IsNullOrEmpty(chatMessage.Message)
-                && ChatCommandIdentifiers.Contains(chatMessage.Message[0])
-                && OnChatCommandReceived != null)
+            if (ChatCommandIdentifiers.Contains(chatMessage.Message[0]))
             {
-                await OnChatCommandReceived.Invoke(this, new() { Command = new ChatCommand(chatMessage) });
+                _ = CommandInfo.TryParse(chatMessage.Message.AsSpan(), out commandInfo);
             }
+
+            await OnMessageReceived.TryInvoke(this, new(chatMessage, commandInfo));
         }
 
         /// <summary>
@@ -1135,26 +1128,14 @@ namespace TwitchLib.Client
         {
             var whisperMessage = new WhisperMessage(ircMessage, TwitchUsername);
             PreviousWhisper = whisperMessage;
+            CommandInfo commandInfo = null;
 
-            await OnWhisperReceived.TryInvoke(this, new() { WhisperMessage = whisperMessage });
-
-            if (WhisperCommandIdentifiers.Count != 0
-                && !string.IsNullOrEmpty(whisperMessage.Message)
-                && WhisperCommandIdentifiers.Contains(whisperMessage.Message[0]))
+            if (WhisperCommandIdentifiers.Contains(whisperMessage.Message[0]))
             {
-                var whisperCommand = new WhisperCommand(whisperMessage);
-                await OnWhisperCommandReceived.TryInvoke(this, new() { Command = whisperCommand });
-                return;
+                _ = CommandInfo.TryParse(whisperMessage.Message.AsSpan(), out commandInfo);
             }
 
-            var rawMessage = ircMessage.ToString();
-            await (OnUnaccountedFor?.Invoke(this, new()
-            {
-                BotUsername = TwitchUsername,
-                Channel = ircMessage.Channel,
-                Location = "WhispergHandling",
-                RawIRC = rawMessage
-            }) ?? UnaccountedFor(rawMessage));
+            await OnWhisperReceived.TryInvoke(this, new(whisperMessage, commandInfo));
         }
 
         /// <summary>

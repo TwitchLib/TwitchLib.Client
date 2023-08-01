@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,6 +13,16 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// The whisper message
         /// </summary>
-        public WhisperMessage WhisperMessage;
+        public WhisperMessage WhisperMessage { get; }
+
+        public bool IsCommand => CommandInfo is not null;
+
+        public CommandInfo CommandInfo { get; }
+
+        public OnWhisperReceivedArgs(WhisperMessage message, CommandInfo commandInfo = null)
+        {
+            WhisperMessage = message;
+            CommandInfo = commandInfo;
+        }
     }
 }
