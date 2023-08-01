@@ -1,11 +1,12 @@
 using System.Drawing;
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing state of a specific user.</summary>
-    public class UserState
+    public class UserState : IHexColorProperty
     {
         /// <summary>Properrty representing the chat badges a specific user has.</summary>
         public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
@@ -17,7 +18,7 @@ namespace TwitchLib.Client.Models
         public string Channel { get; }
 
         /// <summary>Properrty representing HEX user's name.</summary>
-        public Color Color { get; }
+        public string HexColor { get; }
 
         /// <summary>Property representing user's display name.</summary>
         public string DisplayName { get; }
@@ -57,7 +58,7 @@ namespace TwitchLib.Client.Models
                         BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tagValue);
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;
@@ -91,7 +92,7 @@ namespace TwitchLib.Client.Models
         public UserState(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            Color color,
+            string hexColor,
             string displayName,
             string emoteSet,
             string channel,
@@ -102,7 +103,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
-            Color = color;
+            HexColor = hexColor;
             DisplayName = displayName;
             EmoteSet = emoteSet;
             Channel = channel;

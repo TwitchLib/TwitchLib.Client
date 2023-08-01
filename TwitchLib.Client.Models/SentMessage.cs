@@ -1,9 +1,9 @@
-﻿using System.Drawing;
+﻿using TwitchLib.Client.Models.Interfaces;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Model representing a sent message.</summary>
-    public class SentMessage
+    public class SentMessage : IHexColorProperty
     {
         /// <summary>Badges the sender has</summary>
         public List<KeyValuePair<string, string>> Badges { get; }
@@ -12,7 +12,7 @@ namespace TwitchLib.Client.Models
         public string Channel { get; }
 
         /// <summary>Sender's name color.</summary>
-        public Color Color { get; }
+        public string HexColor { get; }
 
         /// <summary>Display name of the sender.</summary>
         public string DisplayName { get; }
@@ -39,7 +39,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = state.Badges;
             Channel = state.Channel;
-            Color = state.Color;
+            HexColor = state.HexColor;
             DisplayName = state.DisplayName;
             EmoteSet = state.EmoteSet;
             IsModerator = state.IsModerator;
@@ -51,7 +51,7 @@ namespace TwitchLib.Client.Models
         public SentMessage(
             List<KeyValuePair<string, string>> badges,
             string channel,
-            Color color,
+            string hexColor,
             string displayName,
             string emoteSet,
             bool isModerator,
@@ -61,7 +61,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = badges;
             Channel = channel;
-            Color = color;
+            HexColor = hexColor;
             DisplayName = displayName;
             EmoteSet = emoteSet;
             IsModerator = isModerator;

@@ -9,7 +9,7 @@ namespace TwitchLib.Client.Models.Builders
 
         public List<KeyValuePair<string, string>> BadgeInfo { get; } = new List<KeyValuePair<string, string>>();
 
-        protected Color Color { get; set; }
+        protected string HexColor { get; set; }
 
         protected string DisplayName { get; set; }
 
@@ -80,9 +80,9 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public SubscriberBaseBuilder WithColor(Color color)
+        public SubscriberBaseBuilder WithColor(string color)
         {
-            Color = color;
+            HexColor = color;
             return this;
         }
 
@@ -235,7 +235,7 @@ namespace TwitchLib.Client.Models.Builders
             return new SubscriberBase(
                 Badges,
                 BadgeInfo,
-                Color,
+                HexColor,
                 DisplayName,
                 EmoteSet,
                 Id,

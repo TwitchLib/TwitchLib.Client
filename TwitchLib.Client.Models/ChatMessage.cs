@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -181,7 +180,7 @@ namespace TwitchLib.Client.Models
                         BitsInDollars = ConvertBitsToUsd(Bits);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tagValue);
+                        HexColor = tagValue;
                         break;
                     case Tags.CustomRewardId:
                         CustomRewardId = tagValue;
@@ -332,7 +331,7 @@ namespace TwitchLib.Client.Models
             string userId,
             string userName,
             string displayName,
-            Color color,
+            string hexColor,
             EmoteSet emoteSet,
             string message,
             UserType userType,
@@ -359,7 +358,7 @@ namespace TwitchLib.Client.Models
             BotUsername = botUsername;
             UserId = userId;
             DisplayName = displayName;
-            Color = color;
+            HexColor = hexColor;
             EmoteSet = emoteSet;
             Message = message;
             UserType = userType;

@@ -7,7 +7,7 @@ namespace TwitchLib.Client.Models.Builders
     {
         private readonly List<KeyValuePair<string, string>> _badges = new List<KeyValuePair<string, string>>();
         private readonly List<KeyValuePair<string, string>> _badgeInfo = new List<KeyValuePair<string, string>>();
-        private Color _color;
+        private string _color;
         private string _displayName;
         private string _emotes;
         private string _id;
@@ -38,7 +38,7 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public RaidNotificationBuilder WithColor(Color color)
+        public RaidNotificationBuilder WithColor(string color)
         {
             _color = color;
             return this;

@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
 
 namespace TwitchLib.Client.Models.Builders
 {
@@ -15,9 +14,9 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public TwitchLibMessageBuilder WithColorHex(Color color)
+        public TwitchLibMessageBuilder WithColorHex(string color)
         {
-            Color = color;
+            HexColor = color;
             return this;
         }
 

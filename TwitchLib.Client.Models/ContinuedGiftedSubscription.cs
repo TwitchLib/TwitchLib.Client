@@ -1,10 +1,10 @@
-﻿using System.Drawing;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class ContinuedGiftedSubscription
+    public class ContinuedGiftedSubscription : IHexColorProperty
     {
         //@badge-info=subscriber/11;badges=subscriber/9;color=#DAA520;display-name=Varanid;emotes=;flags=;id=a2d384c1-c30a-409e-8001-9e7d8f9c784d;login=varanid;mod=0;msg-id=giftpaidupgrade;msg-param-sender-login=cletusbueford;msg-param-sender-name=CletusBueford;room-id=44338537;subscriber=1;system-msg=Varanid\sis\scontinuing\sthe\sGift\sSub\sthey\sgot\sfrom\sCletusBueford!;tmi-sent-ts=1612497386372;user-id=67505836;user-type= :tmi.twitch.tv USERNOTICE #burkeblack 
 
@@ -12,7 +12,9 @@ namespace TwitchLib.Client.Models
 
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
 
-        public Color Color { get; }
+
+        /// <inheritdoc/>
+        public string HexColor { get; }
 
         public string DisplayName { get; }
 
@@ -70,7 +72,7 @@ namespace TwitchLib.Client.Models
                         BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tagValue);
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;

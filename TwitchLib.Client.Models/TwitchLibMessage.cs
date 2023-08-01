@@ -1,11 +1,10 @@
-﻿using System.Drawing;
-
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class represents Message.</summary>
-    public abstract class TwitchLibMessage
+    public abstract class TwitchLibMessage : IHexColorProperty
     {
         /// <summary>List of key-value pair badges.</summary>
         public List<KeyValuePair<string, string>> Badges { get; protected set; }
@@ -14,7 +13,7 @@ namespace TwitchLib.Client.Models
         public string BotUsername { get; protected set; }
 
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public Color Color { get; protected set; }
+        public string HexColor { get; protected set; }
 
         /// <summary>Case-sensitive username of sender of chat message.</summary>
         public string DisplayName { get; protected set; }

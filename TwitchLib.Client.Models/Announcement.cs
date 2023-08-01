@@ -1,11 +1,11 @@
-﻿using System.Drawing;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing Announcement in a Twitch channel.</summary>
-    public class Announcement
+    public class Announcement : IHexColorProperty
     {
         /// <summary>Property representing announcement message id</summary>
         public string Id { get; }
@@ -67,8 +67,8 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing the color value of the announcement.</summary>
         public string MsgParamColor { get; }
 
-        /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public Color Color { get; }
+        /// <inheritdoc/>
+        public string HexColor { get; }
 
         /// <summary>Property representing the message of the announcement.</summary>
         public string Message { get; }
@@ -119,7 +119,7 @@ namespace TwitchLib.Client.Models
                         BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tagValue);
+                        HexColor = tagValue;
                         break;
                     case Tags.MsgParamColor:
                         MsgParamColor = tagValue;

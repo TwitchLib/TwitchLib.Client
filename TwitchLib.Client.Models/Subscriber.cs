@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -14,7 +13,7 @@ namespace TwitchLib.Client.Models
         public Subscriber(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            Color color,
+            string hexColor,
             string displayName,
             string emoteSet,
             string id,
@@ -40,7 +39,7 @@ namespace TwitchLib.Client.Models
             string channel)
             : base(badges,
                   badgeInfo,
-                  color,
+                  hexColor,
                   displayName,
                   emoteSet,
                   id,

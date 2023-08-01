@@ -1,25 +1,10 @@
-﻿using System.Drawing;
-using System.Globalization;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Extensions;
 
 namespace TwitchLib.Client.Models.Internal;
 
 internal static class TagHelper
 {
-    public static Color ToColor(string s)
-    {
-        if (string.IsNullOrEmpty(s))
-            return default;
-#if NETSTANDARD2_0
-        var rgb = int.Parse(s.Substring(1), NumberStyles.HexNumber);
-#else
-        var rgb = int.Parse(s.AsSpan(1), NumberStyles.HexNumber);
-#endif
-        return Color.FromArgb(rgb);
-    }
-
-
     /// <summary>
     /// Parses the badges field in GLOBALUSERSTATE, PRIVMSG, USERNOTICE, USERSTATE, etc
     /// </summary>

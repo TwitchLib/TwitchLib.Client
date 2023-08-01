@@ -1,4 +1,3 @@
-using System.Drawing;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
@@ -18,7 +17,7 @@ namespace TwitchLib.Client.Models
 
         public WhisperMessage(
             List<KeyValuePair<string, string>> badges,
-            Color color,
+            string hexColor,
             string username,
             string displayName,
             EmoteSet emoteSet,
@@ -31,7 +30,7 @@ namespace TwitchLib.Client.Models
             UserType userType)
         {
             Badges = badges;
-            Color = color;
+            HexColor = hexColor;
             Username = username;
             DisplayName = displayName;
             EmoteSet = emoteSet;
@@ -65,7 +64,7 @@ namespace TwitchLib.Client.Models
                         Badges = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tagValue);
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;

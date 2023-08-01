@@ -1,16 +1,18 @@
-﻿using System.Drawing;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class CommunitySubscription
+    public class CommunitySubscription : IHexColorProperty
     {
         private const string AnonymousGifterUserId = "274598607";
 
         public List<KeyValuePair<string, string>> Badges;
         public List<KeyValuePair<string, string>> BadgeInfo;
-        public Color Color;
+        
+        /// <inheritdoc/>
+        public string HexColor { get; }
         public string DisplayName;
         public string Emotes;
         public string Id;
@@ -45,7 +47,7 @@ namespace TwitchLib.Client.Models
                         BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tagValue);
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;

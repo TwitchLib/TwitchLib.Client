@@ -1,11 +1,11 @@
-using System.Drawing;
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing a resubscriber.</summary>
-    public class SubscriberBase
+    public class SubscriberBase : IHexColorProperty
     {
         /// <summary>Property representing list of badges assigned.</summary>
         public List<KeyValuePair<string, string>> Badges { get; }
@@ -14,7 +14,7 @@ namespace TwitchLib.Client.Models
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
 
         /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public Color Color { get; }
+        public string HexColor { get; }
 
         /// <summary>Property representing resubscriber's customized display name.</summary>
         public string DisplayName { get; }
@@ -108,7 +108,7 @@ namespace TwitchLib.Client.Models
                         BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tagValue);
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;
@@ -172,7 +172,7 @@ namespace TwitchLib.Client.Models
         internal SubscriberBase(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            Color color,
+            string hexColor,
             string displayName,
             string emoteSet,
             string id,
@@ -200,7 +200,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
-            Color = color;
+            HexColor = hexColor;
             DisplayName = displayName;
             EmoteSet = emoteSet;
             Id = id;
@@ -231,7 +231,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Overriden ToString method, prints out all properties related to resub.</summary>
         public override string ToString()
         {
-            return $"Badges: {Badges.Count}, color: {Color}, display name: {DisplayName}, emote set: {EmoteSet}, login: {Login}, system message: {SystemMessage}, msgId: {MsgId}, msgParamCumulativeMonths: {MsgParamCumulativeMonths}" +
+            return $"Badges: {Badges.Count}, color: {HexColor}, display name: {DisplayName}, emote set: {EmoteSet}, login: {Login}, system message: {SystemMessage}, msgId: {MsgId}, msgParamCumulativeMonths: {MsgParamCumulativeMonths}" +
                 $"msgParamStreakMonths: {MsgParamStreakMonths}, msgParamShouldShareStreak: {MsgParamShouldShareStreak}, resub message: {ResubMessage}, months: {monthsInternal}, room id: {RoomId}, user id: {UserId}, mod: {IsModerator}, turbo: {IsTurbo}, sub: {IsSubscriber}, user type: {UserType}, raw irc: {RawIrc}";
         }
     }

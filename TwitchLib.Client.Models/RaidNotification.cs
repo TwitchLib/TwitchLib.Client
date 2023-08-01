@@ -1,16 +1,17 @@
-﻿using System.Drawing;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class RaidNotification
+    public class RaidNotification : IHexColorProperty
     {
         public List<KeyValuePair<string, string>> Badges { get; }
 
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
 
-        public Color Color { get; }
+        /// <inheritdoc/>
+        public string HexColor { get; }
 
         public string DisplayName { get; }
 
@@ -61,7 +62,7 @@ namespace TwitchLib.Client.Models
                         BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = TagHelper.ToColor(tagValue);
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;
@@ -116,7 +117,7 @@ namespace TwitchLib.Client.Models
         public RaidNotification(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            Color color,
+            string hexColor,
             string displayName,
             string emotes,
             string id,
@@ -137,7 +138,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
-            Color = color;
+            HexColor = hexColor;
             DisplayName = displayName;
             Emotes = emotes;
             Id = id;
