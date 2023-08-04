@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class ContinuedGiftedSubscription
+    public class ContinuedGiftedSubscription : IHexColorProperty
     {
         //@badge-info=subscriber/11;badges=subscriber/9;color=#DAA520;display-name=Varanid;emotes=;flags=;id=a2d384c1-c30a-409e-8001-9e7d8f9c784d;login=varanid;mod=0;msg-id=giftpaidupgrade;msg-param-sender-login=cletusbueford;msg-param-sender-name=CletusBueford;room-id=44338537;subscriber=1;system-msg=Varanid\sis\scontinuing\sthe\sGift\sSub\sthey\sgot\sfrom\sCletusBueford!;tmi-sent-ts=1612497386372;user-id=67505836;user-type= :tmi.twitch.tv USERNOTICE #burkeblack 
 
@@ -14,7 +12,9 @@ namespace TwitchLib.Client.Models
 
         public List<KeyValuePair<string, string>> BadgeInfo { get; }
 
-        public string Color { get; }
+
+        /// <inheritdoc/>
+        public string HexColor { get; }
 
         public string DisplayName { get; }
 
@@ -40,7 +40,7 @@ namespace TwitchLib.Client.Models
 
         public string SystemMsg { get; }
 
-        public string TmiSentTs { get; }
+        public DateTimeOffset TmiSent { get; }
 
         public string UserId { get; }
 
@@ -48,11 +48,10 @@ namespace TwitchLib.Client.Models
 
         public ContinuedGiftedSubscription(IrcMessage ircMessage)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
+                var tagValue = tag.Value;
+                switch (tag.Key)
                 {
                     case Tags.SystemMsg:
                         SystemMsg = tagValue;
@@ -67,13 +66,13 @@ namespace TwitchLib.Client.Models
                         MsgParamSenderName = tagValue;
                         break;
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = tagValue;
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;
@@ -88,7 +87,7 @@ namespace TwitchLib.Client.Models
                         Login = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
+                        IsModerator = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.MsgId:
                         MsgId = tagValue;
@@ -97,33 +96,16 @@ namespace TwitchLib.Client.Models
                         RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                 }
             }

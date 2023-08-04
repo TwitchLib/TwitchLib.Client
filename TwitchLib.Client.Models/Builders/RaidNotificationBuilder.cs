@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿using System.Drawing;
 using TwitchLib.Client.Enums;
 
 namespace TwitchLib.Client.Models.Builders
@@ -23,7 +22,7 @@ namespace TwitchLib.Client.Models.Builders
         private string _roomId;
         private string _systemMsg;
         private string _systemMsgParsed;
-        private string _tmiSentTs;
+        private DateTimeOffset _tmiSent;
         private string _userId;
         private UserType _userType;
 
@@ -129,9 +128,9 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public RaidNotificationBuilder WithTmiSentTs(string tmiSentTs)
+        public RaidNotificationBuilder WithTmiSent(DateTimeOffset tmiSent)
         {
-            _tmiSentTs = tmiSentTs;
+            _tmiSent = tmiSent;
             return this;
         }
 
@@ -170,7 +169,7 @@ namespace TwitchLib.Client.Models.Builders
                 _isSubscriber,
                 _systemMsg,
                 _systemMsgParsed,
-                _tmiSentTs,
+                _tmiSent,
                 _isTurbo,
                 _userType,
                 _userId);

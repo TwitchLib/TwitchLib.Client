@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
-    public class CommunitySubscription
+    public class CommunitySubscription : IHexColorProperty
     {
         private const string AnonymousGifterUserId = "274598607";
 
         public List<KeyValuePair<string, string>> Badges;
         public List<KeyValuePair<string, string>> BadgeInfo;
-        public string Color;
+        
+        /// <inheritdoc/>
+        public string HexColor { get; }
         public string DisplayName;
         public string Emotes;
         public string Id;
@@ -27,7 +27,7 @@ namespace TwitchLib.Client.Models
         public bool IsSubscriber;
         public string SystemMsg;
         public string SystemMsgParsed;
-        public string TmiSentTs;
+        public DateTimeOffset TmiSent;
         public bool IsTurbo;
         public string UserId;
         public UserType UserType;
@@ -35,20 +35,19 @@ namespace TwitchLib.Client.Models
 
         public CommunitySubscription(IrcMessage ircMessage)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
+                var (tagKey, tagValue) = (tag.Key, tag.Value);
+                switch (tagKey)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        Color = tagValue;
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;
@@ -63,51 +62,35 @@ namespace TwitchLib.Client.Models
                         Login = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
+                        IsModerator = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.MsgId:
                         MsgId = tagValue;
                         break;
                     case Tags.MsgParamSubPlan:
-                        switch (tagValue)
-                        {
-                            case "prime":
-                                MsgParamSubPlan = SubscriptionPlan.Prime;
-                                break;
-                            case "1000":
-                                MsgParamSubPlan = SubscriptionPlan.Tier1;
-                                break;
-                            case "2000":
-                                MsgParamSubPlan = SubscriptionPlan.Tier2;
-                                break;
-                            case "3000":
-                                MsgParamSubPlan = SubscriptionPlan.Tier3;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
-                        }
+                        MsgParamSubPlan  = TagHelper.ToSubscriptionPlan(tag.Value);
                         break;
                     case Tags.MsgParamMassGiftCount:
-                        MsgParamMassGiftCount = int.Parse(tagValue);
+                        MsgParamMassGiftCount = int.Parse(tag.Value);
                         break;
                     case Tags.MsgParamSenderCount:
-                        MsgParamSenderCount = int.Parse(tagValue);
+                        MsgParamSenderCount = int.Parse(tag.Value);
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.SystemMsg:
                         SystemMsg = tagValue;
                         SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
                         break;
                     case Tags.Turbo:
-                        IsTurbo = Common.Helpers.ConvertToBool(tagValue);
+                        IsTurbo = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
@@ -117,24 +100,7 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                     case Tags.MsgParamMultiMonthGiftDuration:
                         MsgParamMultiMonthGiftDuration = tagValue;
