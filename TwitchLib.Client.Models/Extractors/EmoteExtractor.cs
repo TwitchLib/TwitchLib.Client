@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using TwitchLib.Client.Models.Extensions;
+﻿using TwitchLib.Client.Models.Extensions;
 
 namespace TwitchLib.Client.Models.Extractors
 {
@@ -21,8 +19,15 @@ namespace TwitchLib.Client.Models.Extractors
                 foreach (var emote in new SpanSliceEnumerator(emoteData.Slice(index + 1), ','))
                 {
                     index = emote.IndexOf('-');
-                    var start = int.Parse(emote.Slice(0, index).ToString());
-                    var end = int.Parse(emote.Slice(index + 1).ToString());
+                    var startSlice = emote.Slice(0, index);
+                    var endSlice = emote.Slice(index + 1);
+#if NETSTANDARD2_0
+                    var start = int.Parse(startSlice.ToString());
+                    var end = int.Parse(endSlice.ToString());
+#else
+                    var start = int.Parse(startSlice);
+                    var end = int.Parse(endSlice);
+#endif
                     emotes.Add(new(emoteId, message.Substring(start, end - start + 1), start, end));
                 }
             }

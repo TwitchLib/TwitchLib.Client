@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -16,8 +12,7 @@ namespace TwitchLib.Client.Models
         public PrimePaidSubscriber(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            string colorHex,
-            Color color,
+            string hexColor,
             string displayName,
             string emoteSet,
             string id,
@@ -37,15 +32,14 @@ namespace TwitchLib.Client.Models
             bool isTurbo,
             bool isSubscriber,
             bool isPartner,
-            string tmiSentTs,
+            DateTimeOffset tmiSent,
             UserType userType,
             string rawIrc,
             string channel,
             int months = 0)
             : base(badges,
                   badgeInfo,
-                  colorHex,
-                  color,
+                  hexColor,
                   displayName,
                   emoteSet,
                   id,
@@ -65,7 +59,7 @@ namespace TwitchLib.Client.Models
                   isTurbo,
                   isSubscriber,
                   isPartner,
-                  tmiSentTs,
+                  tmiSent,
                   userType,
                   rawIrc,
                   channel,

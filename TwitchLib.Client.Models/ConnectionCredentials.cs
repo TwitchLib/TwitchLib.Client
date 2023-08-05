@@ -1,11 +1,17 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class used to store credentials used to connect to Twitch chat/whisper.</summary>
-    public class ConnectionCredentials
+    public partial class ConnectionCredentials
     {
+#if NET7_0_OR_GREATER
+        [GeneratedRegex("^([a-zA-Z0-9][a-zA-Z0-9_]{4,25})$")]
+        private static partial Regex GetUsernameCheckRegex();
+#else
+        private static Regex GetUsernameCheckRegex() => UsernameCheckRegex;
+        private static readonly Regex UsernameCheckRegex = new("^([a-zA-Z0-9][a-zA-Z0-9_]{4,25})$");
+#endif
         /// <summary>Property representing bot's oauth.</summary>
         public string TwitchOAuth { get; }
 
@@ -22,7 +28,7 @@ namespace TwitchLib.Client.Models
             bool disableUsernameCheck = false,
             Capabilities capabilities = null)
         {
-            if (!disableUsernameCheck && !new Regex("^([a-zA-Z0-9][a-zA-Z0-9_]{3,25})$").Match(twitchUsername).Success)
+            if (!disableUsernameCheck && !GetUsernameCheckRegex().Match(twitchUsername).Success)
                 throw new Exception($"Twitch username does not appear to be valid. {twitchUsername}");
 
             TwitchUsername = twitchUsername.ToLower();
@@ -34,8 +40,7 @@ namespace TwitchLib.Client.Models
                 TwitchOAuth = $"oauth:{twitchOAuth.Replace("oauth", "")}";
             }
 
-            if (capabilities == null)
-                capabilities = new Capabilities();
+            capabilities ??= new Capabilities();
             Capabilities = capabilities;
         }
     }

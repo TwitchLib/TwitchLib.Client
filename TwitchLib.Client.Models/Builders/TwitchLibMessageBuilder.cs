@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
 
 namespace TwitchLib.Client.Models.Builders
 {
@@ -17,15 +14,9 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public TwitchLibMessageBuilder WithColorHex(string colorHex)
+        public TwitchLibMessageBuilder WithColorHex(string color)
         {
-            ColorHex = colorHex;
-            return this;
-        }
-
-        public TwitchLibMessageBuilder WithColorHex(Color color)
-        {
-            Color = color;
+            HexColor = color;
             return this;
         }
 

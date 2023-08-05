@@ -8,7 +8,7 @@ namespace TwitchLib.Client.Models
         public string Channel;
 
         /// <summary>Duration of timeout IN SECONDS.</summary>
-        public int TimeoutDuration;
+        public TimeSpan TimeoutDuration;
 
         /// <summary>Viewer that was timed out.</summary>
         public string Username;
@@ -28,7 +28,7 @@ namespace TwitchLib.Client.Models
                 switch (tag)
                 {
                     case Tags.BanDuration:
-                        TimeoutDuration = int.Parse(tagValue);
+                        TimeoutDuration = TimeSpan.FromSeconds(int.Parse(tagValue));
                         break;
                     case Tags.TargetUserId:
                         TargetUserId = tagValue;
@@ -41,7 +41,7 @@ namespace TwitchLib.Client.Models
             string channel,
             string username,
             string targetuserId,
-            int timeoutDuration)
+            TimeSpan timeoutDuration)
         {
             Channel = channel;
             Username = username;

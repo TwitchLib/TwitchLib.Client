@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Extensions.NetCore;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing Announcement in a Twitch channel.</summary>
-    public class Announcement
+    public class Announcement : IHexColorProperty
     {
         /// <summary>Property representing announcement message id</summary>
         public string Id { get; }
@@ -55,7 +53,7 @@ namespace TwitchLib.Client.Models
         public UserType UserType { get; }
 
         /// <summary>Property representing the tmi-sent-ts value.</summary>
-        public string TmiSentTs { get; }
+        public DateTimeOffset TmiSent { get; }
 
         /// <summary>Property representing emote set of announcement.</summary>
         public string EmoteSet { get; }
@@ -69,11 +67,8 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing the color value of the announcement.</summary>
         public string MsgParamColor { get; }
 
-        /// <summary>Property representing the colorhex of the announcer.</summary>
-        public string ColorHex { get; }
-
-        /// <summary>Property representing HEX color as a System.Drawing.Color object.</summary>
-        public Color Color { get; }
+        /// <inheritdoc/>
+        public string HexColor { get; }
 
         /// <summary>Property representing the message of the announcement.</summary>
         public string Message { get; }
@@ -85,15 +80,13 @@ namespace TwitchLib.Client.Models
         {
             RawIrc = ircMessage.ToString();
             Message = ircMessage.Message;
-
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
+                var tagValue = tag.Value;
+                switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tagValue);
                         foreach (var badge in Badges)
                         {
                             switch (badge.Key)
@@ -123,12 +116,10 @@ namespace TwitchLib.Client.Models
                         }
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        ColorHex = tagValue;
-                        if (!string.IsNullOrEmpty(ColorHex))
-                            Color = ColorTranslator.FromHtml(ColorHex);
+                        HexColor = tagValue;
                         break;
                     case Tags.MsgParamColor:
                         MsgParamColor = tagValue;
@@ -153,30 +144,13 @@ namespace TwitchLib.Client.Models
                         SystemMessageParsed = tagValue.Replace("\\s", " ");
                         break;
                     case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
+                        TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                 }
             }

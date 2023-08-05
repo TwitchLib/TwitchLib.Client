@@ -26,8 +26,7 @@
             return new Subscriber(
                 Badges,
                 BadgeInfo,
-                ColorHex,
-                Color,
+                HexColor,
                 DisplayName,
                 EmoteSet,
                 Id,
@@ -47,7 +46,7 @@
                 IsTurbo,
                 IsSubscriber,
                 IsPartner,
-                TmiSentTs,
+                TmiSent,
                 UserType,
                 RawIrc,
                 Channel);

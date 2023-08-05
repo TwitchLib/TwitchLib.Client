@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using TwitchLib.Client.Models.Extensions;
-
-namespace TwitchLib.Client.Models.Common
+﻿namespace TwitchLib.Client.Models.Common
 {
     /// <summary>Static class of helper functions used around the project.</summary>
     public static class Helpers
@@ -52,28 +47,6 @@ namespace TwitchLib.Client.Models.Common
             return args;
         }
 
-        /// <summary>
-        /// Parses the badges field in GLOBALUSERSTATE, PRIVMSG, USERNOTICE, USERSTATE, etc
-        /// </summary>
-        /// <param name="badgesStr">The data.</param>
-        /// <returns>List of keyvalue pairs representing each badge and value associated</returns>
-        public static List<KeyValuePair<string, string>> ParseBadges(string badgesStr)
-        {
-            var badges = new List<KeyValuePair<string, string>>();
-
-            if (badgesStr.Contains('/'))
-            {
-                foreach (var badge in new SpanSliceEnumerator(badgesStr, ','))
-                {
-                    var index = badge.IndexOf('/');
-                    var key = badge.Slice(0, index).ToString();
-                    var value = badge.Slice(index + 1).ToString();
-                    badges.Add(new KeyValuePair<string, string>(key, value));
-                }
-            }
-            return badges;
-        }
-
         //not used anywhere
         public static string ParseToken(string token, string message)
         {
@@ -92,11 +65,6 @@ namespace TwitchLib.Client.Models.Common
             }
 
             return tokenValue;
-        }
-
-        public static bool ConvertToBool(string data)
-        {
-            return data == "1";
         }
     }
 }

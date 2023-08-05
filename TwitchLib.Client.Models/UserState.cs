@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-
+using System.Drawing;
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing state of a specific user.</summary>
-    public class UserState
+    public class UserState : IHexColorProperty
     {
         /// <summary>Properrty representing the chat badges a specific user has.</summary>
         public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
@@ -19,7 +18,7 @@ namespace TwitchLib.Client.Models
         public string Channel { get; }
 
         /// <summary>Properrty representing HEX user's name.</summary>
-        public string ColorHex { get; }
+        public string HexColor { get; }
 
         /// <summary>Property representing user's display name.</summary>
         public string DisplayName { get; }
@@ -47,19 +46,19 @@ namespace TwitchLib.Client.Models
         {
             Channel = ircMessage.Channel;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-                switch (tag)
+                var tagValue = tag.Value;
+                switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        ColorHex = tagValue;
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;
@@ -71,30 +70,13 @@ namespace TwitchLib.Client.Models
                         Id = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
+                        IsModerator = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                     default:
                         // This should never happen, unless Twitch changes their shit
@@ -110,7 +92,7 @@ namespace TwitchLib.Client.Models
         public UserState(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            string colorHex,
+            string hexColor,
             string displayName,
             string emoteSet,
             string channel,
@@ -121,7 +103,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
-            ColorHex = colorHex;
+            HexColor = hexColor;
             DisplayName = displayName;
             EmoteSet = emoteSet;
             Channel = channel;
