@@ -65,13 +65,13 @@ namespace TwitchLib.Client.Throttling
             _queue.Enqueue((DateTime.UtcNow, message));
             return true;
         }
-        
-        private Task StartThrottlerAsync(object sender, OnConnectedEventArgs args)
+
+        private Task StartThrottlerAsync(object sender, Communication.Events.OnConnectedEventArgs args)
         {
             // Cancel old token first
             _tokenSource.Cancel();
             _tokenSource = new CancellationTokenSource();
-            _sendTask= Task.Run(async() => await SendTaskActionAsync(), _tokenSource.Token);
+            _sendTask = Task.Run(async () => await SendTaskActionAsync(), _tokenSource.Token);
             return Task.CompletedTask;
         }
 
