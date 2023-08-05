@@ -15,14 +15,12 @@ namespace TwitchLib.Client.Events
         /// </summary>
         public WhisperMessage WhisperMessage { get; }
 
-        public bool IsCommand => CommandInfo is not null;
-
-        public CommandInfo CommandInfo { get; }
-
-        public OnWhisperReceivedArgs(WhisperMessage message, CommandInfo commandInfo = null)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnWhisperReceivedArgs"/> class.
+        /// </summary>
+        public OnWhisperReceivedArgs(WhisperMessage message)
         {
             WhisperMessage = message;
-            CommandInfo = commandInfo;
         }
     }
 }

@@ -15,7 +15,16 @@ public class CommandInfo
     /// <summary>Property representing all arguments received in a List form.</summary>
     public List<string> ArgumentsAsList { get; }
 
-    public CommandInfo(char identifier, string name, string argumentsAsString = null, List<string> argumentsAsList = null)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommandInfo"/> class.
+    /// </summary>
+    public CommandInfo(char identifier, string name) : this(identifier, name, string.Empty, new())
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommandInfo"/> class.
+    /// </summary>
+    public CommandInfo(char identifier, string name, string argumentsAsString, List<string> argumentsAsList)
     {
         Identifier = identifier;
         Name = name;
@@ -37,7 +46,7 @@ public class CommandInfo
         if (indexOfSpace == -1)
         {
             var name = s.ToString();
-            result = new(commandIdentifier, name, string.Empty, new());
+            result = new(commandIdentifier, name);
         }
         else
         {

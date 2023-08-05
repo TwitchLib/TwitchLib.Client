@@ -15,14 +15,12 @@ namespace TwitchLib.Client.Events
         /// </summary>
         public ChatMessage ChatMessage { get; }
 
-        public bool IsCommand => CommandInfo is not null;
-
-        public CommandInfo CommandInfo  { get; }
-
-        public OnMessageReceivedArgs(ChatMessage message, CommandInfo commandInfo = null)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnMessageReceivedArgs"/> class.
+        /// </summary>
+        public OnMessageReceivedArgs(ChatMessage message)
         {
             ChatMessage = message;
-            CommandInfo = commandInfo;
         }
     }
 }
