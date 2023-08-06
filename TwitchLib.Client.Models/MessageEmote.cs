@@ -73,6 +73,23 @@ namespace TwitchLib.Client.Models
                 "//cdn.betterttv.net/emote/{0}/3x"
             }
         );
+
+        /// <summary>
+        ///     Collection of Composite Format Strings which will substitute
+        ///     an emote ID to get a URL for an image from the 7tv CDN
+        ///     </summary>
+        /// <remarks>
+        ///     These are sorted such that the <see cref="EmoteSize"/> enum can be used as an index,
+        ///     eg SevenTvEmoteUrls[<see cref="EmoteSize.Small"/>]
+        /// </remarks>
+        public static readonly ReadOnlyCollection<string> SevenTvEmoteUrls = new ReadOnlyCollection<string>(
+            new[]
+            {
+                "//cdn.7tv.app/emote/{0}/1x.avif",
+                "//cdn.7tv.app/emote/{0}/2x.avif",
+                "//cdn.7tv.app/emote/{0}/5x.avif"
+            }
+            );
         #endregion Third-Party Emote URLs
 
         /// <summary>
@@ -87,6 +104,7 @@ namespace TwitchLib.Client.Models
             var sizeIndex = (int)caller.Size;
             return caller.Source switch
             {
+                EmoteSource.SevenTv => string.Format(SevenTvEmoteUrls[sizeIndex], caller.Id),
                 EmoteSource.BetterTwitchTv => string.Format(BetterTwitchTvEmoteUrls[sizeIndex], caller.Id),
                 EmoteSource.FrankerFaceZ => string.Format(FrankerFaceZEmoteUrls[sizeIndex], caller.Id),
                 EmoteSource.Twitch => string.Format(TwitchEmoteUrls[sizeIndex], caller.Id),
@@ -104,7 +122,10 @@ namespace TwitchLib.Client.Models
             FrankerFaceZ,
 
             /// <summary>Emotes hosted by BetterTTV.net</summary>
-            BetterTwitchTv
+            BetterTwitchTv,
+
+            /// <summary>Emotes hosted by 7tv</summary>
+            SevenTv
         }
 
         /// <summary> Enum denoting the emote sizes</summary>
@@ -214,7 +235,7 @@ namespace TwitchLib.Client.Models
     public class MessageEmoteCollection
     {
         private readonly Dictionary<string, MessageEmote> _emotes;
-        private const string BasePattern = @"(\b{0}\b)";
+        private const string BasePattern = @"(\b{0} \b)|(?<=\W){0}(?=$)|(?<=\s){0}(?=\s)";
 
         /// <summary> Do not access directly! Backing field for <see cref="CurrentPattern"/> </summary>
         private string _currentPattern;
@@ -389,17 +410,25 @@ namespace TwitchLib.Client.Models
 
             var newMessage = CurrentRegex.Replace(originalMessage, match =>
             {
-                if (!_emotes.ContainsKey(match.Value))
+                // the match includes possible white space on either side, so we need to preserve that
+                var emoteCode = match.Value.Trim();
+                if (match.Value[0] == ' ')
+                    prefix += " ";
+                if (match.Value[match.Value.Length - 1] == ' ')
+                    suffix = " " + suffix;
+                if (!_emotes.ContainsKey(emoteCode))
                 {
                     return match.Value;
                 }
-                var emote = _emotes[match.Value];
+                var emote = _emotes[emoteCode];
 
                 return CurrentEmoteFilter(emote) ? prefix + emote.ReplacementString + suffix : match.Value;
             });
             CurrentEmoteFilter = _preferredFilter;
 
-            return newMessage;
+            // the hacky replacement logic above will leave 2 spaces between emote and non-emote
+            // twitch doesn't allow this anyways, so this fix should be fine
+            return newMessage.Replace("  ", " ");
         }
 
         /// <summary>
