@@ -235,7 +235,7 @@ namespace TwitchLib.Client.Models
     public class MessageEmoteCollection
     {
         private readonly Dictionary<string, MessageEmote> _emotes;
-        private const string BasePattern = @"(\b{0} \b)|(?<=\W){0}(?=$)|(?<=\s){0}(?=\s)";
+        private const string BasePattern = @"(\b {0}\b)|(\b{0} \b)|(?<=\W){0}(?=$)|(?<=\s){0}(?=\s)|(^{0}$)";
 
         /// <summary> Do not access directly! Backing field for <see cref="CurrentPattern"/> </summary>
         private string _currentPattern;
