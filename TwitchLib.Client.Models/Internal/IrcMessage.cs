@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
-
+﻿using System.Text;
 using TwitchLib.Client.Enums.Internal;
 
 namespace TwitchLib.Client.Models.Internal
@@ -11,7 +9,7 @@ namespace TwitchLib.Client.Models.Internal
         /// The channel the message was sent in
         /// </summary>
         public string Channel => _channel ??= Params.StartsWith("#") ? Params.Remove(0, 1) : Params;
-        private string _channel;
+        private string? _channel;
 
         public string Params => _parameters?.Length > 0 ? _parameters[0] : "";
 
@@ -25,29 +23,29 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// Command parameters
         /// </summary>
-        private readonly string[] _parameters;
+        private readonly string[]? _parameters;
 
         /// <summary>
         /// The user whose message it is
         /// </summary>
-        public readonly string User;
+        public string User { get; }
 
         /// <summary>
         /// Hostmask of the user
         /// </summary>
-        public readonly string Hostmask;
+        public string? Hostmask { get; }
 
         /// <summary>
         /// Raw Command
         /// </summary>
-        public readonly IrcCommand Command;
+        public IrcCommand Command { get; }
 
         /// <summary>
         /// IRCv3 tags
         /// </summary>
-        public readonly Dictionary<string, string> Tags;
+        public Dictionary<string, string> Tags { get; }
 
-        private string _rawString;
+        private string? _rawString;
 
         /// <summary>
         /// Create an INCOMPLETE IrcMessage only carrying username
@@ -73,7 +71,7 @@ namespace TwitchLib.Client.Models.Internal
             IrcCommand command,
             string[] parameters,
             string hostmask,
-            Dictionary<string, string> tags = null)
+            Dictionary<string, string>? tags = null)
         {
             var idx = hostmask.IndexOf('!');
             User = idx >= 0 ? hostmask.Substring(0, idx) : hostmask;
@@ -107,7 +105,7 @@ namespace TwitchLib.Client.Models.Internal
             string[] parameters,
             string user,
             string hostmask,
-            Dictionary<string, string> tags = null)
+            Dictionary<string, string>? tags = null)
         {
             User = user;
             Hostmask = hostmask;

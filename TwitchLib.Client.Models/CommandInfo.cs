@@ -1,4 +1,6 @@
-﻿namespace TwitchLib.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace TwitchLib.Client.Models;
 
 /// <summary>Object representing a command received via Twitch chat.</summary>
 public class CommandInfo
@@ -32,9 +34,19 @@ public class CommandInfo
         ArgumentsAsList = argumentsAsList;
     }
 
+    /// <summary>
+    /// Tries to parse a span of characters into a value.
+    /// </summary>
+    /// <param name="s">The span of characters to parse.</param>
+    /// <param name="result">When this method returns, contains the result of successfully parsing s, or an undefined value on failure.</param>
+    /// <returns>true if s was successfully parsed; otherwise, false.</returns>
+#if NETSTANDARD2_0
     public static bool TryParse(ReadOnlySpan<char> s, out CommandInfo result)
+#else
+    public static bool TryParse(ReadOnlySpan<char> s, [MaybeNullWhen(false)] out CommandInfo result)
+#endif
     {
-        result = default;
+        result = default!;
         s = s.Trim();
         if (s.IsEmpty)
             return false;

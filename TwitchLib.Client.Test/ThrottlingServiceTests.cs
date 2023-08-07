@@ -27,7 +27,7 @@ namespace TwitchLib.Client.Test
             
             if (withMessage)
             {
-                message = new OutboundChatMessage();
+                message = new OutboundChatMessage("channel", "message");
             }
             
             var enqueued = throttlerService.Enqueue(message);

@@ -6,7 +6,7 @@ namespace TwitchLib.Client.Models
     public class ChannelState
     {
         /// <summary>Property representing the current broadcaster language.</summary>
-        public string BroadcasterLanguage { get; }
+        public string BroadcasterLanguage { get; } = default!;
 
         /// <summary>Property representing the current channel.</summary>
         public string Channel { get; }
@@ -27,13 +27,18 @@ namespace TwitchLib.Client.Models
         public bool? Rituals { get; }
 
         /// <summary>Twitch assigned room id</summary>
-        public string RoomId { get; }
+        public string RoomId { get; } = default!;
 
         /// <summary>Property representing whether Slow mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public int? SlowMode { get; }
 
         /// <summary>Property representing whether Sub Mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public bool? SubOnly { get; }
+
+        /// <summary>
+        /// Contains undocumented tags.
+        /// </summary>
+        public Dictionary<string, string>? UndocumentedTags { get; }
 
         /// <summary>ChannelState object constructor.</summary>
         public ChannelState(IrcMessage ircMessage)
@@ -76,13 +81,16 @@ namespace TwitchLib.Client.Models
                         Mercury = TagHelper.ToBool(tagValue);
                         break;
                     default:
-                        Console.WriteLine("[TwitchLib][ChannelState] Unaccounted for: " + tag);
+                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }
             Channel = ircMessage.Channel;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChannelState"/> class.
+        /// </summary>
         public ChannelState(
             bool r9k,
             bool rituals,

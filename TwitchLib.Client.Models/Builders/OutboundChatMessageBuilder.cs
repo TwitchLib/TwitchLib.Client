@@ -1,10 +1,12 @@
-﻿namespace TwitchLib.Client.Models.Builders
+﻿#nullable disable
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+namespace TwitchLib.Client.Models.Builders
 {
     public sealed class OutboundChatMessageBuilder : IBuilder<OutboundChatMessage>
     {
         private string _channel;
         private string _message;
-        private string _userName;
 
         private OutboundChatMessageBuilder()
         {
@@ -27,20 +29,9 @@
             return this;
         }
 
-        public OutboundChatMessageBuilder WithUsername(string userName)
-        {
-            _userName = userName;
-            return this;
-        }
-
         public OutboundChatMessage Build()
         {
-            return new OutboundChatMessage
-            {
-                Channel = _channel,
-                Message = _message,
-                Username = _userName,
-            };
+            return new OutboundChatMessage(_channel, _message);
         }
     }
 }

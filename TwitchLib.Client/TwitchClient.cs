@@ -434,12 +434,7 @@ namespace TwitchLib.Client
                 return;
             }
 
-            var twitchMessage = new OutboundChatMessage
-            {
-                Channel = channel.Channel,
-                Username = ConnectionCredentials.TwitchUsername,
-                Message = message
-            };
+            var twitchMessage = new OutboundChatMessage(channel.Channel, message);
 
             if (replyToId != null)
             {
@@ -653,7 +648,7 @@ namespace TwitchLib.Client
             return OnConnectionError.TryInvoke(this, new()
             {
                 BotUsername = TwitchUsername,
-                Error = new() { Message = e.Reason }
+                Error = new(e.Reason)
             });
         }
 

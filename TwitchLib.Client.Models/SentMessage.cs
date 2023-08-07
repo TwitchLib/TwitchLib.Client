@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models.Interfaces;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 
 namespace TwitchLib.Client.Models
 {
@@ -30,7 +31,7 @@ namespace TwitchLib.Client.Models
         public string Message { get; }
 
         /// <summary>The type of user (admin, broadcaster, viewer, moderator)</summary>
-        public Enums.UserType UserType { get; }
+        public UserType UserType { get; }
 
         /// <summary>Model constructor.</summary>
         public SentMessage(
@@ -48,6 +49,9 @@ namespace TwitchLib.Client.Models
             Message = message;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SentMessage"/> class.
+        /// </summary>
         public SentMessage(
             List<KeyValuePair<string, string>> badges,
             string channel,
@@ -56,7 +60,7 @@ namespace TwitchLib.Client.Models
             string emoteSet,
             bool isModerator,
             bool isSubscriber,
-            Enums.UserType userType,
+            UserType userType,
             string message)
         {
             Badges = badges;

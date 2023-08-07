@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using TwitchLib.Client.Models.Extractors;
+﻿using TwitchLib.Client.Models.Extractors;
 
 // TODO: Builder is missing
 namespace TwitchLib.Client.Models
@@ -13,12 +10,12 @@ namespace TwitchLib.Client.Models
         public List<Emote> Emotes { get; }
 
         /// <summary>The raw emote set string obtained from Twitch, for legacy purposes.</summary>
-        public string RawEmoteSetString { get; }
+        public string? RawEmoteSetString { get; }
 
         /// <summary>Constructor for ChatEmoteSet object.</summary>
         /// <param name="rawEmoteSetString"></param>
         /// <param name="message"></param>
-        public EmoteSet(string rawEmoteSetString, string message)
+        public EmoteSet(string? rawEmoteSetString, string message)
         {
             // this should be removed and used outside of object
             RawEmoteSetString = rawEmoteSetString;

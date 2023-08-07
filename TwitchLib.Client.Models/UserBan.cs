@@ -5,17 +5,20 @@ namespace TwitchLib.Client.Models
     public class UserBan
     {
         /// <summary>Channel that had ban event.</summary>
-        public string Channel;
+        public string Channel { get; }
 
         /// <summary>User that was banned.</summary>
-        public string Username;
+        public string Username { get; }
 
         /// <summary>Channel that had ban event. Id.</summary>
-        public string RoomId;
+        public string RoomId { get; } = default!;
 
         /// <summary>User that was banned. Id.</summary>
-        public string TargetUserId;
+        public string TargetUserId { get; } = default!;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserBan"/> class.
+        /// </summary>
         public UserBan(IrcMessage ircMessage)
         {
             Channel = ircMessage.Channel;
@@ -32,6 +35,9 @@ namespace TwitchLib.Client.Models
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserBan"/> class.
+        /// </summary>
         public UserBan(
             string channel,
             string username,

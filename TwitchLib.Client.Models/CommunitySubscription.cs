@@ -1,4 +1,6 @@
-﻿using TwitchLib.Client.Enums;
+﻿#nullable disable
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
@@ -32,6 +34,11 @@ namespace TwitchLib.Client.Models
         public string UserId;
         public UserType UserType;
         public string MsgParamMultiMonthGiftDuration;
+
+        /// <summary>
+        /// Contains undocumented tags.
+        /// </summary>
+        public Dictionary<string, string>? UndocumentedTags { get; }
 
         public CommunitySubscription(IrcMessage ircMessage)
         {
@@ -104,6 +111,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.MsgParamMultiMonthGiftDuration:
                         MsgParamMultiMonthGiftDuration = tagValue;
+                        break;
+                    default:
+                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }

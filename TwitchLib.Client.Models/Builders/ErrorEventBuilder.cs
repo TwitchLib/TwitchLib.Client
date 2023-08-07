@@ -1,4 +1,7 @@
-﻿namespace TwitchLib.Client.Models.Builders
+﻿#nullable disable
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+namespace TwitchLib.Client.Models.Builders
 {
     public sealed class ErrorEventBuilder : IBuilder<ErrorEvent>
     {
@@ -21,10 +24,7 @@
 
         public ErrorEvent Build()
         {
-            return new ErrorEvent
-            {
-                Message = _message
-            };
+            return new ErrorEvent(_message);
         }
     }
 }
