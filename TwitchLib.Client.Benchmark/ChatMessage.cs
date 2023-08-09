@@ -1,5 +1,5 @@
 using BenchmarkDotNet.Attributes;
-using TwitchLib.Client.Internal.Parsing;
+using TwitchLib.Client.Parsing;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Internal;
 

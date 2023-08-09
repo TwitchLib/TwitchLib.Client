@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
 using TwitchLib.Client.Enums.Internal;
 
@@ -30,22 +29,22 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// The user whose message it is
         /// </summary>
-        public readonly string User;
+        public string User { get; }
 
         /// <summary>
         /// Hostmask of the user
         /// </summary>
-        public readonly string Hostmask;
+        public string Hostmask { get; }
 
         /// <summary>
         /// Raw Command
         /// </summary>
-        public readonly IrcCommand Command;
+        public IrcCommand Command { get; }
 
         /// <summary>
         /// IRCv3 tags
         /// </summary>
-        public readonly Dictionary<string, string> Tags;
+        public Dictionary<string, string> Tags { get; }
 
         private string _rawString;
 
