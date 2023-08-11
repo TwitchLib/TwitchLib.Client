@@ -1,5 +1,4 @@
 // proposal: https://github.com/dotnet/runtime/issues/75317
-using System;
 using System.Runtime.CompilerServices;
 
 namespace TwitchLib.Client.Extensions
@@ -33,9 +32,7 @@ namespace TwitchLib.Client.Extensions
         {
             var separatorIndex = source.IndexOf(separator);
 
-            return separatorIndex > -1
-                ? new(source.Slice(0, separatorIndex), source.Slice(separatorIndex + 1))
-                : new(source, default);
+            return separatorIndex >= 0 ? new(source, separatorIndex, 1) : SplitNotFound(source);
         }
 
         /// <summary>
@@ -65,22 +62,31 @@ namespace TwitchLib.Client.Extensions
         {
             var separatorIndex = source.LastIndexOf(separator);
 
-            return separatorIndex > -1
-                ? new(source.Slice(0, separatorIndex), source.Slice(separatorIndex + 1))
-                : new(source, default);
+            return separatorIndex >= 0 ? new(source, separatorIndex, 1) : SplitNotFound(source);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static ReadOnlySplitPair<T> SplitNotFound<T>(this ReadOnlySpan<T> source)
+        {
+            return new(source, source.Length, 0);
         }
 
         internal readonly ref struct ReadOnlySplitPair<T>
         {
-            public readonly ReadOnlySpan<T> Segment;
+            private readonly ReadOnlySpan<T> _source;
+            private readonly int _offset;
+            private readonly int _stride;
 
-            public readonly ReadOnlySpan<T> Remainder;
+            public readonly ReadOnlySpan<T> Segment => _source.Slice(0, _offset);
+
+            public readonly ReadOnlySpan<T> Remainder => _source.Slice(_offset + _stride);
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public ReadOnlySplitPair(ReadOnlySpan<T> segment, ReadOnlySpan<T> remainder)
+            public ReadOnlySplitPair(ReadOnlySpan<T> source, int offset, int stride)
             {
-                Segment = segment;
-                Remainder = remainder;
+                _source = source;
+                _offset = offset;
+                _stride = stride;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
