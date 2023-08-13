@@ -244,6 +244,12 @@ namespace TwitchLib.Client.Models
                         ChatReply ??= new ChatReply(); // ChatReply is null if not reply
                         ChatReply.ParentUserLogin = tagValue;
                         break;
+                    case Tags.ReplyThreadParentMsgId:
+                        (ChatReply ??= new()).ThreadParentMsgId = tagValue;
+                        break;
+                    case Tags.ReplyThreadParentUserLogin:
+                        (ChatReply ??= new()).ThreadParentUserLogin = tagValue;
+                        break;
                     case Tags.RoomId:
                         RoomId = tagValue;
                         break;

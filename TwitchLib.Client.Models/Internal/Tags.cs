@@ -1,4 +1,5 @@
-﻿namespace TwitchLib.Client.Models.Internal
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+namespace TwitchLib.Client.Models.Internal
 {
     public static class Tags
     {
@@ -51,11 +52,17 @@
         public const string PinnedChatPaidExponent = "pinned-chat-paid-exponent";
         public const string PinnedChatPaidLevel = "pinned-chat-paid-level";
         public const string PinnedChatPaidIsSystemMessage = "pinned-chat-paid-is-system-message";
+        
+        #region  Sent only on replies
         public const string ReplyParentDisplayName = "reply-parent-display-name";               // Sent only on replies
         public const string ReplyParentMsgBody = "reply-parent-msg-body";                       // Sent only on replies
         public const string ReplyParentMsgId = "reply-parent-msg-id";                           // Sent only on replies
         public const string ReplyParentUserId = "reply-parent-user-id";                         // Sent only on replies
         public const string ReplyParentUserLogin = "reply-parent-user-login";                   // Sent only on replies
+        public const string ReplyThreadParentMsgId = "reply-thread-parent-msg-id";
+        public const string ReplyThreadParentUserLogin = "reply-thread-parent-user-login";
+        #endregion
+        
         public const string Rituals = "rituals";
         public const string RoomId = "room-id";
         public const string R9K = "r9k";

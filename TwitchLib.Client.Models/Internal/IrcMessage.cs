@@ -1,4 +1,5 @@
-﻿using System.Text;
+using System.Text;
+
 using TwitchLib.Client.Enums.Internal;
 
 namespace TwitchLib.Client.Models.Internal

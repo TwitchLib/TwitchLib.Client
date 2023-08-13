@@ -1,26 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using TwitchLib.Client.Enums.Internal;
+﻿using TwitchLib.Client.Enums.Internal;
 using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models.Internal;
 
-namespace TwitchLib.Client.Internal.Parsing
+namespace TwitchLib.Client.Parsing
 {
     /// <summary>
-    /// Class IrcParser.
+    /// Twitch IRCv3 message parser.
     /// </summary>
-    internal static class IrcParser
+    public static class IrcParser
     {
         /// <summary>
-        /// Builds an IrcMessage from a string.
+        /// Parses a raw Twitch IRCv3 message line into an IrcMessage object.
         /// </summary>
-        /// <param name="raw">Raw IRC message</param>
-        /// <returns>IrcMessage object</returns>
-        public static IrcMessage ParseMessage(string raw)
+        /// <param name="rawMessage">Raw IRC message</param>
+        /// <returns><see cref="IrcMessage"/> that can be consumed by a variety of TwitchLib.Client types.</returns>
+        /// <exception cref="FormatException">Thrown if the message is invalid.</exception>
+        /// <exception cref="IndexOutOfRangeException">Thrown if the message is invalid.</exception>
+        public static IrcMessage ParseMessage(string rawMessage)
         {
+            if (rawMessage is not { Length: >= 3 })
+            {
+                ThrowInvalidMessage();
+            }
+
             // Sequentially parse each segment, advancing the span as we go.
-            // Adapted from https://github.com/neon-sunset/feetlicker
-            var source = raw.AsSpan();
+            // Adapted from https://github.com/neon-sunset/warpskimmer
+            var source = rawMessage.AsSpan();
             var tags = ParseTags(ref source);
             var (user, hostmask) = ParsePrefix(ref source);
             var command = ParseCommand(ref source);
@@ -38,7 +43,7 @@ namespace TwitchLib.Client.Internal.Parsing
                 message = "";
             }
 
-            return new IrcMessage(raw, command, new[] { parameters, message }, user, hostmask, tags);
+            return new IrcMessage(rawMessage, command, new[] { parameters, message }, user, hostmask, tags);
         }
 
         private static Dictionary<string, string> ParseTags(ref ReadOnlySpan<char> source)
@@ -125,6 +130,13 @@ namespace TwitchLib.Client.Internal.Parsing
                 "MODE" => IrcCommand.Mode,
                 _ => IrcCommand.Unknown,
             };
+        }
+
+        // Not throwing message contents because it may contain sensitive information.
+        private static void ThrowInvalidMessage()
+        {
+            throw new FormatException(
+                "Unexpected IRC message format: must be not null and longer than 3 characters.");
         }
     }
 }
