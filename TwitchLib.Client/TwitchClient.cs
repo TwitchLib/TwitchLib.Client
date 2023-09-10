@@ -463,22 +463,10 @@ namespace TwitchLib.Client
         }
 
         /// <inheritdoc />
-        public void SendReply(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
-        {
-            SendReplyAsync(channel, replyToId, message, dryRun).GetAwaiter().GetResult();
-        }
-
-        /// <inheritdoc />
         public Task SendReplyAsync(JoinedChannel channel, string replyToId, string message, bool dryRun = false)
         {
             SendTwitchMessage(channel, message, replyToId, dryRun);
             return Task.CompletedTask;
-        }
-
-        /// <inheritdoc />
-        public void SendReply(string channel, string replyToId, string message, bool dryRun = false)
-        {
-            SendReplyAsync(channel, replyToId, message, dryRun).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
@@ -1267,12 +1255,6 @@ namespace TwitchLib.Client
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
-        public void SendQueuedItem(string message)
-        {
-            SendQueuedItemAsync(message).GetAwaiter().GetResult();
-        }
-
         /// <inheritdoc />
         public Task SendQueuedItemAsync(string message)
         {
@@ -1301,4 +1283,3 @@ namespace TwitchLib.Client
         }
     }
 }
-//1487

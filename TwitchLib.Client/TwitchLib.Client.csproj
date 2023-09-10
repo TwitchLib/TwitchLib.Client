@@ -28,7 +28,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="TwitchLib.Communication" Version="2.0.0-preview-d9bdf98197f77d62ae5d8774a3fef0c97ba71849" />
+    <PackageReference Include="TwitchLib.Communication" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
