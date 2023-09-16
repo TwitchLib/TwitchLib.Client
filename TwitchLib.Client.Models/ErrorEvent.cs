@@ -4,6 +4,14 @@
     public class ErrorEvent
     {
         /// <summary>Message pertaining to the error.</summary>
-        public string Message { get; set; }
+        public string Message { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ErrorEvent"/> class.
+        /// </summary>
+        public ErrorEvent(string message)
+        {
+            Message = message;
+        }
     }
 }

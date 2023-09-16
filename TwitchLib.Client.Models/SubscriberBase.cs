@@ -1,3 +1,4 @@
+#nullable disable
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
@@ -84,6 +85,11 @@ namespace TwitchLib.Client.Models
 
         protected readonly int monthsInternal;
 
+        /// <summary>
+        /// Contains undocumented tags.
+        /// </summary>
+        public Dictionary<string, string>? UndocumentedTags { get; }
+
         /// <summary>Subscriber object constructor.</summary>
         protected SubscriberBase(IrcMessage ircMessage)
         {
@@ -164,6 +170,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.UserType:
                         UserType = TagHelper.ToUserType(tag.Value);
+                        break;
+                    default:
+                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }

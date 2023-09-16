@@ -1,4 +1,5 @@
 ﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Extensions;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
@@ -6,10 +7,10 @@ namespace TwitchLib.Client.Models
     /// <summary>Class represents ChatMessage in a Twitch channel.</summary>
     public class ChatMessage : TwitchLibMessage
     {
-        protected readonly MessageEmoteCollection _emoteCollection;
+        protected readonly MessageEmoteCollection? _emoteCollection;
 
         /// <summary>Information associated with badges. Not all badges will be in this list. Use carefully.</summary>
-        public List<KeyValuePair<string, string>> BadgeInfo { get; }
+        public List<KeyValuePair<string, string>> BadgeInfo { get; } = default!;
 
         /// <summary>If viewer sent bits in their message, total amount will be here.</summary>
         public int Bits { get; }
@@ -21,16 +22,16 @@ namespace TwitchLib.Client.Models
         public string Channel { get; }
 
         /// <summary>If a cheer badge exists, this property represents the raw value and color (more later). Can be null.</summary>
-        public CheerBadge CheerBadge { get; }
+        public CheerBadge? CheerBadge { get; }
 
         /// <summary>If a custom reward is present with the message, the ID will be set (null by default)</summary>
-        public string CustomRewardId { get; }
+        public string? CustomRewardId { get; }
 
         /// <summary>Text after emotes have been handled (if desired). Will be null if replaceEmotes is false.</summary>
-        public string EmoteReplacedMessage { get; }
+        public string? EmoteReplacedMessage { get; }
 
         /// <summary>Unique message identifier assigned by Twitch</summary>
-        public string Id { get; }
+        public string Id { get; } = default!;
 
         /// <summary>Chat message from broadcaster identifier flag</summary>
         public bool IsBroadcaster { get; }
@@ -69,7 +70,7 @@ namespace TwitchLib.Client.Models
         public Noisy Noisy { get; }
 
         /// <summary>Unique identifier of chat room.</summary>
-        public string RoomId { get; }
+        public string RoomId { get; } = default!;
 
         /// <summary>Number of months a person has been subbed.</summary>
         public int SubscribedMonthCount { get; }
@@ -78,10 +79,10 @@ namespace TwitchLib.Client.Models
         public DateTimeOffset TmiSent { get; }
 
         /// <summary>Chat reply information. Will be null if it is not a reply.</summary>
-        public ChatReply ChatReply { get; }
+        public ChatReply? ChatReply { get; }
 
         /// <summary>Hype Chat information.</summary>
-        public HypeChat HypeChat { get; }
+        public HypeChat? HypeChat { get; }
 
         //Example IRC message: @badges=moderator/1,warcraft/alliance;color=;display-name=Swiftyspiffyv4;emotes=;mod=1;room-id=40876073;subscriber=0;turbo=0;user-id=103325214;user-type=mod :swiftyspiffyv4!swiftyspiffyv4@swiftyspiffyv4.tmi.twitch.tv PRIVMSG #swiftyspiffy :asd
         /// <summary>Constructor for ChatMessage object.</summary>
@@ -94,7 +95,7 @@ namespace TwitchLib.Client.Models
         public ChatMessage(
             string botUsername,
             IrcMessage ircMessage,
-            MessageEmoteCollection emoteCollection = null,
+            MessageEmoteCollection? emoteCollection = null,
             bool replaceEmotes = false,
             string prefix = "",
             string suffix = "")
@@ -268,14 +269,16 @@ namespace TwitchLib.Client.Models
                     case Tags.UserType:
                         UserType = TagHelper.ToUserType(tagValue);
                         break;
+                    default:
+                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
+                        break;
                 }
             }
 
             //Parse the emoteSet
-            if (_emoteCollection != null && Message != null && EmoteSet?.Emotes.Count > 0)
+            if (_emoteCollection != null && EmoteSet?.Emotes.Count > 0)
             {
-                var uniqueEmotes = EmoteSet.RawEmoteSetString.Split('/');
-                foreach (var emote in uniqueEmotes)
+                foreach (var emote in new SpanSliceEnumerator(EmoteSet.RawEmoteSetString!, '/'))
                 {
                     var firstColon = emote.IndexOf(':');
                     var firstComma = emote.IndexOf(',');
@@ -284,11 +287,11 @@ namespace TwitchLib.Client.Models
                     if (firstColon > 0 && firstDash > firstColon && firstComma > firstDash)
                     {
 #if NETSTANDARD2_0
-                        var lowStr =  emote.Substring(firstColon + 1, firstDash - firstColon - 1);
-                        var highStr = emote.Substring(firstDash + 1, firstComma - firstDash - 1);
+                        var lowStr = emote.Slice(firstColon + 1, firstDash - firstColon - 1).ToString();
+                        var highStr = emote.Slice(firstDash + 1, firstComma - firstDash - 1).ToString();
 #else
-                        var lowStr =  emote.AsSpan(firstColon + 1, firstDash - firstColon - 1);
-                        var highStr = emote.AsSpan(firstDash + 1, firstComma - firstDash - 1);
+                        var lowStr = emote.Slice(firstColon + 1, firstDash - firstColon - 1);
+                        var highStr = emote.Slice(firstDash + 1, firstComma - firstDash - 1);
 #endif
                         if (int.TryParse(lowStr, out var low) &&
                             int.TryParse(highStr, out var high))
@@ -296,7 +299,7 @@ namespace TwitchLib.Client.Models
                             if (low >= 0 && low < high && high < Message.Length)
                             {
                                 //Valid emote, let's parse
-                                var id = emote.Substring(0, firstColon);
+                                var id = emote.Slice(0, firstColon).ToString();
                                 //Pull the emote text from the message
                                 var text = Message.Substring(low, high - low + 1);
                                 _emoteCollection.Add(new MessageEmote(id, text));
@@ -332,6 +335,9 @@ namespace TwitchLib.Client.Models
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChatMessage"/> class.
+        /// </summary>
         public ChatMessage(
             string botUsername,
             string userId,

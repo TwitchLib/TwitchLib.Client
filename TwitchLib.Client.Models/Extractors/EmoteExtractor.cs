@@ -4,14 +4,16 @@ namespace TwitchLib.Client.Models.Extractors
 {
     public static class EmoteExtractor
     {
-        public static List<Emote> Extract(string rawEmoteSetString, string message)
+        public static List<Emote> Extract(string? rawEmoteSetString, string message)
         {
             var emotes = new List<Emote>();
             if (string.IsNullOrEmpty(rawEmoteSetString) || string.IsNullOrEmpty(message))
                 return emotes;
 
             // 25:5-9,28-32/28087:15-21 => 25:5-9,28-32  28087:15-21
+#pragma warning disable CS8604 // Possible null reference argument. false positiv in NS 2.0
             foreach (var emoteData in new SpanSliceEnumerator(rawEmoteSetString, '/'))
+#pragma warning restore CS8604 // Possible null reference argument.
             {
                 var index = emoteData.IndexOf(':');
                 var emoteId = emoteData.Slice(0, index).ToString();

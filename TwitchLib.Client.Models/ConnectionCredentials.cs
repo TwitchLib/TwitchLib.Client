@@ -26,7 +26,7 @@ namespace TwitchLib.Client.Models
             string twitchUsername,
             string twitchOAuth,
             bool disableUsernameCheck = false,
-            Capabilities capabilities = null)
+            Capabilities? capabilities = null)
         {
             if (!disableUsernameCheck && !GetUsernameCheckRegex().Match(twitchUsername).Success)
                 throw new Exception($"Twitch username does not appear to be valid. {twitchUsername}");
@@ -40,8 +40,7 @@ namespace TwitchLib.Client.Models
                 TwitchOAuth = $"oauth:{twitchOAuth.Replace("oauth", "")}";
             }
 
-            capabilities ??= new Capabilities();
-            Capabilities = capabilities;
+            Capabilities = capabilities ?? new Capabilities();
         }
     }
 
@@ -57,6 +56,9 @@ namespace TwitchLib.Client.Models
         /// <summary>Enables several Twitch-specific commands.</summary>
         public bool Commands { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Capabilities"/> class.
+        /// </summary>
         public Capabilities(bool membership = true, bool tags = true, bool commands = true)
         {
             Membership = membership;

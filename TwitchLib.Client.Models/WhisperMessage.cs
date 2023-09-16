@@ -7,14 +7,17 @@ namespace TwitchLib.Client.Models
     public class WhisperMessage : TwitchLibMessage
     {
         /// <summary>Property representing message identifier.</summary>
-        public string MessageId { get; }
+        public string MessageId { get; } = default!;
 
         /// <summary>Property representing identifier of the message thread.</summary>
-        public string ThreadId { get; }
+        public string ThreadId { get; } = default!;
 
         /// <summary>Property representing identifier of the message thread.</summary>
         public string Message { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WhisperMessage"/> class.
+        /// </summary>
         public WhisperMessage(
             List<KeyValuePair<string, string>> badges,
             string hexColor,
@@ -86,6 +89,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.UserType:
                         UserType = TagHelper.ToUserType(tag.Value);
+                        break;
+                    default:
+                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }

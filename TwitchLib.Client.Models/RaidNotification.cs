@@ -1,4 +1,6 @@
-﻿using TwitchLib.Client.Enums;
+﻿#nullable disable
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
@@ -46,6 +48,11 @@ namespace TwitchLib.Client.Models
         public string UserId { get; }
 
         public UserType UserType { get; }
+
+        /// <summary>
+        /// Contains undocumented tags.
+        /// </summary>
+        public Dictionary<string, string>? UndocumentedTags { get; }
 
         // @badges=;color=#FF0000;display-name=Heinki;emotes=;id=4fb7ab2d-aa2c-4886-a286-46e20443f3d6;login=heinki;mod=0;msg-id=raid;msg-param-displayName=Heinki;msg-param-login=heinki;msg-param-viewerCount=4;room-id=27229958;subscriber=0;system-msg=4\sraiders\sfrom\sHeinki\shave\sjoined\n!;tmi-sent-ts=1510249711023;turbo=0;user-id=44110799;user-type= :tmi.twitch.tv USERNOTICE #pandablack
         public RaidNotification(IrcMessage ircMessage)
@@ -109,6 +116,9 @@ namespace TwitchLib.Client.Models
                         break;
                     case Tags.UserType:
                         UserType = TagHelper.ToUserType(tag.Value);
+                        break;
+                    default:
+                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }

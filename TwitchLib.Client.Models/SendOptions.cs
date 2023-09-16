@@ -21,6 +21,7 @@ namespace TwitchLib.Client.Models
         public TimeSpan CacheItemTimeout { get; }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="SendOptions"/> class.
         /// </summary>
         /// <param name="sendsAllowedInPeriod">
         ///     A <see langword="value"/> of zero means: 
