@@ -2,8 +2,7 @@
 
 namespace TwitchLib.Client.Models;
 
-// giftpaidupgrade
-public class ContinuedGiftedSubscription : UserNoticeBase
+public class AnonGiftPaidUpgrade : UserNoticeBase
 {
     /// <summary>
     /// The number of gifts the gifter has given during the promo indicated by <see cref="MsgParamPromoName"/>.
@@ -16,20 +15,9 @@ public class ContinuedGiftedSubscription : UserNoticeBase
     public string MsgParamPromoName { get; protected set; } = default!;
 
     /// <summary>
-    /// The login name of the user who gifted the subscription.
+    /// Initializes a new instance of the <see cref="AnonGiftPaidUpgrade"/> class.
     /// </summary>
-    public string MsgParamSenderLogin { get; protected set; } = default!;
-
-    /// <summary>
-    /// The display name of the user who gifted the subscription.
-    /// </summary>
-    public string MsgParamSenderName { get; protected set; } = default!;
-
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ContinuedGiftedSubscription"/> class.
-    /// </summary>
-    public ContinuedGiftedSubscription(IrcMessage ircMessage) : base(ircMessage)
+    public AnonGiftPaidUpgrade(IrcMessage ircMessage) : base(ircMessage)
     {
     }
 
@@ -43,12 +31,6 @@ public class ContinuedGiftedSubscription : UserNoticeBase
                 break;
             case Tags.MsgParamPromoName:
                 MsgParamPromoName = tag.Value;
-                break;
-            case Tags.MsgParamSenderLogin:
-                MsgParamSenderLogin = tag.Value;
-                break;
-            case Tags.MsgParamSenderName:
-                MsgParamSenderName = tag.Value;
                 break;
             default:
                 return false;
