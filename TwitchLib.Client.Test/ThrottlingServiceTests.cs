@@ -23,7 +23,7 @@ namespace TwitchLib.Client.Test
                 .Returns(isConnected);
             var client = clientMock.Object;
             var throttlerService = new ThrottlingService(client, sendOptions);
-            OutboundChatMessage message = null;
+            OutboundChatMessage? message = null;
             
             if (withMessage)
             {
