@@ -1,4 +1,5 @@
 ﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Internal;
 
 public class HypeChat
 {
@@ -34,4 +35,31 @@ public class HypeChat
     /// If false (0), the user provided their own message to send with the Hype Chat.
     /// </remarks>
     public bool IsSystemMessage { get; internal set; }
+
+    internal static bool TrySetTag(ref HypeChat? hypeChat, KeyValuePair<string, string> tag)
+    {
+        switch (tag.Key)
+        {
+            case Tags.PinnedChatPaidAmount:
+                (hypeChat ??= new()).Amount = int.Parse(tag.Value);
+                break;
+            case Tags.PinnedChatPaidCurrency:
+                (hypeChat ??= new()).Currency = tag.Value;
+                break;
+            case Tags.PinnedChatPaidExponent:
+                (hypeChat ??= new()).Exponent = int.Parse(tag.Value);
+                break;
+            case Tags.PinnedChatPaidLevel:
+                (hypeChat ??= new()).Level = Enum.TryParse<PaidLevel>(tag.Value, true, out var val)
+                    ? val
+                    : throw new ArgumentException($"Requested value '{tag.Value}' was not found.");
+                break;
+            case Tags.PinnedChatPaidIsSystemMessage:
+                (hypeChat ??= new()).IsSystemMessage = TagHelper.ToBool(tag.Value);
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
 }

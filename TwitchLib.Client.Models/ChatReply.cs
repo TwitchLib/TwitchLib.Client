@@ -1,4 +1,6 @@
-﻿namespace TwitchLib.Client.Models
+﻿using TwitchLib.Client.Models.Internal;
+
+namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing a chat reply/thread</summary>
     public class ChatReply
@@ -37,5 +39,36 @@
         /// The login name of the sender of the top-level parent message.
         /// </summary>
         public string ThreadParentUserLogin { get; internal set; } = default!;
+
+        internal static bool TrySetTag(ref ChatReply? reply, KeyValuePair<string, string> tag)
+        {
+            switch (tag.Key)
+            {
+                case Tags.ReplyParentDisplayName:
+                    (reply ??= new()).ParentDisplayName = tag.Value;
+                    break;
+                case Tags.ReplyParentMsgBody:
+                    (reply ??= new()).ParentMsgBody = tag.Value;
+                    break;
+                case Tags.ReplyParentMsgId:
+                    (reply ??= new()).ParentMsgId = tag.Value;
+                    break;
+                case Tags.ReplyParentUserId:
+                    (reply ??= new()).ParentUserId = tag.Value;
+                    break;
+                case Tags.ReplyParentUserLogin:
+                    (reply ??= new()).ParentUserLogin = tag.Value;
+                    break;
+                case Tags.ReplyThreadParentMsgId:
+                    (reply ??= new()).ThreadParentMsgId = tag.Value;
+                    break;
+                case Tags.ReplyThreadParentUserLogin:
+                    (reply ??= new()).ThreadParentUserLogin = tag.Value;
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        }
     }
 }
