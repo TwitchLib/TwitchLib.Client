@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models.Internal;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models;
 
@@ -19,6 +20,50 @@ public class AnonGiftPaidUpgrade : UserNoticeBase
     /// </summary>
     public AnonGiftPaidUpgrade(IrcMessage ircMessage) : base(ircMessage)
     {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AnonGiftPaidUpgrade"/> class.
+    /// </summary>
+    public AnonGiftPaidUpgrade(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        int msgParamPromoGiftTotal,
+        string msgParamPromoName)
+        : base(badgeInfo,
+            badges,
+            hexColor,
+            displayMame,
+            emotes,
+            id,
+            login,
+            isModerator,
+            msgId, roomId,
+            isSubscriber,
+            systemMsg,
+            tmiSent,
+            isTurbo,
+            userId,
+            userType,
+            undocumentedTags)
+    {
+        MsgParamPromoGiftTotal = msgParamPromoGiftTotal;
+        MsgParamPromoName = msgParamPromoName;
     }
 
     /// <inheritdoc/>

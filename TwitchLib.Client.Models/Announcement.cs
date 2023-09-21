@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models.Internal;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models;
 
@@ -18,6 +19,50 @@ public class Announcement : UserNoticeBase
     public Announcement(IrcMessage ircMessage) : base(ircMessage)
     {
         Message = ircMessage.Message;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Announcement"/> class.
+    /// </summary>
+    public Announcement(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        string msgParamColor,
+        string message)
+        : base(badgeInfo,
+            badges,
+            hexColor, 
+            displayMame,
+            emotes, 
+            id, 
+            login,
+            isModerator,
+            msgId, roomId, 
+            isSubscriber, 
+            systemMsg, 
+            tmiSent,
+            isTurbo, 
+            userId, 
+            userType, 
+            undocumentedTags)
+    {
+        MsgParamColor = msgParamColor;
+        Message = message;
     }
 
     /// <inheritdoc/>

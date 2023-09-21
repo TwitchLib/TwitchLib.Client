@@ -24,7 +24,7 @@ public abstract class UserNoticeBase : IHexColorProperty
     /// <summary>
     /// The user’s display name, escaped as described in the IRCv3 spec.
     /// </summary>
-    public string DisplayMame { get; protected set; } = default!;
+    public string DisplayName { get; protected set; } = default!;
 
     /// <summary>
     ///  List of emotes and their positions in the message.
@@ -107,7 +107,7 @@ public abstract class UserNoticeBase : IHexColorProperty
                     HexColor = tag.Value;
                     break;
                 case Tags.DisplayName:
-                    DisplayMame = tag.Value;
+                    DisplayName = tag.Value;
                     break;
                 case Tags.Emotes:
                     Emotes = tag.Value;
@@ -151,6 +151,47 @@ public abstract class UserNoticeBase : IHexColorProperty
                     break;
             }
         }
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserNoticeBase"/> class.
+    /// </summary>
+    protected UserNoticeBase(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayName,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator, 
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType, 
+        Dictionary<string, string>? undocumentedTags)
+    {
+        BadgeInfo = badgeInfo;
+        Badges = badges;
+        HexColor = hexColor;
+        DisplayName = displayName;
+        Emotes = emotes;
+        Id = id;
+        Login = login;
+        IsModerator = isModerator;
+        MsgId = msgId;
+        RoomId = roomId;
+        IsSubscriber = isSubscriber;
+        SystemMsg = systemMsg;
+        TmiSent = tmiSent;
+        IsTurbo = isTurbo;
+        UserId = userId;
+        UserType = userType;
+        UndocumentedTags = undocumentedTags;
     }
 
     protected abstract bool TrySet(KeyValuePair<string, string> tag);

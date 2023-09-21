@@ -33,6 +33,60 @@ public class CommunitySubscription : UserNoticeBase
         IsAnonymous = UserId == AnonymousGifterUserId;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommunitySubscription"/> class.
+    /// </summary>
+    public CommunitySubscription(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        bool isAnonymous,
+        Goal? msgParamGoal,
+        string msgParamGiftTheme,
+        int msgParamMassGiftCount,
+        string msgParamOriginId, 
+        int msgParamSenderCount,
+        SubscriptionPlan msgParamSubPlan)
+        : base(badgeInfo,
+            badges,
+            hexColor,
+            displayMame,
+            emotes,
+            id,
+            login,
+            isModerator,
+            msgId, roomId,
+            isSubscriber,
+            systemMsg,
+            tmiSent,
+            isTurbo,
+            userId,
+            userType,
+            undocumentedTags)
+    {
+        IsAnonymous = isAnonymous;
+        MsgParamGoal = msgParamGoal;
+        MsgParamGiftTheme = msgParamGiftTheme;
+        MsgParamMassGiftCount = msgParamMassGiftCount;
+        MsgParamOriginId = msgParamOriginId;
+        MsgParamSenderCount = msgParamSenderCount;
+        MsgParamSubPlan = msgParamSubPlan;
+    }
+
     /// <inheritdoc/>
     protected override bool TrySet(KeyValuePair<string, string> tag)
     {

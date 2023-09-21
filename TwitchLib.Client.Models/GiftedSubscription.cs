@@ -57,6 +57,66 @@ public class GiftedSubscription : UserNoticeBase
         IsAnonymous = UserId == AnonymousGifterUserId;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GiftedSubscription"/> class.
+    /// </summary>
+    public GiftedSubscription(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        Goal? msgParamGoal,
+        bool isAnonymous, 
+        string msgParamMonths,
+        string msgParamRecipientDisplayName,
+        string msgParamRecipientId,
+        string msgParamRecipientUserName, 
+        int msgParamSenderCount, 
+        SubscriptionPlan msgParamSubPlan, 
+        string msgParamSubPlanName, 
+        int msgParamMultiMonthGiftDuration)
+       : base(badgeInfo,
+           badges,
+           hexColor,
+           displayMame,
+           emotes,
+           id,
+           login,
+           isModerator,
+           msgId, roomId,
+           isSubscriber,
+           systemMsg,
+           tmiSent,
+           isTurbo,
+           userId,
+           userType,
+           undocumentedTags)
+    {
+        MsgParamGoal = msgParamGoal;
+        IsAnonymous = isAnonymous;
+        MsgParamMonths = msgParamMonths;
+        MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
+        MsgParamRecipientId = msgParamRecipientId;
+        MsgParamRecipientUserName = msgParamRecipientUserName;
+        MsgParamSenderCount = msgParamSenderCount;
+        MsgParamSubPlan = msgParamSubPlan;
+        MsgParamSubPlanName = msgParamSubPlanName;
+        MsgParamMultiMonthGiftDuration = msgParamMultiMonthGiftDuration;
+    }
+
     /// <inheritdoc/>
     protected override bool TrySet(KeyValuePair<string, string> tag)
     {

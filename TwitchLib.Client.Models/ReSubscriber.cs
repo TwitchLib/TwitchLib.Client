@@ -40,6 +40,58 @@ public class ReSubscriber : UserNoticeBase
         ResubMessage = ircMessage.Message;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReSubscriber"/> class.
+    /// </summary>
+    public ReSubscriber(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        int msgParamCumulativeMonths,
+        bool msgParamShouldShareStreak,
+        int msgParamStreakMonths,
+        SubscriptionPlan msgParamSubPlan, 
+        string msgParamSubPlanName, 
+        string resubMessage)
+       : base(badgeInfo,
+           badges,
+           hexColor,
+           displayMame,
+           emotes,
+           id,
+           login,
+           isModerator,
+           msgId, roomId,
+           isSubscriber,
+           systemMsg,
+           tmiSent,
+           isTurbo,
+           userId,
+           userType,
+           undocumentedTags)
+    {
+        MsgParamCumulativeMonths = msgParamCumulativeMonths;
+        MsgParamShouldShareStreak = msgParamShouldShareStreak;
+        MsgParamStreakMonths = msgParamStreakMonths;
+        MsgParamSubPlan = msgParamSubPlan;
+        MsgParamSubPlanName = msgParamSubPlanName;
+        ResubMessage = resubMessage;
+    }
+
     /// <inheritdoc/>
     protected override bool TrySet(KeyValuePair<string, string> tag)
     {

@@ -24,6 +24,50 @@ public class PrimePaidSubscriber : UserNoticeBase
         ResubMessage = ircMessage.Message;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Announcement"/> class.
+    /// </summary>
+    public PrimePaidSubscriber(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        SubscriptionPlan msgParamSubPlan,
+        string resubMessage)
+        : base(badgeInfo,
+            badges,
+            hexColor,
+            displayMame,
+            emotes,
+            id,
+            login,
+            isModerator,
+            msgId, roomId,
+            isSubscriber,
+            systemMsg,
+            tmiSent,
+            isTurbo,
+            userId,
+            userType,
+            undocumentedTags)
+    {
+        MsgParamSubPlan = msgParamSubPlan;
+        ResubMessage = resubMessage;
+    }
+
     /// <inheritdoc/>
     protected override bool TrySet(KeyValuePair<string, string> tag)
     {

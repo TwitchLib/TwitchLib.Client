@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models.Internal;
+﻿using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models;
 
@@ -23,6 +24,60 @@ public class StandardPayForwardParams : UserNoticeBase
     /// </summary>
     public StandardPayForwardParams(IrcMessage ircMessage) : base(ircMessage)
     {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StandardPayForwardParams"/> class.
+    /// </summary>
+    public StandardPayForwardParams(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        bool msgParamPriorGifterAnonymous, 
+        string msgParamPriorGifterDisplayName,
+        long msgParamPriorGifterId, 
+        string msgParamPriorGifterUserName,
+        string? msgParamRecipientDisplayName,
+        long? msgParamRecipientId,
+        string? msgParamRecipientUserName)
+       : base(badgeInfo,
+           badges,
+           hexColor,
+           displayMame,
+           emotes,
+           id,
+           login,
+           isModerator,
+           msgId, roomId,
+           isSubscriber,
+           systemMsg,
+           tmiSent,
+           isTurbo,
+           userId,
+           userType,
+           undocumentedTags)
+    {
+        MsgParamPriorGifterAnonymous = msgParamPriorGifterAnonymous;
+        MsgParamPriorGifterDisplayName = msgParamPriorGifterDisplayName;
+        MsgParamPriorGifterId = msgParamPriorGifterId;
+        MsgParamPriorGifterUserName = msgParamPriorGifterUserName;
+        MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
+        MsgParamRecipientId = msgParamRecipientId;
+        MsgParamRecipientUserName = msgParamRecipientUserName;
     }
 
     /// <inheritdoc/>
