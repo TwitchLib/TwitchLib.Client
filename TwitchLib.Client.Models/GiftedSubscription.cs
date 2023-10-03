@@ -79,7 +79,6 @@ public class GiftedSubscription : UserNoticeBase
         UserType userType,
         Dictionary<string, string>? undocumentedTags,
         Goal? msgParamGoal,
-        bool isAnonymous, 
         string msgParamMonths,
         string msgParamRecipientDisplayName,
         string msgParamRecipientId,
@@ -106,7 +105,7 @@ public class GiftedSubscription : UserNoticeBase
            undocumentedTags)
     {
         MsgParamGoal = msgParamGoal;
-        IsAnonymous = isAnonymous;
+        IsAnonymous = userId == AnonymousGifterUserId;
         MsgParamMonths = msgParamMonths;
         MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
         MsgParamRecipientId = msgParamRecipientId;

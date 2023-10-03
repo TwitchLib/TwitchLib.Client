@@ -54,7 +54,6 @@ public class CommunitySubscription : UserNoticeBase
         string userId,
         UserType userType,
         Dictionary<string, string>? undocumentedTags,
-        bool isAnonymous,
         Goal? msgParamGoal,
         string msgParamGiftTheme,
         int msgParamMassGiftCount,
@@ -78,7 +77,7 @@ public class CommunitySubscription : UserNoticeBase
             userType,
             undocumentedTags)
     {
-        IsAnonymous = isAnonymous;
+        IsAnonymous = userId == AnonymousGifterUserId;
         MsgParamGoal = msgParamGoal;
         MsgParamGiftTheme = msgParamGiftTheme;
         MsgParamMassGiftCount = msgParamMassGiftCount;
