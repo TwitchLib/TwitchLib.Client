@@ -3,7 +3,7 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models;
 
-public class StandardPayForwardParams : UserNoticeBase
+public class StandardPayForward : UserNoticeBase
 {
     public bool MsgParamPriorGifterAnonymous { get; protected set; }
 
@@ -20,16 +20,16 @@ public class StandardPayForwardParams : UserNoticeBase
     public string? MsgParamRecipientUserName { get; protected set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StandardPayForwardParams"/> class.
+    /// Initializes a new instance of the <see cref="StandardPayForward"/> class.
     /// </summary>
-    public StandardPayForwardParams(IrcMessage ircMessage) : base(ircMessage)
+    public StandardPayForward(IrcMessage ircMessage) : base(ircMessage)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StandardPayForwardParams"/> class.
+    /// Initializes a new instance of the <see cref="StandardPayForward"/> class.
     /// </summary>
-    public StandardPayForwardParams(
+    public StandardPayForward(
         List<KeyValuePair<string, string>> badgeInfo,
         List<KeyValuePair<string, string>> badges,
         string hexColor,
