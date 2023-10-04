@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
+using TwitchLib.Communication.Models;
 
 namespace TwitchLib.Client.Test
 {
@@ -12,17 +13,17 @@ namespace TwitchLib.Client.Test
         public int SendQueueLength => throw new NotImplementedException();
 
         public bool IsConnected { get; private set; }
-        public IClientOptions Options { get; set; }
+        public IClientOptions Options { get; set; } = new ClientOptions();
 
         public int WhisperQueueLength => throw new NotImplementedException();
 
-        public event AsyncEventHandler<OnConnectedEventArgs> OnConnected;
-        public event AsyncEventHandler<OnDisconnectedEventArgs> OnDisconnected;
-        public event AsyncEventHandler<OnErrorEventArgs> OnError;
-        public event AsyncEventHandler<OnFatalErrorEventArgs> OnFatality;
-        public event AsyncEventHandler<OnMessageEventArgs> OnMessage;
-        public event AsyncEventHandler<OnSendFailedEventArgs> OnSendFailed;
-        public event AsyncEventHandler<OnConnectedEventArgs> OnReconnected;
+        public event AsyncEventHandler<OnConnectedEventArgs>? OnConnected;
+        public event AsyncEventHandler<OnDisconnectedEventArgs>? OnDisconnected;
+        public event AsyncEventHandler<OnErrorEventArgs>? OnError;
+        public event AsyncEventHandler<OnFatalErrorEventArgs>? OnFatality;
+        public event AsyncEventHandler<OnMessageEventArgs>? OnMessage;
+        public event AsyncEventHandler<OnSendFailedEventArgs>? OnSendFailed;
+        public event AsyncEventHandler<OnConnectedEventArgs>? OnReconnected;
 
         public Task CloseAsync()
         {
@@ -34,20 +35,19 @@ namespace TwitchLib.Client.Test
         public void Dispose()
         { }
 
-        public void Dispose(bool waitForSendsToComplete)
-        { }
-
         public async Task<bool> OpenAsync()
         {
             IsConnected = true;
-            await OnConnected?.Invoke(this, new OnConnectedEventArgs());
+            if (OnConnected is not  null)
+                await OnConnected.Invoke(this, new OnConnectedEventArgs());
             return true;
         }
 
         public async Task<bool> ReconnectAsync()
         {
             IsConnected = true;
-            await OnReconnected?.Invoke(this, new OnConnectedEventArgs());
+            if (OnReconnected is not null)
+                await OnReconnected.Invoke(this, new OnConnectedEventArgs());
             return true;
         }
 
@@ -68,9 +68,8 @@ namespace TwitchLib.Client.Test
 
         public async Task ReceiveMessage(string message)
         {
-
-           await OnMessage?.Invoke(this, new OnMessageEventArgs(message));
-
+            if (OnMessage is not null)
+                await OnMessage.Invoke(this, new OnMessageEventArgs(message));
         }
 
         public bool SendWhisper(string data)

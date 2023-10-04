@@ -11,7 +11,7 @@ public class CommandInfoTest
     [InlineData("! command")]
     public void ParsingFailAndReturnNull(string s)
     {
-        Assert.False(CommandInfo.TryParse(s, out CommandInfo commandInfo));
+        Assert.False(CommandInfo.TryParse(s, out var commandInfo));
         Assert.Null(commandInfo);
     }
 }
