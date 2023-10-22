@@ -1,209 +1,150 @@
-﻿#nullable disable
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Interfaces;
+﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
-namespace TwitchLib.Client.Models
+namespace TwitchLib.Client.Models;
+
+//SubGift
+public class GiftedSubscription : UserNoticeBase
 {
-    public class GiftedSubscription : IHexColorProperty
+    private Goal? _goal;
+
+    public Goal? MsgParamGoal { get => _goal; protected set => _goal = value; }
+
+    public bool IsAnonymous { get; }
+
+    /// <summary>
+    /// The total number of months the user has subscribed. 
+    /// </summary>
+    public string MsgParamMonths { get; protected set; } = default!;
+
+    /// <summary>
+    /// The display name of the subscription gift recipient.
+    /// </summary>
+    public string MsgParamRecipientDisplayName { get; protected set; } = default!;
+
+    /// <summary>
+    /// The user ID of the subscription gift recipient.
+    /// </summary>
+    public string MsgParamRecipientId { get; protected set; } = default!;
+
+    /// <summary>
+    /// The user name of the subscription gift recipient.
+    /// </summary>
+    public string MsgParamRecipientUserName { get; protected set; } = default!;
+
+    public int MsgParamSenderCount { get; protected set; }
+
+    /// <summary>
+    /// The type of subscription plan being used.
+    /// </summary>
+    public SubscriptionPlan MsgParamSubPlan { get; protected set; }
+
+    /// <summary>
+    /// The display name of the subscription plan. This may be a default name or one created by the channel owner.
+    /// </summary>
+    public string MsgParamSubPlanName { get; protected set; } = default!;
+
+    /// <summary>
+    /// The number of months gifted as part of a single, multi-month gift.
+    /// </summary>
+    public int MsgParamMultiMonthGiftDuration { get; protected set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GiftedSubscription"/> class.
+    /// </summary>
+    public GiftedSubscription(IrcMessage ircMessage) : base(ircMessage)
     {
-        private const string AnonymousGifterUserId = "274598607";
+        IsAnonymous = UserId == AnonymousGifterUserId;
+    }
 
-        public List<KeyValuePair<string, string>> Badges { get; }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GiftedSubscription"/> class.
+    /// </summary>
+    public GiftedSubscription(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        Goal? msgParamGoal,
+        string msgParamMonths,
+        string msgParamRecipientDisplayName,
+        string msgParamRecipientId,
+        string msgParamRecipientUserName, 
+        int msgParamSenderCount, 
+        SubscriptionPlan msgParamSubPlan, 
+        string msgParamSubPlanName, 
+        int msgParamMultiMonthGiftDuration)
+       : base(badgeInfo,
+           badges,
+           hexColor,
+           displayMame,
+           emotes,
+           id,
+           login,
+           isModerator,
+           msgId, roomId,
+           isSubscriber,
+           systemMsg,
+           tmiSent,
+           isTurbo,
+           userId,
+           userType,
+           undocumentedTags)
+    {
+        MsgParamGoal = msgParamGoal;
+        IsAnonymous = userId == AnonymousGifterUserId;
+        MsgParamMonths = msgParamMonths;
+        MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
+        MsgParamRecipientId = msgParamRecipientId;
+        MsgParamRecipientUserName = msgParamRecipientUserName;
+        MsgParamSenderCount = msgParamSenderCount;
+        MsgParamSubPlan = msgParamSubPlan;
+        MsgParamSubPlanName = msgParamSubPlanName;
+        MsgParamMultiMonthGiftDuration = msgParamMultiMonthGiftDuration;
+    }
 
-        public List<KeyValuePair<string, string>> BadgeInfo { get; }
-
-        /// <inheritdoc/>
-        public string HexColor { get; }
-
-        public string DisplayName { get; }
-
-        public string Emotes { get; }
-
-        public string Id { get; }
-
-        public bool IsModerator { get; }
-
-        public bool IsSubscriber { get; }
-
-        public bool IsTurbo { get; }
-
-        public bool IsAnonymous { get; }
-
-        public string Login { get; }
-
-        public string MsgId { get; }
-
-        public string MsgParamMonths { get; }
-
-        public string MsgParamRecipientDisplayName { get; }
-
-        public string MsgParamRecipientId { get; }
-
-        public string MsgParamRecipientUserName { get; }
-
-        public string MsgParamSubPlanName { get; }
-
-        public SubscriptionPlan MsgParamSubPlan { get; }
-
-        public string RoomId { get; }
-
-        public string SystemMsg { get; }
-
-        public string SystemMsgParsed { get; }
-
-        public DateTimeOffset TmiSent { get; }
-
-        public string UserId { get; }
-
-        public UserType UserType { get; }
-
-        public string MsgParamMultiMonthGiftDuration { get; }
-
-        /// <summary>
-        /// Contains undocumented tags.
-        /// </summary>
-        public Dictionary<string, string>? UndocumentedTags { get; }
-
-        public GiftedSubscription(IrcMessage ircMessage)
+    /// <inheritdoc/>
+    protected override bool TrySet(KeyValuePair<string, string> tag)
+    {
+        switch (tag.Key)
         {
-            foreach (var tag in ircMessage.Tags)
-            {
-                var tagValue = tag.Value;
-                switch (tag.Key)
-                {
-                    case Tags.Badges:
-                        Badges = TagHelper.ToBadges(tagValue);
-                        break;
-                    case Tags.BadgeInfo:
-                        BadgeInfo = TagHelper.ToBadges(tagValue);
-                        break;
-                    case Tags.Color:
-                        HexColor = tagValue;
-                        break;
-                    case Tags.DisplayName:
-                        DisplayName = tagValue;
-                        break;
-                    case Tags.Emotes:
-                        Emotes = tagValue;
-                        break;
-                    case Tags.Id:
-                        Id = tagValue;
-                        break;
-                    case Tags.Login:
-                        Login = tagValue;
-                        break;
-                    case Tags.Mod:
-                        IsModerator = TagHelper.ToBool(tagValue);
-                        break;
-                    case Tags.MsgId:
-                        MsgId = tagValue;
-                        break;
-                    case Tags.MsgParamMonths:
-                        MsgParamMonths = tagValue;
-                        break;
-                    case Tags.MsgParamRecipientDisplayname:
-                        MsgParamRecipientDisplayName = tagValue;
-                        break;
-                    case Tags.MsgParamRecipientId:
-                        MsgParamRecipientId = tagValue;
-                        break;
-                    case Tags.MsgParamRecipientUsername:
-                        MsgParamRecipientUserName = tagValue;
-                        break;
-                    case Tags.MsgParamSubPlanName:
-                        MsgParamSubPlanName = tagValue;
-                        break;
-                    case Tags.MsgParamSubPlan:
-                        MsgParamSubPlan = TagHelper.ToSubscriptionPlan(tag.Value);
-                        break;
-                    case Tags.RoomId:
-                        RoomId = tagValue;
-                        break;
-                    case Tags.Subscriber:
-                        IsSubscriber = TagHelper.ToBool(tagValue);
-                        break;
-                    case Tags.SystemMsg:
-                        SystemMsg = tagValue;
-                        SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
-                        break;
-                    case Tags.TmiSentTs:
-                        TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
-                        break;
-                    case Tags.Turbo:
-                        IsTurbo = TagHelper.ToBool(tagValue);
-                        break;
-                    case Tags.UserId:
-                        UserId = tagValue;
-                        if (UserId == AnonymousGifterUserId)
-                        {
-                            IsAnonymous = true;
-                        }
-                        break;
-                    case Tags.UserType:
-                        UserType = TagHelper.ToUserType(tag.Value);
-                        break;
-                    case Tags.MsgParamMultiMonthGiftDuration:
-                        MsgParamMultiMonthGiftDuration = tagValue;
-                        break;
-                    default:
-                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
-                        break;
-                }
-            }
+            case Tags.MsgParamMonths:
+                MsgParamMonths = tag.Value;
+                break;
+            case Tags.MsgParamRecipientDisplayname:
+                MsgParamRecipientDisplayName = tag.Value;
+                break;
+            case Tags.MsgParamRecipientId:
+                MsgParamRecipientId = tag.Value;
+                break;
+            case Tags.MsgParamRecipientUsername:
+                MsgParamRecipientUserName = tag.Value;
+                break;
+            case Tags.MsgParamSubPlanName:
+                MsgParamSubPlanName = tag.Value;
+                break;
+            case Tags.MsgParamSubPlan:
+                MsgParamSubPlan = TagHelper.ToSubscriptionPlan(tag.Value);
+                break;
+            case Tags.MsgParamMultiMonthGiftDuration:
+                MsgParamMultiMonthGiftDuration = int.Parse(tag.Value);
+                break;
+            default:
+                return Goal.TrySetTag(ref _goal, tag);
         }
-
-        public GiftedSubscription(
-            List<KeyValuePair<string, string>> badges,
-            List<KeyValuePair<string, string>> badgeInfo,
-            string hexColor,
-            string displayName,
-            string emotes,
-            string id,
-            string login,
-            bool isModerator,
-            string msgId,
-            string msgParamMonths,
-            string msgParamRecipientDisplayName,
-            string msgParamRecipientId,
-            string msgParamRecipientUserName,
-            string msgParamSubPlanName,
-            string msgMultiMonthDuration,
-            SubscriptionPlan msgParamSubPlan,
-            string roomId,
-            bool isSubscriber,
-            string systemMsg,
-            string systemMsgParsed,
-            DateTimeOffset tmiSent,
-            bool isTurbo,
-            UserType userType,
-            string userId)
-        {
-            Badges = badges;
-            BadgeInfo = badgeInfo;
-            HexColor = hexColor;
-            DisplayName = displayName;
-            Emotes = emotes;
-            Id = id;
-            Login = login;
-            IsModerator = isModerator;
-            MsgId = msgId;
-            MsgParamMonths = msgParamMonths;
-            MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
-            MsgParamRecipientId = msgParamRecipientId;
-            MsgParamRecipientUserName = msgParamRecipientUserName;
-            MsgParamSubPlanName = msgParamSubPlanName;
-            MsgParamSubPlan = msgParamSubPlan;
-            MsgParamMultiMonthGiftDuration = msgMultiMonthDuration;
-            RoomId = roomId;
-            IsSubscriber = isSubscriber;
-            SystemMsg = systemMsg;
-            SystemMsgParsed = systemMsgParsed;
-            TmiSent = tmiSent;
-            IsTurbo = isTurbo;
-            UserType = userType;
-            UserId = userId;
-        }
+        return true;
     }
 }

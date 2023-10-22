@@ -7,6 +7,9 @@ namespace TwitchLib.Client.Models
     /// <summary>Class represents ChatMessage in a Twitch channel.</summary>
     public class ChatMessage : TwitchLibMessage
     {
+        readonly ChatReply? _chatReply;
+        readonly HypeChat? _hypeChat;
+
         protected readonly MessageEmoteCollection? _emoteCollection;
 
         /// <summary>Information associated with badges. Not all badges will be in this list. Use carefully.</summary>
@@ -79,10 +82,10 @@ namespace TwitchLib.Client.Models
         public DateTimeOffset TmiSent { get; }
 
         /// <summary>Chat reply information. Will be null if it is not a reply.</summary>
-        public ChatReply? ChatReply { get; }
+        public ChatReply? ChatReply => _chatReply;
 
         /// <summary>Hype Chat information.</summary>
-        public HypeChat? HypeChat { get; }
+        public HypeChat? HypeChat => _hypeChat;
 
         //Example IRC message: @badges=moderator/1,warcraft/alliance;color=;display-name=Swiftyspiffyv4;emotes=;mod=1;room-id=40876073;subscriber=0;turbo=0;user-id=103325214;user-type=mod :swiftyspiffyv4!swiftyspiffyv4@swiftyspiffyv4.tmi.twitch.tv PRIVMSG #swiftyspiffy :asd
         /// <summary>Constructor for ChatMessage object.</summary>
@@ -207,49 +210,6 @@ namespace TwitchLib.Client.Models
                     case Tags.Noisy:
                         Noisy = TagHelper.ToBool(tagValue) ? Noisy.True : Noisy.False;
                         break;
-                    case Tags.PinnedChatPaidAmount:
-                        (HypeChat ??= new()).Amount = int.Parse(tagValue);
-                        break;
-                    case Tags.PinnedChatPaidCurrency:
-                        (HypeChat ??= new()).Currency = tagValue;
-                        break;
-                    case Tags.PinnedChatPaidExponent:
-                        (HypeChat ??= new()).Exponent = int.Parse(tagValue);
-                        break;
-                    case Tags.PinnedChatPaidLevel:
-                        (HypeChat ??= new()).Level = Enum.TryParse<PaidLevel>(tagValue, true, out var val)
-                            ? val 
-                            : throw new ArgumentException($"Requested value '{tagValue}' was not found.");
-                        break;
-                    case Tags.PinnedChatPaidIsSystemMessage:
-                        (HypeChat ??= new()).IsSystemMessage = TagHelper.ToBool(tagValue);
-                        break;
-                    case Tags.ReplyParentDisplayName:
-                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
-                        ChatReply.ParentDisplayName = tagValue;
-                        break;
-                    case Tags.ReplyParentMsgBody:
-                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
-                        ChatReply.ParentMsgBody = tagValue;
-                        break;
-                    case Tags.ReplyParentMsgId:
-                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
-                        ChatReply.ParentMsgId = tagValue;
-                        break;
-                    case Tags.ReplyParentUserId:
-                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
-                        ChatReply.ParentUserId = tagValue;
-                        break;
-                    case Tags.ReplyParentUserLogin:
-                        ChatReply ??= new ChatReply(); // ChatReply is null if not reply
-                        ChatReply.ParentUserLogin = tagValue;
-                        break;
-                    case Tags.ReplyThreadParentMsgId:
-                        (ChatReply ??= new()).ThreadParentMsgId = tagValue;
-                        break;
-                    case Tags.ReplyThreadParentUserLogin:
-                        (ChatReply ??= new()).ThreadParentUserLogin = tagValue;
-                        break;
                     case Tags.RoomId:
                         RoomId = tagValue;
                         break;
@@ -270,7 +230,8 @@ namespace TwitchLib.Client.Models
                         UserType = TagHelper.ToUserType(tagValue);
                         break;
                     default:
-                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
+                        if (!(ChatReply.TrySetTag(ref _chatReply, tag) || HypeChat.TrySetTag(ref _hypeChat, tag)))
+                            (UndocumentedTags = new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }

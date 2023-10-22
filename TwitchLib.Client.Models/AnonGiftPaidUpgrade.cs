@@ -3,31 +3,29 @@ using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models;
 
-public class PrimePaidSubscriber : UserNoticeBase
+public class AnonGiftPaidUpgrade : UserNoticeBase
 {
     /// <summary>
-    /// The type of subscription plan being used.
+    /// The number of gifts the gifter has given during the promo indicated by <see cref="MsgParamPromoName"/>.
     /// </summary>
-    public SubscriptionPlan MsgParamSubPlan { get; protected set; }
+    public int MsgParamPromoGiftTotal { get; protected set; }
 
     /// <summary>
-    /// Property representing system message.
+    /// The subscriptions promo, if any, that is ongoing (for example, Subtember 2018).
     /// </summary>
-    public string ResubMessage { get; }
+    public string MsgParamPromoName { get; protected set; } = default!;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Announcement"/> class.
+    /// Initializes a new instance of the <see cref="AnonGiftPaidUpgrade"/> class.
     /// </summary>
-    /// <param name="ircMessage">The IRC message from Twitch to be processed.</param>
-    public PrimePaidSubscriber(IrcMessage ircMessage) : base(ircMessage)
+    public AnonGiftPaidUpgrade(IrcMessage ircMessage) : base(ircMessage)
     {
-        ResubMessage = ircMessage.Message;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Announcement"/> class.
+    /// Initializes a new instance of the <see cref="AnonGiftPaidUpgrade"/> class.
     /// </summary>
-    public PrimePaidSubscriber(
+    public AnonGiftPaidUpgrade(
         List<KeyValuePair<string, string>> badgeInfo,
         List<KeyValuePair<string, string>> badges,
         string hexColor,
@@ -45,8 +43,8 @@ public class PrimePaidSubscriber : UserNoticeBase
         string userId,
         UserType userType,
         Dictionary<string, string>? undocumentedTags,
-        SubscriptionPlan msgParamSubPlan,
-        string resubMessage)
+        int msgParamPromoGiftTotal,
+        string msgParamPromoName)
         : base(badgeInfo,
             badges,
             hexColor,
@@ -64,8 +62,8 @@ public class PrimePaidSubscriber : UserNoticeBase
             userType,
             undocumentedTags)
     {
-        MsgParamSubPlan = msgParamSubPlan;
-        ResubMessage = resubMessage;
+        MsgParamPromoGiftTotal = msgParamPromoGiftTotal;
+        MsgParamPromoName = msgParamPromoName;
     }
 
     /// <inheritdoc/>
@@ -73,8 +71,11 @@ public class PrimePaidSubscriber : UserNoticeBase
     {
         switch (tag.Key)
         {
-            case Tags.MsgParamSubPlan:
-                MsgParamSubPlan = TagHelper.ToSubscriptionPlan(tag.Value);
+            case Tags.MsgParamPromoGiftTotal:
+                MsgParamPromoGiftTotal = int.Parse(tag.Value);
+                break;
+            case Tags.MsgParamPromoName:
+                MsgParamPromoName = tag.Value;
                 break;
             default:
                 return false;

@@ -29,7 +29,17 @@ namespace TwitchLib.Client.Models.Internal
         public const string MsgParamDisplayname = "msg-param-displayName";                      // Sent only on raid
         public const string MsgParamLogin = "msg-param-login";                                  // Sent only on raid
         public const string MsgParamCumulativeMonths = "msg-param-cumulative-months";           // Sent only on sub, resub
+        public const string MsgParamGiftTheme = "msg-param-gift-theme";
+        public const string MsgParamGoalContributionType = "msg-param-goal-contribution-type";
+        public const string MsgParamGoalCurrentContributions = "msg-param-goal-current-contributions";
+        public const string MsgParamGoalDescription = "msg-param-goal-description";
+        public const string MsgParamGoalTargetContributions = "msg-param-goal-target-contributions";
+        public const string MsgParamGoalUserContributions = "msg-param-goal-user-contributions";
         public const string MsgParamMonths = "msg-param-months";                                // Sent only on subgift, anonsubgift
+        public const string MsgParamPriorGifterAnonymous = "msg-param-prior-gifter-anonymous";
+        public const string MsgParamPriorGifterDisplayName = "msg-param-prior-gifter-display-name";
+        public const string MsgParamPriorGifterId = "msg-param-prior-gifter-id";
+        public const string MsgParamPriorGifterUserName = "msg-param-prior-gifter-user-name";
         public const string MsgParamPromoGiftTotal = "msg-param-promo-gift-total";              // Sent only on anongiftpaidupgrade, giftpaidupgrade
         public const string MsgParamPromoName = "msg-param-promo-name";                         // Sent only on anongiftpaidupgrade, giftpaidupgrade
         public const string MsgParamShouldShareStreak = "msg-param-should-share-streak";        // Sent only on sub, resub

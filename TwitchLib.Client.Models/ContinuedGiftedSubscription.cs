@@ -1,124 +1,107 @@
-﻿#nullable disable
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Interfaces;
+﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
-namespace TwitchLib.Client.Models
+namespace TwitchLib.Client.Models;
+
+// giftpaidupgrade
+public class ContinuedGiftedSubscription : UserNoticeBase
 {
-    public class ContinuedGiftedSubscription : IHexColorProperty
+    /// <summary>
+    /// The number of gifts the gifter has given during the promo indicated by <see cref="MsgParamPromoName"/>.
+    /// </summary>
+    public int MsgParamPromoGiftTotal { get; protected set; }
+
+    /// <summary>
+    /// The subscriptions promo, if any, that is ongoing (for example, Subtember 2018).
+    /// </summary>
+    public string MsgParamPromoName { get; protected set; } = default!;
+
+    /// <summary>
+    /// The login name of the user who gifted the subscription.
+    /// </summary>
+    public string MsgParamSenderLogin { get; protected set; } = default!;
+
+    /// <summary>
+    /// The display name of the user who gifted the subscription.
+    /// </summary>
+    public string MsgParamSenderName { get; protected set; } = default!;
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ContinuedGiftedSubscription"/> class.
+    /// </summary>
+    public ContinuedGiftedSubscription(IrcMessage ircMessage) : base(ircMessage)
     {
-        //@badge-info=subscriber/11;badges=subscriber/9;color=#DAA520;display-name=Varanid;emotes=;flags=;id=a2d384c1-c30a-409e-8001-9e7d8f9c784d;login=varanid;mod=0;msg-id=giftpaidupgrade;msg-param-sender-login=cletusbueford;msg-param-sender-name=CletusBueford;room-id=44338537;subscriber=1;system-msg=Varanid\sis\scontinuing\sthe\sGift\sSub\sthey\sgot\sfrom\sCletusBueford!;tmi-sent-ts=1612497386372;user-id=67505836;user-type= :tmi.twitch.tv USERNOTICE #burkeblack 
+    }
 
-        public List<KeyValuePair<string, string>> Badges { get; }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ContinuedGiftedSubscription"/> class.
+    /// </summary>
+    public ContinuedGiftedSubscription(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        int msgParamPromoGiftTotal,
+        string msgParamPromoName,
+        string msgParamSenderLogin,
+        string msgParamSenderName)
+        : base(badgeInfo,
+            badges,
+            hexColor,
+            displayMame,
+            emotes,
+            id,
+            login,
+            isModerator,
+            msgId, roomId,
+            isSubscriber,
+            systemMsg,
+            tmiSent,
+            isTurbo,
+            userId,
+            userType,
+            undocumentedTags)
+    {
+        MsgParamPromoGiftTotal = msgParamPromoGiftTotal;
+        MsgParamPromoName = msgParamPromoName;
+        MsgParamSenderLogin = msgParamSenderLogin;
+        MsgParamSenderName = msgParamSenderName;
+    }
 
-        public List<KeyValuePair<string, string>> BadgeInfo { get; }
-
-
-        /// <inheritdoc/>
-        public string HexColor { get; }
-
-        public string DisplayName { get; }
-
-        public string Emotes { get; }
-
-        public string Flags { get; }
-
-        public string Id { get; }
-
-        public string Login { get; }
-
-        public bool IsModerator { get; }
-
-        public string MsgId { get; }
-
-        public string MsgParamSenderLogin { get; }
-
-        public string MsgParamSenderName { get; }
-
-        public string RoomId { get; }
-
-        public bool IsSubscriber { get; }
-
-        public string SystemMsg { get; }
-
-        public DateTimeOffset TmiSent { get; }
-
-        public string UserId { get; }
-
-        public UserType UserType { get; }
-
-        /// <summary>
-        /// Contains undocumented tags.
-        /// </summary>
-        public Dictionary<string, string>? UndocumentedTags { get; }
-
-        public ContinuedGiftedSubscription(IrcMessage ircMessage)
+    /// <inheritdoc/>
+    protected override bool TrySet(KeyValuePair<string, string> tag)
+    {
+        switch (tag.Key)
         {
-            foreach (var tag in ircMessage.Tags)
-            {
-                var tagValue = tag.Value;
-                switch (tag.Key)
-                {
-                    case Tags.SystemMsg:
-                        SystemMsg = tagValue;
-                        break;
-                    case Tags.Flags:
-                        Flags = tagValue;
-                        break;
-                    case Tags.MsgParamSenderLogin:
-                        MsgParamSenderLogin = tagValue;
-                        break;
-                    case Tags.MsgParamSenderName:
-                        MsgParamSenderName = tagValue;
-                        break;
-                    case Tags.Badges:
-                        Badges = TagHelper.ToBadges(tagValue);
-                        break;
-                    case Tags.BadgeInfo:
-                        BadgeInfo = TagHelper.ToBadges(tagValue);
-                        break;
-                    case Tags.Color:
-                        HexColor = tagValue;
-                        break;
-                    case Tags.DisplayName:
-                        DisplayName = tagValue;
-                        break;
-                    case Tags.Emotes:
-                        Emotes = tagValue;
-                        break;
-                    case Tags.Id:
-                        Id = tagValue;
-                        break;
-                    case Tags.Login:
-                        Login = tagValue;
-                        break;
-                    case Tags.Mod:
-                        IsModerator = TagHelper.ToBool(tagValue);
-                        break;
-                    case Tags.MsgId:
-                        MsgId = tagValue;
-                        break;
-                    case Tags.RoomId:
-                        RoomId = tagValue;
-                        break;
-                    case Tags.Subscriber:
-                        IsSubscriber = TagHelper.ToBool(tagValue);
-                        break;
-                    case Tags.TmiSentTs:
-                        TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
-                        break;
-                    case Tags.UserId:
-                        UserId = tagValue;
-                        break;
-                    case Tags.UserType:
-                        UserType = TagHelper.ToUserType(tag.Value);
-                        break;
-                    default:
-                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
-                        break;
-                }
-            }
+            case Tags.MsgParamPromoGiftTotal:
+                MsgParamPromoGiftTotal = int.Parse(tag.Value);
+                break;
+            case Tags.MsgParamPromoName:
+                MsgParamPromoName = tag.Value;
+                break;
+            case Tags.MsgParamSenderLogin:
+                MsgParamSenderLogin = tag.Value;
+                break;
+            case Tags.MsgParamSenderName:
+                MsgParamSenderName = tag.Value;
+                break;
+            default:
+                return false;
         }
+        return true;
     }
 }

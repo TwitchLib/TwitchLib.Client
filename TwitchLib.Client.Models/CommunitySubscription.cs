@@ -1,122 +1,111 @@
-﻿#nullable disable
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-using TwitchLib.Client.Enums;
-using TwitchLib.Client.Models.Interfaces;
+﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
-namespace TwitchLib.Client.Models
+namespace TwitchLib.Client.Models;
+
+//submysterygift
+public class CommunitySubscription : UserNoticeBase
 {
-    public class CommunitySubscription : IHexColorProperty
+    private Goal? _goal;
+
+    public bool IsAnonymous { get; }
+
+    public Goal? MsgParamGoal { get => _goal; protected set => _goal = value; }
+
+    public string MsgParamGiftTheme { get; protected set; } = default!;
+
+    public int MsgParamMassGiftCount { get; protected set; }
+
+    public string MsgParamOriginId { get; protected set; } = default!;
+
+    public int MsgParamSenderCount { get; protected set; }
+
+    /// <summary>
+    /// The type of subscription plan being used.
+    /// </summary>
+    public SubscriptionPlan MsgParamSubPlan { get; protected set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommunitySubscription"/> class.
+    /// </summary>
+    public CommunitySubscription(IrcMessage ircMessage) : base(ircMessage)
     {
-        private const string AnonymousGifterUserId = "274598607";
+        IsAnonymous = UserId == AnonymousGifterUserId;
+    }
 
-        public List<KeyValuePair<string, string>> Badges;
-        public List<KeyValuePair<string, string>> BadgeInfo;
-        
-        /// <inheritdoc/>
-        public string HexColor { get; }
-        public string DisplayName;
-        public string Emotes;
-        public string Id;
-        public string Login;
-        public bool IsModerator;
-        public bool IsAnonymous;
-        public string MsgId;
-        public int MsgParamMassGiftCount;
-        public int MsgParamSenderCount;
-        public SubscriptionPlan MsgParamSubPlan;
-        public string RoomId;
-        public bool IsSubscriber;
-        public string SystemMsg;
-        public string SystemMsgParsed;
-        public DateTimeOffset TmiSent;
-        public bool IsTurbo;
-        public string UserId;
-        public UserType UserType;
-        public string MsgParamMultiMonthGiftDuration;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommunitySubscription"/> class.
+    /// </summary>
+    public CommunitySubscription(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        Goal? msgParamGoal,
+        string msgParamGiftTheme,
+        int msgParamMassGiftCount,
+        string msgParamOriginId, 
+        int msgParamSenderCount,
+        SubscriptionPlan msgParamSubPlan)
+        : base(badgeInfo,
+            badges,
+            hexColor,
+            displayMame,
+            emotes,
+            id,
+            login,
+            isModerator,
+            msgId, roomId,
+            isSubscriber,
+            systemMsg,
+            tmiSent,
+            isTurbo,
+            userId,
+            userType,
+            undocumentedTags)
+    {
+        IsAnonymous = userId == AnonymousGifterUserId;
+        MsgParamGoal = msgParamGoal;
+        MsgParamGiftTheme = msgParamGiftTheme;
+        MsgParamMassGiftCount = msgParamMassGiftCount;
+        MsgParamOriginId = msgParamOriginId;
+        MsgParamSenderCount = msgParamSenderCount;
+        MsgParamSubPlan = msgParamSubPlan;
+    }
 
-        /// <summary>
-        /// Contains undocumented tags.
-        /// </summary>
-        public Dictionary<string, string>? UndocumentedTags { get; }
-
-        public CommunitySubscription(IrcMessage ircMessage)
+    /// <inheritdoc/>
+    protected override bool TrySet(KeyValuePair<string, string> tag)
+    {
+        switch (tag.Key)
         {
-            foreach (var tag in ircMessage.Tags)
-            {
-                var (tagKey, tagValue) = (tag.Key, tag.Value);
-                switch (tagKey)
-                {
-                    case Tags.Badges:
-                        Badges = TagHelper.ToBadges(tagValue);
-                        break;
-                    case Tags.BadgeInfo:
-                        BadgeInfo = TagHelper.ToBadges(tagValue);
-                        break;
-                    case Tags.Color:
-                        HexColor = tagValue;
-                        break;
-                    case Tags.DisplayName:
-                        DisplayName = tagValue;
-                        break;
-                    case Tags.Emotes:
-                        Emotes = tagValue;
-                        break;
-                    case Tags.Id:
-                        Id = tagValue;
-                        break;
-                    case Tags.Login:
-                        Login = tagValue;
-                        break;
-                    case Tags.Mod:
-                        IsModerator = TagHelper.ToBool(tagValue);
-                        break;
-                    case Tags.MsgId:
-                        MsgId = tagValue;
-                        break;
-                    case Tags.MsgParamSubPlan:
-                        MsgParamSubPlan  = TagHelper.ToSubscriptionPlan(tag.Value);
-                        break;
-                    case Tags.MsgParamMassGiftCount:
-                        MsgParamMassGiftCount = int.Parse(tag.Value);
-                        break;
-                    case Tags.MsgParamSenderCount:
-                        MsgParamSenderCount = int.Parse(tag.Value);
-                        break;
-                    case Tags.RoomId:
-                        RoomId = tagValue;
-                        break;
-                    case Tags.Subscriber:
-                        IsSubscriber = TagHelper.ToBool(tagValue);
-                        break;
-                    case Tags.SystemMsg:
-                        SystemMsg = tagValue;
-                        SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
-                        break;
-                    case Tags.TmiSentTs:
-                        TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
-                        break;
-                    case Tags.Turbo:
-                        IsTurbo = TagHelper.ToBool(tagValue);
-                        break;
-                    case Tags.UserId:
-                        UserId = tagValue;
-                        if(UserId == AnonymousGifterUserId)
-                        {
-                            IsAnonymous = true;
-                        }
-                        break;
-                    case Tags.UserType:
-                        UserType = TagHelper.ToUserType(tag.Value);
-                        break;
-                    case Tags.MsgParamMultiMonthGiftDuration:
-                        MsgParamMultiMonthGiftDuration = tagValue;
-                        break;
-                    default:
-                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
-                        break;
-                }
-            }
+            case Tags.MsgParamGiftTheme:
+                MsgParamGiftTheme = tag.Value;
+                break;
+            case Tags.MsgParamMassGiftCount:
+                MsgParamMassGiftCount = int.Parse(tag.Value);
+                break;
+            case Tags.MsgParamSenderCount:
+                MsgParamSenderCount = int.Parse(tag.Value);
+                break;
+            case Tags.MsgParamSubPlan:
+                MsgParamSubPlan = TagHelper.ToSubscriptionPlan(tag.Value);
+                break;
+            default:
+                return Goal.TrySetTag(ref _goal, tag);
         }
+        return true;
     }
 }

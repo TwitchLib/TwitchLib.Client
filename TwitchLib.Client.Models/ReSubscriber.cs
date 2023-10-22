@@ -1,72 +1,120 @@
 ﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
-namespace TwitchLib.Client.Models
+namespace TwitchLib.Client.Models;
+
+public class ReSubscriber : UserNoticeBase
 {
-    public class ReSubscriber : SubscriberBase
+    /// <summary>
+    /// The total number of months the user has subscribed.
+    /// </summary>
+    public int MsgParamCumulativeMonths { get; protected set; }
+
+    /// <summary>
+    /// A Boolean value that indicates whether the user wants their streaks shared.
+    /// </summary>
+    public bool MsgParamShouldShareStreak { get; protected set; }
+
+    /// <summary>
+    /// The number of consecutive months the user has subscribed.
+    /// </summary>
+    public int MsgParamStreakMonths { get; protected set; }
+
+    /// <summary>
+    /// The type of subscription plan being used.
+    /// </summary>
+    public SubscriptionPlan MsgParamSubPlan { get; protected set; }
+
+    /// <summary>
+    /// The display name of the subscription plan. This may be a default name or one created by the channel owner.
+    /// </summary>
+    public string MsgParamSubPlanName { get; protected set; } = default!;
+
+    public string ResubMessage { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReSubscriber"/> class.
+    /// </summary>
+    public ReSubscriber(IrcMessage ircMessage) : base(ircMessage)
     {
-        public int Months => monthsInternal;
+        ResubMessage = ircMessage.Message;
+    }
 
-        public ReSubscriber(IrcMessage ircMessage) : base(ircMessage)
-        {
-        }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReSubscriber"/> class.
+    /// </summary>
+    public ReSubscriber(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayMame,
+        string emotes,
+        string id,
+        string login,
+        bool isModerator,
+        string msgId,
+        string roomId,
+        bool isSubscriber,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        bool isTurbo,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        int msgParamCumulativeMonths,
+        bool msgParamShouldShareStreak,
+        int msgParamStreakMonths,
+        SubscriptionPlan msgParamSubPlan, 
+        string msgParamSubPlanName, 
+        string resubMessage)
+       : base(badgeInfo,
+           badges,
+           hexColor,
+           displayMame,
+           emotes,
+           id,
+           login,
+           isModerator,
+           msgId, roomId,
+           isSubscriber,
+           systemMsg,
+           tmiSent,
+           isTurbo,
+           userId,
+           userType,
+           undocumentedTags)
+    {
+        MsgParamCumulativeMonths = msgParamCumulativeMonths;
+        MsgParamShouldShareStreak = msgParamShouldShareStreak;
+        MsgParamStreakMonths = msgParamStreakMonths;
+        MsgParamSubPlan = msgParamSubPlan;
+        MsgParamSubPlanName = msgParamSubPlanName;
+        ResubMessage = resubMessage;
+    }
 
-        public ReSubscriber(
-            List<KeyValuePair<string, string>> badges,
-            List<KeyValuePair<string, string>> badgeInfo,
-            string hexColor,
-            string displayName,
-            string emoteSet,
-            string id,
-            string login,
-            string systemMessage,
-            string msgId,
-            string msgParamCumulativeMonths,
-            string msgParamStreakMonths,
-            bool msgParamShouldShareStreak,
-            string systemMessageParsed,
-            string resubMessage,
-            SubscriptionPlan subscriptionPlan,
-            string subscriptionPlanName,
-            string roomId,
-            string userId,
-            bool isModerator,
-            bool isTurbo,
-            bool isSubscriber,
-            bool isPartner,
-            DateTimeOffset tmiSent,
-            UserType userType,
-            string rawIrc,
-            string channel,
-            int months = 0)
-            : base(badges,
-                  badgeInfo,
-                  hexColor,
-                  displayName,
-                  emoteSet,
-                  id,
-                  login,
-                  systemMessage,
-                  msgId,
-                  msgParamCumulativeMonths,
-                  msgParamStreakMonths,
-                  msgParamShouldShareStreak,
-                  systemMessageParsed,
-                  resubMessage,
-                  subscriptionPlan,
-                  subscriptionPlanName,
-                  roomId,
-                  userId,
-                  isModerator,
-                  isTurbo,
-                  isSubscriber,
-                  isPartner,
-                  tmiSent,
-                  userType,
-                  rawIrc,
-                  channel,
-                  months)
+    /// <inheritdoc/>
+    protected override bool TrySet(KeyValuePair<string, string> tag)
+    {
+        switch (tag.Key)
         {
+            case Tags.MsgParamCumulativeMonths:
+                MsgParamCumulativeMonths = int.Parse(tag.Value);
+                break;
+            case Tags.MsgParamShouldShareStreak:
+                MsgParamShouldShareStreak = TagHelper.ToBool(tag.Value);
+                break;
+            case Tags.MsgParamStreakMonths:
+                MsgParamStreakMonths = int.Parse(tag.Value);
+                break;
+            case Tags.MsgParamSubPlan:
+                MsgParamSubPlan = TagHelper.ToSubscriptionPlan(tag.Value);
+                break;
+            case Tags.MsgParamSubPlanName:
+                MsgParamSubPlanName = tag.Value;
+                break;
+            default:
+                return false;
         }
+        return true;
     }
 }
