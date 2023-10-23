@@ -982,7 +982,17 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private Task HandleJoin(IrcMessage ircMessage)
         {
-            return OnUserJoined.TryInvoke(this, new(ircMessage.Channel, ircMessage.User));
+            if (string.Equals(TwitchUsername, ircMessage.User, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var channel = _awaitingJoins.Find(x => x.Key == ircMessage.Channel);
+                _awaitingJoins.Remove(channel);
+
+                return OnJoinedChannel.TryInvoke(this, new(ircMessage.Channel, TwitchUsername));
+            }
+            else 
+            {
+                return OnUserJoined.TryInvoke(this, new(ircMessage.Channel, ircMessage.User));
+            } 
         }
 
         /// <summary>
@@ -1106,18 +1116,9 @@ namespace TwitchLib.Client
         /// Handles the state of the room.
         /// </summary>
         /// <param name="ircMessage">The irc message.</param>
-        private async Task HandleRoomState(IrcMessage ircMessage)
+        private Task HandleRoomState(IrcMessage ircMessage)
         {
-            // If ROOMSTATE is sent because a mode (subonly/slow/emote/etc) is being toggled, it has two tags: room-id, and the specific mode being toggled
-            // If ROOMSTATE is sent because of a join confirmation, all tags (ie greater than 2) are sent
-            if (ircMessage.Tags.Count > 2)
-            {
-                var channel = _awaitingJoins.Find(x => x.Key == ircMessage.Channel);
-                _awaitingJoins.Remove(channel);
-
-                await OnJoinedChannel.TryInvoke(this, new(ircMessage.Channel, TwitchUsername));
-            }
-            await OnChannelStateChanged.TryInvoke(this, new(ircMessage.Channel, new ChannelState(ircMessage)));
+            return OnChannelStateChanged.TryInvoke(this, new(ircMessage.Channel, new ChannelState(ircMessage)));
         }
 
         /// <summary>
