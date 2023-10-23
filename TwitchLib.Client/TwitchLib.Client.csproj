@@ -4,6 +4,7 @@
     <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net7.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Features>strict</Features>
+    <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <PackageId>TwitchLib.Client</PackageId>
     <VersionPrefix>4.0.0</VersionPrefix>

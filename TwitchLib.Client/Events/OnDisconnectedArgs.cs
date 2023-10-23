@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TwitchLib.Client.Events
+﻿namespace TwitchLib.Client.Events
 {
     /// <summary>
     /// Args representing client disconnect event.
@@ -13,6 +11,14 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Username of the bot that was disconnected.
         /// </summary>
-        public string BotUsername;
+        public string BotUsername { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnDisconnectedArgs"/> class.
+        /// </summary>
+        public OnDisconnectedArgs(string botUsername)
+        {
+            BotUsername = botUsername;
+        }
     }
 }
