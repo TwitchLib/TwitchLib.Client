@@ -1038,8 +1038,9 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private Task HandleClearMsg(IrcMessage ircMessage)
         {
-            var tmiSentTs = ircMessage.Tags.GetValueOrDefault("tmi-sent-ts", string.Empty);
-            var tmiSent = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(tmiSentTs));
+            var tmiSent = ircMessage.Tags.TryGetValue("tmi-sent-ts", out var tmiSentTs)
+                ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(tmiSentTs))
+                : default;
             return OnMessageCleared.TryInvoke(this, new(
                 ircMessage.Channel,
                 ircMessage.Message,
