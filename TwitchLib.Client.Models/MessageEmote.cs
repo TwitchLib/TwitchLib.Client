@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 
 // TODO: Missing builder
@@ -215,7 +214,7 @@ namespace TwitchLib.Client.Models
             string text,
             EmoteSource source = EmoteSource.Twitch,
             EmoteSize size = EmoteSize.Small,
-            ReplaceEmoteDelegate replacementDelegate = null)
+            ReplaceEmoteDelegate? replacementDelegate = null)
         {
             Id = id;
             Text = text;
@@ -238,15 +237,15 @@ namespace TwitchLib.Client.Models
         private const string BasePattern = @"(\b {0}\b)|(\b{0} \b)|(?<=\W){0}(?=$)|(?<=\s){0}(?=\s)|(^{0}$)";
 
         /// <summary> Do not access directly! Backing field for <see cref="CurrentPattern"/> </summary>
-        private string _currentPattern;
-        private Regex _regex;
+        private string? _currentPattern;
+        private Regex? _regex;
         private readonly EmoteFilterDelegate _preferredFilter;
 
         /// <summary>
         ///     Property so that we can be confident <see cref="PatternChanged"/>
         ///     always reflects changes to <see cref="CurrentPattern"/>.
         /// </summary>
-        private string CurrentPattern
+        private string? CurrentPattern
         {
             get => _currentPattern;
             set
@@ -259,7 +258,7 @@ namespace TwitchLib.Client.Models
             }
         }
 
-        private Regex CurrentRegex
+        private Regex? CurrentRegex
         {
             get
             {
@@ -310,10 +309,15 @@ namespace TwitchLib.Client.Models
         /// <param name="emote">The <see cref="MessageEmote"/> to add to the collection.</param>
         public void Add(MessageEmote emote)
         {
+#if NETSTANDARD2_0
             if (_emotes.ContainsKey(emote.Text))
                 return;
-
             _emotes.Add(emote.Text, emote);
+#else
+            if(!_emotes.TryAdd(emote.Text, emote))
+                return;
+#endif
+
             if (CurrentPattern == null)
             {
                 //string i = String.Format(_basePattern, "(" + emote.EscapedText + "){0}");
@@ -360,7 +364,7 @@ namespace TwitchLib.Client.Models
             // Matches |(\bEMOTE\b) including the preceding | so that the following | and emote (if any)
             // merge seamlessly when this section is removed. Again, wrapped in a group.
             var otherEmotePattern = @"(\|\(\\b" + emote.EscapedText + @"\\b\))";
-            var newPattern = Regex.Replace(CurrentPattern, firstEmotePattern + "|" + otherEmotePattern, "");
+            var newPattern = Regex.Replace(CurrentPattern, firstEmotePattern + "|" + otherEmotePattern, ""); // todo: possible ArgumentNullException
             CurrentPattern = newPattern.Equals("") ? null : newPattern;
         }
 
@@ -396,7 +400,7 @@ namespace TwitchLib.Client.Models
         ///     A string where all of the original emote text has been replaced with
         ///     its designated <see cref="MessageEmote.ReplacementString"/>s
         /// </returns>
-        public string ReplaceEmotes(string originalMessage, EmoteFilterDelegate del = null, string prefix = "", string suffix = "")
+        public string ReplaceEmotes(string originalMessage, EmoteFilterDelegate? del = null, string prefix = "", string suffix = "")
         {
             if (CurrentRegex == null)
             {
@@ -416,11 +420,10 @@ namespace TwitchLib.Client.Models
                     prefix += " ";
                 if (match.Value[match.Value.Length - 1] == ' ')
                     suffix = " " + suffix;
-                if (!_emotes.ContainsKey(emoteCode))
+                if (!_emotes.TryGetValue(emoteCode, out var emote))
                 {
                     return match.Value;
                 }
-                var emote = _emotes[emoteCode];
 
                 return CurrentEmoteFilter(emote) ? prefix + emote.ReplacementString + suffix : match.Value;
             });
