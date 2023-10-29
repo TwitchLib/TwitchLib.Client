@@ -231,7 +231,7 @@ namespace TwitchLib.Client.Models
                         break;
                     default:
                         if (!(ChatReply.TrySetTag(ref _chatReply, tag) || HypeChat.TrySetTag(ref _hypeChat, tag)))
-                            (UndocumentedTags = new()).Add(tag.Key, tag.Value);
+                            (UndocumentedTags ??= new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }

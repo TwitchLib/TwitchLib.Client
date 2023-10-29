@@ -64,7 +64,7 @@ public class GiftedSubscription : UserNoticeBase
         List<KeyValuePair<string, string>> badgeInfo,
         List<KeyValuePair<string, string>> badges,
         string hexColor,
-        string displayMame,
+        string displayName,
         string emotes,
         string id,
         string login,
@@ -90,12 +90,13 @@ public class GiftedSubscription : UserNoticeBase
        : base(badgeInfo,
            badges,
            hexColor,
-           displayMame,
+           displayName,
            emotes,
            id,
            login,
            isModerator,
-           msgId, roomId,
+           msgId,
+           roomId,
            isSubscriber,
            systemMsg,
            tmiSent,
@@ -124,7 +125,7 @@ public class GiftedSubscription : UserNoticeBase
             case Tags.MsgParamMonths:
                 MsgParamMonths = tag.Value;
                 break;
-            case Tags.MsgParamRecipientDisplayname:
+            case Tags.MsgParamRecipientDisplayName:
                 MsgParamRecipientDisplayName = tag.Value;
                 break;
             case Tags.MsgParamRecipientId:
