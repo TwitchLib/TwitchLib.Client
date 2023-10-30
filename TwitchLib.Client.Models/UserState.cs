@@ -91,7 +91,7 @@ namespace TwitchLib.Client.Models
                         UserType = TagHelper.ToUserType(tag.Value);
                         break;
                     default:
-                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
+                        (UndocumentedTags ??= new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }

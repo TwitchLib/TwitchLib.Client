@@ -81,7 +81,7 @@ namespace TwitchLib.Client.Models
                         Mercury = TagHelper.ToBool(tagValue);
                         break;
                     default:
-                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
+                        (UndocumentedTags ??= new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }

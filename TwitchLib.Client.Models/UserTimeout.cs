@@ -42,7 +42,7 @@ namespace TwitchLib.Client.Models
                         TargetUserId = tagValue;
                         break;
                     default:
-                        (UndocumentedTags = new()).Add(tag.Key, tag.Value);
+                        (UndocumentedTags ??= new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }
@@ -54,12 +54,12 @@ namespace TwitchLib.Client.Models
         public UserTimeout(
             string channel,
             string username,
-            string targetuserId,
+            string targetUserId,
             TimeSpan timeoutDuration)
         {
             Channel = channel;
             Username = username;
-            TargetUserId = targetuserId;
+            TargetUserId = targetUserId;
             TimeoutDuration = timeoutDuration;
         }
     }
