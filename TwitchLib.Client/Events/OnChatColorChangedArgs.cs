@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TwitchLib.Client.Events
+﻿namespace TwitchLib.Client.Events
 {
     /// <summary>
     /// Args representing a successful chat color change request.
@@ -14,5 +12,13 @@ namespace TwitchLib.Client.Events
         /// Property reprenting the channel the event was received in.
         /// </summary>
         public string Channel;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnChatColorChangedArgs"/> class.
+        /// </summary>
+        public OnChatColorChangedArgs(string channel)
+        {
+            Channel = channel;
+        }
     }
 }

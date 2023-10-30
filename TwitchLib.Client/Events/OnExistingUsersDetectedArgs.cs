@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TwitchLib.Client.Events
+﻿namespace TwitchLib.Client.Events
 {
     /// <summary>
     /// Args representing existing user(s) detected event.
@@ -14,10 +11,19 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing string list of existing users.
         /// </summary>
-        public List<string> Users;
+        public List<string> Users { get; }
         /// <summary>
         /// Property representing channel bot is connected to.
         /// </summary>
-        public string Channel;
+        public string Channel { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnExistingUsersDetectedArgs"/> class.
+        /// </summary>
+        public OnExistingUsersDetectedArgs(string channel, List<string> users)
+        {
+            Channel = channel;
+            Users = users;
+        }
     }
 }

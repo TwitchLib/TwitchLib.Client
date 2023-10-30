@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TwitchLib.Client.Events
+﻿namespace TwitchLib.Client.Events
 {
     /// <summary>
     /// Args representing viewer joined event.
@@ -13,10 +11,19 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing username of joined viewer.
         /// </summary>
-        public string Username;
+        public string Username { get; }
         /// <summary>
         /// Property representing channel bot is connected to.
         /// </summary>
-        public string Channel;
+        public string Channel { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnUserJoinedArgs"/> class.
+        /// </summary>
+        public OnUserJoinedArgs(string channel, string username)
+        {
+            Channel = channel;
+            Username = username;
+        }
     }
 }

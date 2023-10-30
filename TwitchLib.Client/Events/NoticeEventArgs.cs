@@ -15,7 +15,9 @@ public class NoticeEventArgs
     /// </summary>
     public string Channel { get; }
 
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NoticeEventArgs"/> class.
+    /// </summary>
     public NoticeEventArgs(string channel, string message)
     {
         Message = message;

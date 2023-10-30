@@ -40,7 +40,7 @@ namespace TwitchLib.Client.Test
             client.OnConnected += async (sender, e) =>
             {
                 await client.JoinChannelAsync(TWITCH_CHANNEL);
-                await ReceivedRoomState();
+                await ReceivedJoin(TWITCH_CHANNEL);
             };
 
             await MyAssert.RaisesAsync<OnJoinedChannelArgs>(
@@ -120,7 +120,7 @@ namespace TwitchLib.Client.Test
                       await client.ConnectAsync();
                       await ReceivedTwitchConnected();
                       await client.JoinChannelAsync(TWITCH_CHANNEL);
-                      await ReceivedRoomState();
+                      await ReceivedJoin(TWITCH_CHANNEL);
                   });
         }
 
@@ -214,6 +214,11 @@ namespace TwitchLib.Client.Test
         private async Task ReceivedRoomState()
         {
             await _mockClient.ReceiveMessage($"@broadcaster-lang=;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #{TWITCH_CHANNEL}");
+        }
+
+        private async Task ReceivedJoin(string channel)
+        {
+            await _mockClient.ReceiveMessage($":{TWITCH_BOT_USERNAME}!{TWITCH_BOT_USERNAME}@{TWITCH_BOT_USERNAME}.tmi.twitch.tv JOIN #{channel}");
         }
         #endregion
     } 

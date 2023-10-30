@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using TwitchLib.Client.Extensions;
 
 namespace TwitchLib.Client.Events
 {
@@ -9,15 +8,21 @@ namespace TwitchLib.Client.Events
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    public class OnModeratorsReceivedArgs : EventArgs
+    public class OnModeratorsReceivedArgs : NoticeEventArgs
     {
-        /// <summary>
-        /// Property representing the channel the moderators array came from.
-        /// </summary>
-        public string Channel;
         /// <summary>
         /// Property representing an array of moderators.
         /// </summary>
-        public string[] Moderators;
+        public string[] Moderators { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnModeratorsReceivedArgs"/> class.
+        /// </summary>
+        public OnModeratorsReceivedArgs(string channel, string message) : base(channel, message)
+        {
+            Moderators = string.IsNullOrEmpty(message)
+                ? Array.Empty<string>()
+                : message.SplitFirst(':').Remainder.ToString().Replace(" ", "").Split(',');
+        }
     }
 }

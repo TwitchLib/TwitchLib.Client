@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using TwitchLib.Client.Extensions;
 
 namespace TwitchLib.Client.Events
 {
@@ -9,15 +8,22 @@ namespace TwitchLib.Client.Events
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    public class OnVIPsReceivedArgs : EventArgs
+    public class OnVIPsReceivedArgs : NoticeEventArgs
     {
-        /// <summary>
-        /// Property representing the channel the VIPs array came from.
-        /// </summary>
-        public string Channel;
         /// <summary>
         /// Property representing an array of VIPs.
         /// </summary>
-        public string[] VIPs;
+        public string[] VIPs { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnVIPsReceivedArgs"/> class.
+        /// </summary>
+        public OnVIPsReceivedArgs(string channel, string message) : base(channel, message)
+        {
+            // TODO: Make it less allocatey
+            VIPs = string.IsNullOrEmpty(message)
+                ? Array.Empty<string>()
+                : message.SplitFirst(':').Remainder.ToString().Replace(" ", "").Replace(".", "").Split(',');
+        }
     }
 }

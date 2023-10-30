@@ -13,19 +13,19 @@ namespace TwitchLib.Client.Throttling
     {
         private readonly IClient _client;
         private readonly ISendOptions _sendOptions;
-        private readonly ILogger _logger;
+        private readonly ILogger? _logger;
         private readonly ConcurrentQueue<(DateTime, OutboundChatMessage)> _queue = new ConcurrentQueue<(DateTime, OutboundChatMessage)>();
         private readonly Throttler _throttler;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
-        private Task _sendTask;
+        private Task? _sendTask;
         
-        internal event AsyncEventHandler<OnMessageThrottledArgs> OnThrottled;
-        internal event AsyncEventHandler<OnErrorEventArgs> OnError;
+        internal event AsyncEventHandler<OnMessageThrottledArgs>? OnThrottled;
+        internal event AsyncEventHandler<OnErrorEventArgs>? OnError;
         
         internal ThrottlingService(
             IClient client,
             ISendOptions messageSendOptions,
-            ILogger logger = null)
+            ILogger? logger = null)
         {
             _logger = logger;
             _client = client;
@@ -53,7 +53,7 @@ namespace TwitchLib.Client.Throttling
         ///     <br></br>
         ///     <see langword="false"/> otherwise
         /// </returns>
-        internal bool Enqueue(OutboundChatMessage message)
+        internal bool Enqueue(OutboundChatMessage? message)
         {
             if (!_client.IsConnected ||
                 _queue.Count >= _sendOptions.QueueCapacity ||
@@ -66,7 +66,7 @@ namespace TwitchLib.Client.Throttling
             return true;
         }
 
-        private Task StartThrottlerAsync(object sender, Communication.Events.OnConnectedEventArgs args)
+        private Task StartThrottlerAsync(object? sender, Communication.Events.OnConnectedEventArgs args)
         {
             // Cancel old token first
             _tokenSource.Cancel();
@@ -75,7 +75,7 @@ namespace TwitchLib.Client.Throttling
             return Task.CompletedTask;
         }
 
-        private Task StopThrottlerAsync(object sender, OnDisconnectedEventArgs args)
+        private Task StopThrottlerAsync(object? sender, OnDisconnectedEventArgs args)
         {
             _tokenSource.Cancel();
             return Task.CompletedTask;
