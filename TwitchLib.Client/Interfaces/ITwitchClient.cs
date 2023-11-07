@@ -69,11 +69,6 @@ namespace TwitchLib.Client.Interfaces
         event AsyncEventHandler<OnAnnouncementArgs>? OnAnnouncement;
 
         /// <summary>
-        /// Fires when VIPs are received from chat
-        /// </summary>
-        event AsyncEventHandler<OnVIPsReceivedArgs>? OnVIPsReceived;
-
-        /// <summary>
         /// Fires when client connects to Twitch.
         /// </summary>
         event AsyncEventHandler<Events.OnConnectedEventArgs>? OnConnected;
@@ -187,16 +182,6 @@ namespace TwitchLib.Client.Interfaces
         /// Fires when a viewer gets banned by any moderator.
         /// </summary>
         event AsyncEventHandler<OnUserBannedArgs>? OnUserBanned;
-
-        /// <summary>
-        /// Fires when a list of moderators is received.
-        /// </summary>
-        event AsyncEventHandler<OnModeratorsReceivedArgs>? OnModeratorsReceived;
-
-        /// <summary>
-        /// Fires when confirmation of a chat color change request was received.
-        /// </summary>
-        event AsyncEventHandler<OnChatColorChangedArgs>? OnChatColorChanged;
 
         /// <summary>
         /// Fires when data is either received or sent.
