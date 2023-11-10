@@ -145,9 +145,6 @@ namespace TwitchLib.Client
         public event AsyncEventHandler<OnAnnouncementArgs>? OnAnnouncement;
 
         /// <inheritdoc/>
-        public event AsyncEventHandler<OnVIPsReceivedArgs>? OnVIPsReceived;
-
-        /// <inheritdoc/>
         public event AsyncEventHandler<Events.OnConnectedEventArgs>? OnConnected;
 
         /// <inheritdoc/>
@@ -215,12 +212,6 @@ namespace TwitchLib.Client
 
         /// <inheritdoc/>
         public event AsyncEventHandler<OnUserBannedArgs>? OnUserBanned;
-
-        /// <inheritdoc/>
-        public event AsyncEventHandler<OnModeratorsReceivedArgs>? OnModeratorsReceived;
-
-        /// <inheritdoc/>
-        public event AsyncEventHandler<OnChatColorChangedArgs>? OnChatColorChanged;
 
         /// <inheritdoc/>
         public event AsyncEventHandler<OnSendReceiveDataArgs>? OnSendReceiveData;
@@ -936,9 +927,6 @@ namespace TwitchLib.Client
 
             var result = msgId switch
             {
-                MsgIds.ColorChanged => OnChatColorChanged?.Invoke(this, new(channel)),
-                MsgIds.ModeratorsReceived => OnModeratorsReceived?.Invoke(this, new(channel, message)),
-                MsgIds.NoMods => OnModeratorsReceived?.Invoke(this, new(channel, string.Empty)),
                 MsgIds.NoPermission => OnNoPermissionError?.Invoke(this, new(channel, message)),
                 MsgIds.RaidErrorSelf => OnSelfRaidError?.Invoke(this, new(channel, message)),
                 MsgIds.RaidNoticeMature => OnRaidedChannelIsMatureAudience?.Invoke(this, new(channel, message)),
@@ -946,8 +934,6 @@ namespace TwitchLib.Client
                 MsgIds.MsgChannelSuspended => HandleChannelSuspended(ircMessage),
                 MsgIds.MsgRequiresVerifiedPhoneNumber => OnRequiresVerifiedPhoneNumber?.Invoke(this, new(channel, message)),
                 MsgIds.MsgVerifiedEmail => OnRequiresVerifiedEmail?.Invoke(this, new(channel, message)),
-                MsgIds.NoVIPs => OnVIPsReceived?.Invoke(this, new(channel, string.Empty)),
-                MsgIds.VIPsSuccess => OnVIPsReceived?.Invoke(this, new(channel, message)),
                 MsgIds.MsgRateLimit => OnRateLimit?.Invoke(this, new(channel, message)),
                 MsgIds.MsgDuplicate => OnDuplicate?.Invoke(this, new(channel, message)),
                 MsgIds.MsgFollowersOnly => OnFollowersOnly?.Invoke(this, new(channel, message)),
