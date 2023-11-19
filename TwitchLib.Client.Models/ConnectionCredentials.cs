@@ -35,7 +35,7 @@ namespace TwitchLib.Client.Models
                 throw new Exception($"Twitch username does not appear to be valid. {twitchUsername}");
             }
 
-            TwitchUsername = twitchUsername?.ToLower() ?? $"justinfan${1000 + new Random().Next(79999)}";
+            TwitchUsername = twitchUsername?.ToLower() ?? $"justinfan{new Random().Next(1000, 89999)}";
             TwitchOAuth = twitchOAuth ?? string.Empty;
 
             // Make sure proper formatting is applied to oauth
