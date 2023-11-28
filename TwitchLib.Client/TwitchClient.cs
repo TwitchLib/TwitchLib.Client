@@ -446,15 +446,16 @@ namespace TwitchLib.Client
         }
 
         /// <inheritdoc />
-        public void SendMessage(JoinedChannel channel, string message, bool dryRun = false)
+        public Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false)
         {
             SendTwitchMessage(channel, message,null, dryRun);
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
-        public void SendMessage(string channel, string message, bool dryRun = false)
+        public Task SendMessageAsync(string channel, string message, bool dryRun = false)
         {
-            SendMessage(GetJoinedChannel(channel), message, dryRun);
+            return SendMessageAsync(GetJoinedChannel(channel), message, dryRun);
         }
 
         /// <inheritdoc />
