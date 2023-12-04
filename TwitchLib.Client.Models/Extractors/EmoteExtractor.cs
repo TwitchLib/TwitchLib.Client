@@ -10,6 +10,7 @@ namespace TwitchLib.Client.Models.Extractors
             if (string.IsNullOrEmpty(rawEmoteSetString) || string.IsNullOrEmpty(message))
                 return emotes;
 
+            System.Globalization.StringInfo messageInfo = new(message);
             // 25:5-9,28-32/28087:15-21 => 25:5-9,28-32  28087:15-21
 #pragma warning disable CS8604 // Possible null reference argument. false positiv in NS 2.0
             foreach (var emoteData in new SpanSliceEnumerator(rawEmoteSetString, '/'))
@@ -30,7 +31,11 @@ namespace TwitchLib.Client.Models.Extractors
                     var start = int.Parse(startSlice);
                     var end = int.Parse(endSlice);
 #endif
-                    emotes.Add(new(emoteId, message.Substring(start, end - start + 1), start, end));
+                    int trueStart = messageInfo.SubstringByTextElements(0, start + 1).Length - 1;
+                    string name = messageInfo.SubstringByTextElements(start, end - start + 1);
+                    int trueEnd = trueStart + name.Length - 1;
+
+                    emotes.Add(new(emoteId, name, trueStart, trueEnd));
                 }
             }
             return emotes;

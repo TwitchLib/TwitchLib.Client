@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Models.Internal;
+﻿using TwitchLib.Client.Models.Extractors;
+using TwitchLib.Client.Models.Internal;
 using Xunit;
 
 namespace TwitchLib.Client.Test;
@@ -19,6 +20,14 @@ public class Parsing
             "bits/1000;hype-train/2;moments/5;predictions/blue-1;predictions/pink-2;subscriber/18;sub-gifter/150;" +
             "twitchconEU2023/1;bits-charity/1;founder/0;glhf-pledge/1;superultracombo-2023/1";
         TagHelper.ToBadges(badges);
+    }
+
+    [Fact]
+    public void EmoteExtractorExtract()
+    {
+        var emotes = EmoteExtractor.Extract("25:10-14", "One 😂 Two Kappa Three");
+        Assert.True(emotes.Count == 1);
+        Assert.True(emotes[0].Name == "Kappa");
     }
 
 
