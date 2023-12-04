@@ -394,7 +394,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">The channel.</param>
         /// <param name="message">The message.</param>
         /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
-        void SendMessage(JoinedChannel channel, string message, bool dryRun = false);
+        Task SendMessageAsync(JoinedChannel channel, string message, bool dryRun = false);
         
         /// <summary>
         /// Sends the message.
@@ -402,7 +402,7 @@ namespace TwitchLib.Client.Interfaces
         /// <param name="channel">The channel.</param>
         /// <param name="message">The message.</param>
         /// <param name="dryRun">if set to <c>true</c> [dry run].</param>
-        void SendMessage(string channel, string message, bool dryRun = false);
+        Task SendMessageAsync(string channel, string message, bool dryRun = false);
         
         /// <summary>
         /// Sends a formatted Twitch chat message reply.
