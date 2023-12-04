@@ -21,12 +21,12 @@ public partial class MyAssert
     public static async Task<RaisedEvent<T>> RaisesAsync<T>(Action<AsyncEventHandler<T>> attach, Action<AsyncEventHandler<T>> detach, Func<Task> testCode)
     {
         var raisedEvent = await RaisesAsyncInternal(attach, detach, testCode);
-
+        
         if (raisedEvent == null)
-            throw new RaisesException(typeof(T));
+            throw RaisesException.ForNoEvent(typeof(T));
 
         if (raisedEvent.Arguments != null && !raisedEvent.Arguments.GetType().Equals(typeof(T)))
-            throw new RaisesException(typeof(T), raisedEvent.Arguments.GetType());
+            throw RaisesException.ForIncorrectType(typeof(T), raisedEvent.Arguments.GetType());
 
         return raisedEvent;
     }
@@ -45,7 +45,7 @@ public partial class MyAssert
         var raisedEvent = await RaisesAsyncInternal(attach, detach, testCode);
 
         if (raisedEvent == null)
-            throw new RaisesException(typeof(T));
+            throw RaisesException.ForNoEvent(typeof(T));
 
         return raisedEvent;
     }

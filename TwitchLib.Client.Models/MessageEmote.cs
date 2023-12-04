@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text;
 using System.Text.RegularExpressions;
 
 // TODO: Missing builder
@@ -234,7 +235,11 @@ namespace TwitchLib.Client.Models
     public class MessageEmoteCollection
     {
         private readonly Dictionary<string, MessageEmote> _emotes;
+#if NET8_0_OR_GREATER
+        private static readonly CompositeFormat BasePattern = CompositeFormat.Parse(@"(\b {0}\b)|(\b{0} \b)|(?<=\W){0}(?=$)|(?<=\s){0}(?=\s)|(^{0}$)");
+#else
         private const string BasePattern = @"(\b {0}\b)|(\b{0} \b)|(?<=\W){0}(?=$)|(?<=\s){0}(?=\s)|(^{0}$)";
+#endif
 
         /// <summary> Do not access directly! Backing field for <see cref="CurrentPattern"/> </summary>
         private string? _currentPattern;
@@ -321,11 +326,11 @@ namespace TwitchLib.Client.Models
             if (CurrentPattern == null)
             {
                 //string i = String.Format(_basePattern, "(" + emote.EscapedText + "){0}");
-                CurrentPattern = string.Format(BasePattern, emote.EscapedText);
+                CurrentPattern = string.Format(null, BasePattern, emote.EscapedText);
             }
             else
             {
-                CurrentPattern = CurrentPattern + "|" + string.Format(BasePattern, emote.EscapedText);
+                CurrentPattern = CurrentPattern + "|" + string.Format(null, BasePattern, emote.EscapedText);
             }
         }
 
