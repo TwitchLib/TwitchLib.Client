@@ -25,9 +25,11 @@ public class Parsing
     [Fact]
     public void EmoteExtractorExtract()
     {
-        var emotes = EmoteExtractor.Extract("25:10-14", "One 😂 Two Kappa Three");
+        var message = "One 😂 Two Kappa Three";
+        var emotes = EmoteExtractor.Extract("25:10-14", message);
         Assert.True(emotes.Count == 1);
         Assert.True(emotes[0].Name == "Kappa");
+        Assert.True(emotes[0].StartIndex == message.IndexOf("Kappa"));
     }
 
 
