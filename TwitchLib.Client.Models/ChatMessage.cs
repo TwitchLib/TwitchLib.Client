@@ -48,23 +48,8 @@ namespace TwitchLib.Client.Models
         /// <summary>Chat message /me identifier flag.</summary>
         public bool IsMe { get; }
 
-        /// <summary>Channel specific moderator status.</summary>
-        public bool IsModerator { get; }
-
         /// <summary>Message used channel points to skip sub mode</summary>
         public bool IsSkippingSubMode { get; internal set; }
-
-        /// <summary>Channel specific subscriber status.</summary>
-        public bool IsSubscriber { get; }
-
-        /// <summary>Message is from channel VIP</summary>
-        public bool IsVip { get; }
-
-        /// <summary>Message is from a Twitch Staff member</summary>
-        public bool IsStaff { get; }
-
-        /// <summary>Message is from a Twitch Partner</summary>
-        public bool IsPartner { get; }
 
         /// <summary>Twitch chat message contents.</summary>
         public string Message { get; }
@@ -125,6 +110,7 @@ namespace TwitchLib.Client.Models
             Username = ircMessage.User;
             Channel = ircMessage.Channel;
 
+            var userDetails = UserDetails.None;
             foreach (var tag in ircMessage.Tags)
             {
                 var (tagKey, tagValue) = (tag.Key, tag.Value);
@@ -147,15 +133,7 @@ namespace TwitchLib.Client.Models
                                         SubscribedMonthCount = int.Parse(badge.Value);
                                     }
                                     break;
-                                case "vip":
-                                    IsVip = true;
-                                    break;
-                                case "admin":
-                                case "staff":
-                                    IsStaff = true;
-                                    break;
-                                case "partner":
-                                    IsPartner = true;
+                                default:
                                     break;
                             }
                         }
@@ -166,7 +144,6 @@ namespace TwitchLib.Client.Models
                         var founderBadge = BadgeInfo.Find(b => b.Key == "founder");
                         if (!founderBadge.Equals(default(KeyValuePair<string, string>)))
                         {
-                            IsSubscriber = true;
                             SubscribedMonthCount = int.Parse(founderBadge.Value);
                         }
                         else
@@ -205,7 +182,8 @@ namespace TwitchLib.Client.Models
                         HandleMsgId(tagValue);
                         break;
                     case Tags.Mod:
-                        IsModerator = TagHelper.ToBool(tagValue);
+                        if (TagHelper.ToBool(tag.Value))
+                            userDetails |= UserDetails.Moderator;
                         break;
                     case Tags.Noisy:
                         Noisy = TagHelper.ToBool(tagValue) ? Noisy.True : Noisy.False;
@@ -214,14 +192,15 @@ namespace TwitchLib.Client.Models
                         RoomId = tagValue;
                         break;
                     case Tags.Subscriber:
-                        // this check because when founder is set, the subscriber value is actually 0, which is problematic
-                        IsSubscriber = IsSubscriber || TagHelper.ToBool(tagValue);
+                        if (TagHelper.ToBool(tag.Value))
+                            userDetails |= UserDetails.Subscriber;
                         break;
                     case Tags.TmiSentTs:
                         TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tagValue);
                         break;
                     case Tags.Turbo:
-                        IsTurbo = TagHelper.ToBool(tagValue);
+                        if (TagHelper.ToBool(tag.Value))
+                            userDetails |= UserDetails.Turbo;
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
@@ -235,6 +214,7 @@ namespace TwitchLib.Client.Models
                         break;
                 }
             }
+            UserDetail = new(userDetails, Badges);
 
             //Parse the emoteSet
             if (_emoteCollection != null && EmoteSet?.Emotes.Count > 0)
@@ -310,23 +290,18 @@ namespace TwitchLib.Client.Models
             UserType userType,
             string channel,
             string id,
-            bool isSubscriber,
             int subscribedMonthCount,
             string roomId,
-            bool isTurbo,
-            bool isModerator,
             bool isMe,
             bool isBroadcaster,
-            bool isVip,
-            bool isPartner,
-            bool isStaff,
             Noisy noisy,
             string rawIrcMessage,
             string emoteReplacedMessage,
             List<KeyValuePair<string, string>> badges,
             CheerBadge cheerBadge,
             int bits,
-            double bitsInDollars)
+            double bitsInDollars,
+            UserDetail userDetail)
         {
             BotUsername = botUsername;
             UserId = userId;
@@ -337,16 +312,10 @@ namespace TwitchLib.Client.Models
             UserType = userType;
             Channel = channel;
             Id = id;
-            IsSubscriber = isSubscriber;
             SubscribedMonthCount = subscribedMonthCount;
             RoomId = roomId;
-            IsTurbo = isTurbo;
-            IsModerator = isModerator;
             IsMe = isMe;
             IsBroadcaster = isBroadcaster;
-            IsVip = isVip;
-            IsPartner = isPartner;
-            IsStaff = isStaff;
             Noisy = noisy;
             RawIrcMessage = rawIrcMessage;
             EmoteReplacedMessage = emoteReplacedMessage;
@@ -355,6 +324,7 @@ namespace TwitchLib.Client.Models
             Bits = bits;
             BitsInDollars = bitsInDollars;
             Username = userName;
+            UserDetail = userDetail;
         }
 
         private void HandleMsgId(string val)

@@ -27,9 +27,9 @@ namespace TwitchLib.Client.Models
             string threadId,
             string messageId,
             string userId,
-            bool isTurbo,
             string botUsername,
             string message,
+            UserDetail userDetail,
             UserType userType)
         {
             Badges = badges;
@@ -40,7 +40,7 @@ namespace TwitchLib.Client.Models
             ThreadId = threadId;
             MessageId = messageId;
             UserId = userId;
-            IsTurbo = isTurbo;
+            UserDetail = userDetail;
             BotUsername = botUsername;
             Message = message;
             UserType = userType;
@@ -58,6 +58,7 @@ namespace TwitchLib.Client.Models
             RawIrcMessage = ircMessage.ToString();
 
             Message = ircMessage.Message;
+            var userDetails = UserDetails.None;
             foreach (var tag in ircMessage.Tags)
             {
                 var tagValue = tag.Value;
@@ -82,7 +83,8 @@ namespace TwitchLib.Client.Models
                         ThreadId = tagValue;
                         break;
                     case Tags.Turbo:
-                        IsTurbo = TagHelper.ToBool(tagValue);
+                        if (TagHelper.ToBool(tag.Value))
+                            userDetails |= UserDetails.Turbo;
                         break;
                     case Tags.UserId:
                         UserId = tagValue;
@@ -95,6 +97,7 @@ namespace TwitchLib.Client.Models
                         break;
                 }
             }
+            UserDetail = new(userDetails, Badges);
 
             EmoteSet ??= new EmoteSet(default(string), Message);
         }

@@ -47,12 +47,6 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public TwitchLibMessageBuilder WithIsTurbo(bool isTurbo)
-        {
-            IsTurbo = isTurbo;
-            return this;
-        }
-
         public TwitchLibMessageBuilder WithBotUserName(string botUserName)
         {
             BotUsername = botUserName;
