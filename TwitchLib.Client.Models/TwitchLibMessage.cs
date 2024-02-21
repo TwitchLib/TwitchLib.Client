@@ -21,14 +21,13 @@ namespace TwitchLib.Client.Models
         /// <summary>Emote Ids that exist in message.</summary>
         public EmoteSet EmoteSet { get; protected set; } = default!;
 
-        /// <summary>Twitch site-wide turbo status.</summary>
-        public bool IsTurbo { get; protected set; }
-
         /// <summary>Twitch-unique integer assigned on per account basis.</summary>
         public string UserId { get; protected set; } = default!;
 
         /// <summary>Username of sender of chat message.</summary>
         public string Username { get; protected set; } = default!;
+
+        public UserDetail UserDetail { get; protected set; }
 
         /// <summary>User type can be viewer, moderator, global mod, admin, or staff</summary>
         public UserType UserType { get; protected set; }

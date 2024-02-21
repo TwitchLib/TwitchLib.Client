@@ -61,9 +61,9 @@ namespace TwitchLib.Client.Models.Builders
                 _threadId,
                 _messageId,
                 _twitchLibMessage.UserId,
-                _twitchLibMessage.IsTurbo,
                 _twitchLibMessage.BotUsername,
                 _message,
+                _twitchLibMessage.UserDetail,
                 _twitchLibMessage.UserType);
         }
     }

@@ -42,11 +42,6 @@ public abstract class UserNoticeBase : IHexColorProperty
     public string Login { get; protected set; } = default!;
 
     /// <summary>
-    /// A Boolean value that determines whether the user is a moderator.
-    /// </summary>
-    public bool IsModerator { get; protected set; }
-
-    /// <summary>
     /// The type of notice (not the ID).
     /// </summary>
     public string MsgId { get; protected set; } = default!;
@@ -55,11 +50,6 @@ public abstract class UserNoticeBase : IHexColorProperty
     /// An ID that identifies the chat room (channel).
     /// </summary>
     public string RoomId { get; protected set; } = default!;
-
-    /// <summary>
-    /// A Boolean value that determines whether the user is a subscriber.
-    /// </summary>
-    public bool IsSubscriber { get; protected set; }
 
     /// <summary>
     /// The message Twitch shows in the chat room for this notice.
@@ -71,10 +61,7 @@ public abstract class UserNoticeBase : IHexColorProperty
     /// </summary>
     public DateTimeOffset TmiSent { get; protected set; }
 
-    /// <summary>
-    /// A Boolean value that indicates whether the user has site-wide commercial free mode enabled.
-    /// </summary>
-    public bool IsTurbo { get; protected set; } //todo HasTurbo?
+    public UserDetail UserDetail { get; protected set; }
 
     /// <summary>
     /// The user’s ID.
@@ -93,6 +80,7 @@ public abstract class UserNoticeBase : IHexColorProperty
     /// </summary>
     protected UserNoticeBase(IrcMessage ircMessage)
     {
+        var userDetails = UserDetails.None;
         foreach (var tag in ircMessage.Tags)
         {
             switch (tag.Key)
@@ -119,7 +107,8 @@ public abstract class UserNoticeBase : IHexColorProperty
                     Login = tag.Value;
                     break;
                 case Tags.Mod:
-                    IsModerator = TagHelper.ToBool(tag.Value);
+                    if (TagHelper.ToBool(tag.Value))
+                        userDetails |= UserDetails.Moderator;
                     break;
                 case Tags.MsgId:
                     MsgId = tag.Value;
@@ -128,7 +117,8 @@ public abstract class UserNoticeBase : IHexColorProperty
                     RoomId = tag.Value;
                     break;
                 case Tags.Subscriber:
-                    IsSubscriber = TagHelper.ToBool(tag.Value);
+                    if (TagHelper.ToBool(tag.Value))
+                        userDetails |= UserDetails.Subscriber;
                     break;
                 case Tags.SystemMsg:
                     SystemMsg = tag.Value.Replace("\\s", " ");
@@ -137,7 +127,8 @@ public abstract class UserNoticeBase : IHexColorProperty
                     TmiSent = TagHelper.ToDateTimeOffsetFromUnixMs(tag.Value);
                     break;
                 case Tags.Turbo:
-                    IsTurbo = TagHelper.ToBool(tag.Value);
+                    if (TagHelper.ToBool(tag.Value))
+                        userDetails |= UserDetails.Turbo;
                     break;
                 case Tags.UserId:
                     UserId = tag.Value;
@@ -151,6 +142,7 @@ public abstract class UserNoticeBase : IHexColorProperty
                     break;
             }
         }
+        UserDetail = new UserDetail(userDetails, Badges);
     }
 
     /// <summary>
@@ -164,13 +156,11 @@ public abstract class UserNoticeBase : IHexColorProperty
         string emotes,
         string id,
         string login,
-        bool isModerator, 
         string msgId,
         string roomId,
-        bool isSubscriber,
         string systemMsg,
         DateTimeOffset tmiSent,
-        bool isTurbo,
+        UserDetail userDetail,
         string userId,
         UserType userType, 
         Dictionary<string, string>? undocumentedTags)
@@ -182,13 +172,11 @@ public abstract class UserNoticeBase : IHexColorProperty
         Emotes = emotes;
         Id = id;
         Login = login;
-        IsModerator = isModerator;
         MsgId = msgId;
         RoomId = roomId;
-        IsSubscriber = isSubscriber;
         SystemMsg = systemMsg;
         TmiSent = tmiSent;
-        IsTurbo = isTurbo;
+        UserDetail = userDetail;
         UserId = userId;
         UserType = userType;
         UndocumentedTags = undocumentedTags;

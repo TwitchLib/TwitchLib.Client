@@ -17,11 +17,6 @@ namespace TwitchLib.Client.Models.Builders
         private string _id;
         private bool _isBroadcaster;
         private bool _isMe;
-        private bool _isModerator;
-        private bool _isSubscriber;
-        private bool _isVip;
-        private bool _isStaff;
-        private bool _isPartner;
         private string _message;
         private Noisy _noisy;
         private string _rawIrcMessage;
@@ -93,33 +88,6 @@ namespace TwitchLib.Client.Models.Builders
             return this;
         }
 
-        public ChatMessageBuilder WithIsModerator(bool isModerator)
-        {
-            _isModerator = isModerator;
-            return this;
-        }
-
-        public ChatMessageBuilder WithIsSubscriber(bool isSubscriber)
-        {
-            _isSubscriber = isSubscriber;
-            return this;
-        }
-        public ChatMessageBuilder WithIsVip(bool isVip)
-        {
-            _isVip = isVip;
-            return this;
-        }
-        public ChatMessageBuilder WithIsStaff(bool isStaff)
-        {
-            _isStaff = isStaff;
-            return this;
-        }
-
-        public ChatMessageBuilder WithIsPartner(bool isPartner)
-        {
-            _isPartner = isPartner;
-            return this;
-        }
         public ChatMessageBuilder WithMessage(string message)
         {
             _message = message;
@@ -168,23 +136,18 @@ namespace TwitchLib.Client.Models.Builders
                 _twitchLibMessage.UserType,
                 _channel,
                 _id,
-                _isSubscriber,
                 _subscribedMonthCount,
                 _roomId,
-                _twitchLibMessage.IsTurbo,
-                _isModerator,
                 _isMe,
                 _isBroadcaster,
-                _isVip,
-                _isPartner,
-                _isStaff,
                 _noisy,
                 _rawIrcMessage,
                 _emoteReplacedMessage,
                 _twitchLibMessage.Badges,
                 _cheerBadge,
                 _bits,
-                _bitsInDollars);
+                _bitsInDollars,
+                _twitchLibMessage.UserDetail);
         }
     }
 }
