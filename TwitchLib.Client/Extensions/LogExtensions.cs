@@ -37,6 +37,9 @@ internal static partial class LogExtensions
     [LoggerMessage(LogLevel.Warning, "Unaccounted for: {ircString} (please create a TwitchLib GitHub issue :P)")]
     public static partial void LogUnaccountedFor(this ILogger<TwitchClient> logger, string ircString);
 
+    [LoggerMessage(LogLevel.Error, "Unexpected error during message parsing, message: {message}")]
+    public static partial void LogParsingError(this ILogger<TwitchClient> logger, string message, Exception ex);
+
     [LoggerMessage(LogLevel.Debug, "Writing: {message}")]
     public static partial void LogWriting(this ILogger<TwitchClient> logger, string message);
 

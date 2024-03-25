@@ -699,7 +699,18 @@ namespace TwitchLib.Client
                 _logger?.LogReceived(line);
 
                 await OnSendReceiveData.TryInvoke(this, new(SendReceiveDirection.Received, line));
-                await HandleIrcMessageAsync(IrcParser.ParseMessage(line));
+                IrcMessage ircMessage;
+                try
+                {
+                    ircMessage = IrcParser.ParseMessage(line);
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogParsingError(line, ex);
+                    OnError?.Invoke(this, new(ex));
+                    continue;
+                }
+                await HandleIrcMessageAsync(ircMessage);
             }
         }
 
