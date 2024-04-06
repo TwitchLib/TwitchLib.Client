@@ -23,21 +23,25 @@ namespace TwitchLib.Client.Models
 
         /// <summary>Constructor for ConnectionCredentials object.</summary>
         public ConnectionCredentials(
-            string twitchUsername,
-            string twitchOAuth,
+            string? twitchUsername = null,
+            string? twitchOAuth = null,
             bool disableUsernameCheck = false,
             Capabilities? capabilities = null)
         {
-            if (!disableUsernameCheck && !GetUsernameCheckRegex().Match(twitchUsername).Success)
+            if (twitchUsername != null &&
+                !disableUsernameCheck &&
+                !GetUsernameCheckRegex().Match(twitchUsername).Success)
+            {
                 throw new Exception($"Twitch username does not appear to be valid. {twitchUsername}");
+            }
 
-            TwitchUsername = twitchUsername.ToLower();
-            TwitchOAuth = twitchOAuth;
+            TwitchUsername = twitchUsername?.ToLower() ?? $"justinfan{new Random().Next(1000, 89999)}";
+            TwitchOAuth = twitchOAuth ?? string.Empty;
 
             // Make sure proper formatting is applied to oauth
-            if (!twitchOAuth.Contains(":"))
+            if (!TwitchOAuth.Contains(":"))
             {
-                TwitchOAuth = $"oauth:{twitchOAuth.Replace("oauth", "")}";
+                TwitchOAuth = $"oauth:{TwitchOAuth.Replace("oauth", "")}";
             }
 
             Capabilities = capabilities ?? new Capabilities();
