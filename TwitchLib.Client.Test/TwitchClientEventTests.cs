@@ -141,7 +141,7 @@ namespace TwitchLib.Client.Test
         {
             var client = new TwitchClient(_mockClient);
 
-            await MyAssert.RaisesAsync<OnDisconnectedEventArgs>(
+            await MyAssert.RaisesAsync<OnDisconnectedArgs>(
                   h => client.OnDisconnected += h,
                   h => client.OnDisconnected -= h,
                   async () =>

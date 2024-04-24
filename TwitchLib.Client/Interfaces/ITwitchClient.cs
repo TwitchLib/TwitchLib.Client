@@ -156,7 +156,7 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// Fires when bot has disconnected.
         /// </summary>
-        event AsyncEventHandler<OnDisconnectedEventArgs>? OnDisconnected;
+        event AsyncEventHandler<OnDisconnectedArgs>? OnDisconnected;
 
         /// <summary>
         /// Forces when bot suffers connection error.
