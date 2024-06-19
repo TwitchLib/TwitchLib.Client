@@ -196,7 +196,7 @@ namespace TwitchLib.Client
         public event AsyncEventHandler<OnUserLeftArgs>? OnUserLeft;
 
         /// <inheritdoc/>
-        public event AsyncEventHandler<OnDisconnectedEventArgs>? OnDisconnected;
+        public event AsyncEventHandler<OnDisconnectedArgs>? OnDisconnected;
 
         /// <inheritdoc/>
         public event AsyncEventHandler<OnConnectionErrorArgs>? OnConnectionError;
@@ -652,7 +652,7 @@ namespace TwitchLib.Client
         /// <param name="e">The <see cref="OnDisconnectedEventArgs" /> instance containing the event data.</param>
         private Task _client_OnDisconnected(object? sender, OnDisconnectedEventArgs e)
         {
-            return OnDisconnected.TryInvoke(sender, e);
+            return OnDisconnected.TryInvoke(sender, new(TwitchUsername));
         }
 
         /// <summary>
