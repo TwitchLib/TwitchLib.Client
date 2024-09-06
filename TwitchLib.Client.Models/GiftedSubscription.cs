@@ -18,6 +18,11 @@ public class GiftedSubscription : UserNoticeBase
     public string MsgParamMonths { get; protected set; } = default!;
 
     /// <summary>
+    /// If this message sourced from an event, this is the ID of that event
+    /// </summary>
+    public string MsgParamOriginId { get; protected set; }
+
+    /// <summary>
     /// The display name of the subscription gift recipient.
     /// </summary>
     public string MsgParamRecipientDisplayName { get; protected set; } = default!;
@@ -78,6 +83,7 @@ public class GiftedSubscription : UserNoticeBase
         Dictionary<string, string>? undocumentedTags,
         Goal? msgParamGoal,
         string msgParamMonths,
+        string msgParamOriginId,
         string msgParamRecipientDisplayName,
         string msgParamRecipientId,
         string msgParamRecipientUserName, 
@@ -104,6 +110,7 @@ public class GiftedSubscription : UserNoticeBase
         MsgParamGoal = msgParamGoal;
         IsAnonymous = userId == AnonymousGifterUserId;
         MsgParamMonths = msgParamMonths;
+        MsgParamOriginId = msgParamOriginId;
         MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
         MsgParamRecipientId = msgParamRecipientId;
         MsgParamRecipientUserName = msgParamRecipientUserName;
@@ -120,6 +127,9 @@ public class GiftedSubscription : UserNoticeBase
         {
             case Tags.MsgParamMonths:
                 MsgParamMonths = tag.Value;
+                break;
+            case Tags.MsgParamOriginId:
+                MsgParamOriginId = tag.Value;
                 break;
             case Tags.MsgParamRecipientDisplayName:
                 MsgParamRecipientDisplayName = tag.Value;

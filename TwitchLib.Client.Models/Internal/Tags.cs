@@ -47,6 +47,7 @@ namespace TwitchLib.Client.Models.Internal
         public const string MsgParamSubPlan = "msg-param-sub-plan";                             // Sent only on sub, resub, subgift, anonsubgift
         public const string MsgParamSubPlanName = "msg-param-sub-plan-name";                    // Sent only on sub, resub, subgift, anonsubgift
         public const string MsgParamViewerCount = "msg-param-viewerCount";                      // Sent only on raid
+        public const string MsgParamOriginId = "msg-param-origin-id";
         public const string MsgParamRecipientDisplayName = "msg-param-recipient-display-name";  // Sent only on subgift, anonsubgift
         public const string MsgParamRecipientId = "msg-param-recipient-id";                     // Sent only on subgift, anonsubgift
         public const string MsgParamRecipientUsername = "msg-param-recipient-user-name";        // Sent only on subgift, anonsubgift
