@@ -90,11 +90,7 @@ public class GiftedSubscription : UserNoticeBase
         int msgParamSenderCount, 
         SubscriptionPlan msgParamSubPlan, 
         string msgParamSubPlanName, 
-        int msgParamMultiMonthGiftDuration,
-        string msgParamGoalContributionType,
-        int msgParamGoalCurrentContributions,
-        int msgParamGoalTargetContributions,
-        int msgParamGoalUserContributions)
+        int msgParamMultiMonthGiftDuration)
        : base(badgeInfo,
            badges,
            hexColor,
