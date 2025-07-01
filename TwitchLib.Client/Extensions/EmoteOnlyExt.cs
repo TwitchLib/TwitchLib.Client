@@ -1,4 +1,5 @@
-﻿using TwitchLib.Client.Interfaces;
+﻿using System;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Extensions
@@ -13,6 +14,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of the channel to send the enable emote only command to.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.UpdateChatSettingsAsync() instead.")]
         public static void EmoteOnlyOn(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".emoteonly");
@@ -23,6 +25,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of the channel to send the enable emote only command to.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.UpdateChatSettingsAsync() instead.")]
         public static void EmoteOnlyOn(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".emoteonly");
@@ -33,6 +36,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">JoinedChannel representation of the channel to send the disable emote only command to.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.UpdateChatSettingsAsync() instead.")]
         public static void EmoteOnlyOff(this ITwitchClient client, JoinedChannel channel)
         {
             client.SendMessage(channel, ".emoteonlyoff");
@@ -43,6 +47,7 @@ namespace TwitchLib.Client.Extensions
         /// </summary>
         /// <param name="client">Client reference used to identify extension.</param>
         /// <param name="channel">String representation of the channel to send the disable emote only command to.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Chat.UpdateChatSettingsAsync() instead.")]
         public static void EmoteOnlyOff(this ITwitchClient client, string channel)
         {
             client.SendMessage(channel, ".emoteonlyoff");

@@ -19,6 +19,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="duration">Duration of the timeout via TimeSpan object</param>
         /// <param name="message">Message to accompany the timeout and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not sened if true)</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.BanUserAsync() instead.")]
         public static void TimeoutUser(this ITwitchClient client, JoinedChannel channel, string viewer, TimeSpan duration, string message = "", bool dryRun = false)
         {
             client.SendMessage(channel, $".timeout {viewer} {duration.TotalSeconds} {message}", dryRun);
@@ -33,6 +34,7 @@ namespace TwitchLib.Client.Extensions
         /// <param name="duration">Duration of the timeout via TimeSpan object</param>
         /// <param name="message">Message to accompany the timeout and show the user.</param>
         /// <param name="dryRun">Indicates a dryrun (will not sened if true)</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Moderation.BanUserAsync() instead.")]
         public static void TimeoutUser(this ITwitchClient client, string channel, string viewer, TimeSpan duration, string message = "", bool dryRun = false)
         {
             JoinedChannel joinedChannel = client.GetJoinedChannel(channel);

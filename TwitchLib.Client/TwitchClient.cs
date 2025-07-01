@@ -500,7 +500,7 @@ namespace TwitchLib.Client
         /// <param name="autoReListenOnExceptions">By default, TwitchClient will silence exceptions and auto-relisten for overall stability. For debugging, you may wish to have the exception bubble up, set this to false.</param>
         private void initializeHelper(ConnectionCredentials credentials, List<string> channels, char chatCommandIdentifier = '!', char whisperCommandIdentifier = '!', bool autoReListenOnExceptions = true)
         {
-            Log($"TwitchLib-TwitchClient initialized, assembly version: {Assembly.GetExecutingAssembly().GetName().Version}");
+            Log($"TwitchLib-TwitchClient initialized, assembly version: {Assembly.GetExecutingAssembly().GetName().Version}", level: LogLevel.Information);
             ConnectionCredentials = credentials;
             TwitchUsername = ConnectionCredentials.TwitchUsername;
             if (chatCommandIdentifier != '\0')
@@ -670,6 +670,7 @@ namespace TwitchLib.Client
         /// <param name="receiver">The receiver of the whisper.</param>
         /// <param name="message">The message to be sent.</param>
         /// <param name="dryRun">If set to true, the message will not actually be sent for testing purposes.</param>
+        [Obsolete("Usage of this command through chat is not possible anymore. Use TwitchLib.Api.Helix.Whispers.SendWhisperAsync() instead.")]
         public void SendWhisper(string receiver, string message, bool dryRun = false)
         {
             if (!IsInitialized) HandleNotInitialized();
@@ -697,7 +698,7 @@ namespace TwitchLib.Client
         public bool Connect()
         {
             if (!IsInitialized) HandleNotInitialized();
-            Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}");
+            Log($"Connecting to: {ConnectionCredentials.TwitchWebsocketURI}", level: LogLevel.Information);
 
 			// Clear instance data
             _joinedChannelManager.Clear();
@@ -715,7 +716,7 @@ namespace TwitchLib.Client
         /// </summary>
         public void Disconnect()
         {
-            Log("Disconnect Twitch Chat Client...");
+            Log("Disconnecting Twitch Chat Client...", level: LogLevel.Information);
 
             if (!IsInitialized) HandleNotInitialized();
             _client.Close();
@@ -731,7 +732,7 @@ namespace TwitchLib.Client
         public void Reconnect()
         {
             if (!IsInitialized) HandleNotInitialized();
-            Log($"Reconnecting to Twitch");
+            Log($"Reconnecting to Twitch", level: LogLevel.Information);
             _client.Reconnect();
         }
         #endregion
@@ -842,7 +843,7 @@ namespace TwitchLib.Client
             // Channel MUST be lower case
             channel = channel.ToLower();
             if (channel[0] == '#') channel = channel.Substring(1);
-            Log($"Leaving channel: {channel}");
+            Log($"Leaving channel: {channel}", level: LogLevel.Information);
             JoinedChannel joinedChannel = _joinedChannelManager.GetJoinedChannel(channel);
             if (joinedChannel != null)
                 _client.Send(Rfc2812.Part($"#{channel}"));
@@ -941,7 +942,7 @@ namespace TwitchLib.Client
                 if (line.Length <= 1)
                     continue;
 
-                Log($"Received: {line}");
+                Log($"Received: {line}", level: LogLevel.Trace);
                 OnSendReceiveData?.Invoke(this, new OnSendReceiveDataArgs { Direction = Enums.SendReceiveDirection.Received, Data = line });
                 HandleIrcMessage(_ircParser.ParseIrcMessage(line));
             }
@@ -984,7 +985,7 @@ namespace TwitchLib.Client
             {
                 _currentlyJoiningChannels = true;
                 JoinedChannel channelToJoin = _joinChannelQueue.Dequeue();
-                Log($"Joining channel: {channelToJoin.Channel}");
+                Log($"Joining channel: {channelToJoin.Channel}", level: LogLevel.Information);
                 // important we set channel to lower case when sending join message
                 _client.Send(Rfc2812.Join($"#{channelToJoin.Channel.ToLower()}"));
                 _joinedChannelManager.AddJoinedChannel(new JoinedChannel(channelToJoin.Channel));
@@ -1055,7 +1056,7 @@ namespace TwitchLib.Client
         /// <param name="ircMessage">The irc message.</param>
         private void HandleIrcMessage(IrcMessage ircMessage)
         {
-            if (ircMessage.Message.Contains("Login authentication failed"))
+            if (ircMessage.ToString().StartsWith(":tmi.twitch.tv NOTICE * :Login authentication failed"))
             {
                 OnIncorrectLogin?.Invoke(this, new OnIncorrectLoginArgs { Exception = new ErrorLoggingInException(ircMessage.ToString(), TwitchUsername) });
                 return;
@@ -1496,7 +1497,7 @@ namespace TwitchLib.Client
 
         private void UnaccountedFor(string ircString)
         {
-            Log($"Unaccounted for: {ircString} (please create a TwitchLib GitHub issue :P)");
+            Log($"Unaccounted for: {ircString} (please create a TwitchLib GitHub issue :P)", level: LogLevel.Warning);
         }
 
         /// <summary>
@@ -1505,7 +1506,8 @@ namespace TwitchLib.Client
         /// <param name="message">The message.</param>
         /// <param name="includeDate">if set to <c>true</c> [include date].</param>
         /// <param name="includeTime">if set to <c>true</c> [include time].</param>
-        private void Log(string message, bool includeDate = false, bool includeTime = false)
+        /// <param name="level">The log level of the message.</param>
+        private void Log(string message, bool includeDate = false, bool includeTime = false, LogLevel level = LogLevel.Debug)
         {
             string dateTimeStr;
             if (includeDate && includeTime)
@@ -1516,9 +1518,9 @@ namespace TwitchLib.Client
                 dateTimeStr = $"{DateTime.UtcNow.ToShortTimeString()}";
 
             if (includeDate || includeTime)
-                _logger?.LogInformation($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
+                _logger?.Log(level, $"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version} - {dateTimeStr}] {message}");
             else
-                _logger?.LogInformation($"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
+                _logger?.Log(level, $"[TwitchLib, {Assembly.GetExecutingAssembly().GetName().Version}] {message}");
 
             OnLog?.Invoke(this, new OnLogArgs { BotUsername = ConnectionCredentials?.TwitchUsername, Data = message, DateTime = DateTime.UtcNow });
         }
