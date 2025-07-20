@@ -23,20 +23,18 @@ namespace TwitchLib.Client.Models
 
         /// <summary>Constructor for ConnectionCredentials object.</summary>
         public ConnectionCredentials(
-            string? twitchUsername = null,
-            string? twitchOAuth = null,
+            string twitchUsername,
+            string twitchOAuth,
             bool disableUsernameCheck = false,
             Capabilities? capabilities = null)
         {
-            if (twitchUsername != null &&
-                !disableUsernameCheck &&
-                !GetUsernameCheckRegex().Match(twitchUsername).Success)
+            if (!disableUsernameCheck && !GetUsernameCheckRegex().Match(twitchUsername).Success)
             {
                 throw new Exception($"Twitch username does not appear to be valid. {twitchUsername}");
             }
 
-            TwitchUsername = twitchUsername?.ToLower() ?? $"justinfan{new Random().Next(1000, 89999)}";
-            TwitchOAuth = twitchOAuth ?? string.Empty;
+            TwitchUsername = twitchUsername.ToLower();
+            TwitchOAuth = twitchOAuth;
 
             // Make sure proper formatting is applied to oauth
             if (!TwitchOAuth.Contains(":"))
@@ -44,6 +42,14 @@ namespace TwitchLib.Client.Models
                 TwitchOAuth = $"oauth:{TwitchOAuth.Replace("oauth", "")}";
             }
 
+            Capabilities = capabilities ?? new Capabilities();
+        }
+
+        /// <summary>Constructor for ConnectionCredentials object as anonymous user.</summary>
+        public ConnectionCredentials(Capabilities? capabilities = null)
+        {
+            TwitchUsername = $"justinfan{new Random().Next(1000, 89999)}";
+            TwitchOAuth = string.Empty;
             Capabilities = capabilities ?? new Capabilities();
         }
     }
@@ -65,6 +71,7 @@ namespace TwitchLib.Client.Models
         /// </summary>
         public Capabilities(bool membership = true, bool tags = true, bool commands = true)
         {
+            new ConnectionCredentials();
             Membership = membership;
             Tags = tags;
             Commands = commands;
