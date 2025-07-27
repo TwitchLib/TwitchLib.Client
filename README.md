@@ -1,5 +1,8 @@
-# TwitchLib.Client
+﻿# TwitchLib.Client
 Client component of TwitchLib.
+
+> [!TIP]
+> With the introduction of Chat on EventSub, it is recommended to upgrade your chatbots that are using Twitch IRC to use EventSub (for reading chat messages and roomstates) and Twitch API (for sending chat messages).
 
 ## Installation
 
@@ -13,16 +16,17 @@ Client component of TwitchLib.
 [1]: https://img.shields.io/nuget/v/TwitchLib.Client.svg?label=TwitchLib.Client
 [2]: https://www.nuget.org/packages/TwitchLib.Client
 
-## Breaking Changes in Version 4.0.1
+## ⚠ Breaking Changes in Version 4.0.1 ⚠
 
 Version 4.0.1 contains breaking changes.
+- Removed obsolete methods.
 - Methods are now asynchronous. (The return value changed from `void` to `Task` and gains `Async` suffix)
 - Events are now asynchronous (return value changed from `void` to `Task`)
+- `Add/RemoveChatCommandIdentifier` methods were removed, use `ChatCommandIdentifiers` property instead (same applies to whisper);
+- `OnLog` event was removed (you can still use `ILoggerFactory` to get logs)
 
 TODO
-- OnLog=> ILoggerFactory 
 - suffix Event => EventArgs
-- command identifiers
 
 ## Minimal Setup
 Step 1: Create a new Console project
