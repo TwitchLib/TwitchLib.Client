@@ -49,7 +49,7 @@ namespace TwitchLib.Client.Models
         public ConnectionCredentials(Capabilities? capabilities = null)
         {
             TwitchUsername = $"justinfan{new Random().Next(1000, 89999)}";
-            TwitchOAuth = string.Empty;
+            TwitchOAuth = "oauth:";
             Capabilities = capabilities ?? new Capabilities();
         }
     }
