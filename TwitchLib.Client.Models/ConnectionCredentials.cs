@@ -71,7 +71,6 @@ namespace TwitchLib.Client.Models
         /// </summary>
         public Capabilities(bool membership = true, bool tags = true, bool commands = true)
         {
-            new ConnectionCredentials();
             Membership = membership;
             Tags = tags;
             Commands = commands;
