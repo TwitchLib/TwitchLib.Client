@@ -24,9 +24,11 @@ Version 4.0.1 contains breaking changes.
 - Events are now asynchronous (return value changed from `void` to `Task`)
 - `Add/RemoveChatCommandIdentifier` methods were removed, use `ChatCommandIdentifiers` property instead (same applies to whisper);
 - `OnLog` event was removed (you can still use `ILoggerFactory` to get logs)
-
-TODO
-- suffix Event => EventArgs
+- removed builders classes (removed `TwitchLib.Client.Models.Builders namespace`)
+- changed public fields to properties
+- rewritten all models in `TwitchLib.Client.Models`
+    - some props/classes can be slightly renamed
+    - some properties (`IsModerator`, `IsSubscriber`, `HasTurbo`, `IsVip`, `IsPartner`, `IsStaff`) moved to the `UserDetails` property
 
 ## Minimal Setup
 Step 1: Create a new Console project
