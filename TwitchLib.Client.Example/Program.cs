@@ -27,7 +27,7 @@ await Task.Delay(Timeout.Infinite);
 
 async Task Client_OnConnected(object? sender, OnConnectedEventArgs e)
 {
-    await client.JoinChannelAsync("piratesoftware"); // replace with the channel you want to join
+    await client.JoinChannelAsync("channel_name"); // replace with the channel you want to join
 }
 
 async Task Client_OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
