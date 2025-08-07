@@ -840,7 +840,7 @@ namespace TwitchLib.Client
                 IrcCommand.PrivMsg => HandlePrivMsg(ircMessage),
                 IrcCommand.Join => HandleJoin(ircMessage),
                 IrcCommand.Part => HandlePart(ircMessage),
-                IrcCommand.Ping => !DisableAutoPong ? SendRawAsync("PONG") : Task.CompletedTask,
+                IrcCommand.Ping => !DisableAutoPong ? SendRawAsync($"PONG {ircMessage.ToString().Substring(5)}") : Task.CompletedTask,
                 IrcCommand.Notice => HandleNotice(ircMessage),
                 IrcCommand.Whisper => HandleWhisper(ircMessage),
                 IrcCommand.ClearChat => HandleClearChat(ircMessage),
