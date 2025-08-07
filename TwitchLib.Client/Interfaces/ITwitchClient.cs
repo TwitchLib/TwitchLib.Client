@@ -57,11 +57,11 @@ namespace TwitchLib.Client.Interfaces
         /// <summary>
         /// The chat command identifiers
         /// </summary>
-        ICollection<char> ChatCommandIdentifiers { get; }
+        ICollection<string> ChatCommandIdentifiers { get; }
         /// <summary>
         /// The whisper command identifiers
         /// </summary>
-        ICollection<char> WhisperCommandIdentifiers { get; }
+        ICollection<string> WhisperCommandIdentifiers { get; }
 
         /// <summary>
         /// Fires when an Announcement is received

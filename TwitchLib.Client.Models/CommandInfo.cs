@@ -6,7 +6,7 @@ namespace TwitchLib.Client.Models;
 public class CommandInfo
 {
     /// <summary>Property representing the command identifier (ie command prefix).</summary>
-    public char Identifier { get; }
+    public string Identifier { get; }
 
     /// <summary>Property representing the actual command (without the command prefix).</summary>
     public string Name { get; }
@@ -20,13 +20,13 @@ public class CommandInfo
     /// <summary>
     /// Initializes a new instance of the <see cref="CommandInfo"/> class.
     /// </summary>
-    public CommandInfo(char identifier, string name) : this(identifier, name, string.Empty, new())
+    public CommandInfo(string identifier, string name) : this(identifier, name, string.Empty, new())
     { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CommandInfo"/> class.
     /// </summary>
-    public CommandInfo(char identifier, string name, string argumentsAsString, List<string> argumentsAsList)
+    public CommandInfo(string identifier, string name, string argumentsAsString, List<string> argumentsAsList)
     {
         Identifier = identifier;
         Name = name;
@@ -35,37 +35,34 @@ public class CommandInfo
     }
 
     /// <summary>
-    /// Tries to parse a span of characters into a value.
+    /// Tries to parse a message with specified command identifier into a value.
     /// </summary>
-    /// <param name="s">The span of characters to parse.</param>
-    /// <param name="result">When this method returns, contains the result of successfully parsing s, or an undefined value on failure.</param>
     /// <returns>true if s was successfully parsed; otherwise, false.</returns>
 #if NETSTANDARD2_0
-    public static bool TryParse(ReadOnlySpan<char> s, out CommandInfo result)
+    internal static bool TryParse(string commandIdentifier, ReadOnlySpan<char> message, out CommandInfo result)
 #else
-    public static bool TryParse(ReadOnlySpan<char> s, [MaybeNullWhen(false)] out CommandInfo result)
+    internal static bool TryParse(string commandIdentifier, ReadOnlySpan<char> message, [MaybeNullWhen(false)] out CommandInfo result)
 #endif
     {
         result = default!;
-        s = s.Trim();
-        if (s.IsEmpty)
+        if(!message.StartsWith(commandIdentifier.AsSpan()))
             return false;
-        var commandIdentifier = s[0];
-        s = s.Slice(1);
-        if (s.IsEmpty || s[0] == ' ') // if string contains only the identifier or the first char after identifier is space, then it is invalid input
+
+        message = message.Slice(commandIdentifier.Length);
+        if (message.IsEmpty || message[0] == ' ') // if string contains only the identifier or the first char after identifier is space, then it is invalid input
             return false;
-        var indexOfSpace = s.IndexOf(' ');
+        var indexOfSpace = message.IndexOf(' ');
         if (indexOfSpace == -1)
         {
-            var name = s.ToString();
+            var name = message.ToString();
             result = new(commandIdentifier, name);
         }
         else
         {
-            var name = s.Slice(0, indexOfSpace).ToString();
-            s = s.Slice(indexOfSpace + 1).TrimStart();
-            var argumentsAsString = s.ToString();
-            result = new(commandIdentifier, name, argumentsAsString, ParseArgumentsToList(s));
+            var name = message.Slice(0, indexOfSpace).ToString();
+            message = message.Slice(indexOfSpace + 1).TrimStart();
+            var argumentsAsString = message.ToString();
+            result = new(commandIdentifier, name, argumentsAsString, ParseArgumentsToList(message));
         }
         return true;
 
