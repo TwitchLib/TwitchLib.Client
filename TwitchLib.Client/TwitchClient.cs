@@ -89,10 +89,10 @@ namespace TwitchLib.Client
 
         #region Public Variables
         /// <inheritdoc/>
-        public ICollection<char> ChatCommandIdentifiers { get; } = new HashSet<char>();
+        public ICollection<string> ChatCommandIdentifiers { get; } = new HashSet<string>();
 
         /// <inheritdoc/>
-        public ICollection<char> WhisperCommandIdentifiers { get; } = new HashSet<char>();
+        public ICollection<string> WhisperCommandIdentifiers { get; } = new HashSet<string>();
 
         /// <inheritdoc/>
 #if NET
@@ -370,9 +370,9 @@ namespace TwitchLib.Client
             ConnectionCredentials = credentials;
 
             if (ChatCommandIdentifiers.Count == 0)
-                ChatCommandIdentifiers.Add('!');
+                ChatCommandIdentifiers.Add("!");
             if (WhisperCommandIdentifiers.Count == 0)
-                WhisperCommandIdentifiers.Add('!');
+                WhisperCommandIdentifiers.Add("!");
 
             for (var i = 0; i < channels.Count; i++)
             {
@@ -898,13 +898,10 @@ namespace TwitchLib.Client
                 await OnUserIntro.Invoke(this, new(chatMessage));
             }
 
-            if (OnChatCommandReceived is not null
-                && !string.IsNullOrEmpty(chatMessage.Message)
-                && ChatCommandIdentifiers.Contains(chatMessage.Message[0])
-                && CommandInfo.TryParse(chatMessage.Message.AsSpan(), out var commandInfo)
-                )
+            if (OnChatCommandReceived is not null 
+                && CanInvokeCommand(ChatCommandIdentifiers, chatMessage.Message.AsSpan(), out var commandInfo))
             {
-                await OnChatCommandReceived.Invoke(this, new(chatMessage, commandInfo));
+                await OnChatCommandReceived.Invoke(this, new(chatMessage, commandInfo!));
             }
 
         }
@@ -1101,14 +1098,27 @@ namespace TwitchLib.Client
 
             await OnWhisperReceived.TryInvoke(this, new(whisperMessage));
 
-            if (OnWhisperCommandReceived is not null
-                && !string.IsNullOrEmpty(whisperMessage.Message)
-                && WhisperCommandIdentifiers.Contains(whisperMessage.Message[0])
-                && CommandInfo.TryParse(whisperMessage.Message.AsSpan(), out var commandInfo)
-                )
+            if (OnWhisperCommandReceived is not null 
+                && CanInvokeCommand(WhisperCommandIdentifiers, whisperMessage.Message.AsSpan(), out var commandInfo))
             {
-                await OnWhisperCommandReceived.Invoke(this, new(whisperMessage, commandInfo));
+                await OnWhisperCommandReceived.Invoke(this, new(whisperMessage, commandInfo!));
             }
+        }
+
+        static bool CanInvokeCommand(ICollection<string> commandIdentifiers, ReadOnlySpan<char> message, out CommandInfo? commandInfo)
+        {
+            commandInfo = null;
+            if (message.IsEmpty)
+                return false;
+
+            foreach (var commandIdentifier in commandIdentifiers)
+            {
+                if (message.StartsWith(commandIdentifier.AsSpan()))
+                {
+                    return CommandInfo.TryParse(commandIdentifier, message, out commandInfo);
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -1169,9 +1179,9 @@ namespace TwitchLib.Client
             return Task.CompletedTask;
         }
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
         private Task UnaccountedFor(string ircString)
         {

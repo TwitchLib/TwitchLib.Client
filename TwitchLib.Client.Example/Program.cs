@@ -11,7 +11,7 @@ var loggerFactory = LoggerFactory.Create(c => c
 var credentials = new ConnectionCredentials(); // anonymous user, add Username and OAuth token to get the ability to send messages
 var client = new TwitchClient(loggerFactory: loggerFactory)
 {
-    ChatCommandIdentifiers = { '!', '?' }, // you can customize the command identifiers, if not set, defaults to '!'
+    ChatCommandIdentifiers = { "!", "?" }, // you can customize the command identifiers, if not set, defaults to '!'
 };
 
 client.Initialize(credentials);

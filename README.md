@@ -22,7 +22,7 @@ Version 4.0.1 contains breaking changes.
 - Removed obsolete methods.
 - Methods are now asynchronous. (The return value changed from `void` to `Task` and gains `Async` suffix)
 - Events are now asynchronous (return value changed from `void` to `Task`)
-- `Add/RemoveChatCommandIdentifier` methods were removed, use `ChatCommandIdentifiers` property instead (same applies to whisper);
+- `Add/RemoveChatCommandIdentifier` methods were removed, use `ChatCommandIdentifiers` property instead (same applies to whisper) and uses `string` instead of `char`
 - `OnLog` event was removed (you can still use `ILoggerFactory` to get logs)
 - removed builders classes (removed `TwitchLib.Client.Models.Builders namespace`)
 - changed public fields to properties
