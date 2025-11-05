@@ -10,19 +10,19 @@ jobs:
    runs-on: ubuntu-latest
 
    steps:
-   - uses: actions/checkout@v4
+   - uses: actions/checkout@v5
    - name: Setup .NET
-     uses: actions/setup-dotnet@v3
+     uses: actions/setup-dotnet@v5
      with:
-       dotnet-version: 8.0.x
+       dotnet-version: 10.0.x
    - name: Restore dependencies
      run: dotnet restore
    - name: Build TwitchLib.Client
      run: dotnet build -c Release --no-restore
    - name: Pack TwitchLib.Client
-     run: dotnet pack TwitchLib.Client.sln -v normal -c Release -o nugets --no-build
+     run: dotnet pack TwitchLib.Client.sln -v normal -c Release --no-build
    - name: Push to Nuget
-     run: dotnet nuget push "./nugets/*.nupkg" -k ${{ secrets.API_NUGET_TOKEN }} -s https://api.nuget.org/v3/index.json
+     run: dotnet nuget push "./artifacts/package/release/*.nupkg" -k ${{ secrets.API_NUGET_TOKEN }} -s https://api.nuget.org/v3/index.json
    - name: Send Discord Notification
      uses: sarisia/actions-status-discord@v1
      if: always()
