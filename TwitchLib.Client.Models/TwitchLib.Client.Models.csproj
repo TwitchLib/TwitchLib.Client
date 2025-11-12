@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0;net10.0</TargetFrameworks>
     <Description>Project contains all of the models used in TwitchLib.Client.</Description>
   </PropertyGroup>
 	
@@ -20,7 +20,7 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.5" Condition="$(TargetFramework) == 'netstandard2.0'" />
+    <PackageReference Include="System.Memory" Version="4.6.3" Condition="$(TargetFramework) == 'netstandard2.0'" />
   </ItemGroup>
 	
 </Project>
