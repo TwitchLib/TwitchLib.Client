@@ -283,6 +283,9 @@ namespace TwitchLib.Client
         public event AsyncEventHandler<NoticeEventArgs>? OnSlowMode;
 
         /// <inheritdoc/>
+        public event AsyncEventHandler<SlowModeNoticeEventArgs>? OnSlowModeChannel;
+
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs>? OnR9kMode;
 
         /// <inheritdoc/>
@@ -951,6 +954,8 @@ namespace TwitchLib.Client
                 MsgIds.MsgSuspended => OnSuspended?.Invoke(this, new(channel, message)),
                 MsgIds.MsgBanned => OnBanned?.Invoke(this, new(channel, message)),
                 MsgIds.MsgSlowMode => OnSlowMode?.Invoke(this, new(channel, message)),
+                MsgIds.SlowOn =>  OnSlowModeChannel?.Invoke(this, new(channel, message, true)),
+                MsgIds.SlowOff => OnSlowModeChannel?.Invoke(this, new(channel, message, false)),
                 MsgIds.MsgR9k => OnR9kMode?.Invoke(this, new(channel, message)),
                 _ => OnUnaccountedFor?.Invoke(this, new(TwitchUsername, channel, "NoticeHandling", rawIrcMessage)) ?? UnaccountedFor(rawIrcMessage)
             };

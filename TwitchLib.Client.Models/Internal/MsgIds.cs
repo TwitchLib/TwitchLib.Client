@@ -53,6 +53,8 @@ namespace TwitchLib.Client.Models.Internal
         public const string Subscription = "sub";
         public const string SubsOff = "subs_off";
         public const string SubsOn = "subs_on";
+        public const string SlowOn = "slow_on";
+        public const string SlowOff = "slow_off";
         public const string TimeoutSuccess = "timeout_success";
         public const string UnbanSuccess = "unban_success";
         public const string Unraid = "unraid";
