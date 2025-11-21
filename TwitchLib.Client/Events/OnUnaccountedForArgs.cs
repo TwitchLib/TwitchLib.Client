@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TwitchLib.Client.Events
+﻿namespace TwitchLib.Client.Events
 {
     /// <summary>
     /// Class OnUnaccountedForArgs.
@@ -23,11 +21,19 @@ namespace TwitchLib.Client.Events
         /// Gets or sets the bot username.
         /// </summary>
         /// <value>The bot username.</value>
-        public string BotUsername { get; set; } // may not be available
+        public string? BotUsername { get; set; }
         /// <summary>
         /// Gets or sets the channel.
         /// </summary>
         /// <value>The channel.</value>
-        public string Channel { get; set; } // may not be available
+        public string? Channel { get; set; }
+
+        public OnUnaccountedForArgs(string? botUsername, string? channel, string location, string rawIRC)
+        {
+            BotUsername = botUsername;
+            Channel = channel;
+            Location = location;
+            RawIRC = rawIRC;
+        }
     }
 }

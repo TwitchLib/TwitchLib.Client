@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,6 +13,14 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// The user timeout
         /// </summary>
-        public UserTimeout UserTimeout;
+        public UserTimeout UserTimeout { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnUserTimedoutArgs"/> class.
+        /// </summary>
+        public OnUserTimedoutArgs(UserTimeout userTimeout)
+        {
+            UserTimeout = userTimeout;
+        }
     }
 }

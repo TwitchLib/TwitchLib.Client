@@ -1,33 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>TwitchLib.Client</PackageId>
-    <VersionPrefix>3.4.0</VersionPrefix>
-    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0;net10.0</TargetFrameworks>
     <Description>Client component of TwitchLib. This component allows you to access Twitch chat and whispers, as well as the events that are sent over this connection.</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>swiftyspiffy, Prom3theu5, Syzuna, LuckyNoS7evin</Authors>
-    <PackageIconUrl>https://cdn.syzuna-programs.de/images/twitchlib.png</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/TwitchLib/TwitchLib.Client</PackageProjectUrl>
-    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
-    <Copyright>Copyright 2023</Copyright>
-    <PackageReleaseNotes> </PackageReleaseNotes>
-    <RepositoryUrl>https://github.com/TwitchLib/TwitchLib.Client</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <PackageTags>twitch library irc chat c# csharp api events pubsub net standard 2.0</PackageTags>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>3.4.0</AssemblyVersion>
-    <FileVersion>3.4.0</FileVersion>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-    <PackageReference Include="TwitchLib.Communication" Version="1.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+    <PackageReference Include="TwitchLib.Communication" Version="2.0.1" />
   </ItemGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
     <ProjectReference Include="..\TwitchLib.Client.Models\TwitchLib.Client.Models.csproj" />
   </ItemGroup>
+	
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <!-- Make internal classes visible to test project -->
+      <_Parameter1>TwitchLib.Client.Test</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <!-- Make internal classes visible to benchmark project -->
+      <_Parameter1>TwitchLib.Client.Benchmark</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+	
 </Project>

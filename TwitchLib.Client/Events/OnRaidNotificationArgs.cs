@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -13,10 +12,19 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// The raid notification
         /// </summary>
-        public RaidNotification RaidNotification;
+        public RaidNotification RaidNotification { get; }
         /// <summary>
         /// The channel
         /// </summary>
-        public string Channel;
+        public string Channel { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnRaidNotificationArgs"/> class.
+        /// </summary>
+        public OnRaidNotificationArgs(string channel, RaidNotification raidNotification)
+        {
+            Channel = channel;
+            RaidNotification = raidNotification;
+        }
     }
 }

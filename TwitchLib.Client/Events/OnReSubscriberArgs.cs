@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,10 +13,19 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing resubscriber object.
         /// </summary>
-        public ReSubscriber ReSubscriber;
+        public ReSubscriber ReSubscriber { get; }
         /// <summary>
         /// Property representing the Twitch channel this event fired from.
         /// </summary>
-        public string Channel;
+        public string Channel {  get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnReSubscriberArgs"/> class.
+        /// </summary>
+        public OnReSubscriberArgs(string channel, ReSubscriber reSubscriber)
+        {
+            Channel = channel;
+            ReSubscriber = reSubscriber;
+        }
     }
 }

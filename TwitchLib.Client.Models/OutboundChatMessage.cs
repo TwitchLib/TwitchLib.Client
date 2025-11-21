@@ -6,22 +6,24 @@
 
         public string Message { get; set; }
 
-        public string Username { get; set; }
+        public string? ReplyToId { get; set; }
 
-        public string ReplyToId { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutboundChatMessage"/> class.
+        /// </summary>
+        public OutboundChatMessage(string channel, string message)
+        {
+            Channel = channel;
+            Message = message;
+        }
+        
+        /// <inheritdoc/>
         public override string ToString()
         {
-            var user = Username.ToLower();
             var channel = Channel.ToLower();
-            if(ReplyToId == null)
-            {
-                return $":{user}!{user}@{user}.tmi.twitch.tv PRIVMSG #{channel} :{Message}";
-            } else
-            {
-                return $"@reply-parent-msg-id={ReplyToId} PRIVMSG #{channel} :{Message}";
-            }
-            
+            return ReplyToId is null 
+                ? $"PRIVMSG #{channel} :{Message}"
+                : $"@reply-parent-msg-id={ReplyToId} PRIVMSG #{channel} :{Message}";
         }
     }
 }

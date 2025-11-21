@@ -14,10 +14,19 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing the information of the community subscription.
         /// </summary>
-        public CommunitySubscription GiftedSubscription;
+        public CommunitySubscription GiftedSubscription { get; }
         /// <summary>
         /// Property representing the Twitch channel this event fired from.
         /// </summary>
-        public string Channel;
+        public string Channel { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnCommunitySubscriptionArgs"/> class.
+        /// </summary>
+        public OnCommunitySubscriptionArgs(string channel, CommunitySubscription giftedSubscription)
+        {
+            Channel = channel;
+            GiftedSubscription = giftedSubscription;
+        }
     }
 }

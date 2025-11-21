@@ -1,81 +1,44 @@
-﻿using System.Collections.Generic;
-
-using TwitchLib.Client.Models.Builders;
+﻿using TwitchLib.Client.Models.Extensions;
 
 namespace TwitchLib.Client.Models.Extractors
 {
-    public class EmoteExtractor
+    public static class EmoteExtractor
     {
-        public IEnumerable<Emote> Extract(string rawEmoteSetString, string message)
+        public static List<Emote> Extract(string? rawEmoteSetString, string message)
         {
-            if (string.IsNullOrEmpty(rawEmoteSetString)
-               || string.IsNullOrEmpty(message))
-            {
-                yield break;
-            }
+            var emotes = new List<Emote>();
+            if (string.IsNullOrEmpty(rawEmoteSetString) || string.IsNullOrEmpty(message))
+                return emotes;
 
-            if (rawEmoteSetString.Contains("/"))
+            System.Globalization.StringInfo messageInfo = new(message);
+            // 25:5-9,28-32/28087:15-21 => 25:5-9,28-32  28087:15-21
+#pragma warning disable CS8604 // Possible null reference argument. false positiv in NS 2.0
+            foreach (var emoteData in new SpanSliceEnumerator(rawEmoteSetString, '/'))
+#pragma warning restore CS8604 // Possible null reference argument.
             {
-                // Message contains multiple different emotes, first parse by unique emotes: 28087:15-21/25:5-9,28-32
-                foreach (var emoteData in rawEmoteSetString.Split('/'))
+                var index = emoteData.IndexOf(':');
+                var emoteId = emoteData.Slice(0, index).ToString();
+                // 25:5-9,28-32 => 5-9  28-32
+                foreach (var emote in new SpanSliceEnumerator(emoteData.Slice(index + 1), ','))
                 {
-                    var emoteId = emoteData.Split(':')[0];
-                    if (emoteData.Contains(","))
-                    {
-                        // Multiple copies of a single emote: 25:5-9,28-32
-                        foreach (var emote in emoteData.Replace($"{emoteId}:", "").Split(','))
-                            yield return GetEmote(emote, emoteId, message);
-                    }
-                    else
-                    {
-                        // Single copy of single emote: 25:5-9/28087:16-22
-                        yield return GetEmote(emoteData, emoteId, message, true);
-                    }
+                    index = emote.IndexOf('-');
+                    var startSlice = emote.Slice(0, index);
+                    var endSlice = emote.Slice(index + 1);
+#if NETSTANDARD2_0
+                    var start = int.Parse(startSlice.ToString());
+                    var end = int.Parse(endSlice.ToString());
+#else
+                    var start = int.Parse(startSlice);
+                    var end = int.Parse(endSlice);
+#endif
+                    int trueStart = messageInfo.SubstringByTextElements(0, start + 1).Length - 1;
+                    string name = messageInfo.SubstringByTextElements(start, end - start + 1);
+                    int trueEnd = trueStart + name.Length - 1;
+
+                    emotes.Add(new(emoteId, name, trueStart, trueEnd));
                 }
             }
-            else
-            {
-                var emoteId = rawEmoteSetString.Split(':')[0];
-                // Message contains a single, or multiple of the same emote
-                if (rawEmoteSetString.Contains(","))
-                {
-                    // Multiple copies of a single emote: 25:5-9,28-32
-                    foreach (var emote in rawEmoteSetString.Replace($"{emoteId}:", "").Split(','))
-                        yield return GetEmote(emote, emoteId, message);
-                }
-                else
-                {
-                    // Single copy of single emote: 25:5-9
-                    yield return GetEmote(rawEmoteSetString, emoteId, message, true);
-                }
-            }
-        }
-
-        private Emote GetEmote(string emoteData, string emoteId, string message, bool single = false)
-        {
-            int startIndex = -1;
-            int endIndex = -1;
-
-            if (single)
-            {
-                startIndex = int.Parse(emoteData.Split(':')[1].Split('-')[0]);
-                endIndex = int.Parse(emoteData.Split(':')[1].Split('-')[1]);
-            }
-            else
-            {
-                startIndex = int.Parse(emoteData.Split('-')[0]);
-                endIndex = int.Parse(emoteData.Split('-')[1]);
-            }
-
-            string name = message.Substring(startIndex, (endIndex - startIndex) + 1);
-
-            EmoteBuilder emoteBuilder = EmoteBuilder.Create()
-                                                    .WithId(emoteId)
-                                                    .WithName(name)
-                                                    .WithStartIndex(startIndex)
-                                                    .WithEndIndex(endIndex);
-
-            return emoteBuilder.Build();
+            return emotes;
         }
     }
 }

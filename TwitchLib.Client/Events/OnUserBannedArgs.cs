@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,6 +13,14 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// The user ban
         /// </summary>
-        public UserBan UserBan;
+        public UserBan UserBan { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnUserBannedArgs"/> class.
+        /// </summary>
+        public OnUserBannedArgs(UserBan userBan)
+        {
+            UserBan = userBan;
+        }
     }
 }

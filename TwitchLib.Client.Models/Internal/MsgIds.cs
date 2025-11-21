@@ -1,4 +1,6 @@
-﻿namespace TwitchLib.Client.Models.Internal
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+namespace TwitchLib.Client.Models.Internal
 {
     public static class MsgIds
     {
@@ -9,10 +11,13 @@
         public const string AlreadyR9KOn = "already_r9k_on";
         public const string AlreadySubsOff = "already_subs_off";
         public const string AlreadySubsOn = "already_subs_on";
+        public const string AnonGiftPaidUpgrade = "anongiftpaidupgrade";
         public const string Announcement = "announcement";
         public const string BadUnbanNoBan = "bad_unban_no_ban";
         public const string BanSuccess = "ban_success";
+        public const string BitsBadgeTier = "bitsbadgetier";
         public const string ColorChanged = "color_changed";
+        public const string CommunityPayForward = "communitypayforward";
         public const string EmoteOnlyOff = "emote_only_off";
         public const string EmoteOnlyOn = "emote_only_on";
         public const string HighlightedMessage = "highlighted-message";
@@ -38,16 +43,21 @@
         public const string RaidErrorSelf = "raid_error_self";
         public const string RaidNoticeMature = "raid_notice_mature";
         public const string ReSubscription = "resub";
+        public const string Ritual = "ritual";
         public const string R9KOff = "r9k_off";
         public const string R9KOn = "r9k_on";
+        public const string StandardPayForward = "standardpayforward";
         public const string SubGift = "subgift";
         public const string CommunitySubscription = "submysterygift";
         public const string ContinuedGiftedSubscription = "giftpaidupgrade";
         public const string Subscription = "sub";
         public const string SubsOff = "subs_off";
         public const string SubsOn = "subs_on";
+        public const string SlowOn = "slow_on";
+        public const string SlowOff = "slow_off";
         public const string TimeoutSuccess = "timeout_success";
         public const string UnbanSuccess = "unban_success";
+        public const string Unraid = "unraid";
         public const string UnrecognizedCmd = "unrecognized_cmd";
         public const string UserIntro = "user-intro";
         public const string VIPsSuccess = "vips_success";

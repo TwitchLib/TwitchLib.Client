@@ -1,13 +1,11 @@
-using System;
-using System.Collections.Generic;
-
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Models.Interfaces;
 using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
     /// <summary>Class representing state of a specific user.</summary>
-    public class UserState
+    public class UserState : IHexColorProperty
     {
         /// <summary>Properrty representing the chat badges a specific user has.</summary>
         public List<KeyValuePair<string, string>> Badges { get; } = new List<KeyValuePair<string, string>>();
@@ -19,16 +17,16 @@ namespace TwitchLib.Client.Models
         public string Channel { get; }
 
         /// <summary>Properrty representing HEX user's name.</summary>
-        public string ColorHex { get; }
+        public string HexColor { get; } = default!;
 
         /// <summary>Property representing user's display name.</summary>
-        public string DisplayName { get; }
+        public string DisplayName { get; } = default!;
 
         /// <summary>Property representing emote sets available to user.</summary>
-        public string EmoteSet { get; }
-        
+        public string EmoteSet { get; } = default!;
+
         /// <summary>Property representing the user's Id.</summary>
-        public string Id { get; }
+        public string Id { get; } = default!;
 
         /// <summary>Property representing Turbo status.</summary>
         public bool IsModerator { get; }
@@ -36,8 +34,18 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing subscriber status.</summary>
         public bool IsSubscriber { get; }
 
+        /// <summary>
+        /// A Boolean value that indicates whether the user has site-wide commercial free mode enabled. 
+        /// </summary>
+        public bool Turbo { get; }
+
         /// <summary>Property representing returned user type of user.</summary>
         public UserType UserType { get; }
+
+        /// <summary>
+        /// Contains undocumented tags.
+        /// </summary>
+        public Dictionary<string, string>? UndocumentedTags { get; }
 
         /// <summary>
         /// Constructor for UserState.
@@ -47,19 +55,19 @@ namespace TwitchLib.Client.Models
         {
             Channel = ircMessage.Channel;
 
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-                switch (tag)
+                var tagValue = tag.Value;
+                switch (tag.Key)
                 {
                     case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
+                        Badges = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
+                        BadgeInfo = TagHelper.ToBadges(tagValue);
                         break;
                     case Tags.Color:
-                        ColorHex = tagValue;
+                        HexColor = tagValue;
                         break;
                     case Tags.DisplayName:
                         DisplayName = tagValue;
@@ -71,34 +79,19 @@ namespace TwitchLib.Client.Models
                         Id = tagValue;
                         break;
                     case Tags.Mod:
-                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
+                        IsModerator = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.Subscriber:
-                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
+                        IsSubscriber = TagHelper.ToBool(tagValue);
+                        break;
+                    case Tags.Turbo:
+                        Turbo = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
+                        UserType = TagHelper.ToUserType(tag.Value);
                         break;
                     default:
-                        // This should never happen, unless Twitch changes their shit
-                        Console.WriteLine($"Unaccounted for [UserState]: {tag}");
+                        (UndocumentedTags ??= new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }
@@ -107,10 +100,13 @@ namespace TwitchLib.Client.Models
                 UserType = UserType.Broadcaster;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserState"/> class.
+        /// </summary>
         public UserState(
             List<KeyValuePair<string, string>> badges,
             List<KeyValuePair<string, string>> badgeInfo,
-            string colorHex,
+            string hexColor,
             string displayName,
             string emoteSet,
             string channel,
@@ -121,7 +117,7 @@ namespace TwitchLib.Client.Models
         {
             Badges = badges;
             BadgeInfo = badgeInfo;
-            ColorHex = colorHex;
+            HexColor = hexColor;
             DisplayName = displayName;
             EmoteSet = emoteSet;
             Channel = channel;

@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,6 +13,14 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing received chat message.
         /// </summary>
-        public ChatMessage ChatMessage;
+        public ChatMessage ChatMessage { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnMessageReceivedArgs"/> class.
+        /// </summary>
+        public OnMessageReceivedArgs(ChatMessage message)
+        {
+            ChatMessage = message;
+        }
     }
 }

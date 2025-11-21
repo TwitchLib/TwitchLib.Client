@@ -1,65 +1,54 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Interfaces;
+using TwitchLib.Communication.Models;
 
 namespace TwitchLib.Client.Test
 {
     public class MockIClient : IClient
     {
-        public void WhisperThrottled(OnWhisperThrottledEventArgs eventArgs)
-        {
-            throw new NotImplementedException();
-        }
-
         public TimeSpan DefaultKeepAliveInterval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public int SendQueueLength => throw new NotImplementedException();
 
         public bool IsConnected { get; private set; }
-        public IClientOptions Options { get; set; }
+        public IClientOptions Options { get; set; } = new ClientOptions();
 
         public int WhisperQueueLength => throw new NotImplementedException();
 
-        public event EventHandler<OnConnectedEventArgs> OnConnected;
-        public event EventHandler<OnDataEventArgs> OnData;
-        public event EventHandler<OnDisconnectedEventArgs> OnDisconnected;
-        public event EventHandler<OnErrorEventArgs> OnError;
-        public event EventHandler<OnFatalErrorEventArgs> OnFatality;
-        public event EventHandler<OnMessageEventArgs> OnMessage;
-        public event EventHandler<OnSendFailedEventArgs> OnSendFailed;
-        public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
-        public event EventHandler<OnReconnectedEventArgs> OnReconnected;
-        public event EventHandler<OnMessageThrottledEventArgs> OnMessageThrottled;
-        public event EventHandler<OnWhisperThrottledEventArgs> OnWhisperThrottled;
+        public event AsyncEventHandler<OnConnectedEventArgs>? OnConnected;
+        public event AsyncEventHandler<OnDisconnectedEventArgs>? OnDisconnected;
+        public event AsyncEventHandler<OnErrorEventArgs>? OnError;
+        public event AsyncEventHandler<OnFatalErrorEventArgs>? OnFatality;
+        public event AsyncEventHandler<OnMessageEventArgs>? OnMessage;
+        public event AsyncEventHandler<OnSendFailedEventArgs>? OnSendFailed;
+        public event AsyncEventHandler<OnConnectedEventArgs>? OnReconnected;
 
-        public void Close(bool callDisconnect = true)
+        public Task CloseAsync()
         {
             IsConnected = false;
             OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs());
+            return Task.CompletedTask;
         }
 
         public void Dispose()
         { }
 
-        public void Dispose(bool waitForSendsToComplete)
-        { }
-
-        public bool Open()
+        public async Task<bool> OpenAsync()
         {
             IsConnected = true;
-            OnConnected?.Invoke(this, new OnConnectedEventArgs());
+            if (OnConnected is not  null)
+                await OnConnected.Invoke(this, new OnConnectedEventArgs());
             return true;
         }
 
-        public void Reconnect()
+        public async Task<bool> ReconnectAsync()
         {
             IsConnected = true;
-            OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
-        }
-
-        public void MessageThrottled(OnMessageThrottledEventArgs eventArgs)
-        {
-            throw new NotImplementedException();
+            if (OnReconnected is not null)
+                await OnReconnected.Invoke(this, new OnConnectedEventArgs());
+            return true;
         }
 
         public void SendFailed(OnSendFailedEventArgs eventArgs)
@@ -72,14 +61,15 @@ namespace TwitchLib.Client.Test
             throw new NotImplementedException();
         }
 
-        public bool Send(string data)
+        public Task<bool> SendAsync(string data)
         {
-            return true;
+            return Task.FromResult(true);
         }
 
-        public void ReceiveMessage(string message)
+        public async Task ReceiveMessage(string message)
         {
-            OnMessage?.Invoke(this, new OnMessageEventArgs { Message = message });
+            if (OnMessage is not null)
+                await OnMessage.Invoke(this, new OnMessageEventArgs(message));
         }
 
         public bool SendWhisper(string data)

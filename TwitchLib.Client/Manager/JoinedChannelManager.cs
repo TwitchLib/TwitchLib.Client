@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Concurrent;
 using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Manager
@@ -38,9 +35,9 @@ namespace TwitchLib.Client.Manager
         /// </summary>
         /// <param name="channel">The channel.</param>
         /// <returns>JoinedChannel.</returns>
-        public JoinedChannel GetJoinedChannel(string channel)
+        public JoinedChannel? GetJoinedChannel(string channel)
         {
-            _joinedChannels.TryGetValue(channel, out JoinedChannel joinedChannel);
+            _joinedChannels.TryGetValue(channel, out JoinedChannel? joinedChannel);
             return joinedChannel;
         }
 

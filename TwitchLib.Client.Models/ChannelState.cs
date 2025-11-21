@@ -1,6 +1,4 @@
-﻿using System;
-
-using TwitchLib.Client.Models.Internal;
+﻿using TwitchLib.Client.Models.Internal;
 
 namespace TwitchLib.Client.Models
 {
@@ -8,7 +6,7 @@ namespace TwitchLib.Client.Models
     public class ChannelState
     {
         /// <summary>Property representing the current broadcaster language.</summary>
-        public string BroadcasterLanguage { get; }
+        public string BroadcasterLanguage { get; } = default!;
 
         /// <summary>Property representing the current channel.</summary>
         public string Channel { get; }
@@ -16,7 +14,7 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing whether EmoteOnly mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public bool? EmoteOnly { get; }
 
-        /// <summary>Property representing how long needed to be following to talk. If null, FollowersOnly is not enabled.</summary>
+        /// <summary>Property representing how long needed to be following to talk. Timeout.InfiniteTimespan indicates that FollowersOnly mode is switched off. If null, FollowersOnly status is not changed.</summary>
         public TimeSpan? FollowersOnly { get; } = null;
 
         /// <summary>Property representing mercury value. Not sure what it's for.</summary>
@@ -29,7 +27,7 @@ namespace TwitchLib.Client.Models
         public bool? Rituals { get; }
 
         /// <summary>Twitch assigned room id</summary>
-        public string RoomId { get; }
+        public string RoomId { get; } = default!;
 
         /// <summary>Property representing whether Slow mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public int? SlowMode { get; }
@@ -37,55 +35,62 @@ namespace TwitchLib.Client.Models
         /// <summary>Property representing whether Sub Mode is being applied to chat or not. WILL BE NULL IF VALUE NOT PRESENT.</summary>
         public bool? SubOnly { get; }
 
+        /// <summary>
+        /// Contains undocumented tags.
+        /// </summary>
+        public Dictionary<string, string>? UndocumentedTags { get; }
+
         /// <summary>ChannelState object constructor.</summary>
         public ChannelState(IrcMessage ircMessage)
         {
             //@broadcaster-lang=;emote-only=0;r9k=0;slow=0;subs-only=1 :tmi.twitch.tv ROOMSTATE #burkeblack
-            foreach (var tag in ircMessage.Tags.Keys)
+            foreach (var tag in ircMessage.Tags)
             {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
+                var tagValue = tag.Value;
+                switch (tag.Key)
                 {
                     case Tags.BroadcasterLang:
                         BroadcasterLanguage = tagValue;
                         break;
                     case Tags.EmoteOnly:
-                        EmoteOnly = Common.Helpers.ConvertToBool(tagValue);
+                        EmoteOnly = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.R9K:
-                        R9K = Common.Helpers.ConvertToBool(tagValue);
+                        R9K = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.Rituals:
-                        Rituals = Common.Helpers.ConvertToBool(tagValue);
+                        Rituals = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.Slow:
-                        var success = int.TryParse(tagValue, out var slowDuration);
+                        var success = int.TryParse(tag.Value, out var slowDuration);
                         SlowMode = success ? slowDuration : (int?)null;
                         break;
                     case Tags.SubsOnly:
-                        SubOnly = Common.Helpers.ConvertToBool(tagValue);
+                        SubOnly = TagHelper.ToBool(tagValue);
                         break;
                     case Tags.FollowersOnly:
-                        if(int.TryParse(tagValue, out int minutes) && minutes > -1)
+                        if (int.TryParse(tagValue, out int minutes))
                         {
-                            FollowersOnly = TimeSpan.FromMinutes(minutes);
+                            FollowersOnly = minutes > -1 ? TimeSpan.FromMinutes(minutes) : Timeout.InfiniteTimeSpan;
                         }
                         break;
                     case Tags.RoomId:
                         RoomId = tagValue;
                         break;
                     case Tags.Mercury:
-                        Mercury = Common.Helpers.ConvertToBool(tagValue);
+                        Mercury = TagHelper.ToBool(tagValue);
                         break;
                     default:
-                        Console.WriteLine("[TwitchLib][ChannelState] Unaccounted for: " + tag);
+                        (UndocumentedTags ??= new()).Add(tag.Key, tag.Value);
                         break;
                 }
             }
             Channel = ircMessage.Channel;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChannelState"/> class.
+        /// </summary>
         public ChannelState(
             bool r9k,
             bool rituals,

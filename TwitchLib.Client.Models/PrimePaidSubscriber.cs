@@ -1,76 +1,81 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
-namespace TwitchLib.Client.Models
-{
-    public class PrimePaidSubscriber : SubscriberBase
-    {
-        public PrimePaidSubscriber(IrcMessage ircMessage) : base(ircMessage)
-        {
-        }
+namespace TwitchLib.Client.Models;
 
-        public PrimePaidSubscriber(
-            List<KeyValuePair<string, string>> badges,
-            List<KeyValuePair<string, string>> badgeInfo,
-            string colorHex,
-            Color color,
-            string displayName,
-            string emoteSet,
-            string id,
-            string login,
-            string systemMessage,
-            string msgId,
-            string msgParamCumulativeMonths,
-            string msgParamStreakMonths,
-            bool msgParamShouldShareStreak,
-            string systemMessageParsed,
-            string resubMessage,
-            SubscriptionPlan subscriptionPlan,
-            string subscriptionPlanName,
-            string roomId,
-            string userId,
-            bool isModerator,
-            bool isTurbo,
-            bool isSubscriber,
-            bool isPartner,
-            string tmiSentTs,
-            UserType userType,
-            string rawIrc,
-            string channel,
-            int months = 0)
-            : base(badges,
-                  badgeInfo,
-                  colorHex,
-                  color,
-                  displayName,
-                  emoteSet,
-                  id,
-                  login,
-                  systemMessage,
-                  msgId,
-                  msgParamCumulativeMonths,
-                  msgParamStreakMonths,
-                  msgParamShouldShareStreak,
-                  systemMessageParsed,
-                  resubMessage,
-                  subscriptionPlan,
-                  subscriptionPlanName,
-                  roomId,
-                  userId,
-                  isModerator,
-                  isTurbo,
-                  isSubscriber,
-                  isPartner,
-                  tmiSentTs,
-                  userType,
-                  rawIrc,
-                  channel,
-                  months)
+public class PrimePaidSubscriber : UserNoticeBase
+{
+    /// <summary>
+    /// The type of subscription plan being used.
+    /// </summary>
+    public SubscriptionPlan MsgParamSubPlan { get; protected set; }
+
+    /// <summary>
+    /// Property representing system message.
+    /// </summary>
+    public string ResubMessage { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Announcement"/> class.
+    /// </summary>
+    /// <param name="ircMessage">The IRC message from Twitch to be processed.</param>
+    public PrimePaidSubscriber(IrcMessage ircMessage) : base(ircMessage)
+    {
+        ResubMessage = ircMessage.Message;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Announcement"/> class.
+    /// </summary>
+    public PrimePaidSubscriber(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayName,
+        string emotes,
+        string id,
+        string login,
+        string msgId,
+        string roomId,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        UserDetail userDetail,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        SubscriptionPlan msgParamSubPlan,
+        string resubMessage)
+        : base(badgeInfo,
+            badges,
+            hexColor,
+            displayName,
+            emotes,
+            id,
+            login,
+            msgId,
+            roomId,
+            systemMsg,
+            tmiSent,
+            userDetail,
+            userId,
+            userType,
+            undocumentedTags)
+    {
+        MsgParamSubPlan = msgParamSubPlan;
+        ResubMessage = resubMessage;
+    }
+
+    /// <inheritdoc/>
+    protected override bool TrySet(KeyValuePair<string, string> tag)
+    {
+        switch (tag.Key)
         {
+            case Tags.MsgParamSubPlan:
+                MsgParamSubPlan = TagHelper.ToSubscriptionPlan(tag.Value);
+                break;
+            default:
+                return false;
         }
+        return true;
     }
 }

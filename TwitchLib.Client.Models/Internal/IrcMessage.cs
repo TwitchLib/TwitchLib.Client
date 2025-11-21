@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 using System.Text;
 
 using TwitchLib.Client.Enums.Internal;
@@ -10,41 +9,44 @@ namespace TwitchLib.Client.Models.Internal
         /// <summary>
         /// The channel the message was sent in
         /// </summary>
-        public string Channel => Params.StartsWith("#") ? Params.Remove(0, 1) : Params;
+        public string Channel => _channel ??= Params.StartsWith("#") ? Params.Remove(0, 1) : Params;
+        private string? _channel;
 
-        public string Params => _parameters != null && _parameters.Length > 0 ? _parameters[0] : "";
+        public string Params => _parameters?.Length > 0 ? _parameters[0] : "";
 
         /// <summary>
         /// Message itself
         /// </summary>
         public string Message => Trailing;
 
-        public string Trailing => _parameters != null && _parameters.Length > 1 ? _parameters[_parameters.Length - 1] : "";
+        public string Trailing => _parameters?.Length > 1 ? _parameters[_parameters.Length - 1] : "";
 
         /// <summary>
         /// Command parameters
         /// </summary>
-        private readonly string[] _parameters;
+        private readonly string[]? _parameters;
 
         /// <summary>
         /// The user whose message it is
         /// </summary>
-        public readonly string User;
+        public string User { get; }
 
         /// <summary>
         /// Hostmask of the user
         /// </summary>
-        public readonly string Hostmask;
+        public string? Hostmask { get; }
 
         /// <summary>
         /// Raw Command
         /// </summary>
-        public readonly IrcCommand Command;
+        public IrcCommand Command { get; }
 
         /// <summary>
         /// IRCv3 tags
         /// </summary>
-        public readonly Dictionary<string, string> Tags;
+        public Dictionary<string, string> Tags { get; }
+
+        private string? _rawString;
 
         /// <summary>
         /// Create an INCOMPLETE IrcMessage only carrying username
@@ -56,7 +58,7 @@ namespace TwitchLib.Client.Models.Internal
             User = user;
             Hostmask = null;
             Command = IrcCommand.Unknown;
-            Tags = null;
+            Tags = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -70,58 +72,91 @@ namespace TwitchLib.Client.Models.Internal
             IrcCommand command,
             string[] parameters,
             string hostmask,
-            Dictionary<string, string> tags = null)
+            Dictionary<string, string>? tags = null)
         {
             var idx = hostmask.IndexOf('!');
-            User = idx != -1 ? hostmask.Substring(0, idx) : hostmask;
+            User = idx >= 0 ? hostmask.Substring(0, idx) : hostmask;
             Hostmask = hostmask;
-            _parameters = parameters;
             Command = command;
-            Tags = tags;
+            Tags = tags ?? new Dictionary<string, string>();
 
-            if (command == IrcCommand.RPL_353)
+            _parameters = parameters;
+            if (command == IrcCommand.RPL_353
+                && Params.Length > 0
+                && Params.Contains("#"))
             {
-                if(Params.Length > 0 && Params.Contains("#"))
-                {
-                    _parameters[0] = $"#{_parameters[0].Split('#')[1]}";
-                }
+                _parameters[0] = $"#{_parameters[0].Split('#')[1]}";
             }
         }
 
-        public new string ToString()
+        /// <summary>
+        /// Create an IrcMessage, settings its raw string.
+        /// IrcParser *must* use this constructor, otherwise the raw string
+        /// will be re-generated each time it is parsed and then passed to handlers.
+        /// </summary>
+        /// <param name="raw">Raw IRC message</param>
+        /// <param name="command">IRC Command</param>
+        /// <param name="parameters">Command params</param>
+        /// <param name="user">User</param>
+        /// <param name="hostmask">Hostmask</param>
+        /// <param name="tags">IRCv3 tags</param>
+        internal IrcMessage(
+            string raw,
+            IrcCommand command,
+            string[] parameters,
+            string user,
+            string hostmask,
+            Dictionary<string, string>? tags = null)
         {
-            var raw = new StringBuilder(32);
-            if (Tags != null)
+            User = user;
+            Hostmask = hostmask;
+            Command = command;
+            Tags = tags ?? new Dictionary<string, string>();
+
+            _rawString = raw;
+            _parameters = parameters;
+            if (command == IrcCommand.RPL_353
+                && Params.Length > 0
+                && Params.Contains("#"))
             {
-                var tags = new string[Tags.Count];
-                var i = 0;
+                _parameters[0] = $"#{_parameters[0].Split('#')[1]}";
+            }
+        }
+
+        /// <inheritdoc/>
+        public override string ToString() => _rawString ??= GenerateToString();
+
+        private string GenerateToString()
+        {
+            var raw = new StringBuilder(128);
+            if (Tags?.Count > 0)
+            {
+                raw.Append('@');
                 foreach (var tag in Tags)
                 {
-                    tags[i] = tag.Key + "=" + tag.Value;
-                    ++i;
+                    raw.Append(tag.Key).Append('=').Append(tag.Value).Append(';');
                 }
-
-                if (tags.Length > 0)
-                {
-                    raw.Append("@").Append(string.Join(";", tags)).Append(" ");
-                }
+                raw[raw.Length - 1] = ' ';
             }
 
             if (!string.IsNullOrEmpty(Hostmask))
             {
-                raw.Append(":").Append(Hostmask).Append(" ");
+                raw.Append(':').Append(Hostmask).Append(' ');
             }
 
-            raw.Append(Command.ToString().ToUpper().Replace("RPL_", ""));
-            if (_parameters.Length <= 0)
+            // The "RPL_" replace is required because TwitchLib.Client.Enums.Internal.IrcCommand
+            // has the RPL_ prefix on all RPL commands, but the Twitch IRCv3 spec does not.
+            // Thus, if the message has not been constructed with _rawString from incoming data, remove the prefix.
+            raw.Append(Command.ToString().ToUpperInvariant().Replace("RPL_", ""));
+            if (_parameters == null || _parameters.Length == 0)
                 return raw.ToString();
 
-            if (_parameters[0] != null && _parameters[0].Length > 0)
+            if (!string.IsNullOrEmpty(_parameters[0]))
             {
                 raw.Append(" ").Append(_parameters[0]);
             }
 
-            if (_parameters.Length > 1 && _parameters[1] != null && _parameters[1].Length > 0)
+            if (_parameters.Length > 1 && _parameters[1]?.Length > 0)
             {
                 raw.Append(" :").Append(_parameters[1]);
             }

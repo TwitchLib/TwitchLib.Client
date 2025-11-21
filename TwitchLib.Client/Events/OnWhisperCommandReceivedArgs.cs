@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -9,11 +8,19 @@ namespace TwitchLib.Client.Events
     /// </summary>
     /// <seealso cref="System.EventArgs" />
     /// <inheritdoc />
-    public class OnWhisperCommandReceivedArgs : EventArgs
+    public class OnWhisperCommandReceivedArgs : OnWhisperReceivedArgs
     {
         /// <summary>
         /// Property representing received command.
         /// </summary>
-        public WhisperCommand Command;
+        public CommandInfo Command { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnWhisperCommandReceivedArgs"/> class.
+        /// </summary>
+        public OnWhisperCommandReceivedArgs(WhisperMessage message, CommandInfo commandInfo) : base(message)
+        {
+            Command = commandInfo;
+        }
     }
 }

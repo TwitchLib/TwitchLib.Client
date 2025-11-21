@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="TwitchLib.Client.Enums/TwitchLib.Client.Enums.csproj" />
+    <Project Path="TwitchLib.Client.Models/TwitchLib.Client.Models.csproj" />
+    <Project Path="TwitchLib.Client/TwitchLib.Client.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="TwitchLib.Client.Test/TwitchLib.Client.Test.csproj" />
+  </Folder>
+  <Project Path="TwitchLib.Client.Benchmark/TwitchLib.Client.Benchmark.csproj" />
+  <Project Path="TwitchLib.Client.Example/TwitchLib.Client.Example.csproj" />
+</Solution>

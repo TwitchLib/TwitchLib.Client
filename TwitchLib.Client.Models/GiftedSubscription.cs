@@ -1,234 +1,157 @@
-﻿using System;
-using System.Collections.Generic;
-
-using TwitchLib.Client.Enums;
+﻿using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models.Internal;
 
-namespace TwitchLib.Client.Models
+namespace TwitchLib.Client.Models;
+
+//SubGift
+public class GiftedSubscription : UserNoticeBase
 {
-    public class GiftedSubscription
+    private Goal? _goal;
+
+    public Goal? MsgParamGoal { get => _goal; protected set => _goal = value; }
+
+    public bool IsAnonymous { get; }
+
+    /// <summary>
+    /// The total number of months the user has subscribed. 
+    /// </summary>
+    public string MsgParamMonths { get; protected set; } = default!;
+
+    /// <summary>
+    /// If this message sourced from an event, this is the ID of that event
+    /// </summary>
+    public string MsgParamOriginId { get; protected set; }
+
+    /// <summary>
+    /// The display name of the subscription gift recipient.
+    /// </summary>
+    public string MsgParamRecipientDisplayName { get; protected set; } = default!;
+
+    /// <summary>
+    /// The user ID of the subscription gift recipient.
+    /// </summary>
+    public string MsgParamRecipientId { get; protected set; } = default!;
+
+    /// <summary>
+    /// The user name of the subscription gift recipient.
+    /// </summary>
+    public string MsgParamRecipientUserName { get; protected set; } = default!;
+
+    public int MsgParamSenderCount { get; protected set; }
+
+    /// <summary>
+    /// The type of subscription plan being used.
+    /// </summary>
+    public SubscriptionPlan MsgParamSubPlan { get; protected set; }
+
+    /// <summary>
+    /// The display name of the subscription plan. This may be a default name or one created by the channel owner.
+    /// </summary>
+    public string MsgParamSubPlanName { get; protected set; } = default!;
+
+    /// <summary>
+    /// The number of months gifted as part of a single, multi-month gift.
+    /// </summary>
+    public int MsgParamMultiMonthGiftDuration { get; protected set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GiftedSubscription"/> class.
+    /// </summary>
+    public GiftedSubscription(IrcMessage ircMessage) : base(ircMessage)
     {
-        private const string AnonymousGifterUserId = "274598607";
+        IsAnonymous = UserId == AnonymousGifterUserId;
+    }
 
-        public List<KeyValuePair<string, string>> Badges { get; }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GiftedSubscription"/> class.
+    /// </summary>
+    public GiftedSubscription(
+        List<KeyValuePair<string, string>> badgeInfo,
+        List<KeyValuePair<string, string>> badges,
+        string hexColor,
+        string displayName,
+        string emotes,
+        string id,
+        string login,
+        string msgId,
+        string roomId,
+        string systemMsg,
+        DateTimeOffset tmiSent,
+        UserDetail userDetail,
+        string userId,
+        UserType userType,
+        Dictionary<string, string>? undocumentedTags,
+        Goal? msgParamGoal,
+        string msgParamMonths,
+        string msgParamOriginId,
+        string msgParamRecipientDisplayName,
+        string msgParamRecipientId,
+        string msgParamRecipientUserName, 
+        int msgParamSenderCount, 
+        SubscriptionPlan msgParamSubPlan, 
+        string msgParamSubPlanName, 
+        int msgParamMultiMonthGiftDuration)
+       : base(badgeInfo,
+           badges,
+           hexColor,
+           displayName,
+           emotes,
+           id,
+           login,
+           msgId,
+           roomId,
+           systemMsg,
+           tmiSent,
+           userDetail,
+           userId,
+           userType,
+           undocumentedTags)
+    {
+        MsgParamGoal = msgParamGoal;
+        IsAnonymous = userId == AnonymousGifterUserId;
+        MsgParamMonths = msgParamMonths;
+        MsgParamOriginId = msgParamOriginId;
+        MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
+        MsgParamRecipientId = msgParamRecipientId;
+        MsgParamRecipientUserName = msgParamRecipientUserName;
+        MsgParamSenderCount = msgParamSenderCount;
+        MsgParamSubPlan = msgParamSubPlan;
+        MsgParamSubPlanName = msgParamSubPlanName;
+        MsgParamMultiMonthGiftDuration = msgParamMultiMonthGiftDuration;
+    }
 
-        public List<KeyValuePair<string, string>> BadgeInfo { get; }
-
-        public string Color { get; }
-
-        public string DisplayName { get; }
-
-        public string Emotes { get; }
-
-        public string Id { get; }
-
-        public bool IsModerator { get; }
-
-        public bool IsSubscriber { get; }
-
-        public bool IsTurbo { get; }
-
-        public bool IsAnonymous { get; }
-
-        public string Login { get; }
-
-        public string MsgId { get; }
-
-        public string MsgParamMonths { get; }
-
-        public string MsgParamRecipientDisplayName { get; }
-
-        public string MsgParamRecipientId { get; }
-
-        public string MsgParamRecipientUserName { get; }
-
-        public string MsgParamSubPlanName { get; }
-
-        public SubscriptionPlan MsgParamSubPlan { get; }
-
-        public string RoomId { get; }
-
-        public string SystemMsg { get; }
-
-        public string SystemMsgParsed { get; }
-
-        public string TmiSentTs { get; }
-
-        public string UserId { get; }
-
-        public UserType UserType { get; }
-
-        public string MsgParamMultiMonthGiftDuration { get; }
-
-        public GiftedSubscription(IrcMessage ircMessage)
+    /// <inheritdoc/>
+    protected override bool TrySet(KeyValuePair<string, string> tag)
+    {
+        switch (tag.Key)
         {
-            foreach (var tag in ircMessage.Tags.Keys)
-            {
-                var tagValue = ircMessage.Tags[tag];
-
-                switch (tag)
-                {
-                    case Tags.Badges:
-                        Badges = Common.Helpers.ParseBadges(tagValue);
-                        break;
-                    case Tags.BadgeInfo:
-                        BadgeInfo = Common.Helpers.ParseBadges(tagValue);
-                        break;
-                    case Tags.Color:
-                        Color = tagValue;
-                        break;
-                    case Tags.DisplayName:
-                        DisplayName = tagValue;
-                        break;
-                    case Tags.Emotes:
-                        Emotes = tagValue;
-                        break;
-                    case Tags.Id:
-                        Id = tagValue;
-                        break;
-                    case Tags.Login:
-                        Login = tagValue;
-                        break;
-                    case Tags.Mod:
-                        IsModerator = Common.Helpers.ConvertToBool(tagValue);
-                        break;
-                    case Tags.MsgId:
-                        MsgId = tagValue;
-                        break;
-                    case Tags.MsgParamMonths:
-                        MsgParamMonths = tagValue;
-                        break;
-                    case Tags.MsgParamRecipientDisplayname:
-                        MsgParamRecipientDisplayName = tagValue;
-                        break;
-                    case Tags.MsgParamRecipientId:
-                        MsgParamRecipientId = tagValue;
-                        break;
-                    case Tags.MsgParamRecipientUsername:
-                        MsgParamRecipientUserName = tagValue;
-                        break;
-                    case Tags.MsgParamSubPlanName:
-                        MsgParamSubPlanName = tagValue;
-                        break;
-                    case Tags.MsgParamSubPlan:
-                        switch (tagValue)
-                        {
-                            case "prime":
-                                MsgParamSubPlan = SubscriptionPlan.Prime;
-                                break;
-                            case "1000":
-                                MsgParamSubPlan = SubscriptionPlan.Tier1;
-                                break;
-                            case "2000":
-                                MsgParamSubPlan = SubscriptionPlan.Tier2;
-                                break;
-                            case "3000":
-                                MsgParamSubPlan = SubscriptionPlan.Tier3;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(tagValue.ToLower));
-                        }
-                        break;
-                    case Tags.RoomId:
-                        RoomId = tagValue;
-                        break;
-                    case Tags.Subscriber:
-                        IsSubscriber = Common.Helpers.ConvertToBool(tagValue);
-                        break;
-                    case Tags.SystemMsg:
-                        SystemMsg = tagValue;
-                        SystemMsgParsed = tagValue.Replace("\\s", " ").Replace("\\n", "");
-                        break;
-                    case Tags.TmiSentTs:
-                        TmiSentTs = tagValue;
-                        break;
-                    case Tags.Turbo:
-                        IsTurbo = Common.Helpers.ConvertToBool(tagValue);
-                        break;
-                    case Tags.UserId:
-                        UserId = tagValue;
-                        if (UserId == AnonymousGifterUserId)
-                        {
-                            IsAnonymous = true;
-                        }
-                        break;
-                    case Tags.UserType:
-                        switch (tagValue)
-                        {
-                            case "mod":
-                                UserType = UserType.Moderator;
-                                break;
-                            case "global_mod":
-                                UserType = UserType.GlobalModerator;
-                                break;
-                            case "admin":
-                                UserType = UserType.Admin;
-                                break;
-                            case "staff":
-                                UserType = UserType.Staff;
-                                break;
-                            default:
-                                UserType = UserType.Viewer;
-                                break;
-                        }
-                        break;
-                    case Tags.MsgParamMultiMonthGiftDuration:
-                        MsgParamMultiMonthGiftDuration = tagValue;
-                        break;
-                }
-            }
+            case Tags.MsgParamMonths:
+                MsgParamMonths = tag.Value;
+                break;
+            case Tags.MsgParamOriginId:
+                MsgParamOriginId = tag.Value;
+                break;
+            case Tags.MsgParamRecipientDisplayName:
+                MsgParamRecipientDisplayName = tag.Value;
+                break;
+            case Tags.MsgParamRecipientId:
+                MsgParamRecipientId = tag.Value;
+                break;
+            case Tags.MsgParamRecipientUsername:
+                MsgParamRecipientUserName = tag.Value;
+                break;
+            case Tags.MsgParamSubPlanName:
+                MsgParamSubPlanName = tag.Value;
+                break;
+            case Tags.MsgParamSubPlan:
+                MsgParamSubPlan = TagHelper.ToSubscriptionPlan(tag.Value);
+                break;
+            case Tags.MsgParamMultiMonthGiftDuration:
+                MsgParamMultiMonthGiftDuration = int.Parse(tag.Value);
+                break;
+            default:
+                return Goal.TrySetTag(ref _goal, tag);
         }
-
-        public GiftedSubscription(
-            List<KeyValuePair<string, string>> badges,
-            List<KeyValuePair<string, string>> badgeInfo,
-            string color,
-            string displayName,
-            string emotes,
-            string id,
-            string login,
-            bool isModerator,
-            string msgId,
-            string msgParamMonths,
-            string msgParamRecipientDisplayName,
-            string msgParamRecipientId,
-            string msgParamRecipientUserName,
-            string msgParamSubPlanName,
-            string msgMultiMonthDuration,
-            SubscriptionPlan msgParamSubPlan,
-            string roomId,
-            bool isSubscriber,
-            string systemMsg,
-            string systemMsgParsed,
-            string tmiSentTs,
-            bool isTurbo,
-            UserType userType,
-            string userId)
-        {
-            Badges = badges;
-            BadgeInfo = badgeInfo;
-            Color = color;
-            DisplayName = displayName;
-            Emotes = emotes;
-            Id = id;
-            Login = login;
-            IsModerator = isModerator;
-            MsgId = msgId;
-            MsgParamMonths = msgParamMonths;
-            MsgParamRecipientDisplayName = msgParamRecipientDisplayName;
-            MsgParamRecipientId = msgParamRecipientId;
-            MsgParamRecipientUserName = msgParamRecipientUserName;
-            MsgParamSubPlanName = msgParamSubPlanName;
-            MsgParamSubPlan = msgParamSubPlan;
-            MsgParamMultiMonthGiftDuration = msgMultiMonthDuration;
-            RoomId = roomId;
-            IsSubscriber = isSubscriber;
-            SystemMsg = systemMsg;
-            SystemMsgParsed = systemMsgParsed;
-            TmiSentTs = tmiSentTs;
-            IsTurbo = isTurbo;
-            UserType = userType;
-            UserId = userId;
-        }
+        return true;
     }
 }

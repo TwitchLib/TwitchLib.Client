@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Exceptions;
+﻿using TwitchLib.Client.Exceptions;
 
 namespace TwitchLib.Client.Events
 {
@@ -15,5 +14,13 @@ namespace TwitchLib.Client.Events
         /// Property representing exception object.
         /// </summary>
         public ErrorLoggingInException Exception;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnIncorrectLoginArgs"/> class.
+        /// </summary>
+        public OnIncorrectLoginArgs(ErrorLoggingInException exception)
+        {
+            Exception = exception;
+        }
     }
 }

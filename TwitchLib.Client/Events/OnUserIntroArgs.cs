@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,6 +13,14 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing the PRIVMSG
         /// </summary>
-        public ChatMessage ChatMessage;
+        public ChatMessage ChatMessage { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnUserIntroArgs"/> class.
+        /// </summary>
+        public OnUserIntroArgs(ChatMessage chatMessage)
+        {
+            ChatMessage = chatMessage;
+        }
     }
 }

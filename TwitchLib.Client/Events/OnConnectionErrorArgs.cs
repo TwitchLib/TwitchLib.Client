@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,10 +13,19 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// The error
         /// </summary>
-        public ErrorEvent Error;
+        public ErrorEvent Error { get; }
         /// <summary>
         /// Username of the bot that suffered connection error.
         /// </summary>
-        public string BotUsername;
+        public string BotUsername { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnConnectionErrorArgs"/> class.
+        /// </summary>
+        public OnConnectionErrorArgs(string botUsername, ErrorEvent error)
+        {
+            BotUsername = botUsername;
+            Error = error;
+        }
     }
 }

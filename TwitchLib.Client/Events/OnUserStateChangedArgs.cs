@@ -1,5 +1,4 @@
-﻿using System;
-using TwitchLib.Client.Models;
+﻿using TwitchLib.Client.Models;
 
 namespace TwitchLib.Client.Events
 {
@@ -14,6 +13,14 @@ namespace TwitchLib.Client.Events
         /// <summary>
         /// Property representing user state object.
         /// </summary>
-        public UserState UserState;
+        public UserState UserState { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnUserStateChangedArgs"/> class.
+        /// </summary>
+        public OnUserStateChangedArgs(UserState userState)
+        {
+            UserState = userState;
+        }
     }
 }

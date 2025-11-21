@@ -1,30 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>TwitchLib.Client.Models</PackageId>
-    <VersionPrefix>3.4.0</VersionPrefix>
-    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0;net10.0</TargetFrameworks>
     <Description>Project contains all of the models used in TwitchLib.Client.</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>swiftyspiffy, Prom3theu5, Syzuna, LuckyNoS7evin</Authors>
-    <PackageIconUrl>https://cdn.syzuna-programs.de/images/twitchlib.png</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/TwitchLib/TwitchLib.Client</PackageProjectUrl>
-    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
-    <Copyright>Copyright 2023</Copyright>
-    <PackageReleaseNotes>Incremental changes. See commit history.</PackageReleaseNotes>
-    <RepositoryUrl>https://github.com/TwitchLib/TwitchLib.Client</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <PackageTags>twitch library irc chat c# csharp api events pubsub net standard 2.0</PackageTags>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>3.4.0</AssemblyVersion>
-    <FileVersion>3.4.0</FileVersion>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\TwitchLib.Client.Enums\TwitchLib.Client.Enums.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Folder Include="Interfaces\" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <!-- This is a punishment for worshiping wrong gods of abstraction -->
+    <_Parameter1>TwitchLib.Client</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>TwitchLib.Client.Test</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.6.3" Condition="$(TargetFramework) == 'netstandard2.0'" />
+  </ItemGroup>
+	
 </Project>
