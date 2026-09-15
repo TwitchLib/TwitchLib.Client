@@ -314,6 +314,9 @@ namespace TwitchLib.Client
        
         /// <inheritdoc/>
         public event AsyncEventHandler<OnStandardPayForwardArgs>? OnStandardPayForward;
+
+        /// <inheritdoc/>
+        public event AsyncEventHandler<OnViewerMilestoneArgs>? OnViewerMilestone;
         #endregion
 
         #region Construction Work
@@ -1175,6 +1178,7 @@ namespace TwitchLib.Client
                 MsgIds.BitsBadgeTier => OnBitsBadgeTier.TryInvoke(this, new(ircMessage)),
                 MsgIds.CommunityPayForward => OnCommunityPayForward.TryInvoke(this, new(ircMessage)),
                 MsgIds.StandardPayForward => OnStandardPayForward.TryInvoke(this, new(ircMessage)),
+                MsgIds.ViewerMilestone => OnViewerMilestone.TryInvoke(this, new(ircMessage)),
                 _ => OnUnaccountedFor?.Invoke(this, new(TwitchUsername, ircMessage.Channel, "UserNoticeHandling", rawMessage)) ?? UnaccountedFor(rawMessage)
             };
         }

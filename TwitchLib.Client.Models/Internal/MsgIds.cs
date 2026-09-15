@@ -63,5 +63,6 @@ namespace TwitchLib.Client.Models.Internal
         public const string UserIntro = "user-intro";
         public const string VIPsSuccess = "vips_success";
         public const string SkipSubsModeMessage = "skip-subs-mode-message";
+        public const string ViewerMilestone = "viewermilestone";
     }
 }

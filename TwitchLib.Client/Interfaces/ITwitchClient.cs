@@ -320,6 +320,8 @@ namespace TwitchLib.Client.Interfaces
         /// </summary>
         event AsyncEventHandler<OnUserIntroArgs>? OnUserIntro;
 
+        public event AsyncEventHandler<OnViewerMilestoneArgs>? OnViewerMilestone;
+
         /// <summary>
         /// Fires when data is received from Twitch that is not able to be parsed.
         /// </summary>
