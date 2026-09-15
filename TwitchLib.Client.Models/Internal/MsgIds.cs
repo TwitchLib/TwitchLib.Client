@@ -20,6 +20,7 @@ namespace TwitchLib.Client.Models.Internal
         public const string CommunityPayForward = "communitypayforward";
         public const string EmoteOnlyOff = "emote_only_off";
         public const string EmoteOnlyOn = "emote_only_on";
+        public const string FollowersOnZero = "followers_on_zero";
         public const string HighlightedMessage = "highlighted-message";
         public const string ModeratorsReceived = "room_mods";
         public const string NoMods = "no_mods";

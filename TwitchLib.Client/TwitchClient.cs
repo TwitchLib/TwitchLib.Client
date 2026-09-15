@@ -268,6 +268,9 @@ namespace TwitchLib.Client
         public event AsyncEventHandler<NoticeEventArgs>? OnFollowersOnly;
 
         /// <inheritdoc/>
+        public event AsyncEventHandler<NoticeEventArgs>? OnFollowersOnlyMode;
+
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs>? OnSubsOnly;
 
         /// <inheritdoc/>
@@ -949,6 +952,7 @@ namespace TwitchLib.Client
                 MsgIds.MsgRateLimit => OnRateLimit?.Invoke(this, new(channel, message)),
                 MsgIds.MsgDuplicate => OnDuplicate?.Invoke(this, new(channel, message)),
                 MsgIds.MsgFollowersOnly => OnFollowersOnly?.Invoke(this, new(channel, message)),
+                MsgIds.FollowersOnZero => OnFollowersOnlyMode?.Invoke(this, new(channel, message)),
                 MsgIds.MsgSubsOnly => OnSubsOnly?.Invoke(this, new(channel, message)),
                 MsgIds.MsgEmoteOnly => OnEmoteOnly?.Invoke(this, new(channel, message)),
                 MsgIds.MsgSuspended => OnSuspended?.Invoke(this, new(channel, message)),

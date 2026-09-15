@@ -281,6 +281,11 @@ namespace TwitchLib.Client.Interfaces
         event AsyncEventHandler<NoticeEventArgs>? OnFollowersOnly;
 
         /// <summary>
+        /// Fires when the room is now in followers-only mode.
+        /// </summary>
+        event AsyncEventHandler<NoticeEventArgs>? OnFollowersOnlyMode;
+
+        /// <summary>
         /// Fires when the client attempts to send a message to a channel in subs only mode, as a non-sub
         /// </summary>
         event AsyncEventHandler<NoticeEventArgs>? OnSubsOnly;
