@@ -268,6 +268,9 @@ namespace TwitchLib.Client
         public event AsyncEventHandler<NoticeEventArgs>? OnFollowersOnly;
 
         /// <inheritdoc/>
+        public event AsyncEventHandler<NoticeEventArgs>? OnFollowersOnlyMode;
+
+        /// <inheritdoc/>
         public event AsyncEventHandler<NoticeEventArgs>? OnSubsOnly;
 
         /// <inheritdoc/>
@@ -311,6 +314,9 @@ namespace TwitchLib.Client
        
         /// <inheritdoc/>
         public event AsyncEventHandler<OnStandardPayForwardArgs>? OnStandardPayForward;
+
+        /// <inheritdoc/>
+        public event AsyncEventHandler<OnViewerMilestoneArgs>? OnViewerMilestone;
         #endregion
 
         #region Construction Work
@@ -949,6 +955,7 @@ namespace TwitchLib.Client
                 MsgIds.MsgRateLimit => OnRateLimit?.Invoke(this, new(channel, message)),
                 MsgIds.MsgDuplicate => OnDuplicate?.Invoke(this, new(channel, message)),
                 MsgIds.MsgFollowersOnly => OnFollowersOnly?.Invoke(this, new(channel, message)),
+                MsgIds.FollowersOnZero => OnFollowersOnlyMode?.Invoke(this, new(channel, message)),
                 MsgIds.MsgSubsOnly => OnSubsOnly?.Invoke(this, new(channel, message)),
                 MsgIds.MsgEmoteOnly => OnEmoteOnly?.Invoke(this, new(channel, message)),
                 MsgIds.MsgSuspended => OnSuspended?.Invoke(this, new(channel, message)),
@@ -1171,6 +1178,7 @@ namespace TwitchLib.Client
                 MsgIds.BitsBadgeTier => OnBitsBadgeTier.TryInvoke(this, new(ircMessage)),
                 MsgIds.CommunityPayForward => OnCommunityPayForward.TryInvoke(this, new(ircMessage)),
                 MsgIds.StandardPayForward => OnStandardPayForward.TryInvoke(this, new(ircMessage)),
+                MsgIds.ViewerMilestone => OnViewerMilestone.TryInvoke(this, new(ircMessage)),
                 _ => OnUnaccountedFor?.Invoke(this, new(TwitchUsername, ircMessage.Channel, "UserNoticeHandling", rawMessage)) ?? UnaccountedFor(rawMessage)
             };
         }

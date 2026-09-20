@@ -28,6 +28,8 @@ namespace TwitchLib.Client.Models.Internal
         public const string MsgParamColor = "msg-param-color"; // Sent only on announcement
         public const string MsgParamDisplayname = "msg-param-displayName";                      // Sent only on raid
         public const string MsgParamLogin = "msg-param-login";                                  // Sent only on raid
+        public const string MsgParamCategory = "msg-param-category";
+        public const string MsgParamCopoReward = "msg-param-copoReward";
         public const string MsgParamCumulativeMonths = "msg-param-cumulative-months";           // Sent only on sub, resub
         public const string MsgParamGiftTheme = "msg-param-gift-theme";
         public const string MsgParamGoalContributionType = "msg-param-goal-contribution-type";
@@ -35,6 +37,7 @@ namespace TwitchLib.Client.Models.Internal
         public const string MsgParamGoalDescription = "msg-param-goal-description";
         public const string MsgParamGoalTargetContributions = "msg-param-goal-target-contributions";
         public const string MsgParamGoalUserContributions = "msg-param-goal-user-contributions";
+        public const string MsgParamId = "msg-param-id";
         public const string MsgParamMonths = "msg-param-months";                                // Sent only on subgift, anonsubgift
         public const string MsgParamPriorGifterAnonymous = "msg-param-prior-gifter-anonymous";
         public const string MsgParamPriorGifterDisplayName = "msg-param-prior-gifter-display-name";
@@ -57,6 +60,7 @@ namespace TwitchLib.Client.Models.Internal
         public const string MsgParamSenderLogin = "msg-param-sender-login";                     // Sent only on giftpaidupgrade
         public const string MsgParamSenderName = "msg-param-sender-name";                       // Sent only on giftpaidupgrade
         public const string MsgParamThreshold = "msg-param-threshold";                          // Sent only on bitsbadgetier
+        public const string MsgParamValue = "msg-param-value";
         public const string Noisy = "noisy";
         public const string PinnedChatPaidAmount = "pinned-chat-paid-amount";
         public const string PinnedChatPaidCurrency = "pinned-chat-paid-currency";
