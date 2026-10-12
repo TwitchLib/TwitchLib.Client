@@ -225,6 +225,25 @@ namespace TwitchLib.Client.Test
                 });
         }
 
+        [Fact]
+        public async Task ClientKeepsJoinedChannelsAfterReconnect()
+        {
+            var client = new TwitchClient(_mockClient);
+            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"), TWITCH_CHANNEL);
+            await client.ConnectAsync();
+            await ReceivedTwitchConnected();
+            await ReceivedJoin(TWITCH_CHANNEL);
+            await ReceivedRoomState();
+
+            await _mockClient.ReconnectAsync();
+            await ReceivedTwitchConnected();
+            await ReceivedJoin(TWITCH_CHANNEL);
+            await ReceivedRoomState();
+
+            Assert.Contains(client.JoinedChannels, c => c.Channel == TWITCH_CHANNEL);
+            await client.SendMessageAsync(TWITCH_CHANNEL, "still here");
+        }
+
         #region Messages for Tests
         private async Task ReceivedUserNoticeMessage()
         {
