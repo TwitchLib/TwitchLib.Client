@@ -413,6 +413,7 @@ namespace TwitchLib.Client
             _client.OnConnected += _client_OnConnectedAsync;
             _client.OnMessage += _client_OnMessage;
             _client.OnDisconnected += _client_OnDisconnected;
+            _client.OnError += _client_OnError;
             _client.OnFatality += _client_OnFatality;
             _client.OnReconnected += _client_OnReconnected;
         }
@@ -639,6 +640,17 @@ namespace TwitchLib.Client
         }
 
         /// <summary>
+        /// Handles the OnError event of the _client control.
+        /// Errors of the connection, e.g. a failed read, were not reported anywhere before.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="OnErrorEventArgs" /> instance containing the event data.</param>
+        private Task _client_OnError(object? sender, OnErrorEventArgs e)
+        {
+            return OnError.TryInvoke(sender, e);
+        }
+
+        /// <summary>
         /// Handles the OnFatality event of the _client control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -713,7 +725,18 @@ namespace TwitchLib.Client
                     OnError?.Invoke(this, new(ex));
                     continue;
                 }
-                await HandleIrcMessageAsync(ircMessage);
+
+                try
+                {
+                    await HandleIrcMessageAsync(ircMessage);
+                }
+                catch (Exception ex)
+                {
+                    // An exception thrown by an event handler used to reach the IClient and end its listen task:
+                    // the client stopped reading messages and answering PINGs, while IsConnected stayed true.
+                    _logger?.LogException("Exception while handling a message", ex);
+                    await OnError.TryInvoke(this, new(ex));
+                }
             }
         }
 
