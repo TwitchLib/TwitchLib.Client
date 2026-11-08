@@ -137,6 +137,46 @@ namespace TwitchLib.Client.Test
         }
 
         [Fact]
+        public async Task ClientKeepsHandlingMessagesWhenAHandlerThrows()
+        {
+            var client = new TwitchClient(_mockClient);
+            var received = 0;
+            Exception? error = null;
+            client.OnMessageReceived += (sender, e) =>
+            {
+                if (++received == 1)
+                    throw new InvalidOperationException("handler failed");
+                return Task.CompletedTask;
+            };
+            client.OnError += (sender, e) =>
+            {
+                error = e.Exception;
+                return Task.CompletedTask;
+            };
+
+            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+            await client.ConnectAsync();
+            await ReceivedTwitchConnected();
+            await ReceivedTestMessage();
+            await ReceivedTestMessage();
+
+            Assert.Equal(2, received);
+            Assert.IsType<InvalidOperationException>(error);
+        }
+
+        [Fact]
+        public async Task ClientRaisesOnErrorForConnectionErrors()
+        {
+            var client = new TwitchClient(_mockClient);
+            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"));
+
+            await MyAssert.RaisesAsync<OnErrorEventArgs>(
+                h => client.OnError += h,
+                h => client.OnError -= h,
+                () => _mockClient.Error(new OnErrorEventArgs(new InvalidOperationException("read failed"))));
+        }
+
+        [Fact]
         public async Task ClientRaisesOnDisconnected()
         {
             var client = new TwitchClient(_mockClient);
@@ -183,6 +223,25 @@ namespace TwitchLib.Client.Test
                     Assert.True(pauseConnected.WaitOne(5000));
                     Assert.True(pauseReconnected.WaitOne(60000));
                 });
+        }
+
+        [Fact]
+        public async Task ClientKeepsJoinedChannelsAfterReconnect()
+        {
+            var client = new TwitchClient(_mockClient);
+            client.Initialize(new Models.ConnectionCredentials(TWITCH_BOT_USERNAME, "OAuth"), TWITCH_CHANNEL);
+            await client.ConnectAsync();
+            await ReceivedTwitchConnected();
+            await ReceivedJoin(TWITCH_CHANNEL);
+            await ReceivedRoomState();
+
+            await _mockClient.ReconnectAsync();
+            await ReceivedTwitchConnected();
+            await ReceivedJoin(TWITCH_CHANNEL);
+            await ReceivedRoomState();
+
+            Assert.Contains(client.JoinedChannels, c => c.Channel == TWITCH_CHANNEL);
+            await client.SendMessageAsync(TWITCH_CHANNEL, "still here");
         }
 
         #region Messages for Tests

@@ -56,9 +56,10 @@ namespace TwitchLib.Client.Test
             throw new NotImplementedException();
         }
 
-        public void Error(OnErrorEventArgs eventArgs)
+        public async Task Error(OnErrorEventArgs eventArgs)
         {
-            throw new NotImplementedException();
+            if (OnError is not null)
+                await OnError.Invoke(this, eventArgs);
         }
 
         public Task<bool> SendAsync(string data)

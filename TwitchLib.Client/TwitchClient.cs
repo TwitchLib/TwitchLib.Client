@@ -419,6 +419,7 @@ namespace TwitchLib.Client
             _client.OnConnected += _client_OnConnectedAsync;
             _client.OnMessage += _client_OnMessage;
             _client.OnDisconnected += _client_OnDisconnected;
+            _client.OnError += _client_OnError;
             _client.OnFatality += _client_OnFatality;
             _client.OnReconnected += _client_OnReconnected;
         }
@@ -645,6 +646,17 @@ namespace TwitchLib.Client
         }
 
         /// <summary>
+        /// Handles the OnError event of the _client control.
+        /// Errors of the connection, e.g. a failed read, were not reported anywhere before.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="OnErrorEventArgs" /> instance containing the event data.</param>
+        private Task _client_OnError(object? sender, OnErrorEventArgs e)
+        {
+            return OnError.TryInvoke(sender, e);
+        }
+
+        /// <summary>
         /// Handles the OnFatality event of the _client control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -673,7 +685,14 @@ namespace TwitchLib.Client
         {
             await SendHandshake();
 
-            foreach (var channel in _joinedChannelManager.GetJoinedChannels())
+            // The channels are joined again on the new connection, and QueueingJoinCheckAsync adds each of them
+            // back to the manager when its JOIN is sent. Clearing the manager after queueing removed them again:
+            // JoinedChannels stayed empty although the client was back in the channels,
+            // and sending a message threw BadStateException.
+            var channels = _joinedChannelManager.GetJoinedChannels();
+            _joinedChannelManager.Clear();
+
+            foreach (var channel in channels)
             {
                 _joinChannelQueue.Enqueue(channel);
             }
@@ -683,7 +702,6 @@ namespace TwitchLib.Client
                 await QueueingJoinCheckAsync();
             }
 
-            _joinedChannelManager.Clear();
             await OnReconnected.TryInvoke(sender, new Events.OnConnectedEventArgs(TwitchUsername));
         }
 
@@ -719,7 +737,18 @@ namespace TwitchLib.Client
                     OnError?.Invoke(this, new(ex));
                     continue;
                 }
-                await HandleIrcMessageAsync(ircMessage);
+
+                try
+                {
+                    await HandleIrcMessageAsync(ircMessage);
+                }
+                catch (Exception ex)
+                {
+                    // An exception thrown by an event handler used to reach the IClient and end its listen task:
+                    // the client stopped reading messages and answering PINGs, while IsConnected stayed true.
+                    _logger?.LogException("Exception while handling a message", ex);
+                    await OnError.TryInvoke(this, new(ex));
+                }
             }
         }
 
