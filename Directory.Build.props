@@ -22,7 +22,7 @@
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>twitch library irc chat c# csharp api events net</PackageTags>
 		<PackageReleaseNotes>a lot of changes</PackageReleaseNotes>
-		<VersionPrefix>4.0.1</VersionPrefix>
+		<VersionPrefix>4.0.2</VersionPrefix>
 		<VersionSuffix>$(VersionSuffix)</VersionSuffix>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
 		<FileVersion>$(VersionPrefix)</FileVersion>
